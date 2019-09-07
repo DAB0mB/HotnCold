@@ -2,7 +2,7 @@
 import React from 'react'
 import { Text } from 'react-native'
 import NavBar, { NavTitle, NavButton } from 'react-native-nav'
-import Constants from 'expo-constants'
+import { expo } from '../app.json'
 
 export default function NavBarCustom() {
   return (
@@ -11,7 +11,7 @@ export default function NavBarCustom() {
       <NavTitle>
         💬 Gifted Chat{'\n'}
         <Text style={{ fontSize: 10, color: '#aaa' }}>
-          ({Constants.expoVersion})
+          ({expo.version})
         </Text>
       </NavTitle>
       <NavButton />
