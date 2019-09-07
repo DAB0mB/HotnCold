@@ -29,18 +29,6 @@ const otherUser = {
   avatar: 'https://facebook.github.io/react/img/logo_og.png',
 }
 
-const KeyboardView = ({ children }) => (
-  Platform.OS === 'android' ? (
-    <KeyboardAvoidingView behavior="padding">
-       {children}
-    </KeyboardAvoidingView>
-  ) : (
-    <React.Fragment>
-      {children}
-    </React.Fragment>
-  )
-);
-
 export default class App extends Component {
   state = {
     step: 0,
@@ -235,27 +223,28 @@ export default class App extends Component {
         testID='main'
       >
         <NavBar />
-        <KeyboardView>
-          <GiftedChat
-            messages={this.state.messages}
-            onSend={this.onSend}
-            loadEarlier={this.state.loadEarlier}
-            onLoadEarlier={this.onLoadEarlier}
-            isLoadingEarlier={this.state.isLoadingEarlier}
-            parsePatterns={this.parsePatterns}
-            user={user}
-            onQuickReply={this.onQuickReply}
-            keyboardShouldPersistTaps='never'
-            renderAccessory={this.renderAccessory}
-            renderActions={this.renderCustomActions}
-            renderBubble={this.renderBubble}
-            renderSystemMessage={this.renderSystemMessage}
-            renderCustomView={this.renderCustomView}
-            renderFooter={this.renderFooter}
-            quickReplyStyle={{ borderRadius: 2 }}
-            renderQuickReplySend={this.renderQuickReplySend}
-          />
-        </KeyboardView>
+        <GiftedChat
+          messages={this.state.messages}
+          onSend={this.onSend}
+          loadEarlier={this.state.loadEarlier}
+          onLoadEarlier={this.onLoadEarlier}
+          isLoadingEarlier={this.state.isLoadingEarlier}
+          parsePatterns={this.parsePatterns}
+          user={user}
+          onQuickReply={this.onQuickReply}
+          keyboardShouldPersistTaps='never'
+          renderAccessory={this.renderAccessory}
+          renderActions={this.renderCustomActions}
+          renderBubble={this.renderBubble}
+          renderSystemMessage={this.renderSystemMessage}
+          renderCustomView={this.renderCustomView}
+          renderFooter={this.renderFooter}
+          quickReplyStyle={{ borderRadius: 2 }}
+          renderQuickReplySend={this.renderQuickReplySend}
+        />
+        {Platform.OS === 'android' && (
+          <KeyboardAvoidingView behavior='padding' />
+        )}
       </View>
     )
   }

@@ -1,9 +1,9 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
-  "packagerPort": null,
-  "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 17134,
+  "expoServerNgrokUrl": "https://xp-p3b.dab0mb.sociochat.exp.direct",
+  "packagerNgrokUrl": "https://packager.xp-p3b.dab0mb.sociochat.exp.direct",
+  "ngrokPid": 17190
 }
