@@ -1,14 +1,22 @@
 import React from 'react';
-import { View } from 'react-native'
+import { SafeAreaView } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
-import ProfileScreen from './screens/Profile';
+import { ProfileScreen, ChatScreen } from './screens';
 
-const App = () => {
-  return (
-    <View>
-      <ProfileScreen />
-    </View>
-  );
-};
+const AppNavigator = createStackNavigator({
+  Chat: {
+    screen: ChatScreen,
+  },
+  Profile: {
+    screen: ProfileScreen,
+  },
+}, {
+  initialRouteName: 'Profile',
+  headerMode: 'none',
+});
 
-export default App;
+const AppContainer = createAppContainer(AppNavigator);
+
+export default AppContainer;
