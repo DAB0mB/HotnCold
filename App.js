@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-import { ProfileScreen, ChatScreen } from './screens';
+import { ProfileScreen, ChatScreen, MapScreen } from './screens';
 
 const AppNavigator = createStackNavigator({
   Chat: {
@@ -12,8 +12,11 @@ const AppNavigator = createStackNavigator({
   Profile: {
     screen: ProfileScreen,
   },
+  Map: {
+    screen: MapScreen,
+  },
 }, {
-  initialRouteName: 'Profile',
+  initialRouteName: 'Map',
   headerMode: 'none',
 });
 

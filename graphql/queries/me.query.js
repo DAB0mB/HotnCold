@@ -5,10 +5,9 @@ const me = gql `
     me {
       id
       firstName
-      lastName
       age
       bio
-      job
+      occupation
       pictures
     }
   }

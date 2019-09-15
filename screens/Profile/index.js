@@ -4,10 +4,10 @@ import { View, Text, Image, StyleSheet, Dimensions, BackHandler } from 'react-na
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import ViewLoadingIndicator from '../components/ViewLoadingIndicator'
-import * as queries from '../graphql/queries';
-import { useNavigation } from '../Navigation';
-import Screen from './Screen';
+import ViewLoadingIndicator from '../../components/ViewLoadingIndicator'
+import * as queries from '../../graphql/queries';
+import { useNavigation } from '../../Navigation';
+import Screen from '../Screen';
 
 const styles = StyleSheet.create({
   container: {
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     borderBottomColor: 'silver',
   },
-  job: {
+  occupation: {
     paddingBottom: 10,
     marginLeft: 10,
     marginRight: 10,
@@ -73,12 +73,12 @@ const Profile = () => {
       <View style={styles.profilePicture}>
         <Swiper showButtons loop={false}>
           {me.pictures.map((picture) => (
-            <Image style={styles.profilePicture} key={picture} loadingIndicatorSource={require('../assets/default-profile.jpg')} source={{ uri: picture }} />
+            <Image style={styles.profilePicture} key={picture} loadingIndicatorSource={require('../../assets/default-profile.jpg')} source={{ uri: picture }} />
           ))}
         </Swiper>
       </View>
       <View style={styles.name}><Text style={{ fontSize: styles.name.fontSize }}>{me.firstName}, {me.age}</Text></View>
-      <View style={styles.job}><Text style={{ color: styles.job.color, fontSize: styles.job.fontSize }}><Icon name='suitcase' size={styles.job.fontSize} color={styles.job.color} /> {me.job}</Text></View>
+      <View style={styles.occupation}><Text style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }}><Icon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} /> {me.occupation}</Text></View>
       <View style={styles.bio}><Text style={{ color: styles.bio.color }}>{me.bio}</Text></View>
     </View>
   );
