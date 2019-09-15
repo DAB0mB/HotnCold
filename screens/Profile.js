@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
+import { useQuery } from 'react-apollo-hooks';
 import { View, Text, Image, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import ViewLoadingIndicator from '../components/ViewLoadingIndicator'
+import * as queries from '../graphql/queries';
 import { useNavigation } from '../Navigation';
 import Screen from './Screen';
 
@@ -40,6 +43,7 @@ const styles = StyleSheet.create({
 });
 
 const Profile = () => {
+  const meQuery = useQuery(queries.me);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -56,17 +60,26 @@ const Profile = () => {
     };
   }, [true]);
 
+  if (meQuery.loading) {
+    return (
+      <ViewLoadingIndicator />
+    );
+  }
+
+  const { me } = meQuery.data;
+
   return (
     <View style={styles.container}>
       <View style={styles.profilePicture}>
         <Swiper showButtons loop={false}>
-          <Image style={styles.profilePicture} source={require('../assets/default-profile.jpg')} />
-          <Image style={styles.profilePicture} source={require('../assets/default-profile.jpg')} />
+          {me.pictures.map((picture) => (
+            <Image style={styles.profilePicture} key={picture} loadingIndicatorSource={require('../assets/default-profile.jpg')} source={{ uri: picture }} />
+          ))}
         </Swiper>
       </View>
-      <View style={styles.name}><Text style={{ fontSize: styles.name.fontSize }}>Eytan Manor, 25</Text></View>
-      <View style={styles.job}><Text style={{ color: styles.job.color, fontSize: styles.job.fontSize }}><Icon name='suitcase' size={styles.job.fontSize} color={styles.job.color} /> Software Engineer</Text></View>
-      <View style={styles.bio}><Text style={{ color: styles.bio.color }}>Looking for an advantures person, who's into self developmnt and sports</Text></View>
+      <View style={styles.name}><Text style={{ fontSize: styles.name.fontSize }}>{me.firstName}, {me.age}</Text></View>
+      <View style={styles.job}><Text style={{ color: styles.job.color, fontSize: styles.job.fontSize }}><Icon name='suitcase' size={styles.job.fontSize} color={styles.job.color} /> {me.job}</Text></View>
+      <View style={styles.bio}><Text style={{ color: styles.bio.color }}>{me.bio}</Text></View>
     </View>
   );
 };

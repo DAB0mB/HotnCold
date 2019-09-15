@@ -1,7 +1,9 @@
 import React from 'react';
+import { ApolloProvider } from 'react-apollo-hooks';
 import { View, StyleSheet } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
+import client from '../client';
 import { NavigationProvider } from '../Navigation';
 
 const styles = StyleSheet.create({
@@ -13,9 +15,11 @@ const styles = StyleSheet.create({
 
 const Screen = ({ navigation, children }) => {
   return (
-    <NavigationProvider navigation={navigation}>
-      {children}
-    </NavigationProvider>
+    <ApolloProvider client={client}>
+      <NavigationProvider navigation={navigation}>
+        {children}
+      </NavigationProvider>
+    </ApolloProvider>
   );
 };
 
