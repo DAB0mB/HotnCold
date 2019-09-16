@@ -2,7 +2,7 @@
 import React from 'react'
 import { Text } from 'react-native'
 import NavBar, { NavTitle, NavButton } from 'react-native-nav'
-import { expo } from '../../app.json'
+import { expo } from '../../../app.json'
 
 export default function NavBarCustom() {
   return (

@@ -3,7 +3,9 @@ import { ApolloProvider } from 'react-apollo-hooks';
 import { View, StyleSheet } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
-import client from '../client';
+import graphqlClient from '../graphql/client';
+import mapboxClient from '../mapbox/client';
+import { MapboxProvider } from '../mapbox/utils';
 import { NavigationProvider } from '../Navigation';
 
 const styles = StyleSheet.create({
@@ -15,10 +17,12 @@ const styles = StyleSheet.create({
 
 const Screen = ({ navigation, children }) => {
   return (
-    <ApolloProvider client={client}>
-      <NavigationProvider navigation={navigation}>
-        {children}
-      </NavigationProvider>
+    <ApolloProvider client={graphqlClient}>
+    <MapboxProvider client={mapboxClient}>
+    <NavigationProvider navigation={navigation}>
+      {children}
+    </NavigationProvider>
+    </MapboxProvider>
     </ApolloProvider>
   );
 };

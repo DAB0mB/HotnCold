@@ -1021,6 +1021,18 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
+"@mapbox/geo-viewport@>= 0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@mapbox/geo-viewport/-/geo-viewport-0.4.0.tgz#0a8dc5812d3be12c778d6545b2f3f4dec9c633da"
+  integrity sha512-5OAXoP8C96Co3UDIzFliSzrK5njb9oG2H/RTMaZUW1swxIZlj3n3A5ccep5XAEIhTWxBLg/Cz48D3rUbAdXwHQ==
+  dependencies:
+    "@mapbox/sphericalmercator" "~1.1.0"
+
+"@mapbox/sphericalmercator@~1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@mapbox/sphericalmercator/-/sphericalmercator-1.1.0.tgz#f3b1af042620716a1289fc41e1e97f610823aefe"
+  integrity sha512-pEsfZyG4OMThlfFQbCte4gegvHUjxXCjz0KZ4Xk8NdOYTQBLflj6U8PL05RPAiuRAMAQNUUKJuL6qYZ5Y4kAWA==
+
 "@react-native-community/cli@^1.2.1":
   version "1.11.2"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli/-/cli-1.11.2.tgz#b14967f24a389f5a16889a747345cf0e5757a2f1"
@@ -1061,6 +1073,17 @@
     xcode "^2.0.0"
     xmldoc "^0.4.0"
 
+"@react-native-mapbox-gl/maps@^7.0.4":
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/@react-native-mapbox-gl/maps/-/maps-7.0.4.tgz#202efdb48b5061780e73be8752f74a730e146f65"
+  integrity sha512-NNCvcbFhBaUmwtq72ppZGGgV4EBvQqIcc3uIbAAwyuumN7L4bVICtDXg9zhk/M8fJQq+aTkGFkhC/RgIPQVjlQ==
+  dependencies:
+    "@mapbox/geo-viewport" ">= 0.4.0"
+    "@turf/along" ">= 4.0.0 <7.0.0"
+    "@turf/distance" ">= 4.0.0 <7.0.0"
+    "@turf/helpers" ">= 4.6.0 <7.0.0"
+    underscore "^1.8.3"
+
 "@react-navigation/core@^3.5.0":
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-3.5.0.tgz#73d1a12448e2bd71855e0080b95a7f51ede0cd9e"
@@ -1079,6 +1102,53 @@
     hoist-non-react-statics "^3.0.1"
     react-native-safe-area-view "^0.14.1"
     react-native-screens "^1.0.0 || ^1.0.0-alpha"
+
+"@turf/along@>= 4.0.0 <7.0.0":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@turf/along/-/along-6.0.1.tgz#595cecdc48fc7fcfa83c940a8e3eb24d4c2e04d4"
+  integrity sha512-6PptAcrsFR3o0Flpktk8Vo68W2txEVTh14zjoTVu+H5docd2+pv5/upA77bg3YFBoJgAxmUFt1leDdjReJ44BQ==
+  dependencies:
+    "@turf/bearing" "6.x"
+    "@turf/destination" "6.x"
+    "@turf/distance" "6.x"
+    "@turf/helpers" "6.x"
+    "@turf/invariant" "6.x"
+
+"@turf/bearing@6.x":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@turf/bearing/-/bearing-6.0.1.tgz#8da5d17092e571f170cde7bfb2e5b0d74923c92d"
+  integrity sha512-mXY1NozqV9EFfBTbUItujwfqfQF0G/Xe2fzvnZle90ekPEUfhi4Dgf5JswJTd96J9LiT8kcd6Jonp5khnx0wIg==
+  dependencies:
+    "@turf/helpers" "6.x"
+    "@turf/invariant" "6.x"
+
+"@turf/destination@6.x":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@turf/destination/-/destination-6.0.1.tgz#5275887fa96ec463f44864a2c17f0b712361794a"
+  integrity sha512-MroK4nRdp7as174miCAugp8Uvorhe6rZ7MJiC9Hb4+hZR7gNFJyVKmkdDDXIoCYs6MJQsx0buI+gsCpKwgww0Q==
+  dependencies:
+    "@turf/helpers" "6.x"
+    "@turf/invariant" "6.x"
+
+"@turf/distance@6.x", "@turf/distance@>= 4.0.0 <7.0.0":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@turf/distance/-/distance-6.0.1.tgz#0761f28784286e7865a427c4e7e3593569c2dea8"
+  integrity sha512-q7t7rWIWfkg7MP1Vt4uLjSEhe5rPfCO2JjpKmk7JC+QZKEQkuvHEqy3ejW1iC7Kw5ZcZNR3qdMGGz+6HnVwqvg==
+  dependencies:
+    "@turf/helpers" "6.x"
+    "@turf/invariant" "6.x"
+
+"@turf/helpers@6.x", "@turf/helpers@>= 4.6.0 <7.0.0":
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/@turf/helpers/-/helpers-6.1.4.tgz#d6fd7ebe6782dd9c87dca5559bda5c48ae4c3836"
+  integrity sha512-vJvrdOZy1ngC7r3MDA7zIGSoIgyrkWcGnNIEaqn/APmw+bVLF2gAW7HIsdTxd12s5wQMqEpqIQrmrbRRZ0xC7g==
+
+"@turf/invariant@6.x":
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/@turf/invariant/-/invariant-6.1.2.tgz#6013ed6219f9ac2edada9b31e1dfa5918eb0a2f7"
+  integrity sha512-WU08Ph8j0J2jVGlQCKChXoCtI50BB3yEH21V++V0T4cR1T27HKCxkehV2sYMwTierfMBgjwSwDIsxnR4/2mWXg==
+  dependencies:
+    "@turf/helpers" "6.x"
 
 "@types/babel__core@^7.1.0":
   version "7.1.3"
@@ -5768,6 +5838,11 @@ react-native-communications@2.2.1:
   resolved "https://registry.yarnpkg.com/react-native-communications/-/react-native-communications-2.2.1.tgz#7883b56b20a002eeb790c113f8616ea8692ca795"
   integrity sha1-eIO1ayCgAu63kMET+GFuqGksp5U=
 
+react-native-config@^0.11.7:
+  version "0.11.7"
+  resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-0.11.7.tgz#a2b323f2ecd76a4df88cbb6bc86eaa2ef9febee7"
+  integrity sha512-dn5s+zhwLyE25vRT/vaEtLk/j8ZL1UZKvejORNDWakSwpOnLmFurFeaZV83IqkPlfWHXHFdsYe2IRYG1WN4WkQ==
+
 react-native-gesture-handler@~1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.3.0.tgz#d0386f565928ccc1849537f03f2e37fd5f6ad43f"
@@ -5807,11 +5882,6 @@ react-native-lightbox@^0.7.0:
   integrity sha512-HS3T4WlCd0Gb3us2d6Jse5m6KjNhngnKm35Wapq30WtQa9s+/VMmtuktbGPGaWtswcDyOj6qByeJBw9W80iPCA==
   dependencies:
     prop-types "^15.5.10"
-
-react-native-maps@^0.25.0:
-  version "0.25.0"
-  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.25.0.tgz#81bc51eb50e33811a9e1c345cc48869413ead67d"
-  integrity sha512-PFJuW1pt+HnnnN0m0OGk29RSvICFVkK/DScX6cUk0SuCSN2DAHx0y6y57lZyYXcYqU4J4usNpfxgp/ccjASDiw==
 
 react-native-maps@~0.24.0:
   version "0.24.2"
@@ -7035,6 +7105,11 @@ ultron@~1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.1.1.tgz#9fe1536a10a664a65266a1e3ccf85fd36302bc9c"
   integrity sha512-UIEXBNeYmKptWH6z8ZnqTeS8fV74zG0/eRU9VGkpzz+LIJNs8W/zM/L+7ctCkRrgbNnnR0xxw4bKOr0cW0N0Og==
+
+underscore@^1.8.3:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
+  integrity sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"

@@ -32,4 +32,8 @@ target 'SocioChat' do
 
   use_unimodules!
 
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
+  pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
+
 end
