@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Automatically generated file. DO NOT MODIFY -->
+
+    <!-- Values from default config. -->
+    <string name="GRAPHQL_URI" translatable="false">"http://localhost:8000/graphql"</string>
+    <string name="MAPBOX_ACCESS_TOKEN" translatable="false">"pk.eyJ1IjoiaG90LWFuZC1jb2xkIiwiYSI6ImNrMG1ydDRocjAxNmwzb29oYzh6dmVoYXgifQ.L7MP1vBerJH-7tc2JihR4A"</string>
+    <string name="MAPBOX_STYLE_URL" translatable="false">"mapbox://styles/hot-and-cold/ck0oeiko2178l1cpepvv2vvga"</string>
+
+</resources>
