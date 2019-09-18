@@ -5,12 +5,14 @@ const me = gql `
     me {
       id
       firstName
+      birthDate
       age
       bio
       occupation
+      location
       pictures
     }
   }
-`
+`;
 
 export default me;

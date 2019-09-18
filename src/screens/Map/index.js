@@ -1,13 +1,14 @@
 import { MapView } from '@react-native-mapbox-gl/maps';
 import React from 'react';
+import { useQuery } from 'react-apollo-hooks';
 import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
 import LocationPermittedView from '../../components/LocationPermittedView';
+import ViewLoadingIndicator from '../../components/ViewLoadingIndicator';
+import * as queries from '../../graphql/queries';
 import { useMapbox } from '../../mapbox/utils';
 import Screen from '../Screen';
-
-const SF_OFFICE_COORDINATE = [-122.400021, 37.789085];
 
 const styles = StyleSheet.create({
   container: {
@@ -19,8 +20,16 @@ const styles = StyleSheet.create({
 });
 
 const Map = () => {
-  const mapbox = useMapbox();
-  const { MapView, Camera, ShapeSource, HeatmapLayer } = mapbox;
+  const meQuery = useQuery(queries.me);
+  const { MapView, Camera, ShapeSource, HeatmapLayer } = useMapbox();
+
+  if (meQuery.loading) {
+    return (
+      <ViewLoadingIndicator />
+    );
+  }
+
+  const { me } = meQuery.data;
 
   return (
     <LocationPermittedView style={styles.container}>
@@ -30,7 +39,7 @@ const Map = () => {
       >
         <Camera
           zoomLevel={10}
-          centerCoordinate={SF_OFFICE_COORDINATE}
+          centerCoordinate={me && me.location}
         />
 
         <ShapeSource

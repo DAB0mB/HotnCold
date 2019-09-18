@@ -68,6 +68,10 @@ const Profile = () => {
 
   const { me } = meQuery.data;
 
+  if (!me) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.profilePicture}>
