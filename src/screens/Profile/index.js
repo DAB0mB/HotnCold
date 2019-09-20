@@ -1,5 +1,5 @@
+import { useQuery } from '@apollo/react-hooks';
 import React, { useEffect } from 'react';
-import { useQuery } from 'react-apollo-hooks';
 import { View, Text, Image, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -48,7 +48,7 @@ const Profile = () => {
 
   useEffect(() => {
     const backHandler = () => {
-      navigation.navigate('Chat');
+      navigation.navigate('Map');
 
       return true;
     };

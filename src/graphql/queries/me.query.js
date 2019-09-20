@@ -8,8 +8,8 @@ const me = gql `
       birthDate
       age
       bio
-      occupation
       location
+      occupation
       pictures
     }
   }

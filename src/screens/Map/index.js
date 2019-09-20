@@ -1,6 +1,6 @@
+import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { MapView } from '@react-native-mapbox-gl/maps';
-import React from 'react';
-import { useQuery } from 'react-apollo-hooks';
+import React, { useCallback, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
@@ -20,8 +20,28 @@ const styles = StyleSheet.create({
 });
 
 const Map = () => {
+  const mapRef = useRef(null);
   const meQuery = useQuery(queries.me);
-  const { MapView, Camera, ShapeSource, HeatmapLayer } = useMapbox();
+  const [getUsersLocationsInArea, usersLocationsInAreaQuery] = useLazyQuery(queries.usersLocationsInArea, { fetchPolicy: 'no-cache' });
+  const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation } = useMapbox();
+
+  const handleRegionChange = useCallback(async () => {
+    const map = mapRef.current;
+
+    if (!map) return;
+
+    const [center, bounds] = await Promise.all([
+      map.getCenter(),
+      map.getVisibleBounds(),
+    ]);
+
+    getUsersLocationsInArea({
+      variables: {
+        bounds: [[bounds[0][0], bounds[1][1]], [bounds[0][1], bounds[1][0]]],
+        center,
+      },
+    });
+  }, [mapRef]);
 
   if (meQuery.loading) {
     return (
@@ -30,21 +50,26 @@ const Map = () => {
   }
 
   const { me } = meQuery.data;
+  const { usersLocationsInArea = [] } = usersLocationsInAreaQuery.data || {};
 
   return (
     <LocationPermittedView style={styles.container}>
       <MapView
+        ref={mapRef}
         style={styles.map}
         styleURL={CONFIG.MAPBOX_STYLE_URL}
+        onRegionDidChange={handleRegionChange}
       >
+        <UserLocation />
+
         <Camera
-          zoomLevel={10}
-          centerCoordinate={me && me.location}
+          zoomLevel={14}
+          centerCoordinate={me && me.location.coordinates}
         />
 
         <ShapeSource
           id="earthquakes"
-          url="https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson"
+          shape={usersLocationsInArea}
         >
           <HeatmapLayer
             id="earthquakes"
