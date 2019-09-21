@@ -1,18 +1,21 @@
+import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+
+import { defHook } from '../../utils';
+import * as fragments from '../fragments';
 
 const me = gql `
   query Me {
     me {
-      id
-      firstName
-      birthDate
-      age
-      bio
-      location
-      occupation
-      pictures
+      ...User
     }
   }
+
+  ${fragments.user}
 `;
+
+defHook(me, () => {
+  return useQuery(me);
+});
 
 export default me;

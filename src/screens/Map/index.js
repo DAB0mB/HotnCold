@@ -1,13 +1,16 @@
-import { useQuery, useLazyQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
+import Geolocation from '@react-native-community/geolocation';
 import { MapView } from '@react-native-mapbox-gl/maps';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
 import LocationPermittedView from '../../components/LocationPermittedView';
 import ViewLoadingIndicator from '../../components/ViewLoadingIndicator';
+import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMapbox } from '../../mapbox/utils';
+import { useInterval, useRenderer } from '../../utils';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
@@ -19,80 +22,90 @@ const styles = StyleSheet.create({
   },
 });
 
+Object.assign(styles, {
+  heatmap: {
+    heatmapColor: [
+      'interpolate',
+      ['linear'],
+      ['heatmap-density'],
+      0,
+      'rgba(33,102,172,0)',
+      0.2,
+      'rgb(103,169,207)',
+      0.4,
+      'rgb(209,229,240)',
+      0.6,
+      'rgb(253,219,199)',
+      0.8,
+      'rgb(239,138,98)',
+      1,
+      'rgb(178,24,43)',
+    ],
+  },
+});
+
+const emptyShape = {
+  type: 'FeatureCollection',
+  features: [],
+};
+
 const Map = () => {
-  const mapRef = useRef(null);
-  const meQuery = useQuery(queries.me);
-  const [getUsersLocationsInArea, usersLocationsInAreaQuery] = useLazyQuery(queries.usersLocationsInArea, { fetchPolicy: 'no-cache' });
+  const cameraRef = useRef(null);
+  const meQuery = queries.me.use();
+  const [shapeKey, renderShape] = useRenderer();
+  const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
   const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation } = useMapbox();
+  const [featuresNearMe, setFeaturesNearMe] = useState(emptyShape);
 
-  const handleRegionChange = useCallback(async () => {
-    const map = mapRef.current;
+  const updateMyLocationInterval = useCallback((initial) => {
+    Geolocation.getCurrentPosition((location) => {
+      location = [location.coords.longitude, location.coords.latitude];
 
-    if (!map) return;
+      updateMyLocation(location).then(({ data: { updateMyLocation: featuresNearMe } }) => {
+        setFeaturesNearMe(featuresNearMe);
+        renderShape();
 
-    const [center, bounds] = await Promise.all([
-      map.getCenter(),
-      map.getVisibleBounds(),
-    ]);
-
-    getUsersLocationsInArea({
-      variables: {
-        bounds: [[bounds[0][0], bounds[1][1]], [bounds[0][1], bounds[1][0]]],
-        center,
-      },
+        if (initial && cameraRef.current) {
+          cameraRef.current.flyTo(location);
+        }
+      });
     });
-  }, [mapRef]);
+  }, [updateMyLocation, cameraRef, renderShape]);
 
-  if (meQuery.loading) {
+  useInterval(updateMyLocationInterval, 60 * 1000, true);
+
+  const { me } = meQuery.data || {};
+
+  if (!me) {
     return (
       <ViewLoadingIndicator />
     );
   }
 
-  const { me } = meQuery.data;
-  const { usersLocationsInArea = [] } = usersLocationsInAreaQuery.data || {};
-
   return (
     <LocationPermittedView style={styles.container}>
       <MapView
-        ref={mapRef}
         style={styles.map}
         styleURL={CONFIG.MAPBOX_STYLE_URL}
-        onRegionDidChange={handleRegionChange}
       >
         <UserLocation />
 
         <Camera
+          ref={cameraRef}
           zoomLevel={14}
-          centerCoordinate={me && me.location.coordinates}
+          centerCoordinate={me.location}
         />
 
         <ShapeSource
-          id="earthquakes"
-          shape={usersLocationsInArea}
+          id="featuresNearMe"
+          key={shapeKey}
+          shape={featuresNearMe}
+          cluster
         >
           <HeatmapLayer
-            id="earthquakes"
-            sourceID="earthquakes"
-            style={{
-              heatmapColor: [
-                'interpolate',
-                ['linear'],
-                ['heatmap-density'],
-                0,
-                'rgba(33,102,172,0)',
-                0.2,
-                'rgb(103,169,207)',
-                0.4,
-                'rgb(209,229,240)',
-                0.6,
-                'rgb(253,219,199)',
-                0.8,
-                'rgb(239,138,98)',
-                1,
-                'rgb(178,24,43)',
-              ],
-            }}
+            id="featuresNearMe"
+            sourceID="featuresNearMe"
+            style={styles.heatmap}
           />
         </ShapeSource>
       </MapView>

@@ -1,4 +1,3 @@
-import { useQuery } from '@apollo/react-hooks';
 import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import Swiper from 'react-native-swiper';
@@ -43,7 +42,7 @@ const styles = StyleSheet.create({
 });
 
 const Profile = () => {
-  const meQuery = useQuery(queries.me);
+  const meQuery = queries.me.user();
   const navigation = useNavigation();
 
   useEffect(() => {

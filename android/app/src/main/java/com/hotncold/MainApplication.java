@@ -3,6 +3,7 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.facebook.react.ReactNativeHost;
@@ -27,8 +28,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RCTMGLPackage(),
-            new ReactNativeConfigPackage(),
+          new RCTMGLPackage(),
+          new ReactNativeConfigPackage(),
+          new GeolocationPackage(),
           new ReanimatedPackage(),
           new RNGestureHandlerPackage(),
           new RNScreensPackage()
