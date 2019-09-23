@@ -32,9 +32,20 @@ export const useInterval = (callback, delay, asap) => {
   );
 };
 
-export const useRenderer = () => {
+export const useRenderer = (callback) => {
   const [key, setKey] = useState(0);
-  const render = useCallback(() => setKey(key + 1), [key, setKey]);
+  const callbackRef = useRef(callback);
+
+  const render = useCallback((callback) => {
+    callbackRef.current = callback;
+    setKey(key + 1);
+  }, [key, setKey]);
+
+  useEffect(() => {
+    if (key && callbackRef.current) {
+      callbackRef.current();
+    }
+  }, [key, callbackRef]);
 
   return [key, render];
 };
