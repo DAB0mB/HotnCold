@@ -49,7 +49,7 @@ const emptyShape = {
   features: [],
 };
 
-const SELECTION_RADIUS = 50;
+const SELECTION_RADIUS = 10;
 
 const Map = () => {
   const mapRef = useRef(null);
@@ -60,14 +60,18 @@ const Map = () => {
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
 
-  const renderSelection = useCallback(async (viewCoords) => {
+  const renderSelection = useCallback(async (e) => {
     const map = mapRef.current;
 
     if (!map) return;
 
-    const geoMin = map.getCoordinateFromView([viewCoord[0] - SELECTION_RADIUS, viewCoord[1] - SELECTION_RADIUS]);
-    const geoMax = map.getCoordinateFromView([viewCoord[0] + SELECTION_RADIUS, viewCoord[1] + SELECTION_RADIUS]);
-    const featuresCollection = map.queryRenderedFeaturesInRect([geoMin, geoMax]);
+    const coords = e.geometry.coordinates;
+    const viewCoords = await map.getPointInView(coords);
+    const [geoMin, geoMax] = await Promise.all([
+      map.getCoordinateFromView([viewCoords[0] - SELECTION_RADIUS, viewCoords[1] - SELECTION_RADIUS]),
+      map.getCoordinateFromView([viewCoords[0] + SELECTION_RADIUS, viewCoords[1] + SELECTION_RADIUS]),
+    ]);
+    const featuresCollection = await map.queryRenderedFeaturesInRect([...geoMin, ...geoMax]);
     const featuresNum = featuresCollection.features.length;
 
     // NEVER report 1 for security reasons
@@ -130,7 +134,6 @@ const Map = () => {
             id="featuresNearMe"
             sourceID="featuresNearMe"
             style={styles.heatmap}
-            filter={['!=', 'userId', me.id]}
           />
         </ShapeSource>
       </MapView>
