@@ -11,6 +11,7 @@ import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMapbox } from '../../mapbox/utils';
 import { useInterval, useRenderer } from '../../utils';
+import turf from '../../utils/turf';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
@@ -49,24 +50,42 @@ const emptyShape = {
   features: [],
 };
 
+const SELECTION_RADIUS = 50;
+
 const Map = () => {
+  const mapRef = useRef(null);
   const cameraRef = useRef(null);
-  const meQuery = queries.me.use();
+  const meQuery = queries.me.withArea.use();
   const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
   const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation } = useMapbox();
-  const [featuresNearMe, setFeaturesNearMe] = useState(emptyShape);
+  const [areaFeatures, setAreaFeatures] = useState(emptyShape);
+
+  const renderSelection = useCallback(async (viewCoords) => {
+    const map = mapRef.current;
+
+    if (!map) return;
+
+    const geoMin = map.getCoordinateFromView([viewCoord[0] - SELECTION_RADIUS, viewCoord[1] - SELECTION_RADIUS]);
+    const geoMax = map.getCoordinateFromView([viewCoord[0] + SELECTION_RADIUS, viewCoord[1] + SELECTION_RADIUS]);
+    const featuresCollection = map.queryRenderedFeaturesInRect([geoMin, geoMax]);
+    const featuresNum = featuresCollection.features.length;
+
+    // NEVER report 1 for security reasons
+    return featuresNum == 1 ? 2 : featuresNum;
+  }, [mapRef]);
 
   const updateMyLocationInterval = useCallback((initial) => {
     Geolocation.getCurrentPosition((location) => {
       location = [location.coords.longitude, location.coords.latitude];
 
-      updateMyLocation(location).then(({ data: { updateMyLocation: featuresNearMe } }) => {
-        setFeaturesNearMe(featuresNearMe);
+      updateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
+        setAreaFeatures(areaFeatures);
         renderShape();
 
         if (initial && cameraRef.current) {
           cameraRef.current.flyTo(location);
+          cameraRef.current.bounds();
         }
       });
     });
@@ -85,15 +104,21 @@ const Map = () => {
   return (
     <LocationPermittedView style={styles.container}>
       <MapView
+        ref={mapRef}
         style={styles.map}
         styleURL={CONFIG.MAPBOX_STYLE_URL}
+        onPress={renderSelection}
+        logoEnabled={false}
       >
         <UserLocation />
 
         <Camera
           ref={cameraRef}
           zoomLevel={14}
+          minZoomLevel={10}
+          maxZoomLevel={16}
           centerCoordinate={me.location}
+          bounds={me.area.bbox}
         />
 
         <ShapeSource

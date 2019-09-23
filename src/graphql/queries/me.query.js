@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
-import { defHook } from '../../utils';
 import * as fragments from '../fragments';
 
 const me = gql `
@@ -14,8 +13,22 @@ const me = gql `
   ${fragments.user}
 `;
 
-defHook(me, () => {
+me.withArea = gql `
+  query MeWithArea {
+    me {
+      ...UserWithArea
+    }
+  }
+
+  ${fragments.user.withArea}
+`;
+
+me.use = () => {
   return useQuery(me);
-});
+};
+
+me.withArea.use = () => {
+  return useQuery(me.withArea);
+};
 
 export default me;

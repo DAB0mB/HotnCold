@@ -1,6 +1,8 @@
 import gql from 'graphql-tag';
 
-const user = gql`
+import area from './area.fragment';
+
+const user = gql `
   fragment User on User {
     id
     firstName
@@ -11,6 +13,18 @@ const user = gql`
     occupation
     pictures
   }
+`;
+
+user.withArea = gql `
+  fragment UserWithArea on User {
+    ...User
+    area {
+      ...Area
+    }
+  }
+
+  ${user}
+  ${area}
 `;
 
 export default user;

@@ -2,7 +2,6 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useCallback } from 'react';
 
-import { defHook } from '../../utils';
 import * as fragments from '../fragments';
 import * as queries from '../queries';
 
@@ -12,7 +11,7 @@ const updateMyLocation = gql `
   }
 `;
 
-defHook(updateMyLocation, (defaultLocation, defaultOptions = {}) => {
+updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
   const meQuery = queries.me.use();
   const [superMutate, mutation] = useMutation(updateMyLocation);
 
@@ -37,6 +36,6 @@ defHook(updateMyLocation, (defaultLocation, defaultOptions = {}) => {
   }, [meQuery, superMutate, defaultLocation, defaultOptions]);
 
   return [mutate, mutation];
-});
+};
 
 export default updateMyLocation;

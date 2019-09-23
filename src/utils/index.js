@@ -37,12 +37,4 @@ export const useRenderer = () => {
   const render = useCallback(() => setKey(key + 1), [key, setKey]);
 
   return [key, render];
-}
-
-export const defHook = (obj, value) => {
-  return Object.defineProperty(obj, 'use', {
-    value,
-    configurable: true,
-    writable: true,
-  });
 };
