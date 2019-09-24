@@ -1,6 +1,8 @@
 import { useMutation } from '@apollo/react-hooks';
 import Geolocation from '@react-native-community/geolocation';
 import { MapView } from '@react-native-mapbox-gl/maps';
+import turfCircle from '@turf/circle';
+import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
@@ -42,6 +44,19 @@ Object.assign(styles, {
       'rgb(178,24,43)',
     ],
   },
+
+  selection: {
+    outline: {
+      lineColor: 'orange',
+      lineDasharray: [1, 1],
+      lineWidth: 2,
+    },
+
+    fill: {
+      fillColor: 'orange',
+      fillOpacity: 0.5,
+    }
+  },
 });
 
 const emptyShape = {
@@ -49,34 +64,42 @@ const emptyShape = {
   features: [],
 };
 
-const SELECTION_RADIUS = 10;
+const SELECTION_RADIUS = 100;
 
 const Map = () => {
   const mapRef = useRef(null);
   const meQuery = queries.me.use();
   const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
-  const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation } = useMapbox();
+  const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation, LineLayer, FillLayer } = useMapbox();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
+  const [selection, setSelection] = useState(null);
 
   const renderSelection = useCallback(async (e) => {
     const map = mapRef.current;
 
     if (!map) return;
 
-    const coords = e.geometry.coordinates;
-    const viewCoords = await map.getPointInView(coords);
+    const selectionCoords = e.geometry.coordinates;
+    const viewCoords = await map.getPointInView(selectionCoords);
     const [geoMin, geoMax] = await Promise.all([
       map.getCoordinateFromView([viewCoords[0] - SELECTION_RADIUS, viewCoords[1] - SELECTION_RADIUS]),
       map.getCoordinateFromView([viewCoords[0] + SELECTION_RADIUS, viewCoords[1] + SELECTION_RADIUS]),
     ]);
-    const featuresCollection = await map.queryRenderedFeaturesInRect([...geoMin, ...geoMax]);
-    const featuresNum = featuresCollection.features.length;
+    const featuresCollection = await map.queryRenderedFeaturesInRect([...geoMin, ...geoMax], ['==', 'entity', 'user']);
+    const selectionSize = featuresCollection.features.length;
+    const selectionRadius = turfDistance([geoMin[0], geoMin[1]], [geoMax[0], geoMin[1]]);
+    const selectionFeatures = turfCircle(selectionCoords, selectionRadius);
 
-    // NEVER report 1 for security reasons
-    console.log(featuresNum == 1 ? 2 : featuresNum);
-  }, [mapRef]);
+    console.log(selectionSize);
+
+    setSelection({
+      features: selectionFeatures,
+      // Never show 1 for security reasons
+      size: selectionSize === 1 ? 2 : selectionSize,
+    });
+  }, [mapRef, setSelection]);
 
   const updateMyLocationInterval = useCallback((initial) => {
     Geolocation.getCurrentPosition((location) => {
@@ -120,9 +143,28 @@ const Map = () => {
         <UserLocation />
 
         <Camera
-          zoomLevel={14}
+          zoomLevel={15}
           centerCoordinate={initialLocation}
         />
+
+        {selection && (
+          <ShapeSource
+            id="selection"
+            shape={selection.features}
+          >
+            <LineLayer
+              id="selectionOutline"
+              sourceLayerID="selection"
+              style={styles.selection.outline}
+            />
+
+            <FillLayer
+              id="selectionFill"
+              sourceLayerID="selection"
+              style={styles.selection.fill}
+            />
+          </ShapeSource>
+        )}
 
         <ShapeSource
           id="featuresNearMe"
