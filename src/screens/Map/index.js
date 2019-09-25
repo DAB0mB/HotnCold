@@ -104,15 +104,22 @@ const Map = () => {
       map.getCoordinateFromView(viewMin),
       map.getCoordinateFromView(viewMax),
     ]);
-    const selectionSize = 0; // TODO: Calculate
     const selectionRadius = turfDistance([geoMin[0], geoMin[1]], [geoMax[0], geoMin[1]]);
     const selectionFeatures = turfCircle(selectionCoords, selectionRadius);
 
-    console.log(screenFeatures.features.length);
+    let selectionSize = 0;
+    screenFeatures.features.forEach(({ geometry: { coordinates: coords } }) => {
+      if (turfDistance(selectionCoords, coords) <= selectionRadius) {
+        selectionSize++;
+      }
+    });
+    // Never show 1 for security reasons
+    if (selectionSize === 1) {
+      selectionSize = 2;
+    }
 
     setSelection({
       features: selectionFeatures,
-      // Never show 1 for security reasons
       size: selectionSize === 1 ? 2 : selectionSize,
     });
   }, [mapRef, setSelection, screenFeatures]);
