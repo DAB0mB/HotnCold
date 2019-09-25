@@ -9,6 +9,8 @@
     "@apollo/react-hooks": "^3.1.1",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-mapbox-gl/maps": "^7.0.4",
+    "@turf/bbox-polygon": "^6.0.1",
+    "@turf/boolean-point-in-polygon": "^6.0.1",
     "@turf/circle": "^6.0.1",
     "@turf/distance": "^6.0.1",
     "apollo-boost": "^0.4.4",

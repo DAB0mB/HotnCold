@@ -1,6 +1,8 @@
 import { useMutation } from '@apollo/react-hooks';
 import Geolocation from '@react-native-community/geolocation';
 import { MapView } from '@react-native-mapbox-gl/maps';
+import turfBboxPolygon from '@turf/bbox-polygon';
+import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -73,8 +75,21 @@ const Map = () => {
   const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
   const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation, LineLayer, FillLayer } = useMapbox();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
+  const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
+
+  const resetScreenFeatures = useCallback(async (e) => {
+    let bbox = e.properties.visibleBounds;
+    bbox = turfBboxPolygon([bbox[0][0], bbox[0][1], bbox[1][0], bbox[1][1]]);
+
+    setScreenFeatures({
+      type: 'FeatureCollection',
+      features: areaFeatures.features.filter(feature =>
+        turfBooleanPointInPolygon(feature, bbox.geometry)
+      )
+    });
+  }, [setScreenFeatures, areaFeatures]);
 
   const renderSelection = useCallback(async (e) => {
     const map = mapRef.current;
@@ -82,24 +97,25 @@ const Map = () => {
     if (!map) return;
 
     const selectionCoords = e.geometry.coordinates;
-    const viewCoords = await map.getPointInView(selectionCoords);
+    const viewCoords = [e.properties.screenPointX, e.properties.screenPointY];
+    const viewMin = [viewCoords[0] - SELECTION_RADIUS, viewCoords[1] - SELECTION_RADIUS];
+    const viewMax = [viewCoords[0] + SELECTION_RADIUS, viewCoords[1] + SELECTION_RADIUS];
     const [geoMin, geoMax] = await Promise.all([
-      map.getCoordinateFromView([viewCoords[0] - SELECTION_RADIUS, viewCoords[1] - SELECTION_RADIUS]),
-      map.getCoordinateFromView([viewCoords[0] + SELECTION_RADIUS, viewCoords[1] + SELECTION_RADIUS]),
+      map.getCoordinateFromView(viewMin),
+      map.getCoordinateFromView(viewMax),
     ]);
-    const featuresCollection = await map.queryRenderedFeaturesInRect([...geoMin, ...geoMax], ['==', 'entity', 'user']);
-    const selectionSize = featuresCollection.features.length;
+    const selectionSize = 0; // TODO: Calculate
     const selectionRadius = turfDistance([geoMin[0], geoMin[1]], [geoMax[0], geoMin[1]]);
     const selectionFeatures = turfCircle(selectionCoords, selectionRadius);
 
-    console.log(selectionSize);
+    console.log(screenFeatures.features.length);
 
     setSelection({
       features: selectionFeatures,
       // Never show 1 for security reasons
       size: selectionSize === 1 ? 2 : selectionSize,
     });
-  }, [mapRef, setSelection]);
+  }, [mapRef, setSelection, screenFeatures]);
 
   const updateMyLocationInterval = useCallback((initial) => {
     Geolocation.getCurrentPosition((location) => {
@@ -139,6 +155,7 @@ const Map = () => {
         style={styles.map}
         styleURL={CONFIG.MAPBOX_STYLE_URL}
         onPress={renderSelection}
+        onRegionDidChange={resetScreenFeatures}
       >
         <UserLocation />
 
@@ -167,14 +184,14 @@ const Map = () => {
         )}
 
         <ShapeSource
-          id="featuresNearMe"
+          id="featuresInArea"
           key={shapeKey}
           shape={areaFeatures}
           cluster
         >
           <HeatmapLayer
-            id="featuresNearMe"
-            sourceID="featuresNearMe"
+            id="featuresInAreaHeatmap"
+            sourceID="featuresInArea"
             style={styles.heatmap}
           />
         </ShapeSource>
