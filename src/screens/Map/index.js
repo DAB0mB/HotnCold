@@ -57,7 +57,12 @@ Object.assign(styles, {
     fill: {
       fillColor: 'orange',
       fillOpacity: 0.5,
-    }
+    },
+
+    text: {
+      textSize: 20,
+      textColor: 'white',
+    },
   },
 });
 
@@ -73,7 +78,7 @@ const Map = () => {
   const meQuery = queries.me.use();
   const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
-  const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation, LineLayer, FillLayer } = useMapbox();
+  const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation, LineLayer, FillLayer, SymbolLayer } = useMapbox();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
@@ -85,6 +90,7 @@ const Map = () => {
 
     setScreenFeatures({
       type: 'FeatureCollection',
+      // TODO: Use a quad tree
       features: areaFeatures.features.filter(feature =>
         turfBooleanPointInPolygon(feature, bbox.geometry)
       )
@@ -108,6 +114,7 @@ const Map = () => {
     const selectionFeatures = turfCircle(selectionCoords, selectionRadius);
 
     let selectionSize = 0;
+    // TODO: Use a quad tree
     screenFeatures.features.forEach(({ geometry: { coordinates: coords } }) => {
       if (turfDistance(selectionCoords, coords) <= selectionRadius) {
         selectionSize++;
@@ -119,8 +126,10 @@ const Map = () => {
     }
 
     setSelection({
+      location: e,
       features: selectionFeatures,
       size: selectionSize === 1 ? 2 : selectionSize,
+      zoom: await map.getZoom(),
     });
   }, [mapRef, setSelection, screenFeatures]);
 
@@ -180,12 +189,31 @@ const Map = () => {
               id="selectionOutline"
               sourceLayerID="selection"
               style={styles.selection.outline}
+              minZoomLevel={selection.zoom - 3}
+              maxZoomLevel={selection.zoom + 2}
             />
 
             <FillLayer
               id="selectionFill"
               sourceLayerID="selection"
               style={styles.selection.fill}
+              minZoomLevel={selection.zoom - 3}
+              maxZoomLevel={selection.zoom + 2}
+            />
+          </ShapeSource>
+        )}
+
+        {selection && (
+          <ShapeSource
+            id="selectionLocation"
+            shape={selection.location}
+          >
+            <SymbolLayer
+              id="selectionText"
+              sourceLayerID="selection"
+              minZoomLevel={selection.zoom - 3}
+              maxZoomLevel={selection.zoom + 2}
+              style={{ ...styles.selection.text, textField: selection.size.toString() }}
             />
           </ShapeSource>
         )}
