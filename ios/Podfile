@@ -38,4 +38,10 @@ target 'hotncold' do
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
+  pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
+
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
+  pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
+
 end

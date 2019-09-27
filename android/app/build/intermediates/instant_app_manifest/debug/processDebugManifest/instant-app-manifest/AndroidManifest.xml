@@ -13,16 +13,20 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <!-- OPTIONAL PERMISSIONS, REMOVE WHATEVER YOU DO NOT NEED -->
-    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
 
     <!-- These require runtime permissions on M -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- END OPTIONAL PERMISSIONS -->
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -33,7 +37,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- Required for CrashReporterJobIntentService on API levels below 25 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- END OPTIONAL PERMISSIONS -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name="com.hotncold.MainApplication"
         android:allowBackup="false"

@@ -143,6 +143,8 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-community_async-storage')
+    implementation project(':react-native-ble-plx')
     implementation project(':@react-native-mapbox-gl_maps')
     implementation project(':react-native-community-geolocation')
     implementation project(':react-native-config')

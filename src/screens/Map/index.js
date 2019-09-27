@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/react-hooks';
 import Geolocation from '@react-native-community/geolocation';
-import MapboxGL from '@react-native-mapbox-gl/maps';
 import turfBboxPolygon from '@turf/bbox-polygon';
 import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
@@ -9,11 +8,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
-import LocationPermittedView from '../../components/LocationPermittedView';
+import AuthorizedView from '../../components/AuthorizedView';
 import ViewLoadingIndicator from '../../components/ViewLoadingIndicator';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
-import { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation, LineLayer, FillLayer, SymbolLayer } from '../../mapbox';
+import MapboxGL from '../../mapbox';
 import { useGeolocation } from '../../services/Geolocation';
 import { useInterval, useRenderer } from '../../utils';
 import Screen from '../Screen';
@@ -166,7 +165,7 @@ const Map = () => {
   }
 
   return (
-    <LocationPermittedView style={styles.container}>
+    <AuthorizedView style={styles.container} functions={['location']}>
       <MapboxGL.MapView
         ref={mapRef}
         style={styles.map}
@@ -232,7 +231,7 @@ const Map = () => {
           />
         </MapboxGL.ShapeSource>
       </MapboxGL.MapView>
-    </LocationPermittedView>
+    </AuthorizedView>
   );
 };
 
