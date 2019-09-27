@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import ViewLoadingIndicator from '../../components/ViewLoadingIndicator'
 import * as queries from '../../graphql/queries';
-import { useNavigation } from '../../Navigation';
+import { useNavigation } from '../../services/Navigation';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({

@@ -1,7 +1,7 @@
+import MapboxGL from '@react-native-mapbox-gl/maps';
 import React, { useMemo, useState } from 'react';
 import { Platform, View, Text, StyleSheet } from 'react-native';
 
-import { useMapbox } from '../mapbox/utils';
 import ViewLoadingIndicator from './ViewLoadingIndicator';
 
 const styles = StyleSheet.create({
@@ -21,10 +21,9 @@ const styles = StyleSheet.create({
 const LocationPermittedView = (props) => {
   const [loading, setLoading] = useState(true);
   const [permitted, setPermitted] = useState(false);
-  const mapbox = useMapbox();
 
   useMemo(() => {
-    mapbox.requestAndroidLocationPermissions().then((permitted) => {
+    MapboxGL.requestAndroidLocationPermissions().then((permitted) => {
       setLoading(false);
       setPermitted(permitted);
     });

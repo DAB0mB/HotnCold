@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks';
 import Geolocation from '@react-native-community/geolocation';
-import { MapView } from '@react-native-mapbox-gl/maps';
+import MapboxGL from '@react-native-mapbox-gl/maps';
 import turfBboxPolygon from '@turf/bbox-polygon';
 import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
@@ -13,7 +13,8 @@ import LocationPermittedView from '../../components/LocationPermittedView';
 import ViewLoadingIndicator from '../../components/ViewLoadingIndicator';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
-import { useMapbox } from '../../mapbox/utils';
+import { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation, LineLayer, FillLayer, SymbolLayer } from '../../mapbox';
+import { useGeolocation } from '../../services/Geolocation';
 import { useInterval, useRenderer } from '../../utils';
 import Screen from '../Screen';
 
@@ -76,9 +77,9 @@ const SELECTION_RADIUS = 100;
 const Map = () => {
   const mapRef = useRef(null);
   const meQuery = queries.me.use();
+  const geolocation = useGeolocation();
   const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
-  const { MapView, Camera, ShapeSource, HeatmapLayer, UserLocation, LineLayer, FillLayer, SymbolLayer } = useMapbox();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
@@ -134,7 +135,7 @@ const Map = () => {
   }, [mapRef, setSelection, screenFeatures]);
 
   const updateMyLocationInterval = useCallback((initial) => {
-    Geolocation.getCurrentPosition((location) => {
+    geolocation.getCurrentPosition((location) => {
       location = [location.coords.longitude, location.coords.latitude];
 
       if (initial) {
@@ -166,26 +167,26 @@ const Map = () => {
 
   return (
     <LocationPermittedView style={styles.container}>
-      <MapView
+      <MapboxGL.MapView
         ref={mapRef}
         style={styles.map}
         styleURL={CONFIG.MAPBOX_STYLE_URL}
         onPress={renderSelection}
         onRegionDidChange={resetScreenFeatures}
       >
-        <UserLocation />
+        <MapboxGL.UserLocation />
 
-        <Camera
+        <MapboxGL.Camera
           zoomLevel={15}
           centerCoordinate={initialLocation}
         />
 
         {selection && (
-          <ShapeSource
+          <MapboxGL.ShapeSource
             id="selection"
             shape={selection.features}
           >
-            <LineLayer
+            <MapboxGL.LineLayer
               id="selectionOutline"
               sourceLayerID="selection"
               style={styles.selection.outline}
@@ -193,44 +194,44 @@ const Map = () => {
               maxZoomLevel={selection.zoom + 2}
             />
 
-            <FillLayer
+            <MapboxGL.FillLayer
               id="selectionFill"
               sourceLayerID="selection"
               style={styles.selection.fill}
               minZoomLevel={selection.zoom - 3}
               maxZoomLevel={selection.zoom + 2}
             />
-          </ShapeSource>
+          </MapboxGL.ShapeSource>
         )}
 
         {selection && (
-          <ShapeSource
+          <MapboxGL.ShapeSource
             id="selectionLocation"
             shape={selection.location}
           >
-            <SymbolLayer
+            <MapboxGL.SymbolLayer
               id="selectionText"
               sourceLayerID="selection"
               minZoomLevel={selection.zoom - 3}
               maxZoomLevel={selection.zoom + 2}
               style={{ ...styles.selection.text, textField: selection.size.toString() }}
             />
-          </ShapeSource>
+          </MapboxGL.ShapeSource>
         )}
 
-        <ShapeSource
+        <MapboxGL.ShapeSource
           id="featuresInArea"
           key={shapeKey}
           shape={areaFeatures}
           cluster
         >
-          <HeatmapLayer
+          <MapboxGL.HeatmapLayer
             id="featuresInAreaHeatmap"
             sourceID="featuresInArea"
             style={styles.heatmap}
           />
-        </ShapeSource>
-      </MapView>
+        </MapboxGL.ShapeSource>
+      </MapboxGL.MapView>
     </LocationPermittedView>
   );
 };

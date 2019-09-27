@@ -4,9 +4,8 @@ import { View, StatusBar, SafeAreaView, StyleSheet } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import graphqlClient from '../graphql/client';
-import mapboxClient from '../mapbox/client';
-import { MapboxProvider } from '../mapbox/utils';
-import { NavigationProvider } from '../Navigation';
+import { GeolocationProvider } from '../services/Geolocation';
+import { NavigationProvider } from '../services/Navigation';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,11 +17,11 @@ const styles = StyleSheet.create({
 const Screen = ({ navigation, children }) => {
   return (
     <ApolloProvider client={graphqlClient}>
-    <MapboxProvider client={mapboxClient}>
     <NavigationProvider navigation={navigation}>
+    <GeolocationProvider>
       {children}
+    </GeolocationProvider>
     </NavigationProvider>
-    </MapboxProvider>
     </ApolloProvider>
   );
 };
