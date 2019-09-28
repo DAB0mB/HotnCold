@@ -4,6 +4,7 @@ import { View, StatusBar, SafeAreaView, StyleSheet } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import graphqlClient from '../graphql/client';
+import { BleManagerProvider } from '../services/BleManager';
 import { GeolocationProvider } from '../services/Geolocation';
 import { NavigationProvider } from '../services/Navigation';
 
@@ -17,9 +18,11 @@ const styles = StyleSheet.create({
 const Screen = ({ navigation, children }) => {
   return (
     <ApolloProvider client={graphqlClient}>
-    <NavigationProvider navigation={navigation}>
+    <NavigationProvider service={navigation}>
     <GeolocationProvider>
+    <BleManagerProvider>
       {children}
+    </BleManagerProvider>
     </GeolocationProvider>
     </NavigationProvider>
     </ApolloProvider>

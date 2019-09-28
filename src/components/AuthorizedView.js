@@ -29,23 +29,26 @@ const AuthorizedView = ({ functions: funcs, ...props }) => {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
 
-  useEffect(async () => {
-    const permissions = await Permissions.checkMultiple(funcs);
+  useEffect(() => {
+    // async function returns Promise
+    (async () => {
+      const permissions = await Permissions.checkMultiple(funcs);
 
-    for (let [func, permission] of Object.entries(permissions)) {
-      if (permission !== 'authorized') {
-        permission = await Permissions.request(func);
+      for (let [func, permission] of Object.entries(permissions)) {
+        if (permission !== 'authorized') {
+          permission = await Permissions.request(func);
+        }
+
+        if (permission !== 'authorized') {
+          setLoading(false);
+
+          return;
+        }
       }
 
-      if (permission !== 'authorized') {
-        setLoading(false);
-
-        return;
-      }
-    }
-
-    setAuthorized(true);
-    setLoading(false);
+      setAuthorized(true);
+      setLoading(false);
+    })();
   }, [true]);
 
   if (Platform.OS === 'android' && !authorized) {

@@ -2,9 +2,9 @@ import React, { createContext, useContext } from 'react';
 
 const NavigationContext = createContext(null);
 
-export const NavigationProvider = ({ navigation, children }) => {
+export const NavigationProvider = ({ service, children }) => {
   return (
-    <NavigationContext.Provider value={navigation}>
+    <NavigationContext.Provider value={service}>
       {children}
     </NavigationContext.Provider>
   );
