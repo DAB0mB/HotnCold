@@ -4,8 +4,10 @@ ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.x
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-38:12
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-38:12
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-38:12
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-14:12
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-15:12
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-14:12
 MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-9:12
-MERGED from [:react-native-ble-plx] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-plx/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-12:12
 MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-14:12
 MERGED from [:react-native-community-geolocation] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/geolocation/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-9:12
 MERGED from [:react-native-config] /home/eytan/Workspace/HotnCold/node_modules/react-native-config/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
@@ -16,7 +18,6 @@ MERGED from [com.facebook.react:react-native:0.59.10] /home/eytan/.gradle/caches
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-localization-v8:0.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-localization-v8-0.10.0.aar/23fc8cc0747f030e723c9babb7c15444/AndroidManifest.xml:2:1-9:12
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v8:0.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-markerview-v8-0.3.0.aar/5905a8d4a5be784d6d1c6f44abcc7fe5/AndroidManifest.xml:2:1-9:12
 MERGED from [com.android.support:appcompat-v7:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c61e2f56784e44d75c50459e3d70cd0b/AndroidManifest.xml:17:1-22:12
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:2:1-18:12
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:2:1-20:12
 MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-28.0.0.aar/77884e4d6e4a30bb1207e15d3b684698/AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support:support-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-28.0.0.aar/6b74ed75d0cdec25506c41699f578232/AndroidManifest.xml:17:1-22:12
@@ -53,7 +54,6 @@ MERGED from [com.facebook.fresco:drawee:1.10.0] /home/eytan/.gradle/caches/trans
 MERGED from [com.facebook.fresco:imagepipeline:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-1.10.0.aar/16f544b5e3010891b963561724e0d2ed/AndroidManifest.xml:2:1-9:12
 MERGED from [com.facebook.fresco:imagepipeline-base:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-base-1.10.0.aar/f0f4864f082094346df3fe86f2d5f757/AndroidManifest.xml:2:1-9:12
 MERGED from [com.facebook.soloader:soloader:0.6.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/soloader-0.6.0.aar/7d84776282699ee62ae729d34c7158f7/AndroidManifest.xml:2:1-13:12
-MERGED from [com.artemzin.rxjava:proguard-rules:1.3.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/proguard-rules-1.3.3.0.aar/a02d5823be25ddee51223414ff88f4fa/AndroidManifest.xml:2:1-10:12
 MERGED from [com.jakewharton.timber:timber:4.7.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/timber-4.7.1.aar/f03549d9a37d123fe8643376887e4208/AndroidManifest.xml:2:1-9:12
 MERGED from [com.facebook.fresco:fbcore:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/fbcore-1.10.0.aar/3bdaaa5d062fd3ab71869ef654115508/AndroidManifest.xml:2:1-9:12
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-core-1.3.0.aar/222c56c1afb7efa5126356e9c6e93137/AndroidManifest.xml:2:1-14:12
@@ -90,6 +90,8 @@ ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.x
 		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:5:22-75
 uses-permission#android.permission.ACCESS_COARSE_LOCATION
 ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:10:5-81
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:9:5-81
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:9:5-81
 	android:name
 		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:10:22-78
 uses-permission#android.permission.ACCESS_FINE_LOCATION
@@ -104,22 +106,28 @@ MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle
 		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:11:22-76
 uses-permission#android.permission.BLUETOOTH
 ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:12:5-67
-MERGED from [:react-native-ble-plx] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-plx/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:9:5-68
-MERGED from [:react-native-ble-plx] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-plx/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:9:5-68
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:11:5-68
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:11:5-68
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-68
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-68
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-68
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-68
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-68
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-68
 	android:name
 		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:12:22-65
 uses-permission#android.permission.BLUETOOTH_ADMIN
 ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:13:5-73
-MERGED from [:react-native-ble-plx] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-plx/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:10:5-74
-MERGED from [:react-native-ble-plx] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-plx/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:10:5-74
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:12:5-74
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:12:5-74
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:5-74
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:5-74
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:8:5-74
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:8:5-74
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:5-74
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:5-74
 	android:name
 		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:13:22-71
 uses-feature#android.hardware.bluetooth_le
 ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:16:5-89
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-13:36
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-13:36
 	android:required
 		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:16:64-87
 	android:name
@@ -128,8 +136,6 @@ application
 ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:18:5-36:19
 MERGED from [com.facebook.react:react-native:0.59.10] /home/eytan/.gradle/caches/transforms-1/files-1.1/react-native-0.59.10.aar/a3eb027e158e8a198e5d8f5702f4f9be/AndroidManifest.xml:11:5-20
 MERGED from [com.facebook.react:react-native:0.59.10] /home/eytan/.gradle/caches/transforms-1/files-1.1/react-native-0.59.10.aar/a3eb027e158e8a198e5d8f5702f4f9be/AndroidManifest.xml:11:5-20
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:16:5-53
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:16:5-53
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:18:5-28:19
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:18:5-28:19
 MERGED from [com.android.support:support-compat:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/29e256cee60496a3c4632f9be68280e2/AndroidManifest.xml:22:5-94
@@ -182,10 +188,14 @@ uses-sdk
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-ble-plx] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-plx/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:react-native-ble-plx] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-plx/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:react-native-community-geolocation] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/geolocation/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
@@ -206,8 +216,6 @@ MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v8:0.3.0] /ho
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v8:0.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-markerview-v8-0.3.0.aar/5905a8d4a5be784d6d1c6f44abcc7fe5/AndroidManifest.xml:5:5-7:41
 MERGED from [com.android.support:appcompat-v7:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c61e2f56784e44d75c50459e3d70cd0b/AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:appcompat-v7:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c61e2f56784e44d75c50459e3d70cd0b/AndroidManifest.xml:20:5-44
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:7:5-9:41
-MERGED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:7:5-9:41
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:5:5-7:41
 MERGED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:5:5-7:41
 MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-28.0.0.aar/77884e4d6e4a30bb1207e15d3b684698/AndroidManifest.xml:20:5-44
@@ -280,8 +288,6 @@ MERGED from [com.facebook.fresco:imagepipeline-base:1.10.0] /home/eytan/.gradle/
 MERGED from [com.facebook.fresco:imagepipeline-base:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-base-1.10.0.aar/f0f4864f082094346df3fe86f2d5f757/AndroidManifest.xml:5:5-7:41
 MERGED from [com.facebook.soloader:soloader:0.6.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/soloader-0.6.0.aar/7d84776282699ee62ae729d34c7158f7/AndroidManifest.xml:7:5-9:41
 MERGED from [com.facebook.soloader:soloader:0.6.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/soloader-0.6.0.aar/7d84776282699ee62ae729d34c7158f7/AndroidManifest.xml:7:5-9:41
-MERGED from [com.artemzin.rxjava:proguard-rules:1.3.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/proguard-rules-1.3.3.0.aar/a02d5823be25ddee51223414ff88f4fa/AndroidManifest.xml:8:5-43
-MERGED from [com.artemzin.rxjava:proguard-rules:1.3.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/proguard-rules-1.3.3.0.aar/a02d5823be25ddee51223414ff88f4fa/AndroidManifest.xml:8:5-43
 MERGED from [com.jakewharton.timber:timber:4.7.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/timber-4.7.1.aar/f03549d9a37d123fe8643376887e4208/AndroidManifest.xml:5:5-43
 MERGED from [com.jakewharton.timber:timber:4.7.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/timber-4.7.1.aar/f03549d9a37d123fe8643376887e4208/AndroidManifest.xml:5:5-43
 MERGED from [com.facebook.fresco:fbcore:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/fbcore-1.10.0.aar/3bdaaa5d062fd3ab71869ef654115508/AndroidManifest.xml:5:5-7:41
@@ -298,10 +304,6 @@ INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifes
 		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
 		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
 		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
-uses-permission-sdk-23#android.permission.ACCESS_COARSE_LOCATION
-ADDED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:14:5-88
-	android:name
-		ADDED from [com.polidea.rxandroidble:rxandroidble:1.7.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/rxandroidble-1.7.0.aar/b1cccdf8f2ff83357350021efa748ca1/AndroidManifest.xml:14:29-85
 uses-feature#0x00020000
 ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:9:5-11:35
 	android:glEsVersion

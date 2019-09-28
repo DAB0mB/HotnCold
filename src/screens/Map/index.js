@@ -13,7 +13,7 @@ import ViewLoadingIndicator from '../../components/ViewLoadingIndicator';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import MapboxGL from '../../mapbox';
-import { useGeolocation } from '../../services/Geolocation';
+import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
 import { useInterval, useRenderer } from '../../utils';
 import Screen from '../Screen';
 
@@ -165,7 +165,7 @@ const Map = () => {
   }
 
   return (
-    <AuthorizedView style={styles.container} functions={['location']}>
+    <View style={styles.container}>
       <MapboxGL.MapView
         ref={mapRef}
         style={styles.map}
@@ -231,8 +231,14 @@ const Map = () => {
           />
         </MapboxGL.ShapeSource>
       </MapboxGL.MapView>
-    </AuthorizedView>
+    </View>
   );
 };
 
-export default Screen.create(Map);
+export default Screen.create((...props) =>
+  <AuthorizedView functions={['location']}>
+    <GeolocationProvider>
+      <Map {...props} />
+    </GeolocationProvider>
+  </AuthorizedView>
+);

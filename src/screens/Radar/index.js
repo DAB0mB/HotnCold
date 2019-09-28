@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { BleManager } from 'react-native-ble-plx';
+import React from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import CONFIG from 'react-native-config';
 
 import AuthorizedView from '../../components/AuthorizedView';
-import { useBleManager } from '../../services/BleManager';
+import ViewLoadingIndicator from '../../components/ViewLoadingIndicator';
+import { useBluetoothLE, BluetoothLEProvider, PERMISSIONS, PROPERTIES } from '../../services/BluetoothLE';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
@@ -13,36 +14,31 @@ const styles = StyleSheet.create({
 });
 
 const Radar = () => {
-  const bleManager = useBleManager();
-  const [bleReady, setBleReady] = useState(false);
-  const [bleError, setBleError] = useState(null);
+  const ble = useBluetoothLE({
+    configurePeripheral(peripheral, once) {
+      once(Radar);
+      peripheral.addService(CONFIG.BLE_SERVICE_UUID, true);
+      peripheral.addCharacteristicToService(CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTICS_UUID, PERMISSIONS.READ, PROPERTIES.READ);
+    },
+  });
 
-  useEffect(() => {
-    const subscription = bleManager.onStateChange((state) => {
-      if (state === 'PoweredOn') {
-        setBleReady(true);
-        subscription.remove();
-      }
-    }, true);
-  }, [true]);
-
-  useEffect(() => {
-    if (!bleReady) return;
-
-    bleManager.startDeviceScan(null, { scanMode: 'LowLatency' }, (err, device) => {
-      if (err) {
-        setBleError(err);
-
-        return;
-      }
-
-      // TODO: Handle
-    });
-  }, [bleReady]);
+  if (ble.loading) {
+    return (
+      <ViewLoadingIndicator />
+    );
+  }
 
   return (
-    <AuthorizedView style={styles.container} functions={['bluetooth']} />
+    <View style={styles.container}>
+      <Text>{ble.error}</Text>
+    </View>
   );
 };
 
-export default Screen.create(Radar);
+export default Screen.create((...props) =>
+  <AuthorizedView functions={['bluetooth']}>
+    <BluetoothLEProvider>
+      <Radar {...props} />
+    </BluetoothLEProvider>
+  </AuthorizedView>
+);

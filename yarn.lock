@@ -666,6 +666,11 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@cs125/wait-until@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@cs125/wait-until/-/wait-until-0.0.3.tgz#957fc279121704845300dac47ee37a3b34c203d2"
+  integrity sha512-Z3+GXZbAjiiI0cJi1si+WfBBPfmLwZ9Tk4wqyFJGeZHJilyveBCpSktHdJlmqjHBBvrMi8ymXefYi2S833LhRA==
+
 "@mapbox/geo-viewport@>= 0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@mapbox/geo-viewport/-/geo-viewport-0.4.0.tgz#0a8dc5812d3be12c778d6545b2f3f4dec9c633da"
@@ -4016,10 +4021,22 @@ react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.6:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
 
-react-native-ble-plx@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-1.1.0.tgz#95ba0025f9bfb507633c7f1d1ffd6eaa54296d4d"
-  integrity sha512-+ddyRRf7QT4ldELC7hb0AZMYOSTga1l7sp7lT+HQX87rpBrGTwIBEE8gRFqriLpsTqL67Vt6xgIOj3Ko/vHhhw==
+react-native-ble-manager@^6.6.10:
+  version "6.6.10"
+  resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-6.6.10.tgz#b2e1bde786c5278f3300b03606c2e085169a8f8d"
+  integrity sha512-MweY5yHhSJPl1TQE2SFT87cd76d6VpUqzdREDJQahUlzZx8rErd0cFlR5F624AMRn1oorfLulX+3G6Lv6NTcQg==
+
+react-native-ble-peripheral@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-ble-peripheral/-/react-native-ble-peripheral-2.0.1.tgz#54d170fc16df39dbb3ff345374b327705f662f77"
+  integrity sha512-pppFZZS41bZn/Eb4l3dAAjPS+RrYIraB4WF/rTBbU+GLCRFtzgheZAtQMydIH0oKZm8Ope4zWeGr1TKFbFz5Jg==
+
+react-native-bluetooth-status@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-bluetooth-status/-/react-native-bluetooth-status-1.3.0.tgz#45c6b8eddec2ee54e9abefa44ca16014e5ae1f6b"
+  integrity sha512-GZ/T61RGYabaSGbfwyyKCiTvaDGSQMQY8XcPpEnU8/5KMLDd+PFSQtbFy2V+XoGFcQ+2rrPA864SkooVKf83Ew==
+  dependencies:
+    "@cs125/wait-until" "^0.0.3"
 
 react-native-config@^0.11.7:
   version "0.11.7"

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+export { default as Once } from './once';
+
 export const useInterval = (callback, delay, asap) => {
   const savedCallback = useRef();
 

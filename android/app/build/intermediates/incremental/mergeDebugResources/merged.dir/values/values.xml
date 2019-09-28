@@ -245,6 +245,8 @@
     <integer name="cancel_button_image_alpha">127</integer>
     <integer name="config_tooltipAnimTime">150</integer>
     <integer name="status_bar_notification_info_maxnum">999</integer>
+    <string name="BLE_CHARACTERISTICS_UUID" translatable="false">"3dfafbcf-b8d8-4c77-b7db-c7c24dd8e2e4"</string>
+    <string name="BLE_SERVICE_UUID" translatable="false">"6ab01d30-9ad2-490f-906a-ce388d665751"</string>
     <string name="GRAPHQL_URI" translatable="false">"http://192.168.2.113:8000/graphql"</string>
     <string name="MAPBOX_ACCESS_TOKEN" translatable="false">"pk.eyJ1IjoiaG90LWFuZC1jb2xkIiwiYSI6ImNrMG1ybDJxdzAyMWgzbmpzN2FkbXNiNmoifQ.bTe6zr2ZTsNu8LFow2RCcg"</string>
     <string name="MAPBOX_STYLE_URL" translatable="false">"mapbox://styles/hot-and-cold/ck0oeiko2178l1cpepvv2vvga"</string>

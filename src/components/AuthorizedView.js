@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Platform, View, Text, StyleSheet } from 'react-native';
+import { BluetoothStatus } from 'react-native-bluetooth-status';
 import Permissions from 'react-native-permissions';
 
 import ViewLoadingIndicator from './ViewLoadingIndicator';
@@ -32,11 +33,34 @@ const AuthorizedView = ({ functions: funcs, ...props }) => {
   useEffect(() => {
     // async function returns Promise
     (async () => {
-      const permissions = await Permissions.checkMultiple(funcs);
+      const checks = [];
+      const permissions = {};
+
+      for (let func of funcs) {
+        switch (func) {
+          case Platform.OS == 'android' && 'bluetooth':
+            checks.push(BluetoothStatus.state().then(authorized => {
+              permissions.bluetooth = authorized ? 'authorized' : 'undetermined';
+            }));
+            break;
+          default:
+            checks.push(Permissions.check(func).then((state) => {
+              permissions[func] = state;
+            }));
+        }
+      }
+
+      await Promise.all(checks);
 
       for (let [func, permission] of Object.entries(permissions)) {
         if (permission !== 'authorized') {
-          permission = await Permissions.request(func);
+          switch (func) {
+            // Bluetooth permission request not supported out of the box
+            case Platform.OS == 'android' && 'bluetooth':
+              permission = (await BleManager.enableBluetooth()) ? 'authorized' : 'denied'; break;
+            default:
+              permission = await Permissions.request(func);
+          }
         }
 
         if (permission !== 'authorized') {

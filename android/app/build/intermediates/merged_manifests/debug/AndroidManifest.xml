@@ -24,9 +24,6 @@
     <uses-feature
         android:name="android.hardware.bluetooth_le"
         android:required="true" />
-
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
