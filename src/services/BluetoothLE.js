@@ -1,11 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
 
 import { Once } from '../utils';
 
+const BleManagerModule = NativeModules.BleManager;
+const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+
 const once = Once.create();
 const BleCentralContext = createContext(null);
+const BleEmitterContext = createContext(null);
 const BlePeripheralContext = createContext(null);
 
 const inits = {
@@ -18,7 +23,7 @@ const instances = {
   peripherals: new Map(),
 };
 
-export const PERMISSIONS = {
+export const BLE_PERMISSIONS = {
   READ: 1,
   READ_ENCRYPT: 2,
   READ_ENCRYPT_MITM: 4,
@@ -29,7 +34,7 @@ export const PERMISSIONS = {
   WRITE_SIGNED_MITM: 256,
 };
 
-export const PROPERTIES = {
+export const BLE_PROPERTIES = {
   BROADCAST: 1,
   READ: 2,
   WRITE_NO_RES: 4,
@@ -40,9 +45,10 @@ export const PROPERTIES = {
   EXTEND_PROPS: 128,
 };
 
-export const useBluetoothLE = ({ configurePeripheral }) => {
+export const useBluetoothLE = ({ configurePeripheral } = {}) => {
   const peripheral = useContext(BlePeripheralContext);
   const central = useContext(BleCentralContext);
+  const emitter = useContext(BleEmitterContext);
   const [ready, setReady] = useState(0);
   const [error, setError] = useState(null);
   const loading = ready < 2;
@@ -58,7 +64,7 @@ export const useBluetoothLE = ({ configurePeripheral }) => {
     central.start({ showAlert: true }).then(() => {
       inits.centrals.add(central);
       setReady(r => ++r);
-    });
+    }).catch((e) => setError(e));
   }, [true]);
 
   useEffect(() => {
@@ -69,12 +75,10 @@ export const useBluetoothLE = ({ configurePeripheral }) => {
     const instanceNum = instances.peripherals.get(peripheral) || 0;
 
     // Advertise!
-    peripheral.start()
-      .then(() => {
-        setReady(r => ++r);
-        instances.peripherals.set(peripheral, instanceNum + 1);
-      })
-      .catch((e) => setError(e));
+    peripheral.start().then(() => {
+      setReady(r => ++r);
+      instances.peripherals.set(peripheral, instanceNum + 1);
+    }).catch((e) => setError(e));
 
     return () => {
       // Root component in tree
@@ -85,14 +89,21 @@ export const useBluetoothLE = ({ configurePeripheral }) => {
     };
   }, [true]);
 
-  return { peripheral, central, ready, loading };
+  return { peripheral, central, emitter, ready, loading };
 };
 
-export const BluetoothLEProvider = ({ peripheralService = BleManager, centralService = BlePeripheral, children }) => {
+export const BluetoothLEProvider = ({
+  peripheralService = BleManager,
+  centralService = BlePeripheral,
+  eventEmitter = bleManagerEmitter,
+  children,
+}) => {
   return (
     <BleCentralContext.Provider value={peripheralService}>
       <BlePeripheralContext.Provider value={centralService}>
-        {children}
+        <BleEmitterContext.Provider value={eventEmitter}>
+          {children}
+        </BleEmitterContext.Provider>
       </BlePeripheralContext.Provider>
     </BleCentralContext.Provider>
   );

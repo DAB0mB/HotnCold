@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const AuthorizedView = ({ functions: funcs, ...props }) => {
+const AuthorizedView = ({ functions: funcs, children }) => {
   const [permissions, setPermissions] = useState(() =>
     funcs.reduce((permissions, func) =>
       Object.assign(permissions, {
@@ -57,7 +57,7 @@ const AuthorizedView = ({ functions: funcs, ...props }) => {
           switch (func) {
             // Bluetooth permission request not supported out of the box
             case Platform.OS == 'android' && 'bluetooth':
-              permission = (await BleManager.enableBluetooth()) ? 'authorized' : 'denied'; break;
+              permission = (await BluetoothStatus.enable()) ? 'authorized' : 'denied'; break;
             default:
               permission = await Permissions.request(func);
           }
@@ -89,9 +89,7 @@ const AuthorizedView = ({ functions: funcs, ...props }) => {
     );
   }
 
-  return (
-    <View {...props} />
-  );
+  return children;
 };
 
 export default AuthorizedView;

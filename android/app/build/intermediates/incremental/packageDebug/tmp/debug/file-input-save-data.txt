@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Sun Sep 29 03:15:27 IDT 2019
+#Mon Sep 30 01:06:30 IDT 2019
 56.path=classes.dex
 5.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
 42.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
