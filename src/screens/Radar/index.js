@@ -35,30 +35,31 @@ const styles = StyleSheet.create({
 
 const Radar = () => {
   const ble = useBluetoothLE();
-  const meQuery = queries.me.use();
+  const [discoveredUsers, setDiscoveredUsers] = useState([]);
   const [scanning, setScanning] = useState(false);
   const [serviceConfigured, setServiceConfigured] = useState(false);
-  const [discoveredUsers, setDiscoveredUsers] = useState([
-    {
-      id: '1',
-      firstName: 'Harry',
-      pictures: ['https://avatarfiles.alphacoders.com/833/83315.png'],
-    }
-  ]);
+  const meQuery = queries.me.use();
+  const [queryUser] = queries.user.use.lazy({
+    onCompleted: (data) => {
+      const user = data.user;
+
+      if (user) {
+        setDiscoveredUsers([
+          ...discoveredUsers,
+          user,
+        ]);
+      }
+    },
+  });
 
   useEffect(() => {
     if (ble.loading) return;
 
     const onDiscoverPeripheral = (peripheral) => {
-      const potentialUserIds = peripheral.advertising.serviceUUIDs.filter(id => id !== CONFIG.BLE_SERVICE_UUID);
+      const potentialUserIds = ['72533735-643f-4839-a623-0399e934e94f'] || peripheral.advertising.serviceUUIDs.filter(id => id !== CONFIG.BLE_SERVICE_UUID);
 
-      fetchUser(potentialUserIds).then((user) => {
-        if (user) {
-          setDiscoveredUsers([
-            ...discoveredUsers,
-            user,
-          ]);
-        }
+      queryUser({
+        variables: { userIds: potentialUserIds },
       });
     };
 
