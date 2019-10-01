@@ -17,7 +17,7 @@ import { BluetoothLEProvider } from '../services/BluetoothLE';
 import { useAlertError, DropdownAlertProvider } from '../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../services/Geolocation';
 import { NavigationProvider } from '../services/Navigation';
-import { once as Once, useSet } from '../utils';
+import { once as Once, useCounter, useSet } from '../utils';
 
 const once = Once.create();
 
@@ -35,7 +35,7 @@ const Screen = ({ children }) => {
 Screen.Authorized = ({ children }) => {
   const alertError = useAlertError();
   const meQuery = queries.me.use({ onError: alertError });
-  const startedServices = useSet([]);
+  const [readyState, updateReadyState] = useCounter();
   const { me } = meQuery.data || {};
 
   useEffect(() => {
@@ -52,7 +52,7 @@ Screen.Authorized = ({ children }) => {
 
       return BleManager.start();
     }).then(() => {
-      startedServices.add(BleManager);
+      updateReadyState();
     }).catch(alertError);
 
     once.try(() => {
@@ -72,7 +72,7 @@ Screen.Authorized = ({ children }) => {
         return BlePeripheral.start();
       }
     }).then(() => {
-      startedServices.add(BlePeripheral);
+      updateReadyState();
     }).catch(alertError);
 
     return () => {
@@ -84,7 +84,7 @@ Screen.Authorized = ({ children }) => {
     };
   }, [me]);
 
-  if (meQuery.loading || startedServices.size != 2) {
+  if (meQuery.loading || readyState != 2) {
     return (
       <ActivityIndicator />
     );
@@ -97,29 +97,31 @@ Screen.Authorized = ({ children }) => {
   );
 };
 
-Screen.create = (Root, ScreenType = Screen) => ({ navigation }) => {
+Screen.create = (Root) => ({ navigation }) => {
   return (
     <ApolloProvider client={graphqlClient}>
       <NavigationProvider navigation={navigation}>
         <DropdownAlertProvider>
-          <ScreenType>
-            <StatusBar translucent backgroundColor='black' />
-            <SafeAreaView style={styles.container}>
+          <StatusBar translucent backgroundColor='black' />
+          <SafeAreaView style={styles.container}>
+            <Screen>
               <Root />
-            </SafeAreaView>
-          </ScreenType>
+            </Screen>
+          </SafeAreaView>
         </DropdownAlertProvider>
       </NavigationProvider>
     </ApolloProvider>
   );
 };
 
-Screen.Authorized.create = (Root) => Screen.create(Root, (props) => {
+Screen.Authorized.create = (Root) => Screen.create(() => {
   return (
     <PermissionRequestor functions={['bluetooth', 'location']}>
       <BluetoothLEProvider>
         <GeolocationProvider>
-          <Screen.Authorized {...props} />
+          <Screen.Authorized>
+            <Root />
+          </Screen.Authorized>
         </GeolocationProvider>
       </BluetoothLEProvider>
     </PermissionRequestor>

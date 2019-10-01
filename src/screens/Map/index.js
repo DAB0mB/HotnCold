@@ -14,7 +14,7 @@ import * as mutations from '../../graphql/mutations';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
 import { useNavigation } from '../../services/Navigation';
-import { useInterval, useRenderer } from '../../utils';
+import { useInterval, useCounter } from '../../utils';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
@@ -79,7 +79,7 @@ const Map = () => {
   const alertError = useAlertError();
   const navigation = useNavigation();
   const geolocation = useGeolocation();
-  const [shapeKey, renderShape] = useRenderer();
+  const [shapeKey, renderShape] = useCounter();
   const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);

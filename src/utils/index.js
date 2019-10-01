@@ -25,14 +25,14 @@ export const useInterval = (callback, delay, asap) => {
   }, [delay]);
 };
 
-export const useRenderer = (callback) => {
+export const useCounter = (callback) => {
   const [key, setKey] = useState(0);
   const callbackRef = useRef(callback);
 
   const render = useCallback((callback) => {
     callbackRef.current = callback;
-    setKey(key + 1);
-  }, [key, setKey]);
+    setKey(key => ++key);
+  }, [setKey]);
 
   useEffect(() => {
     if (key && callbackRef.current) {
@@ -41,37 +41,4 @@ export const useRenderer = (callback) => {
   }, [key, callbackRef]);
 
   return [key, render];
-};
-
-export const useSet = (arr) => {
-  const [, forceRender] = useRenderer();
-  const set = useMemo(() => new Set(arr), [true]);
-
-  return useMemo(() => ({
-    add(obj) {
-      const size = set.size;
-      set.add(obj);
-
-      if (set.size != size) {
-        forceRender();
-      }
-    },
-
-    has(obj) {
-      return set.has(obj);
-    },
-
-    delete() {
-      const size = set.size;
-      set.delete(obj);
-
-      if (set.size != size) {
-        forceRender();
-      }
-    },
-
-    get size() {
-      return set.size;
-    },
-  }), [true]);
 };
