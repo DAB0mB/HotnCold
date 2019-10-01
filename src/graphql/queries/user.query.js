@@ -4,8 +4,8 @@ import gql from 'graphql-tag';
 import * as fragments from '../fragments';
 
 const user = gql `
-  query User($userId: ID, $userIds: [ID]) {
-    user(userId: $userId, userIds: $userIds) {
+  query User($userId: ID!) {
+    user(userId: $userId) {
       ...User
     }
   }

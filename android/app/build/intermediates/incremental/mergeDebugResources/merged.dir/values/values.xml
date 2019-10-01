@@ -250,6 +250,7 @@
     <string name="GRAPHQL_URI" translatable="false">"http://192.168.2.113:8000/graphql"</string>
     <string name="MAPBOX_ACCESS_TOKEN" translatable="false">"pk.eyJ1IjoiaG90LWFuZC1jb2xkIiwiYSI6ImNrMG1ybDJxdzAyMWgzbmpzN2FkbXNiNmoifQ.bTe6zr2ZTsNu8LFow2RCcg"</string>
     <string name="MAPBOX_STYLE_URL" translatable="false">"mapbox://styles/hot-and-cold/ck0oeiko2178l1cpepvv2vvga"</string>
+    <string name="RADAR_TEST_USER_ID" translatable="false">"72533735-643f-4839-a623-0399e934e94f"</string>
     <string name="abc_action_bar_home_description">Navigate home</string>
     <string name="abc_action_bar_up_description">Navigate up</string>
     <string name="abc_action_menu_overflow_description">More options</string>

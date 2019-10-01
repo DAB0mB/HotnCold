@@ -981,6 +981,7 @@ string BLE_SERVICE_UUID
 string GRAPHQL_URI
 string MAPBOX_ACCESS_TOKEN
 string MAPBOX_STYLE_URL
+string RADAR_TEST_USER_ID
 string abc_action_bar_home_description
 string abc_action_bar_up_description
 string abc_action_menu_overflow_description

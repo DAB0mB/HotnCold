@@ -56,11 +56,13 @@ const Radar = () => {
   });
 
   useEffect(() => {
-    const onDiscoverPeripheral = (peripheral) => {
-      const potentialUserIds = peripheral.advertising.serviceUUIDs.filter(id => id !== CONFIG.BLE_SERVICE_UUID);
+    const onDiscoverPeripheral = async (peripheral) => {
+      const buffer = await ble.central.read(peripheral.id, CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTIC_UUID);
+      const decoder = new TextDecoder();
+      const userId = decoder.decode(buffer);
 
       queryUser({
-        variables: { userIds: potentialUserIds },
+        variables: { userId },
       });
     };
 
@@ -112,7 +114,7 @@ const Radar = () => {
 
       if (__DEV__) {
         queryUser({
-          variables: { userId: '72533735-643f-4839-a623-0399e934e94f' },
+          variables: { userId: CONFIG.RADAR_TEST_USER_ID },
         });
       }
     });
