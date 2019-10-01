@@ -74,7 +74,6 @@ const emptyShape = {
 const SELECTION_RADIUS = 100;
 
 const Map = () => {
-  console.log('mapppp')
   const mapRef = useRef(null);
   const alertError = useAlertError();
   const navigation = useNavigation();

@@ -13,7 +13,7 @@ import PermissionRequestor from '../components/PermissionRequestor';
 import graphqlClient from '../graphql/client';
 import * as queries from '../graphql/queries';
 import { MeProvider } from '../services/Auth';
-import { BluetoothLEProvider } from '../services/BluetoothLE';
+import { BLE_PERMISSIONS, BLE_PROPERTIES, BluetoothLEProvider } from '../services/BluetoothLE';
 import { useAlertError, DropdownAlertProvider } from '../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../services/Geolocation';
 import { NavigationProvider } from '../services/Navigation';
@@ -56,22 +56,22 @@ Screen.Authorized = ({ children }) => {
     }).catch(alertError);
 
     once.try(() => {
-      once(CONFIG.BLE_SERVICE_UUID);
+      once(BlePeripheral);
 
       BlePeripheral.addService(CONFIG.BLE_SERVICE_UUID, true);
+      BlePeripheral.addCharacteristicToService(CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTIC_UUID, BLE_PERMISSIONS.READ, BLE_PROPERTIES.READ);
     });
-
-    // once.try(() => {
-    //   once(me.id);
-
-    //   BlePeripheral.addService(me.id, false);
-    // });
 
     BlePeripheral.isAdvertising().then((isAdvertising) => {
       if (!isAdvertising) {
         return BlePeripheral.start();
       }
     }).then(() => {
+      const encoder = new TextEncoder();
+      const value = encoder.encode(me.id);
+      // Will set value, and set notifications if some devices are connected
+      // Native code accepts Array and not Uint8Array, so we have to convert it
+      BlePeripheral.sendNotificationToDevices(CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTIC_UUID, Array.from(value));
       updateReadyState();
     }).catch(alertError);
 

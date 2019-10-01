@@ -11,25 +11,25 @@ const BleEmitterContext = createContext(null);
 const BlePeripheralContext = createContext(null);
 
 export const BLE_PERMISSIONS = {
-  READ: 1,
-  READ_ENCRYPT: 2,
-  READ_ENCRYPT_MITM: 4,
-  WRITE: 16,
-  WRITE_ENCRYPT: 32,
-  WRITE_ENCRUPT_MITM: 64,
-  WRITE_SIGNED: 128,
-  WRITE_SIGNED_MITM: 256,
+  READ:               0b000000001,
+  READ_ENCRYPT:       0b000000010,
+  READ_ENCRYPT_MITM:  0b000000100,
+  WRITE:              0b000010000,
+  WRITE_ENCRYPT:      0b000100000,
+  WRITE_ENCRUPT_MITM: 0b001000000,
+  WRITE_SIGNED:       0b010000000,
+  WRITE_SIGNED_MITM:  0b100000000,
 };
 
 export const BLE_PROPERTIES = {
-  BROADCAST: 1,
-  READ: 2,
-  WRITE_NO_RES: 4,
-  WRITE: 8,
-  NOTIFY: 16,
-  INDICATE: 32,
-  SIGNED_WRITE: 64,
-  EXTEND_PROPS: 128,
+  BROADCAST:    0b00000001,
+  READ:         0b00000010,
+  WRITE_NO_RES: 0b00000100,
+  WRITE:        0b00001000,
+  NOTIFY:       0b00010000,
+  INDICATE:     0b00100000,
+  SIGNED_WRITE: 0b01000000,
+  EXTEND_PROPS: 0b10000000,
 };
 
 export const useBluetoothLE = ({ configurePeripheral } = {}) => {
