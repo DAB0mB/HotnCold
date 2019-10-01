@@ -3,9 +3,9 @@ import React, { createContext, useContext } from 'react';
 
 const GeolocationContext = createContext(null);
 
-export const GeolocationProvider = ({ service = Geolocation, children }) => {
+export const GeolocationProvider = ({ geolocation = Geolocation, children }) => {
   return (
-    <GeolocationContext.Provider value={service}>
+    <GeolocationContext.Provider value={geolocation}>
       {children}
     </GeolocationContext.Provider>
   );

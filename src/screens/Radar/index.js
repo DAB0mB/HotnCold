@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Button, Image, View, Text, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
 import CONFIG from 'react-native-config';
 
-import AuthorizedView from '../../components/AuthorizedView';
 import * as queries from '../../graphql/queries';
 import { useMe } from '../../services/Auth';
-import { useAlertError } from '../../services/DropDownAlert';
+import { useAlertError } from '../../services/DropdownAlert';
 import {
   useBluetoothLE,
   BluetoothLEProvider,
@@ -57,8 +56,6 @@ const Radar = () => {
   });
 
   useEffect(() => {
-    if (ble.loading) return;
-
     const onDiscoverPeripheral = (peripheral) => {
       const potentialUserIds = peripheral.advertising.serviceUUIDs.filter(id => id !== CONFIG.BLE_SERVICE_UUID);
 
@@ -82,7 +79,7 @@ const Radar = () => {
         ble.central.stopScan();
       }
     };
-  }, [ble.loading]);
+  }, [true]);
 
   useEffect(() => {
     const backHandler = () => {

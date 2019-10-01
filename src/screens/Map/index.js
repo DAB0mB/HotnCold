@@ -10,9 +10,8 @@ import { Button, View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
 import ActivityIndicator from '../../components/ActivityIndicator';
-import AuthorizedView from '../../components/AuthorizedView';
 import * as mutations from '../../graphql/mutations';
-import { useAlertError } from '../../services/DropDownAlert';
+import { useAlertError } from '../../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
 import { useNavigation } from '../../services/Navigation';
 import { useInterval, useRenderer } from '../../utils';

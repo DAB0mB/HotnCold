@@ -3,7 +3,7 @@ import { Platform, View, Text, StyleSheet } from 'react-native';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import Permissions from 'react-native-permissions';
 
-import ViewLoadingIndicator from './ViewLoadingIndicator';
+import ActivityIndicator from './ActivityIndicator';
 
 const styles = StyleSheet.create({
   container: {
@@ -77,7 +77,9 @@ const PermissionRequestor = ({ functions: funcs, children }) => {
 
   if (Platform.OS === 'android' && !authorized) {
     if (loading) {
-      return <ViewLoadingIndicator />;
+      return (
+        <ActivityIndicator />
+      );
     }
 
     return (

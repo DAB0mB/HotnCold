@@ -37,7 +37,7 @@ export const useBluetoothLE = ({ configurePeripheral } = {}) => {
   const central = useContext(BleCentralContext);
   const emitter = useContext(BleEmitterContext);
 
-  return { peripheral, central, emitter, ready, loading };
+  return { peripheral, central, emitter };
 };
 
 export const BluetoothLEProvider = ({
