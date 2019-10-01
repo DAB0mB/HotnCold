@@ -1,19 +1,20 @@
 import { useMutation } from '@apollo/react-hooks';
 import Geolocation from '@react-native-community/geolocation';
+import MapboxGL from '@react-native-mapbox-gl/maps';
 import turfBboxPolygon from '@turf/bbox-polygon';
 import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { Button, View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
+import ActivityIndicator from '../../components/ActivityIndicator';
 import AuthorizedView from '../../components/AuthorizedView';
-import ViewLoadingIndicator from '../../components/ViewLoadingIndicator';
 import * as mutations from '../../graphql/mutations';
-import * as queries from '../../graphql/queries';
-import MapboxGL from '../../mapbox';
+import { useAlertError } from '../../services/DropDownAlert';
 import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
+import { useNavigation } from '../../services/Navigation';
 import { useInterval, useRenderer } from '../../utils';
 import Screen from '../Screen';
 
@@ -75,7 +76,8 @@ const SELECTION_RADIUS = 100;
 
 const Map = () => {
   const mapRef = useRef(null);
-  const meQuery = queries.me.use();
+  const alertError = useAlertError();
+  const navigation = useNavigation();
   const geolocation = useGeolocation();
   const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
@@ -133,6 +135,10 @@ const Map = () => {
     });
   }, [mapRef, setSelection, screenFeatures]);
 
+  const navToRadar = useCallback(() => {
+    navigation.push('Radar');
+  }, [navigation]);
+
   const updateMyLocationInterval = useCallback((initial) => {
     geolocation.getCurrentPosition((location) => {
       location = [location.coords.longitude, location.coords.latitude];
@@ -143,7 +149,7 @@ const Map = () => {
 
       updateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
         setAreaFeatures(areaFeatures);
-      });
+      }).catch(alertError);
     });
   }, [updateMyLocation, renderShape, setAreaFeatures]);
 
@@ -156,11 +162,9 @@ const Map = () => {
     }
   }, [shapeKey, setAreaFeatures]);
 
-  const { me } = meQuery.data || {};
-
-  if (!me || !initialLocation) {
+  if (!initialLocation) {
     return (
-      <ViewLoadingIndicator />
+      <ActivityIndicator />
     );
   }
 
@@ -182,20 +186,20 @@ const Map = () => {
 
         {selection && (
           <MapboxGL.ShapeSource
-            id="selection"
+            id='selection'
             shape={selection.features}
           >
             <MapboxGL.LineLayer
-              id="selectionOutline"
-              sourceLayerID="selection"
+              id='selectionOutline'
+              sourceLayerID='selection'
               style={styles.selection.outline}
               minZoomLevel={selection.zoom - 3}
               maxZoomLevel={selection.zoom + 2}
             />
 
             <MapboxGL.FillLayer
-              id="selectionFill"
-              sourceLayerID="selection"
+              id='selectionFill'
+              sourceLayerID='selection'
               style={styles.selection.fill}
               minZoomLevel={selection.zoom - 3}
               maxZoomLevel={selection.zoom + 2}
@@ -205,12 +209,12 @@ const Map = () => {
 
         {selection && (
           <MapboxGL.ShapeSource
-            id="selectionLocation"
+            id='selectionLocation'
             shape={selection.location}
           >
             <MapboxGL.SymbolLayer
-              id="selectionText"
-              sourceLayerID="selection"
+              id='selectionText'
+              sourceLayerID='selection'
               minZoomLevel={selection.zoom - 3}
               maxZoomLevel={selection.zoom + 2}
               style={{ ...styles.selection.text, textField: selection.size.toString() }}
@@ -219,26 +223,25 @@ const Map = () => {
         )}
 
         <MapboxGL.ShapeSource
-          id="featuresInArea"
+          id='featuresInArea'
           key={shapeKey}
           shape={areaFeatures}
           cluster
         >
           <MapboxGL.HeatmapLayer
-            id="featuresInAreaHeatmap"
-            sourceID="featuresInArea"
+            id='featuresInAreaHeatmap'
+            sourceID='featuresInArea'
             style={styles.heatmap}
           />
         </MapboxGL.ShapeSource>
       </MapboxGL.MapView>
+
+      <Button
+        title='focus'
+        onPress={navToRadar}
+      />
     </View>
   );
 };
 
-export default Screen.create((...props) =>
-  <AuthorizedView functions={['location']}>
-    <GeolocationProvider>
-      <Map {...props} />
-    </GeolocationProvider>
-  </AuthorizedView>
-);
+export default Screen.Authorized.create(Map);

@@ -1,5 +1,7 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native';
+import BleManager from 'react-native-ble-manager';
+import BlePeripheral from 'react-native-ble-peripheral';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -20,7 +22,7 @@ const AppNavigator = createStackNavigator({
     screen: RadarScreen,
   },
 }, {
-  initialRouteName: 'Radar',
+  initialRouteName: 'Map',
   headerMode: 'none',
 });
 

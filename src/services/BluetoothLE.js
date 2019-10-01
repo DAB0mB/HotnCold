@@ -1,27 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext } from 'react';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
 
-import { Once } from '../utils';
-
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
-const once = Once.create();
 const BleCentralContext = createContext(null);
 const BleEmitterContext = createContext(null);
 const BlePeripheralContext = createContext(null);
-
-const inits = {
-  centrals: new Set(),
-  peripherals: new Set(),
-};
-
-const instances = {
-  centrals: new Map(),
-  peripherals: new Map(),
-};
 
 export const BLE_PERMISSIONS = {
   READ: 1,
@@ -49,45 +36,6 @@ export const useBluetoothLE = ({ configurePeripheral } = {}) => {
   const peripheral = useContext(BlePeripheralContext);
   const central = useContext(BleCentralContext);
   const emitter = useContext(BleEmitterContext);
-  const [ready, setReady] = useState(0);
-  const [error, setError] = useState(null);
-  const loading = ready < 2;
-
-  useEffect(() => {
-    if (inits.centrals.has(central)) {
-      setReady(r => ++r);
-
-      return;
-    }
-
-    // Init module internals
-    central.start({ showAlert: true }).then(() => {
-      inits.centrals.add(central);
-      setReady(r => ++r);
-    }).catch((e) => setError(e));
-  }, [true]);
-
-  useEffect(() => {
-    if (typeof configurePeripheral == 'function') {
-      once.try(configurePeripheral, [peripheral]);
-    }
-
-    const instanceNum = instances.peripherals.get(peripheral) || 0;
-
-    // Advertise!
-    peripheral.start().then(() => {
-      setReady(r => ++r);
-      instances.peripherals.set(peripheral, instanceNum + 1);
-    }).catch((e) => setError(e));
-
-    return () => {
-      // Root component in tree
-      if (!instanceNum) {
-        instances.peripherals.set(peripheral, instanceNum);
-        peripheral.stop();
-      }
-    };
-  }, [true]);
 
   return { peripheral, central, emitter, ready, loading };
 };

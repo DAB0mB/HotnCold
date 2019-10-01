@@ -5,33 +5,24 @@ export { default as Once } from './once';
 export const useInterval = (callback, delay, asap) => {
   const savedCallback = useRef();
 
-  useEffect(
-    () => {
-      if (asap) {
-        callback(true);
-      }
-    },
-    [true]
-  )
+  useEffect(() => {
+    if (asap) {
+      callback(true);
+    }
+  }, [true]);
 
-  useEffect(
-    () => {
-      savedCallback.current = callback;
-    },
-    [callback]
-  );
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
 
-  useEffect(
-    () => {
-      const handler = () => savedCallback.current(false);
+  useEffect(() => {
+    const handler = () => savedCallback.current(false);
 
-      if (delay !== null) {
-        const id = setInterval(handler, delay);
-        return () => clearInterval(id);
-      }
-    },
-    [delay]
-  );
+    if (delay !== null) {
+      const id = setInterval(handler, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
 };
 
 export const useRenderer = (callback) => {
@@ -50,4 +41,36 @@ export const useRenderer = (callback) => {
   }, [key, callbackRef]);
 
   return [key, render];
+};
+
+export const useSet = (arr) => {
+  const [set, setSet] = useState(() => new Set(arr));
+
+  return useMemo(() => ({
+    add(obj) {
+      const size = set.size;
+      set.add(obj);
+
+      if (set.size != size) {
+        setSet(set);
+      }
+    },
+
+    has(obj) {
+      return set.has(obj);
+    },
+
+    delete() {
+      const size = set.size;
+      set.delete(obj);
+
+      if (set.size != size) {
+        setSet(set);
+      }
+    },
+
+    get size() {
+      return set.size;
+    },
+  }), [set, setSet]);
 };

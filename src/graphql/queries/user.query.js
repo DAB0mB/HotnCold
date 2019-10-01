@@ -13,13 +13,13 @@ const user = gql `
   ${fragments.user}
 `;
 
-user.use = () => {
-  return useQuery(user);
+user.use = (options) => {
+  return useQuery(user, options);
 };
 
 user.use.lazy = (options = {}) => {
   return useLazyQuery(user, {
-    cachePolicy: 'no-cache',
+    fetchPolicy: 'no-cache',
     ...options,
   });
 };

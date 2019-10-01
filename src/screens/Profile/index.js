@@ -3,8 +3,6 @@ import { View, Text, Image, StyleSheet, Dimensions, BackHandler } from 'react-na
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import ViewLoadingIndicator from '../../components/ViewLoadingIndicator'
-import * as queries from '../../graphql/queries';
 import { useNavigation } from '../../services/Navigation';
 import Screen from '../Screen';
 
@@ -42,12 +40,12 @@ const styles = StyleSheet.create({
 });
 
 const Profile = () => {
-  const meQuery = queries.me.user();
   const navigation = useNavigation();
+  const user = navigation.getParam('user');
 
   useEffect(() => {
     const backHandler = () => {
-      navigation.navigate('Map');
+      navigation.goBack();
 
       return true;
     };
@@ -59,32 +57,20 @@ const Profile = () => {
     };
   }, [true]);
 
-  if (meQuery.loading) {
-    return (
-      <ViewLoadingIndicator />
-    );
-  }
-
-  const { me } = meQuery.data;
-
-  if (!me) {
-    return null;
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.profilePicture}>
         <Swiper showButtons loop={false}>
-          {me.pictures.map((picture) => (
+          {user.pictures.map((picture) => (
             <Image style={styles.profilePicture} key={picture} loadingIndicatorSource={require('./default-profile.jpg')} source={{ uri: picture }} />
           ))}
         </Swiper>
       </View>
-      <View style={styles.name}><Text style={{ fontSize: styles.name.fontSize }}>{me.firstName}, {me.age}</Text></View>
-      <View style={styles.occupation}><Text style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }}><Icon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} /> {me.occupation}</Text></View>
-      <View style={styles.bio}><Text style={{ color: styles.bio.color }}>{me.bio}</Text></View>
+      <View style={styles.name}><Text style={{ fontSize: styles.name.fontSize }}>{user.firstName}, {user.age}</Text></View>
+      <View style={styles.occupation}><Text style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }}><Icon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} /> {user.occupation}</Text></View>
+      <View style={styles.bio}><Text style={{ color: styles.bio.color }}>{user.bio}</Text></View>
     </View>
   );
 };
 
-export default Screen.create(Profile);
+export default Screen.Authorized.create(Profile);

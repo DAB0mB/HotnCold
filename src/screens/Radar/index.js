@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Button, Image, View, Text, ScrollView } from 'react-native';
+import { StyleSheet, Button, Image, View, Text, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
 import CONFIG from 'react-native-config';
 
 import AuthorizedView from '../../components/AuthorizedView';
-import ViewLoadingIndicator from '../../components/ViewLoadingIndicator';
 import * as queries from '../../graphql/queries';
+import { useMe } from '../../services/Auth';
+import { useAlertError } from '../../services/DropDownAlert';
 import {
   useBluetoothLE,
   BluetoothLEProvider,
   BLE_PERMISSIONS,
   BLE_PROPERTIES,
 } from '../../services/BluetoothLE';
+import { useNavigation } from '../../services/Navigation';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
@@ -34,29 +36,31 @@ const styles = StyleSheet.create({
 });
 
 const Radar = () => {
+  const me = useMe();
   const ble = useBluetoothLE();
+  const navigation = useNavigation();
+  const alertError = useAlertError();
   const [discoveredUsers, setDiscoveredUsers] = useState([]);
   const [scanning, setScanning] = useState(false);
-  const [serviceConfigured, setServiceConfigured] = useState(false);
-  const meQuery = queries.me.use();
   const [queryUser] = queries.user.use.lazy({
-    onCompleted: (data) => {
+    onError: alertError,
+    onCompleted: useCallback((data) => {
       const user = data.user;
 
-      if (user) {
+      if (user && !discoveredUsers.some(u => u.id == user.id)) {
         setDiscoveredUsers([
           ...discoveredUsers,
           user,
         ]);
       }
-    },
+    }, [setDiscoveredUsers, discoveredUsers]),
   });
 
   useEffect(() => {
     if (ble.loading) return;
 
     const onDiscoverPeripheral = (peripheral) => {
-      const potentialUserIds = ['72533735-643f-4839-a623-0399e934e94f'] || peripheral.advertising.serviceUUIDs.filter(id => id !== CONFIG.BLE_SERVICE_UUID);
+      const potentialUserIds = peripheral.advertising.serviceUUIDs.filter(id => id !== CONFIG.BLE_SERVICE_UUID);
 
       queryUser({
         variables: { userIds: potentialUserIds },
@@ -80,6 +84,20 @@ const Radar = () => {
     };
   }, [ble.loading]);
 
+  useEffect(() => {
+    const backHandler = () => {
+      navigation.goBack();
+
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backHandler);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandler);
+    };
+  }, [true]);
+
   const scan = useCallback(() => {
     let stoppingScan;
 
@@ -94,29 +112,27 @@ const Radar = () => {
     }).then(() => {
       setScanning(true);
       setDiscoveredUsers([]);
+
+      if (__DEV__) {
+        queryUser({
+          variables: { userId: '72533735-643f-4839-a623-0399e934e94f' },
+        });
+      }
     });
   }, [ble.central]);
 
-  const { me } = meQuery.data || {};
-
-  if (ble.loading || meQuery.loading) {
-    return (
-      <ViewLoadingIndicator />
-    );
-  } else if (!serviceConfigured) {
-    ble.peripheral.addService(CONFIG.BLE_SERVICE_UUID, true);
-    ble.peripheral.addService(me.id, false);
-    setServiceConfigured(true);
-  }
+  const navToUserProfile = useCallback((user) => {
+    navigation.push('Profile', { user });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
       <ScrollView>
         {discoveredUsers.map((user) =>
-          <View key={user.id} style={styles.userItem}>
+          <TouchableOpacity key={user.id} style={styles.userItem} onPress={() => navToUserProfile(user)}>
             <Image style={styles.userItemImage} source={{ uri: user.pictures[0] }} />
             <Text>{user.firstName}</Text>
-          </View>
+          </TouchableOpacity>
         )}
       </ScrollView>
       <Button disabled={scanning} title={scanning ? 'scanning...' : 'scan'} onPress={scan} />
@@ -124,10 +140,4 @@ const Radar = () => {
   );
 };
 
-export default Screen.create((...props) =>
-  <AuthorizedView functions={['bluetooth']}>
-    <BluetoothLEProvider>
-      <Radar {...props} />
-    </BluetoothLEProvider>
-  </AuthorizedView>
-);
+export default Screen.Authorized.create(Radar);
