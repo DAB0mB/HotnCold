@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-export { default as Once } from './once';
+export { default as once } from './once';
 
 export const useInterval = (callback, delay, asap) => {
   const savedCallback = useRef();
@@ -44,7 +44,8 @@ export const useRenderer = (callback) => {
 };
 
 export const useSet = (arr) => {
-  const [set, setSet] = useState(() => new Set(arr));
+  const [, forceRender] = useRenderer();
+  const set = useMemo(() => new Set(arr), [true]);
 
   return useMemo(() => ({
     add(obj) {
@@ -52,7 +53,7 @@ export const useSet = (arr) => {
       set.add(obj);
 
       if (set.size != size) {
-        setSet(set);
+        forceRender();
       }
     },
 
@@ -65,12 +66,12 @@ export const useSet = (arr) => {
       set.delete(obj);
 
       if (set.size != size) {
-        setSet(set);
+        forceRender();
       }
     },
 
     get size() {
       return set.size;
     },
-  }), [set, setSet]);
+  }), [true]);
 };

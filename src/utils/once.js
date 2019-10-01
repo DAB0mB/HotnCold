@@ -1,22 +1,25 @@
 const createOnce = () => {
-  const once = (obj) => {
-    if (once.set.has(obj)) {
-      throw once.set;
+  const set = new Set();
+
+  const once = (obj, defaultReturn) => {
+    if (set.has(obj)) {
+      throw [set, defaultReturn];
     } else {
-      once.set.add(obj);
+      set.add(obj);
     }
   };
 
   once.create = createOnce;
-  once.set = new Set();
 
-  once.try = (callback, args) => {
+  once.try = (callback, args = []) => {
     try {
-      callback(...args, once);
+      return callback(...args, once);
     } catch (e) {
-      if (e !== once.set) {
-        throw e;
+      if (e && e[0] === set) {
+        return e[1];
       }
+
+      throw e;
     }
   };
 

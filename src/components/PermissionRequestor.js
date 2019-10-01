@@ -3,6 +3,7 @@ import { Platform, View, Text, StyleSheet } from 'react-native';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import Permissions from 'react-native-permissions';
 
+import { useAlertError } from '../services/DropdownAlert';
 import ActivityIndicator from './ActivityIndicator';
 
 const styles = StyleSheet.create({
@@ -29,6 +30,7 @@ const PermissionRequestor = ({ functions: funcs, children }) => {
   );
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
+  const alertError = useAlertError();
 
   useEffect(() => {
     // async function returns Promise
@@ -64,6 +66,7 @@ const PermissionRequestor = ({ functions: funcs, children }) => {
         }
 
         if (permission !== 'authorized') {
+          alertError(`${func} permission must be granted`);
           setLoading(false);
 
           return;
@@ -82,13 +85,7 @@ const PermissionRequestor = ({ functions: funcs, children }) => {
       );
     }
 
-    return (
-      <View style={styles.container}>
-        <Text style={styles.unauthorizedText}>
-          You need to accept {funcs.join(', ')} permissions in order to proceed
-        </Text>
-      </View>
-    );
+    return null;
   }
 
   return children;
