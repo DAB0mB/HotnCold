@@ -6,11 +6,14 @@ import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, View, StyleSheet } from 'react-native';
+import { Button, View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import CONFIG from 'react-native-config';
+import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
+import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import ActivityIndicator from '../../components/ActivityIndicator';
 import * as mutations from '../../graphql/mutations';
+import { useMe } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
 import { useNavigation } from '../../services/Navigation';
@@ -23,6 +26,20 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  iconsContainer: {
+    position: 'absolute',
+    flexDirection: 'row',
+    padding: 10,
+  },
+  icon: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 999,
+    marginRight: 10,
   },
 });
 
@@ -74,6 +91,7 @@ const emptyShape = {
 const SELECTION_RADIUS = 100;
 
 const Map = () => {
+  const me = useMe();
   const mapRef = useRef(null);
   const alertError = useAlertError();
   const navigation = useNavigation();
@@ -136,6 +154,10 @@ const Map = () => {
 
   const navToRadar = useCallback(() => {
     navigation.push('Radar');
+  }, [navigation]);
+
+  const editProfile = useCallback(() => {
+    navigation.push('Profile', { user: me });
   }, [navigation]);
 
   const updateMyLocationInterval = useCallback((initial) => {
@@ -235,10 +257,24 @@ const Map = () => {
         </MapboxGL.ShapeSource>
       </MapboxGL.MapView>
 
-      <Button
+      <View style={styles.iconsContainer}>
+        <TouchableWithoutFeedback onPress={editProfile}>
+          <View style={styles.icon}>
+            <Fa5Icon name='user-edit' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+          </View>
+        </TouchableWithoutFeedback>
+
+        <TouchableWithoutFeedback onPress={navToRadar}>
+          <View style={styles.icon}>
+            <McIcon name='radar' size={30} color='rgba(0, 0, 0, 0.8)' />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+
+      {/*<Button
         title='focus'
         onPress={navToRadar}
-      />
+      />*/}
     </View>
   );
 };

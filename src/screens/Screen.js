@@ -29,7 +29,11 @@ const styles = StyleSheet.create({
 });
 
 const Screen = ({ children }) => {
-  return children;
+  return (
+    <MeProvider me={null}>
+      {children}
+    </MeProvider>
+  );
 };
 
 Screen.Authorized = ({ children }) => {

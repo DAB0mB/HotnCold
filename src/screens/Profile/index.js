@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, BackHandler } from 'react-native';
 import Swiper from 'react-native-swiper';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FaIcon from 'react-native-vector-icons/FontAwesome';
 
+import { useMe } from '../../services/Auth';
 import { useNavigation } from '../../services/Navigation';
 import Screen from '../Screen';
 
@@ -40,6 +41,7 @@ const styles = StyleSheet.create({
 });
 
 const Profile = () => {
+  const me = useMe();
   const navigation = useNavigation();
   const user = navigation.getParam('user');
 
@@ -67,10 +69,10 @@ const Profile = () => {
         </Swiper>
       </View>
       <View style={styles.name}><Text style={{ fontSize: styles.name.fontSize }}>{user.firstName}, {user.age}</Text></View>
-      <View style={styles.occupation}><Text style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }}><Icon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} /> {user.occupation}</Text></View>
+      <View style={styles.occupation}><Text style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }}><FaIcon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} /> {user.occupation}</Text></View>
       <View style={styles.bio}><Text style={{ color: styles.bio.color }}>{user.bio}</Text></View>
     </View>
   );
 };
 
-export default Screen.Authorized.create(Profile);
+export default Screen.create(Profile);
