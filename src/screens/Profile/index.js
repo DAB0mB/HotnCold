@@ -1,15 +1,18 @@
+import moment from 'moment';
 import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, BackHandler } from 'react-native';
+import { View, ScrollView, Text, TextInput, Image, StyleSheet, Dimensions, BackHandler, KeyboardAvoidingView } from 'react-native';
 import Swiper from 'react-native-swiper';
 import FaIcon from 'react-native-vector-icons/FontAwesome';
 
 import { useMe } from '../../services/Auth';
+import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
+    flex: 1,
   },
   profilePicture: {
     width: Dimensions.get('window').width,
@@ -21,6 +24,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontSize: 20,
     borderBottomColor: 'silver',
+    flexDirection: 'row',
   },
   occupation: {
     paddingBottom: 10,
@@ -30,6 +34,8 @@ const styles = StyleSheet.create({
     color: 'gray',
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   bio: {
     paddingTop: 10,
@@ -42,8 +48,11 @@ const styles = StyleSheet.create({
 
 const Profile = () => {
   const me = useMe();
+  const alertError = useAlertError();
   const navigation = useNavigation();
   const user = navigation.getParam('user');
+  const itsMe = navigation.getParam('itsMe');
+  const MyText = itsMe ? TextInput : Text;
 
   useEffect(() => {
     const backHandler = () => {
@@ -60,7 +69,7 @@ const Profile = () => {
   }, [true]);
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="position" enabled>
       <View style={styles.profilePicture}>
         <Swiper showButtons loop={false}>
           {user.pictures.map((picture) => (
@@ -68,10 +77,19 @@ const Profile = () => {
           ))}
         </Swiper>
       </View>
-      <View style={styles.name}><Text style={{ fontSize: styles.name.fontSize }}>{user.firstName}, {user.age}</Text></View>
-      <View style={styles.occupation}><Text style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }}><FaIcon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} /> {user.occupation}</Text></View>
-      <View style={styles.bio}><Text style={{ color: styles.bio.color }}>{user.bio}</Text></View>
-    </View>
+      <View style={styles.name}>
+        <MyText style={{ fontSize: styles.name.fontSize, padding: 0 }}>{[user.firstName, itsMe && user.lastName].filter(Boolean).join(' ')}</MyText>
+        <Text style={{ fontSize: styles.name.fontSize }}>, </Text>
+        <MyText style={{ fontSize: styles.name.fontSize, padding: 0 }}>{itsMe ? moment(user.birthDate).calendar() : user.age}</MyText>
+      </View>
+      <View style={styles.occupation}>
+        <FaIcon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} style={{ marginRight: styles.occupation.marginLeft / 2 }} />
+        <MyText style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize, padding: 0 }} maxLength={30}>{user.occupation}</MyText>
+      </View>
+      <View style={styles.bio}>
+        <MyText style={{ color: styles.bio.color, padding: 0 }} scrollEnabled={false} multiline>{user.bio}</MyText>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

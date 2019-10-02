@@ -6,7 +6,9 @@ const user = gql `
   fragment User on User {
     id
     firstName
+    lastName
     birthDate
+    gender
     age
     bio
     location

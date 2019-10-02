@@ -1,7 +1,14 @@
 import React, { createContext, useCallback, useContext, useMemo, useRef } from 'react';
+import { StyleSheet } from 'react-native';
 import DropdownAlert from 'react-native-dropdownalert';
 
 const DropdownAlertContext = createContext(null);
+
+const styles = StyleSheet.create({
+  wrapper: {
+    padding: 0,
+  },
+});
 
 export const DropdownAlertProvider = ({ dropdownAlert, children }) => {
   const dropdownAlertRef = useRef(dropdownAlert);
@@ -16,8 +23,8 @@ export const DropdownAlertProvider = ({ dropdownAlert, children }) => {
 
   return (
     <DropdownAlertContext.Provider value={dropDownAlertContext}>
-      {!dropdownAlert && <DropdownAlert ref={dropdownAlertRef} />}
       {children}
+      {!dropdownAlert && <DropdownAlert ref={dropdownAlertRef} translucent />}
     </DropdownAlertContext.Provider>
   );
 };

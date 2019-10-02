@@ -157,7 +157,7 @@ const Map = () => {
   }, [navigation]);
 
   const editProfile = useCallback(() => {
-    navigation.push('Profile', { user: me });
+    navigation.push('Profile', { user: me, itsMe: true });
   }, [navigation]);
 
   const updateMyLocationInterval = useCallback((initial) => {
