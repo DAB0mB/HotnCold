@@ -40,3 +40,11 @@ export const useAlertError = () => {
     dropdownAlert.alertWithType('error', 'Error', error.message || error);
   }, [dropdownAlert]);
 };
+
+export const useAlertSuccess = () => {
+  const dropdownAlert = useDropdownAlert();
+
+  return useCallback((message) => {
+    dropdownAlert.alertWithType('success', 'Success', message);
+  }, [dropdownAlert]);
+};

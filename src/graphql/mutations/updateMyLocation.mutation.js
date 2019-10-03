@@ -2,8 +2,8 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useCallback } from 'react';
 
+import { useMe } from '../../services/Auth';
 import * as fragments from '../fragments';
-import * as queries from '../queries';
 
 const updateMyLocation = gql `
   mutation UpdateMyLocation($location: Vector2D!) {
@@ -12,7 +12,7 @@ const updateMyLocation = gql `
 `;
 
 updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
-  const meQuery = queries.me.use();
+  const me = useMe();
   const [superMutate, mutation] = useMutation(updateMyLocation);
 
   const mutate = useCallback((location = defaultLocation) => {
@@ -20,9 +20,7 @@ updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
       fetchPolicy: 'no-cache',
       update: (client, mutation) => {
         if (mutation.error) return;
-        if (!meQuery.data) return;
-
-        const { me } = meQuery.data;
+        if (!me) return;
 
         client.writeFragment({
           id: me.id,
@@ -33,7 +31,7 @@ updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
       ...defaultOptions,
       variables: { location },
     })
-  }, [meQuery, superMutate, defaultLocation, defaultOptions]);
+  }, [me, superMutate, defaultLocation, defaultOptions]);
 
   return [mutate, mutation];
 };

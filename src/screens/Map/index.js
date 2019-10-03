@@ -6,7 +6,7 @@ import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import CONFIG from 'react-native-config';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -97,7 +97,7 @@ const Map = () => {
   const navigation = useNavigation();
   const geolocation = useGeolocation();
   const [shapeKey, renderShape] = useCounter();
-  const [updateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use();
+  const [updateMyLocation] = mutations.updateMyLocation.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
@@ -270,11 +270,6 @@ const Map = () => {
           </View>
         </TouchableWithoutFeedback>
       </View>
-
-      {/*<Button
-        title='focus'
-        onPress={navToRadar}
-      />*/}
     </View>
   );
 };
