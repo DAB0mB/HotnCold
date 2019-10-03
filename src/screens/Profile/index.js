@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   bio: {
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 20,
     marginLeft: 10,
     marginRight: 10,
     color: 'gray',
@@ -94,15 +94,14 @@ const Profile = () => {
     onCompleted: useCallback(() => alertSuccess('Profile successfully updated'), [alertSuccess]),
   });
 
-  const MyText = useCallback(({ style = {}, ...props }) => (
+  const MyText = useCallback(React.forwardRef(({ style = {}, ...props }, ref) => (
     <TextInput
       editable={itsMe}
-      onFocus={() => setEditing(true)}
-      onBlur={() => setEditing(false)}
       {...props}
       style={{ padding: 0, ...style }}
+      ref={ref}
     />
-  ), [setEditing]);
+  )), [true]);
 
   useEffect(() => {
     const keyboardShowHandler = () => {
@@ -157,9 +156,9 @@ const Profile = () => {
         <FaIcon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} style={{ marginRight: styles.occupation.marginLeft / 2 }} />
         <MyText style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }} value={occupation} onChangeText={setOccupation} />
       </View>
-      <View style={styles.bio}>
-        <MyText style={{ color: styles.bio.color }} multiline value={bio} onChangeText={setBio} />
-      </View>
+      <ScrollView style={styles.bio}>
+        <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} />
+      </ScrollView>
 
       <View style={styles.iconsContainer}>
         <TouchableWithoutFeedback onPress={updateMyProfile}>
