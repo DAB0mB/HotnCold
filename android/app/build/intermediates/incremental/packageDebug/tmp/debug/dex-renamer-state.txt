@@ -1,8 +1,14 @@
-#Fri Oct 04 12:18:11 IDT 2019
+#Sat Oct 05 17:24:34 IDT 2019
 base.2=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/5
 base.1=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/8
 base.0=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/7
+renamed.22=classes23.dex
+renamed.21=classes22.dex
 renamed.20=classes21.dex
+path.22=classes.dex
+base.22=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/23
+path.21=classes.dex
+base.21=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/22
 path.20=classes.dex
 base.20=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/19
 path.9=classes.dex

@@ -4086,6 +4086,11 @@ react-native-gesture-handler@~1.3.0:
     invariant "^2.2.2"
     prop-types "^15.5.10"
 
+react-native-image-picker@0.28.0:
+  version "0.28.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-0.28.0.tgz#e3f26df170ea932e9c0404624fbced2f59a300e3"
+  integrity sha512-lQfdOyC1mQ/pvfEaUGdoodO1A1clg9kf6YC1WdbWhA6XK+joBd9GQYf8SaCf6/7vM25U4ib+6ux4yvnrS1pOqQ==
+
 react-native-modal-datetime-picker@^7.6.0:
   version "7.6.0"
   resolved "https://registry.yarnpkg.com/react-native-modal-datetime-picker/-/react-native-modal-datetime-picker-7.6.0.tgz#6818f221010d0f61a6396a956b303fee65726fee"

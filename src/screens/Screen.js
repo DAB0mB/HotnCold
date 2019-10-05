@@ -17,6 +17,7 @@ import { BLE_PERMISSIONS, BLE_PROPERTIES, BluetoothLEProvider } from '../service
 import { DateTimePickerProvider } from '../services/DateTimePicker';
 import { useAlertError, DropdownAlertProvider } from '../services/DropdownAlert';
 import { GeolocationProvider } from '../services/Geolocation';
+import { ImagePickerProvider } from '../services/ImagePicker';
 import { NavigationProvider } from '../services/Navigation';
 import { once as Once, useCounter, useSet } from '../utils';
 
@@ -33,7 +34,9 @@ const Screen = ({ children }) => {
   return (
     <MeProvider me={null}>
       <DateTimePickerProvider>
-        {children}
+        <ImagePickerProvider>
+          {children}
+        </ImagePickerProvider>
       </DateTimePickerProvider>
     </MeProvider>
   );

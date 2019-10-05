@@ -11,14 +11,18 @@ import {
   BackHandler,
   Keyboard,
   TouchableWithoutFeedback,
+  Platform,
 } from 'react-native';
+import { ReactNativeFile } from 'apollo-upload-client';
 import Swiper from 'react-native-swiper';
 import FaIcon from 'react-native-vector-icons/FontAwesome';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
+import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as mutations from '../../graphql/mutations';
 import { useAlertError, useAlertSuccess } from '../../services/DropdownAlert';
 import { useDateTimePicker } from '../../services/DateTimePicker';
+import { useImagePicker } from '../../services/ImagePicker';
 import { useNavigation } from '../../services/Navigation';
 import Screen from '../Screen';
 
@@ -58,8 +62,16 @@ const styles = StyleSheet.create({
     marginRight: 10,
     color: 'gray',
   },
-  iconsContainer: {
+  picturesButtons: {
     position: 'absolute',
+    flexDirection: 'row',
+    right: 0,
+    top: 0,
+    padding: 10,
+  },
+  profileButtons: {
+    position: 'absolute',
+    flexDirection: 'row',
     right: 0,
     bottom: 0,
     padding: 10,
@@ -111,6 +123,23 @@ const Profile = () => {
     onError: alertError,
     onCompleted: useCallback(() => alertSuccess('Profile successfully updated'), [alertSuccess]),
   });
+  const [uploadPicture] = mutations.uploadPicture.use({
+    onError: alertError,
+    onCompleted: useCallback((data) => {
+      const url = data.uploadPicture;
+
+      console.log(url);
+    }, [true])
+  });
+  const imagePicker = useImagePicker(useCallback((image) => {
+    const file = new ReactNativeFile({
+      uri: image.uri,
+      name: image.fileName,
+      type: image.type,
+    });
+
+    uploadPicture(file);
+  }, [uploadPicture]));
 
   const MyText = useCallback(React.forwardRef(({ style = {}, ...props }, ref) => (
     <TextInput
@@ -168,7 +197,7 @@ const Profile = () => {
       <View style={styles.name}>
         <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} />
         <Text style={{ fontSize: styles.name.fontSize, color: styles.name.color }}>, </Text>
-        <TouchableWithoutFeedback onPress={dateTimePicker.show}>
+        <TouchableWithoutFeedback onPress={() => dateTimePicker.show()}>
           <View>
             <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate} onChangeText={setBirthDate} editable={false} />
           </View>
@@ -182,7 +211,15 @@ const Profile = () => {
         <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} maxLength={512} />
       </ScrollView>
 
-      <View style={styles.iconsContainer}>
+      <View style={styles.picturesButtons}>
+        <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
+          <View style={styles.icon}>
+            <McIcon name='upload' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+
+      <View style={styles.profileButtons}>
         <TouchableWithoutFeedback onPress={updateMyProfile}>
           <View style={styles.icon}>
             <Fa5Icon name='save' size={25} color='rgba(0, 0, 0, 0.8)' solid />

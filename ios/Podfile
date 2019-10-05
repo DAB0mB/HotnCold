@@ -47,4 +47,6 @@ target 'hotncold' do
 
   pod 'react-native-bluetooth-status', :path => '../node_modules/react-native-bluetooth-status'
 
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
 end

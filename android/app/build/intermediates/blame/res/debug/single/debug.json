@@ -580,6 +580,10 @@
         "source": "/home/eytan/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c61e2f56784e44d75c50459e3d70cd0b/res/drawable/abc_ic_clear_material.xml"
     },
     {
+        "merged": "/home/eytan/Workspace/HotnCold/android/app/build/intermediates/res/merged/debug/layout_list_item.xml.flat",
+        "source": "/home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/packaged_res/debug/layout/list_item.xml"
+    },
+    {
         "merged": "/home/eytan/Workspace/HotnCold/android/app/build/intermediates/res/merged/debug/color-v23_abc_tint_seek_thumb.xml.flat",
         "source": "/home/eytan/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c61e2f56784e44d75c50459e3d70cd0b/res/color-v23/abc_tint_seek_thumb.xml"
     },
@@ -626,6 +630,10 @@
     {
         "merged": "/home/eytan/Workspace/HotnCold/android/app/build/intermediates/res/merged/debug/drawable-xhdpi-v4_mapbox_user_icon_stale.png.flat",
         "source": "/home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/res/drawable-xhdpi-v4/mapbox_user_icon_stale.png"
+    },
+    {
+        "merged": "/home/eytan/Workspace/HotnCold/android/app/build/intermediates/res/merged/debug/xml_provider_paths.xml.flat",
+        "source": "/home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/packaged_res/debug/xml/provider_paths.xml"
     },
     {
         "merged": "/home/eytan/Workspace/HotnCold/android/app/build/intermediates/res/merged/debug/drawable_abc_btn_check_material.xml.flat",

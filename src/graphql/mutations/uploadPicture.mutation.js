@@ -1,20 +1,21 @@
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { useCallback } from 'react';
 
 const uploadPicture = gql `
-  mutation UploadPicture($blob: Upload!) {
-    UploadPicture(blob: $blob)
+  mutation UploadPicture($data: Upload!) {
+    uploadPicture(data: $data)
   }
 `;
 
-uploadPicture.use = (defaultBlob, defaultOptions = {}) => {
+uploadPicture.use = (defaultOptions = {}) => {
   const [superMutate, mutation] = useMutation(uploadPicture, defaultOptions);
 
-  const mutate = useCallback((blob = defaultBlob) => {
+  const mutate = useCallback((data) => {
     return superMutate({
-      variables: { blob },
+      variables: { data },
     })
-  }, [superMutate, defaultBlob]);
+  }, [superMutate]);
 
   return [mutate, mutation];
 };

@@ -144,6 +144,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-image-picker')
     implementation project(':react-native-bluetooth-status')
     implementation project(':react-native-ble-manager')
     implementation project(':react-native-ble-peripheral')
