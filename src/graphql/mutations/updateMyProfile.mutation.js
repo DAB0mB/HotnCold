@@ -7,13 +7,15 @@ import * as fragments from '../fragments';
 
 const updateMyProfile = gql `
   mutation UpdateMyProfile(
-    $name: String!
+    $firstName: String!
+    $lastName: String!
     $occupation: String!
     $birthDate: DateTime!
     $bio: String!
   ) {
     updateMyProfile(
-      name: $name
+      firstName: $firstName
+      lastName: $lastName
       occupation: $occupation
       birthDate: $birthDate
       bio: $bio
@@ -30,7 +32,8 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
   const [superMutate, mutation] = useMutation(updateMyProfile, defaultOptions);
 
   const mutate = useCallback(({
-    name = defaultArgs.name,
+    firstName = defaultArgs.firstName,
+    lastName = defaultArgs.lastName,
     birthDate = defaultArgs.birthDate,
     occupation = defaultArgs.occupation,
     bio = defaultArgs.bio,
@@ -43,12 +46,20 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
         client.writeFragment({
           id: me.id,
           fragment: fragments.user,
-          data: { ...me, name, birthDate, occupation, bio },
+          data: { ...me, firstName, lastName, birthDate, occupation, bio },
         });
       },
-      variables: { name, birthDate, occupation, bio },
+      variables: { firstName, lastName, birthDate, occupation, bio },
     })
-  }, [me, superMutate, defaultArgs]);
+  }, [
+    me,
+    superMutate,
+    defaultArgs.firstName,
+    defaultArgs.lastName,
+    defaultArgs.birthDate,
+    defaultArgs.occupation,
+    defaultArgs.bio
+  ]);
 
   return [mutate, mutation];
 };

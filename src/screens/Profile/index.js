@@ -96,10 +96,17 @@ const Profile = () => {
     }, [setBirthDate])
   });
   const [updateMyProfile] = mutations.updateMyProfile.use({
-    name,
     bio,
     occupation,
-    birthDate: useMemo(() => new Date(user.birthDate), [user.birthDate]),
+    birthDate: useMemo(() => new Date(birthDate), [birthDate]),
+    ...useMemo(() => {
+      const [firstName, ...lastName] = name.split(/ +/);
+
+      return {
+        firstName,
+        lastName: lastName.join(' '),
+      };
+    }, [name])
   }, {
     onError: alertError,
     onCompleted: useCallback(() => alertSuccess('Profile successfully updated'), [alertSuccess]),
