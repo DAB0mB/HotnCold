@@ -1,10 +1,10 @@
 #Internal package file, do not edit.
-#Thu Oct 03 08:02:17 IDT 2019
+#Fri Oct 04 12:18:13 IDT 2019
 60.set=NATIVE_RESOURCE
 52.set=NATIVE_RESOURCE
 53.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/16
 44.set=NATIVE_RESOURCE
-36.set=NATIVE_RESOURCE
+36.set=DEX
 28.set=DEX
 39.baseType=DIRECTORY
 40.path=lib/x86/libjscexecutor.so
@@ -25,12 +25,12 @@
 65.baseType=DIRECTORY
 25.baseType=DIRECTORY
 43.set=DEX
-35.set=DEX
+35.set=NATIVE_RESOURCE
 27.set=NATIVE_RESOURCE
 63.path=lib/armeabi-v7a/libmapbox-gl.so
 7.baseType=DIRECTORY
 19.set=NATIVE_RESOURCE
-36.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
+36.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/19
 58.baseType=DIRECTORY
 18.baseType=DIRECTORY
 23.path=lib/x86/libglog.so
@@ -74,7 +74,7 @@
 25.set=NATIVE_RESOURCE
 17.set=NATIVE_RESOURCE
 62.path=classes.dex
-35.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/21
+35.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
 69.path=lib/arm64-v8a/libreactnativejni.so
 60.baseType=DIRECTORY
 22.path=lib/x86_64/libglog_init.so
@@ -85,7 +85,7 @@
 13.baseType=DIRECTORY
 0.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
 44.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
-36.path=lib/x86_64/libjscexecutor.so
+36.path=classes.dex
 7.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
 40.set=NATIVE_RESOURCE
 32.set=DEX
@@ -124,7 +124,7 @@
 55.baseType=DIRECTORY
 15.baseType=DIRECTORY
 43.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/4
-35.path=classes.dex
+35.path=lib/x86_64/libjscexecutor.so
 6.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
 0.baseType=DIRECTORY
 30.set=DEX

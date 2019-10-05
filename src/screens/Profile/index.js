@@ -18,6 +18,7 @@ import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import * as mutations from '../../graphql/mutations';
 import { useAlertError, useAlertSuccess } from '../../services/DropdownAlert';
+import { useDateTimePicker } from '../../services/DateTimePicker';
 import { useNavigation } from '../../services/Navigation';
 import Screen from '../Screen';
 
@@ -35,6 +36,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     fontSize: 20,
+    color: '#666666',
     borderBottomColor: 'silver',
     flexDirection: 'row',
   },
@@ -84,11 +86,20 @@ const Profile = () => {
   const [birthDate, setBirthDate] = useState(() => itsMe ? moment(user.birthDate).calendar() : user.age);
   const [occupation, setOccupation] = useState(user.occupation);
   const [bio, setBio] = useState(user.bio);
+  const dateTimePicker = useDateTimePicker({
+    mode: 'date',
+    maximumDate: useMemo(() => new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000), [true]),
+    minimumDate: useMemo(() => new Date(Date.now() - 100 * 365 * 24 * 60 * 60 * 1000), [true]),
+    date: useMemo(() => new Date(user.birthDate), [user.birthDate]),
+    onConfirm: useCallback((birthDate) => {
+      setBirthDate(moment(birthDate).calendar());
+    }, [setBirthDate])
+  });
   const [updateMyProfile] = mutations.updateMyProfile.use({
     name,
     bio,
     occupation,
-    birthDate: new Date(birthDate),
+    birthDate: useMemo(() => new Date(user.birthDate), [user.birthDate]),
   }, {
     onError: alertError,
     onCompleted: useCallback(() => alertSuccess('Profile successfully updated'), [alertSuccess]),
@@ -148,16 +159,20 @@ const Profile = () => {
         </View>
       )}
       <View style={styles.name}>
-        <MyText style={{ fontSize: styles.name.fontSize }} value={name} onChangeText={setName} />
-        <Text style={{ fontSize: styles.name.fontSize }}>, </Text>
-        <MyText style={{ fontSize: styles.name.fontSize }} value={birthDate} onChangeText={setBirthDate} />
+        <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} />
+        <Text style={{ fontSize: styles.name.fontSize, color: styles.name.color }}>, </Text>
+        <TouchableWithoutFeedback onPress={dateTimePicker.show}>
+          <View>
+            <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate} onChangeText={setBirthDate} editable={false} />
+          </View>
+        </TouchableWithoutFeedback>
       </View>
       <View style={styles.occupation}>
         <FaIcon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} style={{ marginRight: styles.occupation.marginLeft / 2 }} />
-        <MyText style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }} value={occupation} onChangeText={setOccupation} />
+        <MyText style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }} value={occupation} onChangeText={setOccupation} maxLength={30} />
       </View>
       <ScrollView style={styles.bio}>
-        <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} />
+        <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} maxLength={512} />
       </ScrollView>
 
       <View style={styles.iconsContainer}>

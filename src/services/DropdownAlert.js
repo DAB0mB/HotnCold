@@ -10,8 +10,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export const DropdownAlertProvider = ({ dropdownAlert, children }) => {
-  const dropdownAlertRef = useRef(dropdownAlert);
+export const DropdownAlertProvider = ({ children }) => {
+  const dropdownAlertRef = useRef(null);
 
   const dropDownAlertContext = useMemo(() => ({
     alertWithType(...args) {
@@ -24,7 +24,7 @@ export const DropdownAlertProvider = ({ dropdownAlert, children }) => {
   return (
     <DropdownAlertContext.Provider value={dropDownAlertContext}>
       {children}
-      {!dropdownAlert && <DropdownAlert ref={dropdownAlertRef} translucent />}
+      <DropdownAlert ref={dropdownAlertRef} translucent />
     </DropdownAlertContext.Provider>
   );
 };
