@@ -12,6 +12,7 @@ const updateMyProfile = gql `
     $occupation: String!
     $birthDate: DateTime!
     $bio: String!
+    $pictures: [String!]!
   ) {
     updateMyProfile(
       firstName: $firstName
@@ -19,6 +20,7 @@ const updateMyProfile = gql `
       occupation: $occupation
       birthDate: $birthDate
       bio: $bio
+      pictures: $pictures
     ) {
       ...User
     }
@@ -37,6 +39,7 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
     birthDate = defaultArgs.birthDate,
     occupation = defaultArgs.occupation,
     bio = defaultArgs.bio,
+    pictures = defaultArgs.pictures,
   }) => {
     return superMutate({
       update: (client, mutation) => {
@@ -46,10 +49,10 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
         client.writeFragment({
           id: me.id,
           fragment: fragments.user,
-          data: { ...me, firstName, lastName, birthDate, occupation, bio },
+          data: { ...me, firstName, lastName, birthDate, occupation, bio, pictures },
         });
       },
-      variables: { firstName, lastName, birthDate, occupation, bio },
+      variables: { firstName, lastName, birthDate, occupation, bio, pictures },
     })
   }, [
     me,
@@ -58,7 +61,8 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
     defaultArgs.lastName,
     defaultArgs.birthDate,
     defaultArgs.occupation,
-    defaultArgs.bio
+    defaultArgs.bio,
+    defaultArgs.pictures,
   ]);
 
   return [mutate, mutation];

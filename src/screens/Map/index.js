@@ -158,7 +158,7 @@ const Map = () => {
 
   const editProfile = useCallback(() => {
     navigation.push('Profile', { user: me, itsMe: true });
-  }, [navigation]);
+  }, [navigation, me]);
 
   const updateMyLocationInterval = useCallback((initial) => {
     geolocation.getCurrentPosition((location) => {

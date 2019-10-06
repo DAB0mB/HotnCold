@@ -47,7 +47,7 @@ export const useImagePicker = (defaultOptions, defaultCallback) => {
       ...defaultOptions,
       ...options,
     };
-  }, [defaultOptions]);
+  }, [...Object.values(defaultOptions)]);
 
   return useMemo(() => ({
     showImagePicker(options, callback) {

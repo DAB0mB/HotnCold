@@ -20,10 +20,11 @@ import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as mutations from '../../graphql/mutations';
-import { useAlertError, useAlertSuccess } from '../../services/DropdownAlert';
 import { useDateTimePicker } from '../../services/DateTimePicker';
+import { useAlertError, useAlertSuccess } from '../../services/DropdownAlert';
 import { useImagePicker } from '../../services/ImagePicker';
 import { useNavigation } from '../../services/Navigation';
+import { useCounter } from '../../utils';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
@@ -34,6 +35,11 @@ const styles = StyleSheet.create({
   profilePicture: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').width,
+  },
+  profilePicturePlaceholder: {
+    backgroundColor: 'silver',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   name: {
     paddingTop: 10,
@@ -93,11 +99,15 @@ const Profile = () => {
   const itsMe = navigation.getParam('itsMe');
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
+  const [swiperKey, renderSwiper] = useCounter();
+  const [pictureIndex, setPictureIndex] = useState(0);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(() => itsMe ? `${user.firstName} ${user.lastName}` : user.firstName);
   const [birthDate, setBirthDate] = useState(() => itsMe ? moment(user.birthDate).calendar() : user.age);
   const [occupation, setOccupation] = useState(user.occupation);
   const [bio, setBio] = useState(user.bio);
+  // TODO: Pick and drop function
+  const [pictures, setPictures] = useState(user.pictures);
   const dateTimePicker = useDateTimePicker({
     mode: 'date',
     maximumDate: useMemo(() => new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000), [true]),
@@ -110,6 +120,7 @@ const Profile = () => {
   const [updateMyProfile] = mutations.updateMyProfile.use({
     bio,
     occupation,
+    pictures,
     birthDate: useMemo(() => new Date(birthDate), [birthDate]),
     ...useMemo(() => {
       const [firstName, ...lastName] = name.split(/ +/);
@@ -128,10 +139,18 @@ const Profile = () => {
     onCompleted: useCallback((data) => {
       const url = data.uploadPicture;
 
-      console.log(url);
-    }, [true])
+      renderSwiper();
+      // TODO: Upload only when saving, before that we can show only local images
+      setPictures(
+        [...pictures.slice(0, pictureIndex), url, ...pictures.slice(pictureIndex)]
+      );
+    }, [setPictures, pictures, pictureIndex])
   });
-  const imagePicker = useImagePicker(useCallback((image) => {
+  const imagePicker = useImagePicker({
+    mediaType: 'photo',
+    maxWidth: 512,
+    maxHeight: 512,
+  }, useCallback((image) => {
     const file = new ReactNativeFile({
       uri: image.uri,
       name: image.fileName,
@@ -183,14 +202,28 @@ const Profile = () => {
     };
   }, [true]);
 
+  const deletePicture = useCallback(() => {
+    setPictures(
+      [...pictures.slice(0, pictureIndex), ...pictures.slice(pictureIndex + 1)]
+    );
+    renderSwiper();
+  }, [pictureIndex, pictures, setPictures]);
+
   return (
     <View style={styles.container}>
       {!editing && (
         <View style={styles.profilePicture}>
-          <Swiper showButtons loop={false}>
-            {user.pictures.map((picture) => (
+          <Swiper showButtons loop={false} onIndexChanged={setPictureIndex} key={swiperKey}>
+            {pictures.map((picture) => (
               <Image style={styles.profilePicture} key={picture} loadingIndicatorSource={require('./default-profile.jpg')} source={{ uri: picture }} />
             ))}
+            {itsMe && (
+              <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
+                <View style={[styles.profilePicture, styles.profilePicturePlaceholder]} key='_'>
+                  <McIcon name='image-plus' size={100} color='rgba(0, 0, 0, 0.8)' solid />
+                </View>
+              </TouchableWithoutFeedback>
+            )}
           </Swiper>
         </View>
       )}
@@ -211,13 +244,20 @@ const Profile = () => {
         <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} maxLength={512} />
       </ScrollView>
 
-      <View style={styles.picturesButtons}>
-        <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
-          <View style={styles.icon}>
-            <McIcon name='upload' size={25} color='rgba(0, 0, 0, 0.8)' solid />
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
+      {pictureIndex < pictures.length && (
+        <View style={styles.picturesButtons}>
+          <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
+            <View style={styles.icon}>
+              <McIcon name='image-plus' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+            </View>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={deletePicture}>
+            <View style={styles.icon}>
+              <McIcon name='delete' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      )}
 
       <View style={styles.profileButtons}>
         <TouchableWithoutFeedback onPress={updateMyProfile}>

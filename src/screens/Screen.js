@@ -92,7 +92,7 @@ Screen.Authorized = ({ children }) => {
         }
       });
     };
-  }, [me]);
+  }, [me && me.id]);
 
   if (meQuery.loading || readyState != 2) {
     return (

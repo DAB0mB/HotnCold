@@ -59,7 +59,7 @@ export const useDateTimePicker = (defaults = {}) => {
       onConfirm = defaults.onConfirm,
       maximumDate = defaults.maximumDate,
       minimumDate = defaults.minimumDate,
-    }) {
+    } = {}) {
       if (onConfirm) {
         dateTimePicker.setOnConfirm(() => onConfirm);
       }
