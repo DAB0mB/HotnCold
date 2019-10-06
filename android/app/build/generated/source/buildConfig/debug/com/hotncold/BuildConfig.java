@@ -16,5 +16,5 @@ public final class BuildConfig {
   public static final String GRAPHQL_URI = "http://192.168.2.113:8000/graphql";
   public static final String MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoiaG90LWFuZC1jb2xkIiwiYSI6ImNrMG1ybDJxdzAyMWgzbmpzN2FkbXNiNmoifQ.bTe6zr2ZTsNu8LFow2RCcg";
   public static final String MAPBOX_STYLE_URL = "mapbox://styles/hot-and-cold/ck0oeiko2178l1cpepvv2vvga";
-  public static final String RADAR_TEST_USER_ID = "72533735-643f-4839-a623-0399e934e94f";
+  public static final String RADAR_TEST_USER_ID = "93d4b2f6-2f02-4aa4-b11d-83ffc6a61f52";
 }

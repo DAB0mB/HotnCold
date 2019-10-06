@@ -1,4 +1,4 @@
-#Sat Oct 05 17:24:34 IDT 2019
+#Sun Oct 06 17:07:45 IDT 2019
 base.2=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/5
 base.1=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/8
 base.0=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/7

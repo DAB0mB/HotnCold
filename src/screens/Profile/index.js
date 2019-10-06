@@ -162,7 +162,7 @@ const Profile = () => {
 
   const MyText = useCallback(React.forwardRef(({ style = {}, ...props }, ref) => (
     <TextInput
-      editable={itsMe}
+      editable={Boolean(itsMe)}
       {...props}
       style={{ padding: 0, ...style }}
       ref={ref}
@@ -230,9 +230,9 @@ const Profile = () => {
       <View style={styles.name}>
         <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} />
         <Text style={{ fontSize: styles.name.fontSize, color: styles.name.color }}>, </Text>
-        <TouchableWithoutFeedback onPress={() => dateTimePicker.show()}>
+        <TouchableWithoutFeedback onPress={() => itsMe ? dateTimePicker.show() : () => {}}>
           <View>
-            <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate} onChangeText={setBirthDate} editable={false} />
+            <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate} editable={false} />
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -244,13 +244,15 @@ const Profile = () => {
         <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} maxLength={512} />
       </ScrollView>
 
-      {pictureIndex < pictures.length && (
+      {itsMe && pictureIndex < pictures.length && (
         <View style={styles.picturesButtons}>
-          <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
-            <View style={styles.icon}>
-              <McIcon name='image-plus' size={25} color='rgba(0, 0, 0, 0.8)' solid />
-            </View>
-          </TouchableWithoutFeedback>
+          {pictures.length < 6 && (
+            <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
+              <View style={styles.icon}>
+                <McIcon name='image-plus' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+              </View>
+            </TouchableWithoutFeedback>
+          )}
           <TouchableWithoutFeedback onPress={deletePicture}>
             <View style={styles.icon}>
               <McIcon name='delete' size={25} color='rgba(0, 0, 0, 0.8)' solid />
@@ -259,13 +261,15 @@ const Profile = () => {
         </View>
       )}
 
-      <View style={styles.profileButtons}>
-        <TouchableWithoutFeedback onPress={updateMyProfile}>
-          <View style={styles.icon}>
-            <Fa5Icon name='save' size={25} color='rgba(0, 0, 0, 0.8)' solid />
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
+      {itsMe && (
+        <View style={styles.profileButtons}>
+          <TouchableWithoutFeedback onPress={updateMyProfile}>
+            <View style={styles.icon}>
+              <Fa5Icon name='save' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      )}
     </View>
   );
 };

@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Sat Oct 05 17:24:36 IDT 2019
+#Sun Oct 06 17:07:46 IDT 2019
 60.set=NATIVE_RESOURCE
 52.set=NATIVE_RESOURCE
 53.base=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/stripDebugSymbol/debug/0
