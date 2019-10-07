@@ -4,6 +4,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
 import { createUploadLink } from 'apollo-upload-client';
 import CONFIG from 'react-native-config';
+import Observable from 'zen-observable';
 
 const cache = new InMemoryCache()
 
@@ -26,7 +27,37 @@ const httpLink = createUploadLink({
   credentials: 'include',
 });
 
-const link = ApolloLink.from([errorLink, httpLink]);
+// react-native doesn't have a built-in handler for cookies, so I use the local storage manually instead
+const authLink = new ApolloLink((operation, forward) => new Observable(async (observable) => {
+  const token = await AsyncStorage.getItem('authToken');
+
+  if (token) {
+    operation.setContext({
+      headers: {
+        cookie: `authToken=${token}`,
+      },
+    });
+  }
+
+  forward(operation).map(async (response) => {
+    const context = operation.getContext();
+    const response = context.response;
+    const headers = response.headers;
+
+    if (headers) {
+      const cookie = headers.get('Set-Cookie');
+      const token = (cookie.match(/authToken=(\w+)/) || [])[1];
+
+      if (token) {
+        await AsyncStorage.setItem('authToken', token);
+      }
+    }
+
+    observable.next(response);
+  });
+}));
+
+const link = ApolloLink.from([errorLink, authLink, httpLink]);
 
 // super hacky, we will fix the types eventually
 const client = new ApolloClient({

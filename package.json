@@ -43,7 +43,8 @@
     "react-native-vector-icons": "^6.6.0",
     "react-native-web": "^0.11.4",
     "react-navigation": "^4.0.5",
-    "react-navigation-stack": "^1.8.0"
+    "react-navigation-stack": "^1.8.0",
+    "zen-observable": "^0.8.14"
   },
   "devDependencies": {
     "jetifier": "^1.6.4",

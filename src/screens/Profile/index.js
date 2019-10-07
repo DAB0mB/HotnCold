@@ -170,6 +170,8 @@ const Profile = () => {
   )), [true]);
 
   useEffect(() => {
+    if (!user) return;
+
     const keyboardShowHandler = () => {
       setEditing(true);
     };
@@ -218,8 +220,8 @@ const Profile = () => {
               <Image style={styles.profilePicture} key={picture} loadingIndicatorSource={require('./default-profile.jpg')} source={{ uri: picture }} />
             ))}
             {itsMe && (
-              <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
-                <View style={[styles.profilePicture, styles.profilePicturePlaceholder]} key='_'>
+              <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()} key='_'>
+                <View style={[styles.profilePicture, styles.profilePicturePlaceholder]}>
                   <McIcon name='image-plus' size={100} color='rgba(0, 0, 0, 0.8)' solid />
                 </View>
               </TouchableWithoutFeedback>
@@ -228,20 +230,20 @@ const Profile = () => {
         </View>
       )}
       <View style={styles.name}>
-        <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} />
+        <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} placeholder='Full Name' />
         <Text style={{ fontSize: styles.name.fontSize, color: styles.name.color }}>, </Text>
         <TouchableWithoutFeedback onPress={() => itsMe ? dateTimePicker.show() : () => {}}>
           <View>
-            <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate} editable={false} />
+            <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate} editable={false} placeholder='01/01/2000' />
           </View>
         </TouchableWithoutFeedback>
       </View>
       <View style={styles.occupation}>
         <FaIcon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} style={{ marginRight: styles.occupation.marginLeft / 2 }} />
-        <MyText style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }} value={occupation} onChangeText={setOccupation} maxLength={30} />
+        <MyText style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }} value={occupation} onChangeText={setOccupation} maxLength={30} placeholder='Occupation' />
       </View>
       <ScrollView style={styles.bio}>
-        <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} maxLength={512} />
+        <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} maxLength={512} placeholder='A short description of yourself: what do you like to do, what do you like to eat, where do you like to go, etc.' />
       </ScrollView>
 
       {itsMe && pictureIndex < pictures.length && (

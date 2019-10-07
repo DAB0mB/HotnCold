@@ -5,15 +5,28 @@ import { useCallback } from 'react';
 import { useMe } from '../../services/Auth';
 import * as fragments from '../fragments';
 
-const updateMyLocation = gql `
-  mutation UpdateMyLocation($location: Vector2D!) {
-    updateMyLocation(location: $location)
+const register = gql `
+  mutation Register(
+    $firstName: String!
+    $lastName: String!
+    $occupation: String!
+    $birthDate: DateTime!
+    $bio: String!
+    $pictures: [String!]!
+  ) {
+    register(
+      firstName: $firstName
+      lastName: $lastName
+      occupation: $occupation
+      birthDate: $birthDate
+      bio: $bio
+      pictures: $pictures
+    )
   }
 `;
 
-updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
-  const me = useMe();
-  const [superMutate, mutation] = useMutation(updateMyLocation, defaultOptions);
+register.use = (defaultOptions = {}) => {
+  const [superMutate, mutation] = useMutation(register, defaultOptions);
 
   const mutate = useCallback((location = defaultLocation) => {
     return superMutate({
@@ -29,9 +42,9 @@ updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
       },
       variables: { location },
     })
-  }, [me, superMutate, defaultLocation]);
+  }, [superMutate]);
 
   return [mutate, mutation];
 };
 
-export default updateMyLocation;
+export default register;

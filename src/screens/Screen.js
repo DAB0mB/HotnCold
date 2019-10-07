@@ -18,7 +18,7 @@ import { DateTimePickerProvider } from '../services/DateTimePicker';
 import { useAlertError, DropdownAlertProvider } from '../services/DropdownAlert';
 import { GeolocationProvider } from '../services/Geolocation';
 import { ImagePickerProvider } from '../services/ImagePicker';
-import { NavigationProvider } from '../services/Navigation';
+import { useNavigation, NavigationProvider } from '../services/Navigation';
 import { once as Once, useCounter, useSet } from '../utils';
 
 const once = Once.create();
@@ -44,6 +44,7 @@ const Screen = ({ children }) => {
 
 Screen.Authorized = ({ children }) => {
   const alertError = useAlertError();
+  const navigation = useNavigation();
   const meQuery = queries.me.use({ onError: alertError });
   const [readyState, updateReadyState] = useCounter();
   const { me } = meQuery.data || {};
@@ -93,6 +94,13 @@ Screen.Authorized = ({ children }) => {
       });
     };
   }, [me && me.id]);
+
+  useEffect(() => {
+    if (meQuery.called && !meQuery.loading && !meQuery.error && !meQuery.data) {
+      // Unauthorized
+      navigation.replace('Profile');
+    }
+  }, [meQuery.called, meQuery.loading, meQuery.error, meQuery.data]);
 
   if (meQuery.loading || readyState != 2) {
     return (
