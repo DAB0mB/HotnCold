@@ -3,12 +3,10 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.psykar.cookiemanager.CookieManagerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.solinor.bluetoothstatus.RNBluetoothManagerPackage;
 import it.innove.BleManagerPackage;
 import com.himelbrand.ble.peripheral.RNBLEPackage;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
@@ -34,12 +32,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new CookieManagerPackage(),
             new ImagePickerPackage(),
             new RNBluetoothManagerPackage(),
             new BleManagerPackage(),
             new RNBLEPackage(),
-            new AsyncStoragePackage(),
           new RCTMGLPackage(),
           new ReactNativeConfigPackage(),
           new GeolocationPackage(),

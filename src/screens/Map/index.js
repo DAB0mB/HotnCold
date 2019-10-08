@@ -31,6 +31,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flexDirection: 'row',
     padding: 10,
+    right: 0,
+    top: 0,
   },
   icon: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -258,6 +260,14 @@ const Map = () => {
       </MapboxGL.MapView>
 
       <View style={styles.iconsContainer}>
+        {__DEV__ && (
+          <TouchableWithoutFeedback onPress={navToRadar}>
+            <View style={styles.icon}>
+              <McIcon name='logout' size={30} color='rgba(0, 0, 0, 0.8)' />
+            </View>
+          </TouchableWithoutFeedback>
+        )}
+
         <TouchableWithoutFeedback onPress={editProfile}>
           <View style={styles.icon}>
             <Fa5Icon name='user-edit' size={25} color='rgba(0, 0, 0, 0.8)' solid />
