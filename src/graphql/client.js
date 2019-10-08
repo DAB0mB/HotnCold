@@ -1,11 +1,9 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import { ApolloLink } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
 import { createUploadLink } from 'apollo-upload-client';
 import CONFIG from 'react-native-config';
-import Observable from 'zen-observable';
 
 const cache = new InMemoryCache()
 
@@ -28,45 +26,53 @@ const httpLink = createUploadLink({
   credentials: 'include',
 });
 
-// react-native doesn't have a built-in handler for cookies, so I use the local storage manually instead
-const authLink = new ApolloLink((operation, forward) => new Observable(async (observable) => {
-  const token = await AsyncStorage.getItem('authToken');
+/* Custom asyn middleware example */
 
-  if (token) {
-    operation.setContext({
-      headers: {
-        cookie: `authToken=${token}`,
-      },
-    });
-  }
+// const authLink = new ApolloLink((operation, forward) => new Observable(async (observable) => {
+//   const cookie = await CookieManager.get(CONFIG.STORAGE_KEY);
 
-  forward(operation).subscribe({
-    async next(response) {
-      const { response: { headers } } = operation.getContext();
+//   operation.setContext({
+//     headers: {
+//       cookie,
+//     },
+//   });
 
-      storeCookies:
-      if (headers) {
-        const cookie = headers.get('Set-Cookie');
+//   let pendingJobs = 0;
+//   let completed = false;
 
-        if (!cookie) break storeCookies;
+//   forward(operation).subscribe({
+//     async next(response) {
+//       pendingJobs++;
+//       const { response: { headers } } = operation.getContext();
 
-        const token = (cookie.match(/authToken=(\w+)/) || [])[1];
+//       if (headers) {
+//         const cookie = headers.get('Set-Cookie');
 
-        if (!token) break storeCookies;
+//         if (cookie) {
+//           await CookieManager.setFromResponse(CONFIG.STORAGE_KEY, cookie)
+//         }
+//       }
 
-        await AsyncStorage.setItem('authToken', token);
-      }
+//       observable.next(response);
 
-      observable.next(response);
-    },
-    error(error) { observable.error(error) },
-    complete() { observable.complete() },
-  });
-}));
+//       if (!--pendingJobs && completed) {
+//         await Promise.resolve();
+//         observable.complete();
+//       }
+//     },
+//     complete() {
+//       completed = true;
 
-const link = ApolloLink.from([errorLink, authLink, httpLink]);
+//       if (!pendingJobs) {
+//         observable.complete();
+//       }
+//     },
+//     error(error) { observable.error(error) },
+//   });
+// }));
 
-// super hacky, we will fix the types eventually
+const link = ApolloLink.from([errorLink, httpLink]);
+
 const client = new ApolloClient({
   cache,
   link,

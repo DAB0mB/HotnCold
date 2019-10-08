@@ -8,7 +8,7 @@ const user = gql `
     firstName
     lastName
     birthDate
-    gender
+    # gender
     age
     bio
     location
