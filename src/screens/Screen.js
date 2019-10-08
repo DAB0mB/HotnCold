@@ -96,11 +96,11 @@ Screen.Authorized = ({ children }) => {
   }, [me && me.id]);
 
   useEffect(() => {
-    if (meQuery.called && !meQuery.loading && !meQuery.error && !meQuery.data) {
+    if (meQuery.called && !meQuery.loading && !meQuery.error && !me) {
       // Unauthorized
       navigation.replace('Profile');
     }
-  }, [meQuery.called, meQuery.loading, meQuery.error, meQuery.data]);
+  }, [meQuery.called, meQuery.loading, meQuery.error, me]);
 
   if (meQuery.loading || readyState != 2) {
     return (

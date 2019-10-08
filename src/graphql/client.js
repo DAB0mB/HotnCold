@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-community/async-storage';
 import { ApolloLink } from 'apollo-link';
 import { onError } from 'apollo-link-error';
 import { InMemoryCache } from 'apollo-cache-inmemory';
@@ -39,21 +40,27 @@ const authLink = new ApolloLink((operation, forward) => new Observable(async (ob
     });
   }
 
-  forward(operation).map(async (response) => {
-    const context = operation.getContext();
-    const response = context.response;
-    const headers = response.headers;
+  forward(operation).subscribe({
+    async next(response) {
+      const { response: { headers } } = operation.getContext();
 
-    if (headers) {
-      const cookie = headers.get('Set-Cookie');
-      const token = (cookie.match(/authToken=(\w+)/) || [])[1];
+      storeCookies:
+      if (headers) {
+        const cookie = headers.get('Set-Cookie');
 
-      if (token) {
+        if (!cookie) break storeCookies;
+
+        const token = (cookie.match(/authToken=(\w+)/) || [])[1];
+
+        if (!token) break storeCookies;
+
         await AsyncStorage.setItem('authToken', token);
       }
-    }
 
-    observable.next(response);
+      observable.next(response);
+    },
+    error(error) { observable.error(error) },
+    complete() { observable.complete() },
   });
 }));
 

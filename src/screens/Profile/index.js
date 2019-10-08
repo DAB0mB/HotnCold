@@ -97,27 +97,29 @@ const Profile = () => {
   const navigation = useNavigation();
   const user = navigation.getParam('user');
   const itsMe = navigation.getParam('itsMe');
+  const editMode = !user && !itsMe;
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
   const [swiperKey, renderSwiper] = useCounter();
   const [pictureIndex, setPictureIndex] = useState(0);
-  const [editing, setEditing] = useState(false);
-  const [name, setName] = useState(() => itsMe ? `${user.firstName} ${user.lastName}` : user.firstName);
-  const [birthDate, setBirthDate] = useState(() => itsMe ? moment(user.birthDate).calendar() : user.age);
-  const [occupation, setOccupation] = useState(user.occupation);
-  const [bio, setBio] = useState(user.bio);
+  const [typing, setTyping] = useState(false);
+  const [name, setName] = useState(() => !user ? '' : itsMe ? `${user.firstName} ${user.lastName}` : user.firstName);
+  const [birthDate, setBirthDate] = useState(() => !user ? '' : itsMe ? user.birthDate : user.age);
+  const [occupation, setOccupation] = useState(() => user ? user.occupation : '');
+  const [bio, setBio] = useState(() => user ? user.bio : '');
   // TODO: Pick and drop function
-  const [pictures, setPictures] = useState(user.pictures);
+  const [pictures, setPictures] = useState(() => user ? user.pictures : []);
   const dateTimePicker = useDateTimePicker({
     mode: 'date',
     maximumDate: useMemo(() => new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000), [true]),
     minimumDate: useMemo(() => new Date(Date.now() - 100 * 365 * 24 * 60 * 60 * 1000), [true]),
-    date: useMemo(() => new Date(user.birthDate), [user.birthDate]),
+    date: useMemo(() => new Date(birthDate ? birthDate : '1/1/2000'), [birthDate]),
     onConfirm: useCallback((birthDate) => {
-      setBirthDate(moment(birthDate).calendar());
+      setBirthDate(birthDate);
     }, [setBirthDate])
   });
-  const [updateMyProfile] = mutations.updateMyProfile.use({
+  const profileMutation = itsMe ? mutations.updateMyProfile : mutations.register;
+  const [mutateProfile] = profileMutation.use({
     bio,
     occupation,
     pictures,
@@ -132,7 +134,13 @@ const Profile = () => {
     }, [name])
   }, {
     onError: alertError,
-    onCompleted: useCallback(() => alertSuccess('Profile successfully updated'), [alertSuccess]),
+    onCompleted: useCallback(() => {
+      if (itsMe) {
+        alertSuccess('Profile successfully updated')
+      } else {
+        navigation.replace('Map');
+      }
+    }, [itsMe, alertSuccess, navigation]),
   });
   const [uploadPicture] = mutations.uploadPicture.use({
     onError: alertError,
@@ -162,7 +170,10 @@ const Profile = () => {
 
   const MyText = useCallback(React.forwardRef(({ style = {}, ...props }, ref) => (
     <TextInput
-      editable={Boolean(itsMe)}
+      editable={editMode}
+      autoCompleteType='off'
+      importantForAutofill='no'
+      autoCorrect={false}
       {...props}
       style={{ padding: 0, ...style }}
       ref={ref}
@@ -170,15 +181,15 @@ const Profile = () => {
   )), [true]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!editMode) return;
 
     const keyboardShowHandler = () => {
-      setEditing(true);
+      setTyping(true);
     };
 
     const keyboardHideHandler = () => {
       Keyboard.dismiss();
-      setEditing(false);
+      setTyping(false);
     };
 
     Keyboard.addListener('keyboardDidShow', keyboardShowHandler);
@@ -188,7 +199,7 @@ const Profile = () => {
       Keyboard.removeListener('keyboardDidShow', keyboardShowHandler);
       Keyboard.removeListener('keyboardDidHide', keyboardHideHandler);
     };
-  }, [setEditing]);
+  }, [setTyping]);
 
   useEffect(() => {
     const backHandler = () => {
@@ -213,28 +224,28 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      {!editing && (
+      {!typing && (
         <View style={styles.profilePicture}>
+          {/*react-native-swiper doesn't iterate through children properly so I have to compose the array manually*/}
           <Swiper showButtons loop={false} onIndexChanged={setPictureIndex} key={swiperKey}>
             {pictures.map((picture) => (
               <Image style={styles.profilePicture} key={picture} loadingIndicatorSource={require('./default-profile.jpg')} source={{ uri: picture }} />
-            ))}
-            {itsMe && (
+            )).concat(editMode && (
               <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()} key='_'>
                 <View style={[styles.profilePicture, styles.profilePicturePlaceholder]}>
                   <McIcon name='image-plus' size={100} color='rgba(0, 0, 0, 0.8)' solid />
                 </View>
               </TouchableWithoutFeedback>
-            )}
+            )).filter(Boolean)}
           </Swiper>
         </View>
       )}
       <View style={styles.name}>
-        <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} placeholder='Full Name' />
+        <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} placeholder={name ? '' : 'Full Name'} />
         <Text style={{ fontSize: styles.name.fontSize, color: styles.name.color }}>, </Text>
-        <TouchableWithoutFeedback onPress={() => itsMe ? dateTimePicker.show() : () => {}}>
+        <TouchableWithoutFeedback onPress={() => editMode ? dateTimePicker.show() : () => {}}>
           <View>
-            <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate} editable={false} placeholder='01/01/2000' />
+            <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate && moment(birthDate).format('MMMM Do YYYY')} editable={false} placeholder='Birthday' />
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -246,7 +257,7 @@ const Profile = () => {
         <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} maxLength={512} placeholder='A short description of yourself: what do you like to do, what do you like to eat, where do you like to go, etc.' />
       </ScrollView>
 
-      {itsMe && pictureIndex < pictures.length && (
+      {editMode && pictureIndex < pictures.length && (
         <View style={styles.picturesButtons}>
           {pictures.length < 6 && (
             <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
@@ -263,9 +274,9 @@ const Profile = () => {
         </View>
       )}
 
-      {itsMe && (
+      {editMode && (
         <View style={styles.profileButtons}>
-          <TouchableWithoutFeedback onPress={updateMyProfile}>
+          <TouchableWithoutFeedback onPress={mutateProfile}>
             <View style={styles.icon}>
               <Fa5Icon name='save' size={25} color='rgba(0, 0, 0, 0.8)' solid />
             </View>

@@ -25,24 +25,30 @@ const register = gql `
   }
 `;
 
-register.use = (defaultOptions = {}) => {
+register.use = (defaultArgs = {}, defaultOptions = {}) => {
   const [superMutate, mutation] = useMutation(register, defaultOptions);
 
-  const mutate = useCallback((location = defaultLocation) => {
+  const mutate = useCallback(({
+    firstName = defaultArgs.firstName,
+    lastName = defaultArgs.lastName,
+    birthDate = defaultArgs.birthDate,
+    occupation = defaultArgs.occupation,
+    bio = defaultArgs.bio,
+    pictures = defaultArgs.pictures,
+  }) => {
+    // Token should be stored via response.headers, see graphql/client.ts
     return superMutate({
-      update: (client, mutation) => {
-        if (mutation.error) return;
-        if (!me) return;
-
-        client.writeFragment({
-          id: me.id,
-          fragment: fragments.user,
-          data: { ...me, location },
-        });
-      },
-      variables: { location },
+      variables: { firstName, lastName, birthDate, occupation, bio, pictures },
     })
-  }, [superMutate]);
+  }, [
+    superMutate,
+    defaultArgs.firstName,
+    defaultArgs.lastName,
+    defaultArgs.birthDate,
+    defaultArgs.occupation,
+    defaultArgs.bio,
+    defaultArgs.pictures,
+  ]);
 
   return [mutate, mutation];
 };
