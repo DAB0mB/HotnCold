@@ -12,3 +12,4 @@ web-report/
 .env
 android/build
 android/app/build
+android/gradle.properties
