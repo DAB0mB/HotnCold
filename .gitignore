@@ -10,3 +10,5 @@ npm-debug.*
 web-build/
 web-report/
 .env
+android/build
+android/app/build
