@@ -26,19 +26,11 @@ export const useRegister = (...args) => {
 };
 
 export const useLogout = () => {
-  const me = useMe();
   const cookie = useCookie();
   const client = useApolloClient();
 
   return useCallback(async () => {
     await cookie.clear();
-
-    if (me) {
-      client.writeFragment({
-        id: me.id,
-        fragment: fragments.user,
-        data: null
-      });
-    }
-  }, [client, cookie, me]);
+    await client.clearStore();
+  }, [client, cookie]);
 };

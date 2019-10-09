@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Button, Image, View, Text, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
 import CONFIG from 'react-native-config';
+import { TextDecoder } from 'text-encoding';
 
 import * as queries from '../../graphql/queries';
 import { useMe } from '../../services/Auth';

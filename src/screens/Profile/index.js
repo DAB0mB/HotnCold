@@ -25,7 +25,7 @@ import { useDateTimePicker } from '../../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../../services/DropdownAlert';
 import { useImagePicker } from '../../services/ImagePicker';
 import { useNavigation } from '../../services/Navigation';
-import { useCounter } from '../../utils';
+import { useRenderer } from '../../utils';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
@@ -101,7 +101,7 @@ const Profile = () => {
   const editMode = !user && !itsMe;
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
-  const [swiperKey, renderSwiper] = useCounter();
+  const [swiperKey, renderSwiper] = useRenderer();
   const [pictureIndex, setPictureIndex] = useState(0);
   const [typing, setTyping] = useState(false);
   const [name, setName] = useState(() => !user ? '' : itsMe ? `${user.firstName} ${user.lastName}` : user.firstName);

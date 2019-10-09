@@ -7,6 +7,7 @@ import BlePeripheral from 'react-native-ble-peripheral';
 import CONFIG from 'react-native-config';
 import DropdownAlert from 'react-native-dropdownalert';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import { TextEncoder } from 'text-encoding';
 
 import ActivityIndicator from '../components/ActivityIndicator';
 import PermissionRequestor from '../components/PermissionRequestor';
@@ -14,13 +15,13 @@ import graphqlClient from '../graphql/client';
 import * as queries from '../graphql/queries';
 import { MeProvider } from '../services/Auth';
 import { BLE_PERMISSIONS, BLE_PROPERTIES, BluetoothLEProvider } from '../services/BluetoothLE';
-import { CookieProvider } from '../services/Cookie';
+import { useCookie, CookieProvider } from '../services/Cookie';
 import { DateTimePickerProvider } from '../services/DateTimePicker';
 import { useAlertError, DropdownAlertProvider } from '../services/DropdownAlert';
 import { GeolocationProvider } from '../services/Geolocation';
 import { ImagePickerProvider } from '../services/ImagePicker';
 import { useNavigation, NavigationProvider } from '../services/Navigation';
-import { once as Once, useCounter, useSet } from '../utils';
+import { once as Once, useRenderer, useSet, useAsyncEffect } from '../utils';
 
 const once = Once.create();
 
@@ -32,16 +33,36 @@ const styles = StyleSheet.create({
 });
 
 const Screen = ({ children }) => {
+  if (__DEV__ && CONFIG.INITIAL_USER_TOKEN) {
+    const cookie = useCookie();
+    const alertError = useAlertError();
+    const [cookieReady, setCookieReady] = useState(!!CONFIG.INITIAL_USER_TOKEN);
+
+    useEffect(() => {
+      once.try(() => {
+        once(cookie, Promise.resolve());
+
+        return cookie.set('authToken', CONFIG.INITIAL_USER_TOKEN);
+      }).then(() => {
+        setCookieReady(true);
+      }).catch(alertError);
+    }, [true]);
+
+    if (!cookieReady) {
+      return (
+        <ActivityIndicator />
+      );
+    }
+  }
+
   return (
-    <CookieProvider>
-      <MeProvider me={null}>
-        <DateTimePickerProvider>
-          <ImagePickerProvider>
-            {children}
-          </ImagePickerProvider>
-        </DateTimePickerProvider>
-      </MeProvider>
-    </CookieProvider>
+    <MeProvider me={null}>
+      <DateTimePickerProvider>
+        <ImagePickerProvider>
+          {children}
+        </ImagePickerProvider>
+      </DateTimePickerProvider>
+    </MeProvider>
   );
 };
 
@@ -49,7 +70,7 @@ Screen.Authorized = ({ children }) => {
   const alertError = useAlertError();
   const navigation = useNavigation();
   const meQuery = queries.me.use({ onError: alertError });
-  const [readyState, updateReadyState] = useCounter();
+  const [readyState, updateReadyState] = useRenderer();
   const { me } = meQuery.data || {};
 
   useEffect(() => {
@@ -121,16 +142,20 @@ Screen.Authorized = ({ children }) => {
 Screen.create = (Root) => ({ navigation }) => {
   return (
     <ApolloProvider client={graphqlClient}>
-      <NavigationProvider navigation={navigation}>
-        <DropdownAlertProvider>
-          <StatusBar translucent backgroundColor='black' />
-          <SafeAreaView style={styles.container}>
-            <Screen>
-              <Root />
-            </Screen>
-          </SafeAreaView>
-        </DropdownAlertProvider>
-      </NavigationProvider>
+    <NavigationProvider navigation={navigation}>
+    <DropdownAlertProvider>
+    <CookieProvider>
+
+      <StatusBar translucent backgroundColor='black' />
+      <SafeAreaView style={styles.container}>
+        <Screen>
+          <Root />
+        </Screen>
+      </SafeAreaView>
+
+    </CookieProvider>
+    </DropdownAlertProvider>
+    </NavigationProvider>
     </ApolloProvider>
   );
 };
@@ -138,13 +163,17 @@ Screen.create = (Root) => ({ navigation }) => {
 Screen.Authorized.create = (Root) => Screen.create(() => {
   return (
     <PermissionRequestor functions={['bluetooth', 'location']}>
+
       <BluetoothLEProvider>
-        <GeolocationProvider>
-          <Screen.Authorized>
-            <Root />
-          </Screen.Authorized>
-        </GeolocationProvider>
+      <GeolocationProvider>
+
+        <Screen.Authorized>
+          <Root />
+        </Screen.Authorized>
+
+      </GeolocationProvider>
       </BluetoothLEProvider>
+
     </PermissionRequestor>
   );
 });

@@ -18,7 +18,7 @@ import { useMe, useLogout } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
 import { useNavigation } from '../../services/Navigation';
-import { useInterval, useCounter } from '../../utils';
+import { useInterval, useRenderer } from '../../utils';
 import Screen from '../Screen';
 
 const styles = StyleSheet.create({
@@ -100,7 +100,7 @@ const Map = () => {
   const alertError = useAlertError();
   const navigation = useNavigation();
   const geolocation = useGeolocation();
-  const [shapeKey, renderShape] = useCounter();
+  const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation] = mutations.updateMyLocation.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
@@ -119,6 +119,12 @@ const Map = () => {
       )
     });
   }, [setScreenFeatures, areaFeatures]);
+
+  const logoutAndFlee = useCallback(() => {
+    logout().then(() => {
+      navigation.replace('Profile');
+    }).catch(alertError);
+  }, [logout, alertError, navigation]);
 
   const renderSelection = useCallback(async (e) => {
     const map = mapRef.current;
@@ -263,7 +269,7 @@ const Map = () => {
 
       <View style={styles.iconsContainer}>
         {__DEV__ && (
-          <TouchableWithoutFeedback onPress={() => logout().catch(alertError)}>
+          <TouchableWithoutFeedback onPress={logoutAndFlee}>
             <View style={styles.icon}>
               <McIcon name='logout' size={30} color='rgba(0, 0, 0, 0.8)' />
             </View>

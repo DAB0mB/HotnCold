@@ -1,10 +1,10 @@
-import useAsyncEffect from '@n1ru4l/use-async-effect';
 import React, { useMemo, useState } from 'react';
 import { Platform, View, Text, StyleSheet } from 'react-native';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import Permissions from 'react-native-permissions';
 
 import { useAlertError } from '../services/DropdownAlert';
+import { useAsyncEffect } from '../utils';
 import ActivityIndicator from './ActivityIndicator';
 
 const styles = StyleSheet.create({
