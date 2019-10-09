@@ -33,6 +33,18 @@ allprojects {
     }
 }
 
+// Make sure all android plugins target the same SDK version as the root project to avoid build errors
+// https://stackoverflow.com/questions/51508578/react-native-android-release-build-failing-gradle
+subprojects { subproject ->
+    afterEvaluate{
+        if((subproject.plugins.hasPlugin('android') || subproject.plugins.hasPlugin('android-library'))) {
+            android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+            }
+        }
+    }
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.7'

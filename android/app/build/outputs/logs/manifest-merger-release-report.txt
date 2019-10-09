@@ -1,0 +1,386 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-cookie] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookie/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-11:12
+MERGED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-23:12
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-14:12
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-15:12
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-14:12
+MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-14:12
+MERGED from [:react-native-community-geolocation] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/geolocation/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-config] /home/eytan/Workspace/HotnCold/node_modules/react-native-config/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-11:12
+MERGED from [:react-native-screens] /home/eytan/Workspace/HotnCold/node_modules/react-native-screens/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-11:12
+MERGED from [:react-native-reanimated] /home/eytan/Workspace/HotnCold/node_modules/react-native-reanimated/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-11:12
+MERGED from [:react-native-gesture-handler] /home/eytan/Workspace/HotnCold/node_modules/react-native-gesture-handler/android/build/intermediates/library_manifest/release/AndroidManifest.xml:2:1-11:12
+MERGED from [com.facebook.react:react-native:0.59.10] /home/eytan/.gradle/caches/transforms-1/files-1.1/react-native-0.59.10.aar/a3eb027e158e8a198e5d8f5702f4f9be/AndroidManifest.xml:2:1-13:12
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-localization-v8:0.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-localization-v8-0.10.0.aar/23fc8cc0747f030e723c9babb7c15444/AndroidManifest.xml:2:1-9:12
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v8:0.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-markerview-v8-0.3.0.aar/5905a8d4a5be784d6d1c6f44abcc7fe5/AndroidManifest.xml:2:1-9:12
+MERGED from [com.android.support:appcompat-v7:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c61e2f56784e44d75c50459e3d70cd0b/AndroidManifest.xml:17:1-22:12
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:2:1-20:12
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-28.0.0.aar/77884e4d6e4a30bb1207e15d3b684698/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-28.0.0.aar/6b74ed75d0cdec25506c41699f578232/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:transition:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/transition-28.0.0.aar/440b28025bfba601990499eae23459da/AndroidManifest.xml:17:1-22:12
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-gestures:0.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-gestures-0.5.1.aar/b93c28489fa82ed2781be7e355a89dd5/AndroidManifest.xml:2:1-11:12
+MERGED from [com.android.support:support-fragment:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-fragment-28.0.0.aar/5a574bd91e8887b2a1b73963d4580620/AndroidManifest.xml:17:1-22:12
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:2:1-30:12
+MERGED from [com.android.support:support-core-ui:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-core-ui-28.0.0.aar/cf9cc168bd419f44550be530cdb51f84/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-utils:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-core-utils-28.0.0.aar/aa027b06b73dedce9d5ed56ba1e1552d/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:loader:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/loader-28.0.0.aar/2728a4659d91a5d6884fc61127307793/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:viewpager:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/viewpager-28.0.0.aar/7ff751107051fe8be42cd229213dadb2/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/coordinatorlayout-28.0.0.aar/fd565ea74f333a6834aaef677651d89e/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:drawerlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/drawerlayout-28.0.0.aar/4536b17e29659c7dfb8d2823f5093e66/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/ec41bce36c9e70a6ab5dac594304b1c9/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:customview:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/customview-28.0.0.aar/2a44c82d4356f16dda07d6ef3c135665/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/swiperefreshlayout-28.0.0.aar/9d90bb9a3b6e65dd0ab8a01a6ca6f2ce/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/asynclayoutinflater-28.0.0.aar/37c1103c10b09dc484f4849bfe26fa87/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-compat:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/29e256cee60496a3c4632f9be68280e2/AndroidManifest.xml:17:1-24:12
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/36e72b8f2d7a027e8c2e5d87dbad73b7/AndroidManifest.xml:17:1-25:12
+MERGED from [com.android.support:cursoradapter:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/cursoradapter-28.0.0.aar/4fefe1c508c646efd949a12d9b1877bf/AndroidManifest.xml:17:1-22:12
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-accounts:0.2.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-accounts-0.2.0.aar/fffb74b75d9079724f6ce9182b783539/AndroidManifest.xml:2:1-9:12
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/55cafb87cd92fd9816625bc59b060281/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:documentfile:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/documentfile-28.0.0.aar/b985ccb8200dcaae53bdb39f9d8c80a2/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/bb37195d77136e89a061bac8bdb1ff72/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:print:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/print-28.0.0.aar/8276315ebd7c7a89ad7e3cf256f2f5bb/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.1.aar/d83ec3d66233167871180fa104cce647/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/10e25f2125f039041aa6d2f84ace2bca/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.1.aar/6e2b471f6f5bd4de16d9db71e1ec2c5f/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.core:runtime:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/5484856b27ac229d442b67c360f36117/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:interpolator:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/interpolator-28.0.0.aar/bb1ce05a3dd0296b3e74d83c05f81923/AndroidManifest.xml:17:1-22:12
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-okhttp3-1.10.0.aar/7ba17bbe7a96a59c33f93d065cf43057/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:fresco:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/fresco-1.10.0.aar/f9043e92720d5c99dff2351683d29b31/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:drawee:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/drawee-1.10.0.aar/9400783d1e6244f4073e03de04925aac/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:imagepipeline:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-1.10.0.aar/16f544b5e3010891b963561724e0d2ed/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:imagepipeline-base:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-base-1.10.0.aar/f0f4864f082094346df3fe86f2d5f757/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.soloader:soloader:0.6.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/soloader-0.6.0.aar/7d84776282699ee62ae729d34c7158f7/AndroidManifest.xml:2:1-13:12
+MERGED from [com.jakewharton.timber:timber:4.7.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/timber-4.7.1.aar/f03549d9a37d123fe8643376887e4208/AndroidManifest.xml:2:1-9:12
+MERGED from [com.facebook.fresco:fbcore:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/fbcore-1.10.0.aar/3bdaaa5d062fd3ab71869ef654115508/AndroidManifest.xml:2:1-9:12
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-core-1.3.0.aar/222c56c1afb7efa5126356e9c6e93137/AndroidManifest.xml:2:1-14:12
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+	package
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:2:5-27
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:4:5-67
+MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-67
+MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-67
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:16:5-67
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:16:5-67
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:16:5-67
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:16:5-67
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:4:22-64
+uses-permission#android.permission.SYSTEM_ALERT_WINDOW
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:5:5-77
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:5:22-75
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:10:5-81
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:9:5-81
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:9:5-81
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:10:22-78
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:11:5-79
+MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/release/AndroidManifest.xml:12:5-79
+MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/release/AndroidManifest.xml:12:5-79
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:13:5-79
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:13:5-79
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-core-1.3.0.aar/222c56c1afb7efa5126356e9c6e93137/AndroidManifest.xml:11:5-79
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-core-1.3.0.aar/222c56c1afb7efa5126356e9c6e93137/AndroidManifest.xml:11:5-79
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:11:22-76
+uses-permission#android.permission.BLUETOOTH
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:12:5-67
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-68
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-68
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-68
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-68
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-68
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-68
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:12:22-65
+uses-permission#android.permission.BLUETOOTH_ADMIN
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:13:5-73
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/release/AndroidManifest.xml:12:5-74
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/release/AndroidManifest.xml:12:5-74
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:8:5-74
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:8:5-74
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/release/AndroidManifest.xml:12:5-74
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/release/AndroidManifest.xml:12:5-74
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:13:22-71
+uses-permission#android.permission.CAMERA
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:14:5-65
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:14:22-62
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:15:5-80
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:15:22-78
+uses-feature#android.hardware.bluetooth_le
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:18:5-89
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-13:36
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-13:36
+	android:required
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:18:64-87
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:18:19-63
+application
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:20:5-39:19
+MERGED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-21:19
+MERGED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:11:5-21:19
+MERGED from [com.facebook.react:react-native:0.59.10] /home/eytan/.gradle/caches/transforms-1/files-1.1/react-native-0.59.10.aar/a3eb027e158e8a198e5d8f5702f4f9be/AndroidManifest.xml:11:5-20
+MERGED from [com.facebook.react:react-native:0.59.10] /home/eytan/.gradle/caches/transforms-1/files-1.1/react-native-0.59.10.aar/a3eb027e158e8a198e5d8f5702f4f9be/AndroidManifest.xml:11:5-20
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:18:5-28:19
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:18:5-28:19
+MERGED from [com.android.support:support-compat:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/29e256cee60496a3c4632f9be68280e2/AndroidManifest.xml:22:5-94
+MERGED from [com.android.support:support-compat:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/29e256cee60496a3c4632f9be68280e2/AndroidManifest.xml:22:5-94
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/36e72b8f2d7a027e8c2e5d87dbad73b7/AndroidManifest.xml:22:5-23:19
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/36e72b8f2d7a027e8c2e5d87dbad73b7/AndroidManifest.xml:22:5-23:19
+MERGED from [com.facebook.soloader:soloader:0.6.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/soloader-0.6.0.aar/7d84776282699ee62ae729d34c7158f7/AndroidManifest.xml:11:5-20
+MERGED from [com.facebook.soloader:soloader:0.6.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/soloader-0.6.0.aar/7d84776282699ee62ae729d34c7158f7/AndroidManifest.xml:11:5-20
+MERGED from [com.jakewharton.timber:timber:4.7.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/timber-4.7.1.aar/f03549d9a37d123fe8643376887e4208/AndroidManifest.xml:7:5-20
+MERGED from [com.jakewharton.timber:timber:4.7.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/timber-4.7.1.aar/f03549d9a37d123fe8643376887e4208/AndroidManifest.xml:7:5-20
+	android:appComponentFactory
+		ADDED from [com.android.support:support-compat:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/29e256cee60496a3c4632f9be68280e2/AndroidManifest.xml:22:18-91
+	android:label
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:22:7-39
+	android:roundIcon
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:24:7-52
+	android:icon
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:23:7-41
+	android:allowBackup
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:25:7-34
+	android:theme
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:26:7-38
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:21:7-38
+activity#com.hotncold.MainActivity
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:27:7-37:18
+	android:screenOrientation
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:30:9-45
+	android:label
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:29:9-41
+	android:windowSoftInputMode
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:32:9-51
+	android:configChanges
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:31:9-79
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:28:9-37
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:33:9-36:25
+action#android.intent.action.MAIN
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:34:13-65
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:34:21-62
+category#android.intent.category.LAUNCHER
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:35:13-73
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:35:23-70
+activity#com.facebook.react.devsupport.DevSettingsActivity
+ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:38:7-84
+	android:name
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:38:17-81
+uses-sdk
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/release/AndroidManifest.xml:5:5-7:41
+MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/release/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-cookie] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookie/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-cookie] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookie/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/release/AndroidManifest.xml:5:5-44
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-community-geolocation] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/geolocation/android/build/intermediates/library_manifest/release/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-community-geolocation] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/geolocation/android/build/intermediates/library_manifest/release/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-config] /home/eytan/Workspace/HotnCold/node_modules/react-native-config/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-config] /home/eytan/Workspace/HotnCold/node_modules/react-native-config/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-screens] /home/eytan/Workspace/HotnCold/node_modules/react-native-screens/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-screens] /home/eytan/Workspace/HotnCold/node_modules/react-native-screens/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-reanimated] /home/eytan/Workspace/HotnCold/node_modules/react-native-reanimated/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-reanimated] /home/eytan/Workspace/HotnCold/node_modules/react-native-reanimated/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-gesture-handler] /home/eytan/Workspace/HotnCold/node_modules/react-native-gesture-handler/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-gesture-handler] /home/eytan/Workspace/HotnCold/node_modules/react-native-gesture-handler/android/build/intermediates/library_manifest/release/AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.react:react-native:0.59.10] /home/eytan/.gradle/caches/transforms-1/files-1.1/react-native-0.59.10.aar/a3eb027e158e8a198e5d8f5702f4f9be/AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.react:react-native:0.59.10] /home/eytan/.gradle/caches/transforms-1/files-1.1/react-native-0.59.10.aar/a3eb027e158e8a198e5d8f5702f4f9be/AndroidManifest.xml:7:5-9:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-localization-v8:0.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-localization-v8-0.10.0.aar/23fc8cc0747f030e723c9babb7c15444/AndroidManifest.xml:5:5-7:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-localization-v8:0.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-localization-v8-0.10.0.aar/23fc8cc0747f030e723c9babb7c15444/AndroidManifest.xml:5:5-7:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v8:0.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-markerview-v8-0.3.0.aar/5905a8d4a5be784d6d1c6f44abcc7fe5/AndroidManifest.xml:5:5-7:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-plugin-markerview-v8:0.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-plugin-markerview-v8-0.3.0.aar/5905a8d4a5be784d6d1c6f44abcc7fe5/AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:appcompat-v7:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c61e2f56784e44d75c50459e3d70cd0b/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/c61e2f56784e44d75c50459e3d70cd0b/AndroidManifest.xml:20:5-44
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:5:5-7:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:5:5-7:41
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-28.0.0.aar/77884e4d6e4a30bb1207e15d3b684698/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-28.0.0.aar/77884e4d6e4a30bb1207e15d3b684698/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-28.0.0.aar/6b74ed75d0cdec25506c41699f578232/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-28.0.0.aar/6b74ed75d0cdec25506c41699f578232/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:transition:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/transition-28.0.0.aar/440b28025bfba601990499eae23459da/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:transition:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/transition-28.0.0.aar/440b28025bfba601990499eae23459da/AndroidManifest.xml:20:5-44
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-gestures:0.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-gestures-0.5.1.aar/b93c28489fa82ed2781be7e355a89dd5/AndroidManifest.xml:7:5-9:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-gestures:0.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-gestures-0.5.1.aar/b93c28489fa82ed2781be7e355a89dd5/AndroidManifest.xml:7:5-9:41
+MERGED from [com.android.support:support-fragment:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-fragment-28.0.0.aar/5a574bd91e8887b2a1b73963d4580620/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-fragment-28.0.0.aar/5a574bd91e8887b2a1b73963d4580620/AndroidManifest.xml:20:5-44
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:7:5-9:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:7:5-9:41
+MERGED from [com.android.support:support-core-ui:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-core-ui-28.0.0.aar/cf9cc168bd419f44550be530cdb51f84/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-core-ui-28.0.0.aar/cf9cc168bd419f44550be530cdb51f84/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-core-utils-28.0.0.aar/aa027b06b73dedce9d5ed56ba1e1552d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-core-utils-28.0.0.aar/aa027b06b73dedce9d5ed56ba1e1552d/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:loader:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/loader-28.0.0.aar/2728a4659d91a5d6884fc61127307793/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:loader:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/loader-28.0.0.aar/2728a4659d91a5d6884fc61127307793/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:viewpager:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/viewpager-28.0.0.aar/7ff751107051fe8be42cd229213dadb2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:viewpager:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/viewpager-28.0.0.aar/7ff751107051fe8be42cd229213dadb2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/coordinatorlayout-28.0.0.aar/fd565ea74f333a6834aaef677651d89e/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:coordinatorlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/coordinatorlayout-28.0.0.aar/fd565ea74f333a6834aaef677651d89e/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:drawerlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/drawerlayout-28.0.0.aar/4536b17e29659c7dfb8d2823f5093e66/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:drawerlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/drawerlayout-28.0.0.aar/4536b17e29659c7dfb8d2823f5093e66/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/ec41bce36c9e70a6ab5dac594304b1c9/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:slidingpanelayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/slidingpanelayout-28.0.0.aar/ec41bce36c9e70a6ab5dac594304b1c9/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:customview:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/customview-28.0.0.aar/2a44c82d4356f16dda07d6ef3c135665/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:customview:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/customview-28.0.0.aar/2a44c82d4356f16dda07d6ef3c135665/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/swiperefreshlayout-28.0.0.aar/9d90bb9a3b6e65dd0ab8a01a6ca6f2ce/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:swiperefreshlayout:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/swiperefreshlayout-28.0.0.aar/9d90bb9a3b6e65dd0ab8a01a6ca6f2ce/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/asynclayoutinflater-28.0.0.aar/37c1103c10b09dc484f4849bfe26fa87/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:asynclayoutinflater:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/asynclayoutinflater-28.0.0.aar/37c1103c10b09dc484f4849bfe26fa87/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/29e256cee60496a3c4632f9be68280e2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/support-compat-28.0.0.aar/29e256cee60496a3c4632f9be68280e2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/36e72b8f2d7a027e8c2e5d87dbad73b7/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:versionedparcelable:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/versionedparcelable-28.0.0.aar/36e72b8f2d7a027e8c2e5d87dbad73b7/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cursoradapter:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/cursoradapter-28.0.0.aar/4fefe1c508c646efd949a12d9b1877bf/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cursoradapter:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/cursoradapter-28.0.0.aar/4fefe1c508c646efd949a12d9b1877bf/AndroidManifest.xml:20:5-44
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-accounts:0.2.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-accounts-0.2.0.aar/fffb74b75d9079724f6ce9182b783539/AndroidManifest.xml:5:5-7:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-accounts:0.2.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-accounts-0.2.0.aar/fffb74b75d9079724f6ce9182b783539/AndroidManifest.xml:5:5-7:41
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/55cafb87cd92fd9816625bc59b060281/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/55cafb87cd92fd9816625bc59b060281/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:documentfile:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/documentfile-28.0.0.aar/b985ccb8200dcaae53bdb39f9d8c80a2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:documentfile:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/documentfile-28.0.0.aar/b985ccb8200dcaae53bdb39f9d8c80a2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/bb37195d77136e89a061bac8bdb1ff72/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:localbroadcastmanager:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/localbroadcastmanager-28.0.0.aar/bb37195d77136e89a061bac8bdb1ff72/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:print:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/print-28.0.0.aar/8276315ebd7c7a89ad7e3cf256f2f5bb/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:print:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/print-28.0.0.aar/8276315ebd7c7a89ad7e3cf256f2f5bb/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.1.aar/d83ec3d66233167871180fa104cce647/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:viewmodel:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.1.aar/d83ec3d66233167871180fa104cce647/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/10e25f2125f039041aa6d2f84ace2bca/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/livedata-1.1.1.aar/10e25f2125f039041aa6d2f84ace2bca/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.1.aar/6e2b471f6f5bd4de16d9db71e1ec2c5f/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:livedata-core:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/livedata-core-1.1.1.aar/6e2b471f6f5bd4de16d9db71e1ec2c5f/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/5484856b27ac229d442b67c360f36117/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.core:runtime:1.1.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/runtime-1.1.1.aar/5484856b27ac229d442b67c360f36117/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:interpolator:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/interpolator-28.0.0.aar/bb1ce05a3dd0296b3e74d83c05f81923/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:interpolator:28.0.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/interpolator-28.0.0.aar/bb1ce05a3dd0296b3e74d83c05f81923/AndroidManifest.xml:20:5-44
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-okhttp3-1.10.0.aar/7ba17bbe7a96a59c33f93d065cf43057/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-okhttp3:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-okhttp3-1.10.0.aar/7ba17bbe7a96a59c33f93d065cf43057/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:fresco:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/fresco-1.10.0.aar/f9043e92720d5c99dff2351683d29b31/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:fresco:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/fresco-1.10.0.aar/f9043e92720d5c99dff2351683d29b31/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:drawee:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/drawee-1.10.0.aar/9400783d1e6244f4073e03de04925aac/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:drawee:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/drawee-1.10.0.aar/9400783d1e6244f4073e03de04925aac/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-1.10.0.aar/16f544b5e3010891b963561724e0d2ed/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-1.10.0.aar/16f544b5e3010891b963561724e0d2ed/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-base:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-base-1.10.0.aar/f0f4864f082094346df3fe86f2d5f757/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:imagepipeline-base:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/imagepipeline-base-1.10.0.aar/f0f4864f082094346df3fe86f2d5f757/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.soloader:soloader:0.6.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/soloader-0.6.0.aar/7d84776282699ee62ae729d34c7158f7/AndroidManifest.xml:7:5-9:41
+MERGED from [com.facebook.soloader:soloader:0.6.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/soloader-0.6.0.aar/7d84776282699ee62ae729d34c7158f7/AndroidManifest.xml:7:5-9:41
+MERGED from [com.jakewharton.timber:timber:4.7.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/timber-4.7.1.aar/f03549d9a37d123fe8643376887e4208/AndroidManifest.xml:5:5-43
+MERGED from [com.jakewharton.timber:timber:4.7.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/timber-4.7.1.aar/f03549d9a37d123fe8643376887e4208/AndroidManifest.xml:5:5-43
+MERGED from [com.facebook.fresco:fbcore:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/fbcore-1.10.0.aar/3bdaaa5d062fd3ab71869ef654115508/AndroidManifest.xml:5:5-7:41
+MERGED from [com.facebook.fresco:fbcore:1.10.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/fbcore-1.10.0.aar/3bdaaa5d062fd3ab71869ef654115508/AndroidManifest.xml:5:5-7:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-core-1.3.0.aar/222c56c1afb7efa5126356e9c6e93137/AndroidManifest.xml:7:5-9:41
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-core-1.3.0.aar/222c56c1afb7efa5126356e9c6e93137/AndroidManifest.xml:7:5-9:41
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+		ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+		INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
+provider#com.imagepicker.FileProvider
+ADDED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:12:9-20:20
+	android:grantUriPermissions
+		ADDED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:16:13-47
+	android:authorities
+		ADDED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:14:13-60
+	android:exported
+		ADDED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:15:13-37
+	android:name
+		ADDED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:13:13-56
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:17:13-19:58
+	android:resource
+		ADDED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:19:17-55
+	android:name
+		ADDED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/release/AndroidManifest.xml:18:17-67
+uses-feature#0x00020000
+ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:9:5-11:35
+	android:glEsVersion
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:10:9-41
+	android:required
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:11:9-32
+uses-feature#android.hardware.wifi
+ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:12:5-14:36
+	android:required
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:14:9-33
+	android:name
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:13:9-45
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:17:5-79
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:14:5-79
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:14:5-79
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-core-1.3.0.aar/222c56c1afb7efa5126356e9c6e93137/AndroidManifest.xml:12:5-79
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-core:1.3.0] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-core-1.3.0.aar/222c56c1afb7efa5126356e9c6e93137/AndroidManifest.xml:12:5-79
+	android:name
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:17:22-76
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:18:5-76
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:15:5-76
+MERGED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:15:5-76
+	android:name
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-sdk-8.2.1.aar/35a392acd9ec50ba7c524347fbdca761/AndroidManifest.xml:18:22-73
+uses-permission#android.permission.WAKE_LOCK
+ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:12:5-68
+	android:name
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:12:22-65
+provider#com.mapbox.android.telemetry.provider.MapboxTelemetryInitProvider
+ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:19:9-23:39
+	android:authorities
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:21:13-79
+	android:exported
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:22:13-37
+	android:initOrder
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:23:13-36
+	android:name
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:20:13-93
+service#com.mapbox.android.telemetry.crash.CrashReporterJobIntentService
+ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:25:9-27:72
+	android:permission
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:27:13-69
+	android:name
+		ADDED from [com.mapbox.mapboxsdk:mapbox-android-telemetry:4.5.1] /home/eytan/.gradle/caches/transforms-1/files-1.1/mapbox-android-telemetry-4.5.1.aar/e73da46fee9b33ba0052560d39c6193e/AndroidManifest.xml:26:13-92
