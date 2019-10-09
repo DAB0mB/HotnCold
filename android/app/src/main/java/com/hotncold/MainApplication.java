@@ -3,6 +3,8 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import im.shimo.react.cookie.CookieManagerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.solinor.bluetoothstatus.RNBluetoothManagerPackage;
 import it.innove.BleManagerPackage;
@@ -32,6 +34,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AsyncStoragePackage(),
+            new CookieManagerPackage(),
             new ImagePickerPackage(),
             new RNBluetoothManagerPackage(),
             new BleManagerPackage(),

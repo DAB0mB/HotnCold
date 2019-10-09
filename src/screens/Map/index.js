@@ -7,13 +7,14 @@ import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import Cookie from 'react-native-cookie';
 import CONFIG from 'react-native-config';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import ActivityIndicator from '../../components/ActivityIndicator';
 import * as mutations from '../../graphql/mutations';
-import { useMe } from '../../services/Auth';
+import { useMe, useLogout } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
 import { useNavigation } from '../../services/Navigation';
@@ -94,6 +95,7 @@ const SELECTION_RADIUS = 100;
 
 const Map = () => {
   const me = useMe();
+  const logout = useLogout();
   const mapRef = useRef(null);
   const alertError = useAlertError();
   const navigation = useNavigation();
@@ -261,7 +263,7 @@ const Map = () => {
 
       <View style={styles.iconsContainer}>
         {__DEV__ && (
-          <TouchableWithoutFeedback onPress={navToRadar}>
+          <TouchableWithoutFeedback onPress={() => logout().catch(alertError)}>
             <View style={styles.icon}>
               <McIcon name='logout' size={30} color='rgba(0, 0, 0, 0.8)' />
             </View>

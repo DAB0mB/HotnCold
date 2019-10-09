@@ -20,6 +20,7 @@ import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as mutations from '../../graphql/mutations';
+import { useRegister } from '../../services/Auth';
 import { useDateTimePicker } from '../../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../../services/DropdownAlert';
 import { useImagePicker } from '../../services/ImagePicker';
@@ -107,7 +108,7 @@ const Profile = () => {
   const [birthDate, setBirthDate] = useState(() => !user ? '' : itsMe ? user.birthDate : user.age);
   const [occupation, setOccupation] = useState(() => user ? user.occupation : '');
   const [bio, setBio] = useState(() => user ? user.bio : '');
-  // TODO: Pick and drop function
+  // TODO: Change picture order function
   const [pictures, setPictures] = useState(() => user ? user.pictures : []);
   const dateTimePicker = useDateTimePicker({
     mode: 'date',
@@ -118,8 +119,8 @@ const Profile = () => {
       setBirthDate(birthDate);
     }, [setBirthDate])
   });
-  const profileMutation = itsMe ? mutations.updateMyProfile : mutations.register;
-  const [mutateProfile] = profileMutation.use({
+  const useProfileMutation = itsMe ? mutations.updateMyProfile.use : useRegister;
+  const [mutateProfile] = useProfileMutation({
     bio,
     occupation,
     pictures,

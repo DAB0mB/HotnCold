@@ -4,12 +4,12 @@ ADDED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.x
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml:1:1-41:12
-MERGED from [:react-native-cookies] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookies/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
+MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-9:12
+MERGED from [:react-native-cookie] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookie/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
 MERGED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-23:12
 MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-14:12
 MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-15:12
 MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-14:12
-MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-9:12
 MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-14:12
 MERGED from [:react-native-community-geolocation] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/geolocation/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-9:12
 MERGED from [:react-native-config] /home/eytan/Workspace/HotnCold/node_modules/react-native-config/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
@@ -202,8 +202,10 @@ uses-sdk
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
 INJECTED from /home/eytan/Workspace/HotnCold/android/app/src/main/AndroidManifest.xml
-MERGED from [:react-native-cookies] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookies/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
-MERGED from [:react-native-cookies] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookies/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
+MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
+MERGED from [:react-native-cookie] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookie/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-cookie] /home/eytan/Workspace/HotnCold/node_modules/react-native-cookie/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:react-native-image-picker] /home/eytan/Workspace/HotnCold/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:react-native-bluetooth-status] /home/eytan/Workspace/HotnCold/node_modules/react-native-bluetooth-status/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
@@ -212,8 +214,6 @@ MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modu
 MERGED from [:react-native-ble-manager] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-manager/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:react-native-ble-peripheral] /home/eytan/Workspace/HotnCold/node_modules/react-native-ble-peripheral/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
-MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
-MERGED from [:@react-native-community_async-storage] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/async-storage/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41
 MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:@react-native-mapbox-gl_maps] /home/eytan/Workspace/HotnCold/node_modules/@react-native-mapbox-gl/maps/android/rctmgl/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [:react-native-community-geolocation] /home/eytan/Workspace/HotnCold/node_modules/@react-native-community/geolocation/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-7:41

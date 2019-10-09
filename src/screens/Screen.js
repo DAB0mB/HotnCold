@@ -14,6 +14,7 @@ import graphqlClient from '../graphql/client';
 import * as queries from '../graphql/queries';
 import { MeProvider } from '../services/Auth';
 import { BLE_PERMISSIONS, BLE_PROPERTIES, BluetoothLEProvider } from '../services/BluetoothLE';
+import { CookieProvider } from '../services/Cookie';
 import { DateTimePickerProvider } from '../services/DateTimePicker';
 import { useAlertError, DropdownAlertProvider } from '../services/DropdownAlert';
 import { GeolocationProvider } from '../services/Geolocation';
@@ -32,13 +33,15 @@ const styles = StyleSheet.create({
 
 const Screen = ({ children }) => {
   return (
-    <MeProvider me={null}>
-      <DateTimePickerProvider>
-        <ImagePickerProvider>
-          {children}
-        </ImagePickerProvider>
-      </DateTimePickerProvider>
-    </MeProvider>
+    <CookieProvider>
+      <MeProvider me={null}>
+        <DateTimePickerProvider>
+          <ImagePickerProvider>
+            {children}
+          </ImagePickerProvider>
+        </DateTimePickerProvider>
+      </MeProvider>
+    </CookieProvider>
   );
 };
 

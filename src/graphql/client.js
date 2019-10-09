@@ -22,7 +22,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const httpLink = createUploadLink({
-  uri: CONFIG.GRAPHQL_URI,
+  uri: CONFIG.GRAPHQL_ENDPOINT,
   credentials: 'include',
 });
 

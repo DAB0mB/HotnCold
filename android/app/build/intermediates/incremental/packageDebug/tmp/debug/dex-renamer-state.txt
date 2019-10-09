@@ -1,4 +1,4 @@
-#Tue Oct 08 16:31:42 IDT 2019
+#Wed Oct 09 06:52:49 IDT 2019
 base.10=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/9
 base.9=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/10
 base.8=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/0
@@ -62,7 +62,7 @@ renamed.11=classes12.dex
 renamed.10=classes11.dex
 base.24=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/24
 base.23=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/25
-base.22=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/23
+base.22=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/21
 base.21=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/22
 base.20=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/19
 base.19=/home/eytan/Workspace/HotnCold/android/app/build/intermediates/transforms/dexMerger/debug/20
