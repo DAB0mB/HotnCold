@@ -87,3 +87,9 @@ export const useAsyncEffect = (generator, input) => {
     return dispose;
   }, [key]);
 };
+
+export const sleep = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};

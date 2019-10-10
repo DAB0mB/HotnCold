@@ -230,7 +230,7 @@ const Profile = () => {
           {/*react-native-swiper doesn't iterate through children properly so I have to compose the array manually*/}
           <Swiper showButtons loop={false} onIndexChanged={setPictureIndex} key={swiperKey}>
             {pictures.map((picture) => (
-              <Image style={styles.profilePicture} key={picture} loadingIndicatorSource={require('./default-profile.jpg')} source={{ uri: picture }} />
+              <Image style={styles.profilePicture} key={picture} source={{ uri: picture }} />
             )).concat(editMode && (
               <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()} key='_'>
                 <View style={[styles.profilePicture, styles.profilePicturePlaceholder]}>

@@ -58,13 +58,17 @@ const Radar = () => {
 
   useEffect(() => {
     const onDiscoverPeripheral = async (peripheral) => {
-      const buffer = await ble.central.read(peripheral.id, CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTIC_UUID);
-      const decoder = new TextDecoder();
-      const userId = decoder.decode(buffer);
+      try {
+        const buffer = await ble.central.read(peripheral.id, CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTIC_UUID);
+        const decoder = new TextDecoder();
+        const userId = decoder.decode(buffer);
 
-      queryUser({
-        variables: { userId },
-      });
+        queryUser({
+          variables: { userId },
+        });
+      } catch (e) {
+        alertError(e);
+      }
     };
 
     const onStopScan = () => {

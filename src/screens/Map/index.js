@@ -53,35 +53,31 @@ Object.assign(styles, {
       ['linear'],
       ['heatmap-density'],
       0,
-      'rgba(33,102,172,0)',
-      0.2,
-      'rgb(103,169,207)',
-      0.4,
-      'rgb(209,229,240)',
-      0.6,
-      'rgb(253,219,199)',
-      0.8,
-      'rgb(239,138,98)',
+      'rgba(0,0,0,0)',
+      0.1,
+      'rgba(0,0,0,0)',
+      0.101,
+      'rgb(88,236,216)',
+      0.9,
+      'rgb(88,236,216)',
+      0.901,
+      'rgb(236,88,174)',
       1,
-      'rgb(178,24,43)',
+      'rgb(236,88,174)',
     ],
   },
 
   selection: {
     outline: {
-      lineColor: 'orange',
-      lineDasharray: [1, 1],
+      lineCap: 'round',
+      lineColor: 'rgb(40, 23, 69)',
       lineWidth: 2,
-    },
-
-    fill: {
-      fillColor: 'orange',
-      fillOpacity: 0.5,
+      lineDasharray: [0, 2],
     },
 
     text: {
       textSize: 20,
-      textColor: 'white',
+      textColor: 'rgb(40, 23, 69)',
     },
   },
 });
@@ -207,6 +203,7 @@ const Map = () => {
         styleURL={CONFIG.MAPBOX_STYLE_URL}
         onPress={renderSelection}
         onRegionDidChange={resetScreenFeatures}
+        compassViewPosition='top-left'
       >
         <MapboxGL.UserLocation />
 
@@ -225,15 +222,6 @@ const Map = () => {
               sourceLayerID='selection'
               style={styles.selection.outline}
               minZoomLevel={selection.zoom - 3}
-              maxZoomLevel={selection.zoom + 2}
-            />
-
-            <MapboxGL.FillLayer
-              id='selectionFill'
-              sourceLayerID='selection'
-              style={styles.selection.fill}
-              minZoomLevel={selection.zoom - 3}
-              maxZoomLevel={selection.zoom + 2}
             />
           </MapboxGL.ShapeSource>
         )}
@@ -257,11 +245,11 @@ const Map = () => {
           id='featuresInArea'
           key={shapeKey}
           shape={areaFeatures}
-          cluster
         >
           <MapboxGL.HeatmapLayer
             id='featuresInAreaHeatmap'
             sourceID='featuresInArea'
+            filter={['!=', 'userId', me.id]}
             style={styles.heatmap}
           />
         </MapboxGL.ShapeSource>

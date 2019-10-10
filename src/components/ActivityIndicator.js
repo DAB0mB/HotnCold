@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, ActivityIndicator, StyleSheet, Platform, Dimensions } from 'react-native'
+import React, { useEffect, useState } from 'react';
+import { View, ActivityIndicator, StyleSheet, Platform, Dimensions } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,12 +10,27 @@ const styles = StyleSheet.create({
   },
 });
 
-const size = Platform.OS == 'android' ? Dimensions.get('window').width / 4 : 'large';
+const SIZE = Platform.OS == 'android' ? Dimensions.get('window').width / 4 : 'large';
+const BUFFER_MS = 1000;
 
-const ViewLoadingIndicator = () => {
+const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS }) => {
+  const [buffering, setBuffering] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setBuffering(false);
+    }, bufferMs);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [true]);
+
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={size} color="#0000ff" />
+      {!buffering && (
+        <ActivityIndicator size={size} color="#0000ff" />
+      )}
     </View>
   );
 };
