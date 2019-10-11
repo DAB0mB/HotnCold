@@ -1,5 +1,6 @@
-import MapboxGL from '@react-native-mapbox-gl/maps';
 import { ApolloProvider } from '@apollo/react-hooks';
+import MapboxGL from '@react-native-mapbox-gl/maps';
+import { stringToBytes } from 'convert-string';
 import React, { useEffect, useState } from 'react';
 import { View, StatusBar, Text, SafeAreaView, StyleSheet } from 'react-native';
 import BleManager from 'react-native-ble-manager';
@@ -7,7 +8,6 @@ import BlePeripheral from 'react-native-ble-peripheral';
 import CONFIG from 'react-native-config';
 import DropdownAlert from 'react-native-dropdownalert';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-import { TextEncoder } from 'text-encoding';
 
 import ActivityIndicator from '../components/ActivityIndicator';
 import PermissionRequestor from '../components/PermissionRequestor';
@@ -93,8 +93,8 @@ Screen.Authorized = ({ children }) => {
     once.try(() => {
       once(BlePeripheral);
 
-      BlePeripheral.addService(CONFIG.BLE_SERVICE_UUID, true);
-      BlePeripheral.addCharacteristicToService(CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTIC_UUID, BLE_PERMISSIONS.READ, BLE_PROPERTIES.READ);
+      BlePeripheral.addService(CONFIG.BLE_SERVICE, true);
+      BlePeripheral.addCharacteristicToService(CONFIG.BLE_SERVICE, CONFIG.BLE_CHARACTERISTIC_PACKET1, BLE_PERMISSIONS.READ, BLE_PROPERTIES.READ);
     });
 
     BlePeripheral.isAdvertising().then((isAdvertising) => {
@@ -102,11 +102,10 @@ Screen.Authorized = ({ children }) => {
         return BlePeripheral.start();
       }
     }).then(() => {
-      const encoder = new TextEncoder();
-      const value = encoder.encode(me.id);
+      const value = stringToBytes(me.id.slice(0, 8));
       // Will set value, and set notifications if some devices are connected
       // Native code accepts Array and not Uint8Array, so we have to convert it
-      BlePeripheral.sendNotificationToDevices(CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTIC_UUID, Array.from(value));
+      BlePeripheral.sendNotificationToDevices(CONFIG.BLE_SERVICE, CONFIG.BLE_CHARACTERISTIC_PACKET1, value);
       updateReadyState();
     }).catch(alertError);
 

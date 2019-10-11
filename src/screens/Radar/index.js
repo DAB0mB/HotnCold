@@ -1,7 +1,7 @@
+import { bytesToString } from 'convert-string';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Button, Image, View, Text, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
 import CONFIG from 'react-native-config';
-import { TextDecoder } from 'text-encoding';
 
 import * as queries from '../../graphql/queries';
 import { useMe } from '../../services/Auth';
@@ -57,21 +57,41 @@ const Radar = () => {
   });
 
   useEffect(() => {
+    let discoveredPeripheralIds = [];
+
     const onDiscoverPeripheral = async (peripheral) => {
+      debugger
+      if (discoveredPeripheralIds.includes(peripheral.id)) return;
+
+      discoveredPeripheralIds.push(peripheral.id);
+
       try {
-        const buffer = await ble.central.read(peripheral.id, CONFIG.BLE_SERVICE_UUID, CONFIG.BLE_CHARACTERISTIC_UUID);
-        const decoder = new TextDecoder();
-        const userId = decoder.decode(buffer);
+        debugger
+        await ble.central.connect(peripheral.id);
+        debugger
+
+        let bytes;
+        try {
+          bytes = await ble.central.read(peripheral.id, CONFIG.BLE_SERVICE, CONFIG.BLE_CHARACTERISTIC_PACKAT1);
+          debugger
+        } finally {
+          await ble.central.disconnect(peripheral.id);
+        }
+
+        debugger
+        const userId = bytesToString(bytes);
 
         queryUser({
           variables: { userId },
         });
       } catch (e) {
+        debugger;
         alertError(e);
       }
     };
 
     const onStopScan = () => {
+      discoveredPeripheralIds = [];
       setScanning(false);
     };
 

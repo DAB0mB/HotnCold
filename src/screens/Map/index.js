@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/react-hooks';
-import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import turfBboxPolygon from '@turf/bbox-polygon';
 import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
