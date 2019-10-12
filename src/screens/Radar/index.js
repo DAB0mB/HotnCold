@@ -6,12 +6,7 @@ import CONFIG from 'react-native-config';
 import * as queries from '../../graphql/queries';
 import { useMe } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
-import {
-  useBluetoothLE,
-  BluetoothLEProvider,
-  BLE_PERMISSIONS,
-  BLE_PROPERTIES,
-} from '../../services/BluetoothLE';
+import { useBluetoothLE, BluetoothLEProvider } from '../../services/BluetoothLE';
 import { useNavigation } from '../../services/Navigation';
 import Screen from '../Screen';
 
@@ -57,41 +52,24 @@ const Radar = () => {
   });
 
   useEffect(() => {
-    let discoveredPeripheralIds = [];
+    let discoveredUsersIds = [];
 
-    const onDiscoverPeripheral = async (peripheral) => {
-      debugger
-      if (discoveredPeripheralIds.includes(peripheral.id)) return;
+    const onDiscoverPeripheral = (peripheral) => {
+      if (peripheral.name !== CONFIG.BLUETOOTH_ADAPTER_NAME) return;
 
-      discoveredPeripheralIds.push(peripheral.id);
+      const userId = peripheral.serviceUUIDs[0];
 
-      try {
-        debugger
-        await ble.central.connect(peripheral.id);
-        debugger
+      if (discoveredUsersIds.includes(userId)) return;
 
-        let bytes;
-        try {
-          bytes = await ble.central.read(peripheral.id, CONFIG.BLE_SERVICE, CONFIG.BLE_CHARACTERISTIC_PACKAT1);
-          debugger
-        } finally {
-          await ble.central.disconnect(peripheral.id);
-        }
+      discoveredUsersIds.push(userId);
 
-        debugger
-        const userId = bytesToString(bytes);
-
-        queryUser({
-          variables: { userId },
-        });
-      } catch (e) {
-        debugger;
-        alertError(e);
-      }
+      queryUser({
+        variables: { userId },
+      });
     };
 
     const onStopScan = () => {
-      discoveredPeripheralIds = [];
+      discoveredUsersIds = [];
       setScanning(false);
     };
 
@@ -132,12 +110,12 @@ const Radar = () => {
     }
 
     stoppingScan.then(() => {
-      return ble.central.scan([CONFIG.BLE_SERVICE_UUID], 5, false)
+      return ble.central.scan([], 5, false)
     }).then(() => {
       setScanning(true);
       setDiscoveredUsers([]);
 
-      if (__DEV__) {
+      if (__DEV__ && CONFIG.RADAR_TEST_USER_ID) {
         queryUser({
           variables: { userId: CONFIG.RADAR_TEST_USER_ID },
         });
