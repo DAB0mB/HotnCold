@@ -1,4 +1,5 @@
-import Geolocation from '@react-native-community/geolocation';
+// @react-native-community/geolocation has issues, don't use it
+import Geolocation from 'react-native-geolocation-service';
 import React, { createContext, useContext } from 'react';
 
 const GeolocationContext = createContext(null);

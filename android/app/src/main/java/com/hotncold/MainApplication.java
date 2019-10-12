@@ -3,13 +3,13 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import im.shimo.react.cookie.CookieManagerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.solinor.bluetoothstatus.RNBluetoothManagerPackage;
 import it.innove.BleManagerPackage;
 import com.himelbrand.ble.peripheral.RNBLEPackage;
-import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.facebook.react.ReactNativeHost;
@@ -34,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFusedLocationPackage(),
             new AsyncStoragePackage(),
             new CookieManagerPackage(),
             new ImagePickerPackage(),
@@ -42,7 +43,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNBLEPackage(),
           new RCTMGLPackage(),
           new ReactNativeConfigPackage(),
-          new GeolocationPackage(),
           new ReanimatedPackage(),
           new RNGestureHandlerPackage(),
           new RNScreensPackage()
