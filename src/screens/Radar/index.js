@@ -51,6 +51,7 @@ const Radar = () => {
     }, [setDiscoveredUsers, discoveredUsers]),
   });
 
+  // TODO: Send a couple of query batches, after 2 seconds and after 3 seconds of scanning
   useEffect(() => {
     let discoveredUsersIds = [];
 

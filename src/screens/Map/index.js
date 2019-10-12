@@ -52,17 +52,15 @@ Object.assign(styles, {
       ['linear'],
       ['heatmap-density'],
       0,
-      'rgba(0,0,0,0)',
+      'rgba(0, 0, 0, 0)',
       0.1,
-      'rgba(0,0,0,0)',
+      'rgba(0, 0, 0, 0)',
       0.101,
-      'rgb(88,236,216)',
-      0.9,
-      'rgb(88,236,216)',
-      0.901,
-      'rgb(236,88,174)',
+      'rgba(88, 236, 216, 0.5)',
+      0.5,
+      'rgba(214, 236, 88, 0.7)',
       1,
-      'rgb(236,88,174)',
+      'rgba(236, 88, 174, 0.9)',
     ],
   },
 
@@ -204,8 +202,6 @@ const Map = () => {
         onRegionDidChange={resetScreenFeatures}
         compassViewPosition='top-left'
       >
-        <MapboxGL.UserLocation />
-
         <MapboxGL.Camera
           zoomLevel={15}
           centerCoordinate={initialLocation}
@@ -252,6 +248,8 @@ const Map = () => {
             style={styles.heatmap}
           />
         </MapboxGL.ShapeSource>
+
+        <MapboxGL.UserLocation />
       </MapboxGL.MapView>
 
       <View style={styles.iconsContainer}>
