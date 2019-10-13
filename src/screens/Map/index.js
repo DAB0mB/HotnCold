@@ -5,13 +5,15 @@ import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, Text } from 'react-native';
 import Cookie from 'react-native-cookie';
 import CONFIG from 'react-native-config';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { colors, hexToRgba } from '../../theme';
 import ActivityIndicator from '../../components/ActivityIndicator';
+import RootHeader from '../../components/RootHeader';
 import * as mutations from '../../graphql/mutations';
 import { useMe, useLogout } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     right: 0,
-    top: 0,
+    top: 50,
   },
   icon: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -56,11 +58,11 @@ Object.assign(styles, {
       0.1,
       'rgba(0, 0, 0, 0)',
       0.101,
-      'rgba(88, 236, 216, 0.5)',
+      hexToRgba(colors.cold, 0.5),
       0.5,
-      'rgba(214, 236, 88, 0.7)',
+      hexToRgba(colors.warm, 0.7),
       1,
-      'rgba(236, 88, 174, 0.9)',
+      hexToRgba(colors.hot, 0.9),
     ],
   },
 
@@ -244,7 +246,6 @@ const Map = () => {
           <MapboxGL.HeatmapLayer
             id='featuresInAreaHeatmap'
             sourceID='featuresInArea'
-            filter={['!=', 'userId', me.id]}
             style={styles.heatmap}
           />
         </MapboxGL.ShapeSource>
@@ -256,25 +257,27 @@ const Map = () => {
         {__DEV__ && (
           <TouchableWithoutFeedback onPress={logoutAndFlee}>
             <View style={styles.icon}>
-              <McIcon name='logout' size={30} color='rgba(0, 0, 0, 0.8)' />
+              <McIcon name='logout' size={30} color={hexToRgba(colors.ink, 0.8)} />
             </View>
           </TouchableWithoutFeedback>
         )}
 
         <TouchableWithoutFeedback onPress={editProfile}>
           <View style={styles.icon}>
-            <Fa5Icon name='user-edit' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+            <Fa5Icon name='user-edit' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
           </View>
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={navToRadar}>
           <View style={styles.icon}>
-            <McIcon name='radar' size={30} color='rgba(0, 0, 0, 0.8)' />
+            <McIcon name='radar' size={30} color={hexToRgba(colors.ink, 0.8)} />
           </View>
         </TouchableWithoutFeedback>
       </View>
     </View>
   );
 };
+
+Map.Header = RootHeader;
 
 export default Screen.Authorized.create(Map);

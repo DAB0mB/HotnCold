@@ -1,31 +1,34 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native';
-import BleManager from 'react-native-ble-manager';
-import BlePeripheral from 'react-native-ble-peripheral';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import { StyleSheet, View } from 'react-native';
 
-import {
-  MapScreen,
-  ProfileScreen,
-  RadarScreen,
-} from './screens';
+import Router from './Router';
+import { DropdownAlertProvider } from './services/DropdownAlert';
+import { useHeaderState, HeaderProvider } from './services/Header';
 
-const AppNavigator = createStackNavigator({
-  Profile: {
-    screen: ProfileScreen,
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
   },
-  Map: {
-    screen: MapScreen,
-  },
-  Radar: {
-    screen: RadarScreen,
-  },
-}, {
-  initialRouteName: 'Map',
-  headerMode: 'none',
 });
 
-const AppContainer = createAppContainer(AppNavigator);
+const App = () => {
+  const [header] = useHeaderState();
 
-export default AppContainer;
+  return (
+    <View style={styles.container}>
+      <Router />
+      {header}
+    </View>
+  );
+};
+
+export default () => {
+  return (
+    <HeaderProvider>
+    <DropdownAlertProvider>
+      <App />
+    </DropdownAlertProvider>
+    </HeaderProvider>
+  );
+};

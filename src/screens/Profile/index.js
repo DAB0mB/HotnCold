@@ -24,7 +24,7 @@ import { useRegister } from '../../services/Auth';
 import { useDateTimePicker } from '../../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../../services/DropdownAlert';
 import { useImagePicker } from '../../services/ImagePicker';
-import { useNavigation } from '../../services/Navigation';
+import { useNavigation, useBackListener } from '../../services/Navigation';
 import { useRenderer } from '../../utils';
 import Screen from '../Screen';
 
@@ -202,19 +202,7 @@ const Profile = () => {
     };
   }, [setTyping]);
 
-  useEffect(() => {
-    const backHandler = () => {
-      navigation.goBack();
-
-      return true;
-    };
-
-    BackHandler.addEventListener('hardwareBackPress', backHandler);
-
-    return () => {
-      BackHandler.removeEventListener('hardwareBackPress', backHandler);
-    };
-  }, [true]);
+  useBackListener();
 
   const deletePicture = useCallback(() => {
     setPictures(

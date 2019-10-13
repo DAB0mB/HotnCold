@@ -17,11 +17,17 @@ const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS }) => {
   const [buffering, setBuffering] = useState(true);
 
   useEffect(() => {
+    // React native doesn't clear timeout for some reason
+    let mounted = true;
+
     const timeout = setTimeout(() => {
-      setBuffering(false);
+      if (mounted) {
+        setBuffering(false);
+      }
     }, bufferMs);
 
     return () => {
+      mounted = false;
       clearTimeout(timeout);
     };
   }, [true]);

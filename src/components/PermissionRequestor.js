@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Platform, View, Text, StyleSheet } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import Permissions from 'react-native-permissions';
 

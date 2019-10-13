@@ -6,19 +6,20 @@ import { View, StatusBar, Text, SafeAreaView, StyleSheet } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
 import CONFIG from 'react-native-config';
-import DropdownAlert from 'react-native-dropdownalert';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import ActivityIndicator from '../components/ActivityIndicator';
 import PermissionRequestor from '../components/PermissionRequestor';
 import graphqlClient from '../graphql/client';
 import * as queries from '../graphql/queries';
+import Router from '../Router';
 import { MeProvider } from '../services/Auth';
 import { BluetoothLEProvider } from '../services/BluetoothLE';
 import { useCookie, CookieProvider } from '../services/Cookie';
 import { DateTimePickerProvider } from '../services/DateTimePicker';
-import { useAlertError, DropdownAlertProvider } from '../services/DropdownAlert';
+import { useAlertError } from '../services/DropdownAlert';
 import { GeolocationProvider } from '../services/Geolocation';
+import { useHeaderState } from '../services/Header';
 import { ImagePickerProvider } from '../services/ImagePicker';
 import { useNavigation, NavigationProvider } from '../services/Navigation';
 import { once as Once, useRenderer, useSet, useAsyncEffect } from '../utils';
@@ -66,12 +67,13 @@ const Screen = ({ children }) => {
   );
 };
 
-Screen.Authorized = ({ children }) => {
+Screen.Authorized = ({ children, Header }) => {
   const alertError = useAlertError();
   const navigation = useNavigation();
   const meQuery = queries.me.use({ onError: alertError });
   const [readyState, updateReadyState] = useRenderer();
   const { me } = meQuery.data || {};
+  const [, setHeader] = useHeaderState();
 
   useEffect(() => {
     if (!me) return;
@@ -117,6 +119,21 @@ Screen.Authorized = ({ children }) => {
     }
   }, [meQuery.called, meQuery.loading, meQuery.error, me]);
 
+  useEffect(() => {
+    if (meQuery.loading || readyState != 2) return;
+    if (!Header) return;
+
+    setHeader(<Header navigation={navigation} me={me} />);
+
+    const listener = navigation.addListener('didFocus', () => {
+      setHeader(<Header navigation={navigation} me={me} />);
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, [meQuery.loading, readyState]);
+
   if (meQuery.loading || readyState != 2) {
     return (
       <ActivityIndicator />
@@ -130,43 +147,66 @@ Screen.Authorized = ({ children }) => {
   );
 };
 
-Screen.create = (Root) => ({ navigation }) => {
-  return (
-    <ApolloProvider client={graphqlClient}>
-    <NavigationProvider navigation={navigation}>
-    <DropdownAlertProvider>
-    <CookieProvider>
+Screen.create = (Component) => {
+  const ComponentScreen = ({ navigation }) => {
+    // This one belongs to the root component which never unmounts
+    const [, setHeader] = useHeaderState();
 
-      <StatusBar translucent backgroundColor='black' />
-      <SafeAreaView style={styles.container}>
-        <Screen>
-          <Root />
-        </Screen>
-      </SafeAreaView>
+    once.try(() => {
+      once(Screen);
 
-    </CookieProvider>
-    </DropdownAlertProvider>
-    </NavigationProvider>
-    </ApolloProvider>
-  );
+      navigation.addListener('willFocus', (e) => {
+        const RouteScreen = Router.router.getComponentForRouteName(e.state.routeName);
+
+        setHeader(RouteScreen.Component.Header && <RouteScreen.Component.Header navigation={navigation} />);
+      });
+
+      navigation.addListener('willBlur', (e) => {
+        const RouteScreen = Router.router.getComponentForRouteName(e.action.routeName);
+
+        setHeader(RouteScreen.Component.Header && <RouteScreen.Component.Header navigation={navigation} />);
+      });
+    });
+
+    return (
+      <ApolloProvider client={graphqlClient}>
+      <NavigationProvider navigation={navigation}>
+      <CookieProvider>
+        <StatusBar translucent barStyle="dark-content" backgroundColor='white' />
+        <SafeAreaView style={styles.container}>
+          <Screen>
+            <Component />
+          </Screen>
+        </SafeAreaView>
+      </CookieProvider>
+      </NavigationProvider>
+      </ApolloProvider>
+    );
+  };
+
+  ComponentScreen.Component = Component;
+
+  return ComponentScreen;
 };
 
-Screen.Authorized.create = (Root) => Screen.create(() => {
-  return (
-    <PermissionRequestor functions={['bluetooth', 'location']}>
+Screen.Authorized.create = (Component) => {
+  const ComponentScreen = Screen.create(() => {
+    return (
+      <PermissionRequestor functions={['bluetooth', 'location']}>
+        <BluetoothLEProvider>
+        <GeolocationProvider>
+          <Screen.Authorized Header={Component.Header}>
+            <Component />
+          </Screen.Authorized>
+        </GeolocationProvider>
+        </BluetoothLEProvider>
+      </PermissionRequestor>
+    );
+  });
 
-      <BluetoothLEProvider>
-      <GeolocationProvider>
+  ComponentScreen.Component = Component;
 
-        <Screen.Authorized>
-          <Root />
-        </Screen.Authorized>
-
-      </GeolocationProvider>
-      </BluetoothLEProvider>
-
-    </PermissionRequestor>
-  );
-});
+  return ComponentScreen;
+};
 
 export default Screen;

@@ -1,8 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
+    <!-- docs: https://developer.android.com/guide/topics/ui/look-and-feel/themes -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">#ffffff</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
 </resources>
