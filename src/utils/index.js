@@ -88,6 +88,37 @@ export const useAsyncEffect = (generator, input) => {
   }, [key]);
 };
 
+// Will invoke callback as soon as all input params are ready
+export const useCallbackTask = (callback, input) => {
+  const [shouldInvoke, setShouldInvoke] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    for (let i of input) {
+      if (i == null) {
+        setIsReady(false);
+
+        return;
+      }
+    }
+
+    setIsReady(true);
+
+    if (shouldInvoke) {
+      callback();
+      setShouldInvoke(false);
+    }
+  }, input);
+
+  return useCallback(() => {
+    if (isReady) {
+      callback();
+    } else {
+      setShouldInvoke(true);
+    }
+  }, [isReady]);
+};
+
 export const sleep = (ms) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);

@@ -5,6 +5,7 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { colors, hexToRgba } from '../theme';
+import { useCallbackTask } from '../utils';
 
 const styles = StyleSheet.create({
   gradient: {
@@ -33,10 +34,7 @@ const styles = StyleSheet.create({
 });
 
 const RootHeader = ({ navigation, me }) => {
-  const editProfile = useCallback(() => {
-    if (!navigation) return;
-    if (!me) return;
-
+  const editProfile = useCallbackTask(() => {
     navigation.push('Profile', { user: me, itsMe: true });
   }, [navigation, me]);
 
