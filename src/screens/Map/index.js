@@ -26,6 +26,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  buffer: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    left: 0,
+    top: 0,
+  },
   map: {
     flex: 1,
   },
@@ -34,7 +42,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 10,
     right: 0,
-    top: 50,
+    bottom: 0,
   },
   icon: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -101,6 +109,11 @@ const Map = () => {
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
+  const [showingBuffer, setShowingBuffer] = useState(true);
+
+  const removeBuffer = useCallback(() => {
+    setShowingBuffer(false);
+  }, [true]);
 
   const resetScreenFeatures = useCallback(async (e) => {
     let bbox = e.properties.visibleBounds;
@@ -157,14 +170,6 @@ const Map = () => {
     });
   }, [mapRef, setSelection, screenFeatures]);
 
-  const navToRadar = useCallback(() => {
-    navigation.push('Radar');
-  }, [navigation]);
-
-  const editProfile = useCallback(() => {
-    navigation.push('Profile', { user: me, itsMe: true });
-  }, [navigation, me]);
-
   const updateMyLocationInterval = useCallback((initial) => {
     geolocation.getCurrentPosition((location) => {
       location = [location.coords.longitude, location.coords.latitude];
@@ -202,6 +207,7 @@ const Map = () => {
         styleURL={CONFIG.MAPBOX_STYLE_URL}
         onPress={renderSelection}
         onRegionDidChange={resetScreenFeatures}
+        onDidFinishLoadingMap={removeBuffer}
         compassViewPosition='top-left'
       >
         <MapboxGL.Camera
@@ -253,6 +259,10 @@ const Map = () => {
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
 
+      {showingBuffer && (
+        <ActivityIndicator style={styles.buffer} />
+      )}
+
       <View style={styles.iconsContainer}>
         {__DEV__ && (
           <TouchableWithoutFeedback onPress={logoutAndFlee}>
@@ -261,18 +271,6 @@ const Map = () => {
             </View>
           </TouchableWithoutFeedback>
         )}
-
-        <TouchableWithoutFeedback onPress={editProfile}>
-          <View style={styles.icon}>
-            <Fa5Icon name='user-edit' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
-          </View>
-        </TouchableWithoutFeedback>
-
-        <TouchableWithoutFeedback onPress={navToRadar}>
-          <View style={styles.icon}>
-            <McIcon name='radar' size={30} color={hexToRgba(colors.ink, 0.8)} />
-          </View>
-        </TouchableWithoutFeedback>
       </View>
     </View>
   );

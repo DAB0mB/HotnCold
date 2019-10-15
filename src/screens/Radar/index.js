@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Button, Image, View, Text, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
 import CONFIG from 'react-native-config';
 
+import RootHeader from '../../components/RootHeader';
 import * as queries from '../../graphql/queries';
 import { useMe } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
@@ -142,5 +143,7 @@ const Radar = () => {
     </View>
   );
 };
+
+Radar.Header = RootHeader;
 
 export default Screen.Authorized.create(Radar);

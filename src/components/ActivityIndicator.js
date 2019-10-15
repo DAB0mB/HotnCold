@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 const SIZE = Platform.OS == 'android' ? Dimensions.get('window').width / 4 : 'large';
 const BUFFER_MS = 1000;
 
-const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS }) => {
+const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS, style = {} }) => {
   const [buffering, setBuffering] = useState(true);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS }) => {
   }, [true]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       {!buffering && (
         <ActivityIndicator size={size} color="#0000ff" />
       )}

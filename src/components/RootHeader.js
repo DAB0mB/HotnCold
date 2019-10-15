@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Image, Switch, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -34,14 +34,26 @@ const styles = StyleSheet.create({
 });
 
 const RootHeader = ({ navigation, me }) => {
+  const [toggled, setToggled] = useState(navigation.state.routeName === 'Radar');
+
   const editProfile = useCallbackTask(() => {
     navigation.push('Profile', { user: me, itsMe: true });
   }, [navigation, me]);
 
+  const navToScreen = useCallback(() => {
+    if (navigation.state.routeName === 'Map') {
+      setToggled(true);
+      navigation.replace('Radar');
+    } else {
+      setToggled(false);
+      navigation.replace('Map');
+    }
+  }, [navigation]);
+
   return (
     <LinearGradient colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} style={styles.gradient}>
       <View style={styles.container}>
-        <Switch />
+        <Switch value={toggled} onChange={navToScreen} />
         <View style={{ height: styles.logo.height }}>
           <Image source={require('../assets/logo_light.png')} style={styles.logo} />
         </View>

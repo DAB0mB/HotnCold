@@ -152,9 +152,7 @@ Screen.create = (Component) => {
     // This one belongs to the root component which never unmounts
     const [, setHeader] = useHeaderState();
 
-    once.try(() => {
-      once(Screen);
-
+    useEffect(() => {
       navigation.addListener('willFocus', (e) => {
         const RouteScreen = Router.router.getComponentForRouteName(e.state.routeName);
 
@@ -162,11 +160,13 @@ Screen.create = (Component) => {
       });
 
       navigation.addListener('willBlur', (e) => {
+        if (!e.action.routeName) return;
+
         const RouteScreen = Router.router.getComponentForRouteName(e.action.routeName);
 
         setHeader(RouteScreen.Component.Header && <RouteScreen.Component.Header navigation={navigation} />);
       });
-    });
+    }, [true]);
 
     return (
       <ApolloProvider client={graphqlClient}>
