@@ -98,7 +98,7 @@ const Profile = () => {
   const navigation = useNavigation();
   const user = navigation.getParam('user');
   const itsMe = navigation.getParam('itsMe');
-  const editMode = !user && !itsMe;
+  const editMode = !user || itsMe;
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
   const [swiperKey, renderSwiper] = useRenderer();

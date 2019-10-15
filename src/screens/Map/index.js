@@ -22,6 +22,8 @@ import { useNavigation } from '../../services/Navigation';
 import { useInterval, useRenderer } from '../../utils';
 import Screen from '../Screen';
 
+const SHOW_FAKE_DATA = false;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -109,10 +111,12 @@ const Map = () => {
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
-  const [showingBuffer, setShowingBuffer] = useState(true);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [readyState, updateReadyState] = useRenderer();
 
-  const removeBuffer = useCallback(() => {
-    setShowingBuffer(false);
+  const resetMapLoaded = useCallback(() => {
+    setMapLoaded(true);
+    updateReadyState();
   }, [true]);
 
   const resetScreenFeatures = useCallback(async (e) => {
@@ -176,6 +180,7 @@ const Map = () => {
 
       if (initial) {
         setInitialLocation(location);
+        updateReadyState();
       }
 
       updateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
@@ -193,12 +198,6 @@ const Map = () => {
     }
   }, [shapeKey, setAreaFeatures]);
 
-  if (!initialLocation) {
-    return (
-      <ActivityIndicator />
-    );
-  }
-
   return (
     <View style={styles.container}>
       <MapboxGL.MapView
@@ -207,7 +206,7 @@ const Map = () => {
         styleURL={CONFIG.MAPBOX_STYLE_URL}
         onPress={renderSelection}
         onRegionDidChange={resetScreenFeatures}
-        onDidFinishLoadingMap={removeBuffer}
+        onDidFinishLoadingMap={resetMapLoaded}
         compassViewPosition='top-left'
       >
         <MapboxGL.Camera
@@ -247,7 +246,13 @@ const Map = () => {
         <MapboxGL.ShapeSource
           id='featuresInArea'
           key={shapeKey}
-          shape={areaFeatures}
+          {...(
+            SHOW_FAKE_DATA ? {
+              url: 'https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson'
+            } : {
+              shape: areaFeatures
+            }
+          )}
         >
           <MapboxGL.HeatmapLayer
             id='featuresInAreaHeatmap'
@@ -259,8 +264,8 @@ const Map = () => {
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
 
-      {showingBuffer && (
-        <ActivityIndicator style={styles.buffer} />
+      {readyState !== 2 && (
+        <ActivityIndicator style={styles.buffer} bufferMs={0} />
       )}
 
       <View style={styles.iconsContainer}>

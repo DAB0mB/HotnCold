@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet, Platform, Dimensions } from 'react-native';
+import React, { useEffect, useState, useMemo } from 'react';
+import { View, Text, StyleSheet, Platform, Dimensions } from 'react-native';
+
+import DotsLoader from './DotsLoader';
 
 const styles = StyleSheet.create({
   container: {
@@ -8,10 +10,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text: {
+    color: 'silver',
+    margin: 10,
+  },
 });
 
 const SIZE = Platform.OS == 'android' ? Dimensions.get('window').width / 4 : 'large';
-const BUFFER_MS = 1000;
+const BUFFER_MS = 500;
 
 const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS, style = {} }) => {
   const [buffering, setBuffering] = useState(true);
@@ -35,7 +41,10 @@ const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS, style = {} })
   return (
     <View style={[styles.container, style]}>
       {!buffering && (
-        <ActivityIndicator size={size} color="#0000ff" />
+        <>
+          <DotsLoader />
+          <Text style={styles.text}>Loading...</Text>
+        </>
       )}
     </View>
   );
