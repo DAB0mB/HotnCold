@@ -43,49 +43,72 @@ export const useRenderer = (callback) => {
   return [key, render];
 };
 
-export const useAsyncEffect = (generator, input) => {
-  const iteratorRef = useRef(generator);
-  const [cbQueue, setCbQueue] = useState([]);
-  const [key, render] = useRenderer();
-
-  const next = useCallback((value = iteratorRef.current.value) => {
-    iteratorRef.current.next(value);
-    render();
-  }, [key]);
+export const useAsyncEffect = (fn, input) => {
+  const [initial, setInitial] = useState(true);
+  const [generator, setGenerator] = useState(fn);
+  const [iterator, setIterator] = useState(null);
+  const cbQueueRef = useRef([]);
 
   const dispose = useCallback(async () => {
-    for (let callback of cbQueue) {
+    for (let callback of cbQueueRef.current) {
       await callback();
     }
-  }, [cbQueue]);
+  }, [generator]);
 
-  useEffect(() => {
-    iteratorRef.current = generator();
-  }, [true]);
-
-  useEffect(() => {
-    const iterator = iteratorRef.current;
-
-    if (typeof iterator.value == 'function') {
-      setCbQueue([...cbQueue, iterator.value]);
+  const next = useCallback((value) => {
+    if (iterator && iterator.done) {
+      return;
     }
 
-    if (iterator.done) {
-      return dispose;
+    setIterator(generator.next(value));
+  }, [iterator]);
+
+  useEffect(() => {
+    if (initial) {
+      return () => {
+        setInitial(false);
+      };
+    }
+
+    setGenerator(fn);
+    setIterator(null);
+    cbQueueRef.current = [];
+  }, input);
+
+  useEffect(() => {
+    next();
+
+    return dispose;
+  }, [generator]);
+
+  useEffect(() => {
+    if (!iterator) return;
+
+    let mounted = true;
+
+    if (typeof iterator.value == 'function') {
+      cbQueueRef.current.push(iterator.value);
+      next(iterator.value);
+
+      return;
     }
 
     if (iterator.value instanceof Promise) {
       iterator.value.then((value) => {
-        next(value);
+        if (mounted) {
+          next(value);
+        }
       });
 
-      return dispose;
+      return;
     }
 
-    next();
+    next(iterator.value);
 
-    return dispose;
-  }, [key]);
+    return () => {
+      mounted = false;
+    };
+  }, [iterator]);
 };
 
 // Will invoke callback as soon as all input params are ready

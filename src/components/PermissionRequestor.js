@@ -59,7 +59,12 @@ const PermissionRequestor = ({ functions: funcs, children }) => {
         switch (func) {
           // Bluetooth permission request not supported out of the box
           case Platform.OS == 'android' && 'bluetooth':
-            permission = (yield BleManager.enableBluetooth()) ? 'authorized' : 'denied';
+            try {
+              yield BleManager.enableBluetooth();
+              permission = 'authorized';
+            } catch (e) {
+              permission = 'denied';
+            }
             break;
           default:
             permission = yield Permissions.request(func);
