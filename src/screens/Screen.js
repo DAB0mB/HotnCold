@@ -1,7 +1,7 @@
 import { ApolloProvider } from '@apollo/react-hooks';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { stringToBytes } from 'convert-string';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, StatusBar, Text, SafeAreaView, StyleSheet } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
@@ -22,6 +22,7 @@ import { GeolocationProvider } from '../services/Geolocation';
 import { useHeaderState } from '../services/Header';
 import { ImagePickerProvider } from '../services/ImagePicker';
 import { useNavigation, NavigationProvider } from '../services/Navigation';
+import { useLoading, LoadingProvider } from '../services/Loading';
 import { once as Once, useRenderer, useSet, useAsyncEffect } from '../utils';
 
 const once = Once.create();
@@ -30,7 +31,15 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: getStatusBarHeight(),
     flex: 1,
-  }
+  },
+  loadingBuffer: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    top: getStatusBarHeight(),
+    left: 0,
+  },
 });
 
 const Screen = ({ children }) => {
@@ -74,6 +83,7 @@ Screen.Authorized = ({ children }) => {
   const [readyState, updateReadyState] = useRenderer();
   const { me } = meQuery.data || {};
   const [, setHeader] = useHeaderState();
+  const setLoading = useLoading();
   const { Header } = Router.router.getComponentForRouteName(navigation.state.routeName).Component;
 
   useEffect(() => {
@@ -136,10 +146,12 @@ Screen.Authorized = ({ children }) => {
   }, [meQuery.loading, readyState]);
 
   if (meQuery.loading || readyState != 2) {
-    return (
-      <ActivityIndicator />
-    );
+    setLoading(true);
+
+    return null;
   }
+
+  setLoading(false);
 
   return (
     <MeProvider me={me}>
@@ -152,6 +164,25 @@ Screen.create = (Component) => {
   const ComponentScreen = ({ navigation }) => {
     // This one belongs to the root component which never unmounts
     const [, setHeader] = useHeaderState();
+    const [isLoading, setLoadingState] = useState(false);
+    const loadingRef = useRef(null);
+    const immediateRef = useRef(null);
+
+    const setLoading = useCallback((value) => {
+      loadingRef.current = value ? (
+        <ActivityIndicator style={styles.loadingBuffer} />
+      ) : null;
+
+      if (value === isLoading) {
+        clearImmediate(immediateRef.current);
+        immediateRef.current = null;
+      } else {
+        immediateRef.current = setImmediate(() => {
+          immediateRef.current = null;
+          setLoadingState(value);
+        });
+      }
+    }, [loadingRef, immediateRef, isLoading, setLoadingState]);
 
     useEffect(() => {
       navigation.addListener('willFocus', (e) => {
@@ -172,14 +203,17 @@ Screen.create = (Component) => {
     return (
       <ApolloProvider client={graphqlClient}>
       <NavigationProvider navigation={navigation}>
+      <LoadingProvider setLoading={setLoading}>
       <CookieProvider>
         <StatusBar translucent barStyle="dark-content" backgroundColor='white' />
         <SafeAreaView style={styles.container}>
           <Screen>
             <Component />
+            {isLoading && loadingRef.current}
           </Screen>
         </SafeAreaView>
       </CookieProvider>
+      </LoadingProvider>
       </NavigationProvider>
       </ApolloProvider>
     );

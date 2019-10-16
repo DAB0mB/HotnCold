@@ -12,13 +12,13 @@ import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { colors, hexToRgba } from '../../theme';
-import ActivityIndicator from '../../components/ActivityIndicator';
 import RootHeader from '../../components/RootHeader';
 import * as mutations from '../../graphql/mutations';
 import { useMe, useLogout } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
 import { useNavigation } from '../../services/Navigation';
+import { useLoading } from '../../services/Loading';
 import { useInterval, useRenderer } from '../../utils';
 import Screen from '../Screen';
 
@@ -27,14 +27,6 @@ const SHOW_FAKE_DATA = false;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  buffer: {
-    backgroundColor: 'white',
-    position: 'absolute',
-    height: '100%',
-    width: '100%',
-    left: 0,
-    top: 0,
   },
   map: {
     flex: 1,
@@ -113,6 +105,7 @@ const Map = () => {
   const [selection, setSelection] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [readyState, updateReadyState] = useRenderer();
+  const setLoading = useLoading();
 
   const resetMapLoaded = useCallback(() => {
     setMapLoaded(true);
@@ -198,6 +191,12 @@ const Map = () => {
     }
   }, [shapeKey, setAreaFeatures]);
 
+  if (readyState !== 2) {
+    setLoading(true);
+  } else {
+    setLoading(false);
+  }
+
   return (
     <View style={styles.container}>
       <MapboxGL.MapView
@@ -263,10 +262,6 @@ const Map = () => {
 
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
-
-      {readyState !== 2 && (
-        <ActivityIndicator style={styles.buffer} bufferMs={0} />
-      )}
 
       <View style={styles.iconsContainer}>
         {__DEV__ && (
