@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Platform, View, StyleSheet } from 'react-native';
+import BleManager from 'react-native-ble-manager';
 import { BluetoothStatus } from 'react-native-bluetooth-status';
 import Permissions from 'react-native-permissions';
 
@@ -58,7 +59,7 @@ const PermissionRequestor = ({ functions: funcs, children }) => {
         switch (func) {
           // Bluetooth permission request not supported out of the box
           case Platform.OS == 'android' && 'bluetooth':
-            permission = (yield BluetoothStatus.enable()) ? 'authorized' : 'denied';
+            permission = (yield BleManager.enableBluetooth()) ? 'authorized' : 'denied';
             break;
           default:
             permission = yield Permissions.request(func);
