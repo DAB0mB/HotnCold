@@ -1,11 +1,25 @@
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { fromRight, fromBottom } from 'react-navigation-transitions'
 
 import {
   MapScreen,
   ProfileScreen,
   RadarScreen,
 } from './screens';
+
+const handleCustomTransition = ({ scenes }) => {
+  const prevScene = scenes[scenes.length - 2];
+  const nextScene = scenes[scenes.length - 1];
+
+  // Custom transitions go there
+  if (prevScene
+    && prevScene.route.routeName === 'Map'
+    && nextScene.route.routeName === 'Radar') {
+    return fromRight();
+  }
+  return fromBottom();
+}
 
 const Navigator = createStackNavigator({
   Profile: {
@@ -20,6 +34,7 @@ const Navigator = createStackNavigator({
 }, {
   initialRouteName: 'Map',
   headerMode: 'none',
+  transitionConfig: (nav) => handleCustomTransition(nav),
 });
 
 export default createAppContainer(Navigator);

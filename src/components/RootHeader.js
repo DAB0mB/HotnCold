@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { View, Image, Switch, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import React, { useCallback, useState, useEffect } from 'react';
+import { View, Image, Switch, StyleSheet, TouchableWithoutFeedback, BackHandler } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
 
 const RootHeader = ({ navigation, me }) => {
   const [toggled, setToggled] = useState(navigation.state.routeName === 'Radar');
+  const [pointerEvents, setPointerEvents] = useState('auto');
 
   const editProfile = useCallbackTask(() => {
     navigation.push('Profile', { user: me, itsMe: true });
@@ -43,17 +44,49 @@ const RootHeader = ({ navigation, me }) => {
   const navToScreen = useCallback(() => {
     if (navigation.state.routeName === 'Map') {
       setToggled(true);
-      navigation.replace('Radar');
+      navigation.push('Radar');
     } else {
       setToggled(false);
-      navigation.replace('Map');
+      navigation.goBack();
     }
   }, [navigation]);
+
+  useEffect(() => {
+    setPointerEvents('none');
+
+    const timeout = setTimeout(() => {
+      setPointerEvents('auto');
+    }, 333);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [toggled]);
+
+  useEffect(() => {
+    const backHandler = () => {
+      if (navigation.state.routeName !== 'Radar') return true;
+      if (pointerEvents !== 'auto') return true;
+
+      navigation.goBack();
+      setToggled(false);
+
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backHandler);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandler);
+    };
+  }, [navigation, pointerEvents]);
 
   return (
     <LinearGradient colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} style={styles.gradient}>
       <View style={styles.container}>
-        <Switch value={toggled} onChange={navToScreen} />
+        <View pointerEvents={pointerEvents}>
+          <Switch value={toggled} onChange={navToScreen} />
+        </View>
         <View style={{ height: styles.logo.height }}>
           <Image source={require('../assets/logo_light.png')} style={styles.logo} />
         </View>
