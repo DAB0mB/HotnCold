@@ -67,13 +67,14 @@ const Screen = ({ children }) => {
   );
 };
 
-Screen.Authorized = ({ children, Header }) => {
+Screen.Authorized = ({ children }) => {
   const alertError = useAlertError();
   const navigation = useNavigation();
   const meQuery = queries.me.use({ onError: alertError });
   const [readyState, updateReadyState] = useRenderer();
   const { me } = meQuery.data || {};
   const [, setHeader] = useHeaderState();
+  const { Header } = Router.router.getComponentForRouteName(navigation.state.routeName).Component;
 
   useEffect(() => {
     if (!me) return;
@@ -154,17 +155,17 @@ Screen.create = (Component) => {
 
     useEffect(() => {
       navigation.addListener('willFocus', (e) => {
-        const RouteScreen = Router.router.getComponentForRouteName(e.state.routeName);
+        const { Header } = Router.router.getComponentForRouteName(e.state.routeName).Component;
 
-        setHeader(RouteScreen.Component.Header && <RouteScreen.Component.Header navigation={navigation} />);
+        setHeader(Header && <Header navigation={navigation} />);
       });
 
       navigation.addListener('willBlur', (e) => {
         if (!e.action.routeName) return;
 
-        const RouteScreen = Router.router.getComponentForRouteName(e.action.routeName);
+        const { Header } = Router.router.getComponentForRouteName(e.action.routeName).Component;
 
-        setHeader(RouteScreen.Component.Header && <RouteScreen.Component.Header navigation={navigation} />);
+        setHeader(Header && <Header navigation={navigation} />);
       });
     }, [true]);
 
