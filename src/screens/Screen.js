@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { stringToBytes } from 'convert-string';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, Text, SafeAreaView, StyleSheet } from 'react-native';
+import { View, StatusBar, Text, SafeAreaView, StyleSheet, Animated } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
 import CONFIG from 'react-native-config';
@@ -165,13 +165,39 @@ Screen.create = (Component) => {
     // This one belongs to the root component which never unmounts
     const [, setHeader] = useHeaderState();
     const [isLoading, setLoadingState] = useState(false);
+    const fadeAnimRef = useRef(null);
     const loadingRef = useRef(null);
     const immediateRef = useRef(null);
 
+    useEffect(() => {
+      if (isLoading) return;
+      if (!fadeAnimRef.current) return;
+
+      Animated.timing(
+        fadeAnimRef.current,
+        {
+          toValue: 0,
+          duration: 333,
+        }
+      ).start();
+    }, [isLoading]);
+
     const setLoading = useCallback((value) => {
-      loadingRef.current = value ? (
-        <ActivityIndicator style={styles.loadingBuffer} />
-      ) : null;
+      if (value) {
+        fadeAnimRef.current = new Animated.Value(1);
+
+        loadingRef.current = (
+          <Animated.View style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
+            <ActivityIndicator />
+          </Animated.View>
+        );
+      } else {
+        loadingRef.current = (
+          <Animated.View pointerEvents='none' style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
+            <ActivityIndicator />
+          </Animated.View>
+        );
+      }
 
       if (value === isLoading) {
         clearImmediate(immediateRef.current);
@@ -182,7 +208,7 @@ Screen.create = (Component) => {
           setLoadingState(value);
         });
       }
-    }, [loadingRef, immediateRef, isLoading, setLoadingState]);
+    }, [loadingRef, immediateRef, isLoading, setLoadingState, fadeAnimRef]);
 
     useEffect(() => {
       navigation.addListener('willFocus', (e) => {
@@ -209,7 +235,7 @@ Screen.create = (Component) => {
         <SafeAreaView style={styles.container}>
           <Screen>
             <Component />
-            {isLoading && loadingRef.current}
+            {loadingRef.current}
           </Screen>
         </SafeAreaView>
       </CookieProvider>
@@ -230,7 +256,7 @@ Screen.Authorized.create = (Component) => {
       <PermissionRequestor functions={['bluetooth', 'location']}>
         <BluetoothLEProvider>
         <GeolocationProvider>
-          <Screen.Authorized Header={Component.Header}>
+          <Screen.Authorized>
             <Component />
           </Screen.Authorized>
         </GeolocationProvider>
