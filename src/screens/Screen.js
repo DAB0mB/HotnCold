@@ -9,7 +9,7 @@ import CONFIG from 'react-native-config';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import ActivityIndicator from '../components/ActivityIndicator';
-import PermissionRequestor from '../components/PermissionRequestor';
+import NativeServicesEnsurer, { SERVICES } from '../components/NativeServicesEnsurer';
 import graphqlClient from '../graphql/client';
 import * as queries from '../graphql/queries';
 import Router from '../Router';
@@ -84,7 +84,9 @@ Screen.Authorized = ({ children }) => {
   const { me } = meQuery.data || {};
   const [, setHeader] = useHeaderState();
   const setLoading = useLoading();
-  const { Header } = Router.router.getComponentForRouteName(navigation.state.routeName).Component;
+
+  // Avoid circular dependencies
+  const { Header } = require('../Router').router.getComponentForRouteName(navigation.state.routeName).Component;
 
   useEffect(() => {
     if (!me) return;
@@ -252,8 +254,22 @@ Screen.create = (Component) => {
 
 Screen.Authorized.create = (Component) => {
   const ComponentScreen = Screen.create(() => {
+    if (Component.nativeServices) {
+      const nativeServices = useNativeServices();
+
+      useEffect(() => {
+        const requiredNativeServices = nativeServices.required;
+
+        nativeServices.require(Component.nativeServices);
+      }, [nativeServices.required]);
+
+      if (nativeServices.active !== Component.nativeServices) {
+        return null;
+      }
+    }
+
     return (
-      <PermissionRequestor functions={['bluetooth', 'location']}>
+      <NativeServicesEnsurer services={SERVICES.GPS | SERVICES.BLUETOOTH}>
         <BluetoothLEProvider>
         <GeolocationProvider>
           <Screen.Authorized>
@@ -261,7 +277,7 @@ Screen.Authorized.create = (Component) => {
           </Screen.Authorized>
         </GeolocationProvider>
         </BluetoothLEProvider>
-      </PermissionRequestor>
+      </NativeServicesEnsurer>
     );
   });
 

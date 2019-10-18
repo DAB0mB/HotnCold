@@ -3,6 +3,8 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import de.patwoz.rn.bluetoothstatemanager.RNBluetoothStateManagerPackage;
+import br.com.dopaminamob.gpsstate.GPSStatePackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -35,6 +37,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNBluetoothStateManagerPackage(),
+            new GPSStatePackage(),
             new LinearGradientPackage(),
             new RNFusedLocationPackage(),
             new AsyncStoragePackage(),

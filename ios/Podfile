@@ -51,4 +51,8 @@ target 'hotncold' do
 
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
+  pod 'react-native-gps-state', :path => '../node_modules/react-native-gps-state'
+
+  pod 'RNBluetoothStateManager', :path => '../node_modules/react-native-bluetooth-state-manager'
+
 end

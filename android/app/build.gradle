@@ -159,6 +159,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-bluetooth-state-manager')
+    implementation project(':react-native-gps-state')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-geolocation-service')
     implementation project(':@react-native-community_async-storage')
