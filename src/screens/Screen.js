@@ -21,6 +21,7 @@ import { useAlertError } from '../services/DropdownAlert';
 import { GeolocationProvider } from '../services/Geolocation';
 import { useHeaderState } from '../services/Header';
 import { ImagePickerProvider } from '../services/ImagePicker';
+import { useNativeServices } from '../services/NativeServices';
 import { useNavigation, NavigationProvider } from '../services/Navigation';
 import { useLoading, LoadingProvider } from '../services/Loading';
 import { once as Once, useRenderer, useSet, useAsyncEffect } from '../utils';
@@ -254,19 +255,15 @@ Screen.create = (Component) => {
 
 Screen.Authorized.create = (Component) => {
   const ComponentScreen = Screen.create(() => {
-    if (Component.nativeServices) {
-      const nativeServices = useNativeServices();
+    const [nativeServices, setNativeServices] = useNativeServices();
 
-      useEffect(() => {
-        const requiredNativeServices = nativeServices.required;
+    useEffect(() => {
+      setNativeServices(Component.nativeServices || 0);
 
-        nativeServices.require(Component.nativeServices);
-      }, [nativeServices.required]);
-
-      if (nativeServices.active !== Component.nativeServices) {
-        return null;
-      }
-    }
+      return () => {
+        setNativeServices(nativeServices);
+      };
+    }, [true]);
 
     return (
       <NativeServicesEnsurer services={SERVICES.GPS | SERVICES.BLUETOOTH}>

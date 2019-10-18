@@ -31,12 +31,10 @@ const App = () => {
   const watcherIgnored = !!resettingBluetooth;
 
   const onBluetoothActivated = useCallback(() => {
-    let resettingBluetooth = Promise.resolve();
-    if (nativeServices.active & SERVICES.BLUETOOTH) {
-      resettingBluetooth = BluetoothStateManager.disabled().then(() => {
-        return BluetoothStateManager.enable();
-      });
-    }
+    const resettingBluetooth = BluetoothStateManager.disabled().then(() => {
+      return BluetoothStateManager.enable();
+    });
+
     setResettingBluetoothPromise(resettingBluetooth);
   }, [resettingBluetooth]);
 
