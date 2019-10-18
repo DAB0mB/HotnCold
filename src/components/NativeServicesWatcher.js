@@ -4,12 +4,8 @@ import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 import GPSState from 'react-native-gps-state';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { SERVICES } from '../services/NativeServices';
 import { colors } from '../theme';
-
-export const SERVICES = {
-  GPS:       0x01,
-  BLUETOOTH: 0x10,
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -36,7 +32,7 @@ const styles = StyleSheet.create({
 const NativeServicesWatcher = ({
   services,
   children,
-  ignored,
+  watcherIgnored,
   onBluetoothActivated,
   onBluetoothDeactivated,
   onGPSActivated,
@@ -44,7 +40,6 @@ const NativeServicesWatcher = ({
 }) => {
   const [bluetoothState, setBluetoothState] = useState();
   const [gpsState, setGpsState] = useState();
-  const [loading, setLoading] = useState(true);
 
   const getRequiredService = useCallback(() => {
     if ((services & SERVICES.GPS) && gpsState !== GPSState.AUTHORIZED) {
@@ -56,20 +51,23 @@ const NativeServicesWatcher = ({
     }
   }, [gpsState, bluetoothState]);
 
-  const initializeStates = useCallback(() => {
+  useEffect(() => {
+    if (watcherIgnored) return;
+
+    let mounted = true;
     Promise.all([
       (services & SERVICES.GPS) && GPSState.getStatus(),
       (services & SERVICES.BLUETOOTH) && BluetoothStateManager.getState(),
     ]).then(([gpsState, bluetoothState]) => {
-      if (gpsState) setGpsState(gpsState);
-      if (bluetoothState) setBluetoothState(bluetoothState);
-      setLoading(false);
+      if (!mounted) return;
+      if (gpsState != null) setGpsState(gpsState);
+      if (bluetoothState != null) setBluetoothState(bluetoothState);
     });
-  }, [setGpsState, setBluetoothState]);
 
-  useEffect(() => {
-    initializeStates();
-  }, [true]);
+    return () => {
+      mounted = false;
+    };
+  }, [watcherIgnored]);
 
   useEffect(() => {
     if (gpsState == null) return;
@@ -82,14 +80,6 @@ const NativeServicesWatcher = ({
   }, [gpsState === GPSState.AUTHORIZED]);
 
   useEffect(() => {
-    if (ignored) {
-      setLoading(true);
-    } else {
-      initializeStates();
-    }
-  }, [ignored]);
-
-  useEffect(() => {
     if (bluetoothState == null) return;
 
     if (bluetoothState === 'PoweredOn') {
@@ -100,8 +90,7 @@ const NativeServicesWatcher = ({
   }, [bluetoothState === 'PoweredOn']);
 
   useEffect(() => {
-    if (loading) return;
-    if (ignored) return;
+    if (watcherIgnored) return;
 
     let gpsListener;
     if (services & SERVICES.GPS) {
@@ -128,9 +117,12 @@ const NativeServicesWatcher = ({
         bluetoothListener.remove();
       }
     };
-  }, [gpsState, bluetoothState, loading, ignored]);
+  }, [setGpsState, setBluetoothState, watcherIgnored]);
 
-  if (loading) {
+  if (
+    ((services & SERVICES.BLUETOOTH) && bluetoothState == null) ||
+    ((services & SERVICES.GPS) && gpsState == null)
+  ) {
     return null;
   }
 

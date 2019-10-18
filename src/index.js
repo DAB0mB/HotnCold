@@ -1,10 +1,22 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import BleManager from 'react-native-ble-manager';
+import BlePeripheral from 'react-native-ble-peripheral';
+import CONFIG from 'react-native-config';
 
+import NativeServicesWatcher from './components/NativeServicesWatcher';
 import Router from './Router';
 import { DropdownAlertProvider } from './services/DropdownAlert';
 import { useHeaderState, HeaderProvider } from './services/Header';
+import { useNativeServices, NativeServicesProvider } from './services/NativeServices';
 
+let modulesInitialized;
+Promise.all([
+  BleManager.start(),
+  MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
+]).then(() => {
+  modulesInitialized = true;
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -12,18 +24,10 @@ const styles = StyleSheet.create({
   },
 });
 
-let modulesInitialized;
-Promise.all([
-  BleManager.start(),
-  Mapbox.setAccessToken(),
-]).then(() => {
-  modulesInitialized = true;
-});
-
 const App = () => {
   const [header] = useHeaderState();
   const [resettingBluetooth, setResettingBluetoothPromise] = useState(null);
-  const nativeServices = useNativeServices();
+  const [nativeServices] = useNativeServices();
   const watcherIgnored = !!resettingBluetooth;
 
   const onBluetoothActivated = useCallback(() => {
@@ -58,10 +62,10 @@ const App = () => {
   return (
     <View style={styles.container}>
       <NativeServicesWatcher
-        services={nativeServices.required}
-        onBluetoothActivated={onServiceActivated}
-        onServiceDeactivated={onServiceDeactivated}
-        ignored={watcherIgnored}
+        services={nativeServices}
+        onBluetoothActivated={onBluetoothActivated}
+        onBluetoothDeactivated={onBluetoothDeactivated}
+        watcherIgnored={watcherIgnored}
       >
         <Router />
       </NativeServicesWatcher>
