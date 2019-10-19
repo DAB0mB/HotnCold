@@ -30,13 +30,12 @@ const styles = StyleSheet.create({
 });
 
 const NativeServicesWatcher = ({
-  services,
   children,
-  watcherIgnored,
-  onBluetoothActivated,
-  onBluetoothDeactivated,
-  onGPSActivated,
-  onGPSDeactivated,
+  services = 0,
+  onBluetoothActivated = () => {},
+  onBluetoothDeactivated = () => {},
+  onGPSActivated = () => {},
+  onGPSDeactivated = () => {},
 }) => {
   const [recentServices, setRecentServices] = useState(0);
   const [bluetoothState, setBluetoothState] = useState(null);
@@ -54,17 +53,17 @@ const NativeServicesWatcher = ({
 
   useEffect(() => {
     let mounted = true;
-    const gettingsStates = [];
+    const gettingStates = [];
 
     if (!(recentServices & SERVICES.GPS) && (services & SERVICES.GPS)) {
       gettingStates.push(GPSState.getStatus());
     }
 
-    if (!(recentServices & SERVICES.Bluetooth) && (services & SERVICES.Bluetooth)) {
+    if (!(recentServices & SERVICES.BLUETOOTH) && (services & SERVICES.BLUETOOTH)) {
       gettingStates.push(BluetoothStateManager.getState());
     }
 
-    Promise.all(gettingsStates).then(([gpsState, bluetoothState]) => {
+    Promise.all(gettingStates).then(([gpsState, bluetoothState]) => {
       if (!mounted) return;
       if (gpsState != null) setGpsState(gpsState);
       if (bluetoothState != null) setBluetoothState(bluetoothState);

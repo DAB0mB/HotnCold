@@ -1,22 +1,20 @@
-import React from 'react';
+import MapboxGL from '@react-native-mapbox-gl/maps';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
 import CONFIG from 'react-native-config';
 
-import NativeServicesWatcher from './components/NativeServicesWatcher';
 import Router from './Router';
 import { DropdownAlertProvider } from './services/DropdownAlert';
 import { useHeaderState, HeaderProvider } from './services/Header';
-import { useNativeServices, NativeServicesProvider, SERVICES } from './services/NativeServices';
+import NativeServicesWatcher from './components/NativeServicesWatcher';
+import { useNativeServices, NativeServicesProvider } from './services/NativeServices';
 
-let modulesInitialized;
-Promise.all([
+const initializingModules = Promise.all([
   BleManager.start(),
   MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
-]).then(() => {
-  modulesInitialized = true;
-});
+]);
 
 const styles = StyleSheet.create({
   container: {
@@ -26,32 +24,14 @@ const styles = StyleSheet.create({
 
 const App = () => {
   const [header] = useHeaderState();
-  const [resettingBluetooth, setResettingBluetoothPromise] = useState(null);
   const [nativeServices] = useNativeServices();
-  const watcherIgnored = !!resettingBluetooth;
-
-  const onBluetoothActivated = useCallback(() => {
-    const resettingBluetooth = BluetoothStateManager.disabled().then(() => {
-      return BluetoothStateManager.enable();
-    });
-
-    setResettingBluetoothPromise(resettingBluetooth);
-  }, [resettingBluetooth]);
+  const [modulesInitialized, setModulesInitialized] = useState(false);
 
   useEffect(() => {
-    if (!resettingBluetooth) return;
-
-    resettingBluetooth.then(() => {
-      BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
-      BlePeripheral.addService(me.id, true);
-
-      return BlePeripheral.start();
-    }).then(() => {
-      setResettingBluetoothPromise(null);
-    }).catch(() => {
-      setResettingBluetoothPromise(null);
+    initializingModules.then(() => {
+      setModulesInitialized(true);
     });
-  }, [resettingBluetooth]);
+  }, [true]);
 
   if (!modulesInitialized) {
     return null;
@@ -59,11 +39,7 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <NativeServicesWatcher
-        services={resettingBluetooth ? nativeServices ^ SERVICES.BLUETOOTH : nativeServices}
-        onBluetoothActivated={onBluetoothActivated}
-        onBluetoothDeactivated={onBluetoothDeactivated}
-      >
+      <NativeServicesWatcher {...nativeServices}>
         <Router />
       </NativeServicesWatcher>
       {header}

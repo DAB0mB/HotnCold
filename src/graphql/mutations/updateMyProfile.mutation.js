@@ -2,8 +2,8 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useCallback } from 'react';
 
-import { useMe } from '../../services/Auth';
 import * as fragments from '../fragments';
+import * as queries from '../queries';
 
 const updateMyProfile = gql `
   mutation UpdateMyProfile(
@@ -30,7 +30,7 @@ const updateMyProfile = gql `
 `;
 
 updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
-  const me = useMe();
+  const { data: { me } = {} } = queries.me.use();
   const [superMutate, mutation] = useMutation(updateMyProfile, defaultOptions);
 
   const mutate = useCallback(({

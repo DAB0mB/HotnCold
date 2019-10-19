@@ -2,7 +2,6 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useCallback } from 'react';
 
-import { useMe } from '../../services/Auth';
 import * as fragments from '../fragments';
 
 const register = gql `

@@ -1,18 +1,15 @@
 import { ApolloProvider } from '@apollo/react-hooks';
-import MapboxGL from '@react-native-mapbox-gl/maps';
 import { stringToBytes } from 'convert-string';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, StatusBar, Text, SafeAreaView, StyleSheet, Animated } from 'react-native';
-import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
+import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 import CONFIG from 'react-native-config';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import ActivityIndicator from '../components/ActivityIndicator';
-import NativeServicesEnsurer, { SERVICES } from '../components/NativeServicesEnsurer';
 import graphqlClient from '../graphql/client';
 import * as queries from '../graphql/queries';
-import Router from '../Router';
 import { MeProvider } from '../services/Auth';
 import { BluetoothLEProvider } from '../services/BluetoothLE';
 import { useCookie, CookieProvider } from '../services/Cookie';
@@ -21,10 +18,10 @@ import { useAlertError } from '../services/DropdownAlert';
 import { GeolocationProvider } from '../services/Geolocation';
 import { useHeaderState } from '../services/Header';
 import { ImagePickerProvider } from '../services/ImagePicker';
-import { useNativeServices } from '../services/NativeServices';
+import { useNativeServices, SERVICES } from '../services/NativeServices';
 import { useNavigation, NavigationProvider } from '../services/Navigation';
 import { useLoading, LoadingProvider } from '../services/Loading';
-import { once as Once, useRenderer, useSet, useAsyncEffect } from '../utils';
+import { once as Once, useRenderer } from '../utils';
 
 const once = Once.create();
 
@@ -85,46 +82,52 @@ Screen.Authorized = ({ children }) => {
   const { me } = meQuery.data || {};
   const [, setHeader] = useHeaderState();
   const setLoading = useLoading();
+  const [resettingBluetooth, setBluetoothResettingPromise] = useState();
+  const [nativeServices, setNativeServices] = useNativeServices();
 
   // Avoid circular dependencies
-  const { Header } = require('../Router').router.getComponentForRouteName(navigation.state.routeName).Component;
+  const Router = require('../Router').default;
+  const { Header } = Router.router.getComponentForRouteName(navigation.state.routeName).Component;
 
-  useEffect(() => {
-    if (!me) return;
-
-    once.try(() => {
-      once(MapboxGL);
-
-      MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN);
+  const onBluetoothActivated = useCallback(() => {
+    const resettingBluetooth = BluetoothStateManager.disable().then(() => {
+      return BluetoothStateManager.enable();
     });
 
-    once.try(() => {
-      once(BleManager, Promise.resolve());
+    setBluetoothResettingPromise(resettingBluetooth);
+    setNativeServices({ services: nativeServices.services ^ SERVICES.BLUETOOTH });
+  }, [resettingBluetooth, nativeServices]);
 
-      return BleManager.start();
+  useEffect(() => {
+    if (!resettingBluetooth) return;
+    if (!me) return;
+
+    resettingBluetooth.then(() => {
+      BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
+      BlePeripheral.addService(me.id, true);
+
+      return BlePeripheral.start();
     }).then(() => {
-      updateReadyState();
-    }).catch(alertError);
+      setBluetoothResettingPromise(null);
+      setNativeServices({ services: nativeServices.services & SERVICES.BLUETOOTH });
+    }).catch(() => {
+      setBluetoothResettingPromise(null);
+      setNativeServices({ services: nativeServices.services & SERVICES.BLUETOOTH });
+    });
+  }, [me && me.id, resettingBluetooth]);
 
-    BlePeripheral.isAdvertising().then((isAdvertising) => {
-      if (!isAdvertising) {
-        BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
-        BlePeripheral.addService(me.id, true);
+  useEffect(() => {
+    const props = nativeServices;
 
-        return BlePeripheral.start();
-      }
-    }).then(() => {
-      updateReadyState();
-    }).catch(alertError);
+    setNativeServices({
+      onBluetoothActivated,
+      services: SERVICES.BLUETOOTH | SERVICES.GPS,
+    });
 
     return () => {
-      BlePeripheral.isAdvertising().then((isAdvertising) => {
-        if (isAdvertising) {
-          BlePeripheral.stop();
-        }
-      });
+      setNativeServices(props);
     };
-  }, [me && me.id]);
+  }, [true]);
 
   useEffect(() => {
     if (meQuery.called && !meQuery.loading && !meQuery.error && !me) {
@@ -171,6 +174,9 @@ Screen.create = (Component) => {
     const fadeAnimRef = useRef(null);
     const loadingRef = useRef(null);
     const immediateRef = useRef(null);
+
+    // Avoid circular dependencies
+    const Router = require('../Router').default;
 
     useEffect(() => {
       if (isLoading) return;
@@ -255,26 +261,14 @@ Screen.create = (Component) => {
 
 Screen.Authorized.create = (Component) => {
   const ComponentScreen = Screen.create(() => {
-    const [nativeServices, setNativeServices] = useNativeServices();
-
-    useEffect(() => {
-      setNativeServices(Component.nativeServices || 0);
-
-      return () => {
-        setNativeServices(nativeServices);
-      };
-    }, [true]);
-
     return (
-      <NativeServicesEnsurer services={SERVICES.GPS | SERVICES.BLUETOOTH}>
-        <BluetoothLEProvider>
-        <GeolocationProvider>
-          <Screen.Authorized>
-            <Component />
-          </Screen.Authorized>
-        </GeolocationProvider>
-        </BluetoothLEProvider>
-      </NativeServicesEnsurer>
+      <BluetoothLEProvider>
+      <GeolocationProvider>
+        <Screen.Authorized>
+          <Component />
+        </Screen.Authorized>
+      </GeolocationProvider>
+      </BluetoothLEProvider>
     );
   });
 

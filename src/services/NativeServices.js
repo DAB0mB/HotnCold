@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 
 const NativeServicesContext = createContext(null);
 
@@ -8,15 +8,21 @@ export const SERVICES = {
 };
 
 export const NativeServicesProvider = ({ children }) => {
-  const [nativeServices, setNativeServices] = useState(0x00);
+  const nativeServicesState = useState({});
 
   return (
-    <NativeServicesContext.Provider value={[nativeServices, setNativeServices]}>
+    <NativeServicesContext.Provider value={nativeServicesState}>
       {children}
     </NativeServicesContext.Provider>
   );
 };
 
-export const useNativeServicesState = () => {
-  return useContext(NativeServicesContext);
+export const useNativeServices = () => {
+  const [nativeServices, _setNativeServices] = useContext(NativeServicesContext);
+
+  const setNativeServices = useCallback((nativeServices) => {
+    _setNativeServices(_nativeServices => ({ ..._nativeServices, ...nativeServices }));
+  }, [true]);
+
+  return [nativeServices, setNativeServices];
 };
