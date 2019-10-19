@@ -8,7 +8,13 @@ export const SERVICES = {
 };
 
 export const NativeServicesProvider = ({ children }) => {
-  const nativeServicesState = useState({});
+  const nativeServicesState = useState({
+    services: 0,
+    onBluetoothActivated: useCallback(() => {}, [true]),
+    onBluetoothDeactivated: useCallback(() => {}, [true]),
+    onGPSActivated: useCallback(() => {}, [true]),
+    onGPSDeactivated: useCallback(() => {}, [true]),
+  });
 
   return (
     <NativeServicesContext.Provider value={nativeServicesState}>
@@ -18,11 +24,26 @@ export const NativeServicesProvider = ({ children }) => {
 };
 
 export const useNativeServices = () => {
-  const [nativeServices, _setNativeServices] = useContext(NativeServicesContext);
+  const [_nativeServices, _setNativeServices] = useContext(NativeServicesContext);
 
-  const setNativeServices = useCallback((nativeServices) => {
-    _setNativeServices(_nativeServices => ({ ..._nativeServices, ...nativeServices }));
-  }, [true]);
+  const setNativeServices = useCallback((nativeServicesArg) => {
+    let shouldReset = false;
+    const nativeServices = {};
 
-  return [nativeServices, setNativeServices];
+    Object.keys(_nativeServices).forEach((prop) => {
+      nativeServices[prop] = nativeServicesArg[prop] != null
+        ? nativeServicesArg[prop]
+        : _nativeServices[prop];
+
+      if (nativeServices[prop] !== _nativeServices[prop]) {
+        shouldReset = true;
+      }
+    });
+
+    if (shouldReset) {
+      _setNativeServices(nativeServices);
+    }
+  }, [_nativeServices, _setNativeServices]);
+
+  return [_nativeServices, setNativeServices];
 };

@@ -78,7 +78,6 @@ Screen.Authorized = ({ children }) => {
   const alertError = useAlertError();
   const navigation = useNavigation();
   const meQuery = queries.me.use({ onError: alertError });
-  const [readyState, updateReadyState] = useRenderer();
   const { me } = meQuery.data || {};
   const [, setHeader] = useHeaderState();
   const setLoading = useLoading();
@@ -96,7 +95,7 @@ Screen.Authorized = ({ children }) => {
 
     setBluetoothResettingPromise(resettingBluetooth);
     setNativeServices({ services: nativeServices.services ^ SERVICES.BLUETOOTH });
-  }, [resettingBluetooth, nativeServices]);
+  }, [resettingBluetooth, nativeServices.services]);
 
   useEffect(() => {
     if (!resettingBluetooth) return;
@@ -125,7 +124,10 @@ Screen.Authorized = ({ children }) => {
     });
 
     return () => {
-      setNativeServices(props);
+      setNativeServices({
+        onBluetoothActivated: props.onBluetoothActivated,
+        services: props.services,
+      });
     };
   }, [true]);
 
@@ -137,7 +139,7 @@ Screen.Authorized = ({ children }) => {
   }, [meQuery.called, meQuery.loading, meQuery.error, me]);
 
   useEffect(() => {
-    if (meQuery.loading || readyState != 2) return;
+    if (meQuery.loading) return;
     if (!Header) return;
 
     setHeader(<Header navigation={navigation} me={me} />);
@@ -149,9 +151,9 @@ Screen.Authorized = ({ children }) => {
     return () => {
       listener.remove();
     };
-  }, [meQuery.loading, readyState]);
+  }, [meQuery.loading]);
 
-  if (meQuery.loading || readyState != 2) {
+  if (meQuery.loading) {
     setLoading(true);
 
     return null;
@@ -174,6 +176,7 @@ Screen.create = (Component) => {
     const fadeAnimRef = useRef(null);
     const loadingRef = useRef(null);
     const immediateRef = useRef(null);
+    const mountedRef = useRef(false);
 
     // Avoid circular dependencies
     const Router = require('../Router').default;
@@ -213,11 +216,21 @@ Screen.create = (Component) => {
         immediateRef.current = null;
       } else {
         immediateRef.current = setImmediate(() => {
+          if (!mountedRef.current) return;
+
           immediateRef.current = null;
           setLoadingState(value);
         });
       }
-    }, [loadingRef, immediateRef, isLoading, setLoadingState, fadeAnimRef]);
+    }, [loadingRef, immediateRef, isLoading, setLoadingState, fadeAnimRef, mountedRef]);
+
+    useEffect(() => {
+      mountedRef.current = true;
+
+      return () => {
+        mountedRef.current = false;
+      };
+    }, [true]);
 
     useEffect(() => {
       navigation.addListener('willFocus', (e) => {

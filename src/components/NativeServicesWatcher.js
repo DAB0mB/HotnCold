@@ -31,11 +31,11 @@ const styles = StyleSheet.create({
 
 const NativeServicesWatcher = ({
   children,
-  services = 0,
-  onBluetoothActivated = () => {},
-  onBluetoothDeactivated = () => {},
-  onGPSActivated = () => {},
-  onGPSDeactivated = () => {},
+  services,
+  onBluetoothActivated,
+  onBluetoothDeactivated,
+  onGPSActivated,
+  onGPSDeactivated,
 }) => {
   const [recentServices, setRecentServices] = useState(0);
   const [bluetoothState, setBluetoothState] = useState(null);
@@ -49,7 +49,7 @@ const NativeServicesWatcher = ({
     if ((services & SERVICES.BLUETOOTH) && bluetoothState !== 'PoweredOn') {
       return { name: 'Bluetooth', icon: 'bluetooth' };
     }
-  }, [gpsState, bluetoothState]);
+  }, [services, gpsState, bluetoothState]);
 
   useEffect(() => {
     let mounted = true;
@@ -57,10 +57,14 @@ const NativeServicesWatcher = ({
 
     if (!(recentServices & SERVICES.GPS) && (services & SERVICES.GPS)) {
       gettingStates.push(GPSState.getStatus());
+    } else {
+      gettingStates.push(null);
     }
 
     if (!(recentServices & SERVICES.BLUETOOTH) && (services & SERVICES.BLUETOOTH)) {
       gettingStates.push(BluetoothStateManager.getState());
+    } else {
+      gettingStates.push(null);
     }
 
     Promise.all(gettingStates).then(([gpsState, bluetoothState]) => {
@@ -78,6 +82,7 @@ const NativeServicesWatcher = ({
 
   useEffect(() => {
     if (gpsState == null) return;
+    if (!(services & SERVICES.GPS)) return;
 
     if (gpsState === GPSState.AUTHORIZED) {
       onGPSActivated();
@@ -88,6 +93,7 @@ const NativeServicesWatcher = ({
 
   useEffect(() => {
     if (bluetoothState == null) return;
+    if (!(services & SERVICES.BLUETOOTH)) return;
 
     if (bluetoothState === 'PoweredOn') {
       onBluetoothActivated();
@@ -122,7 +128,7 @@ const NativeServicesWatcher = ({
         bluetoothListener.remove();
       }
     };
-  }, [setGpsState, setBluetoothState]);
+  }, [services, setGpsState, setBluetoothState]);
 
   if (
     ((services & SERVICES.BLUETOOTH) && bluetoothState == null) ||
@@ -140,8 +146,8 @@ const NativeServicesWatcher = ({
           <Text style={{ color: colors.hot }}>Please turn on your</Text> <Text style={{ color: colors.cold }}>{requiredService.name}</Text><Text style={{ color: colors.hot }}>.</Text>
         </Text>
         <McIcon name={requiredService.icon} size={25} color={colors.ink} solid />
-        {customMessage && (
-          <Text style={styles.customMessage}>{customMessage}</Text>
+        {requiredService.customMessage && (
+          <Text style={styles.customMessage}>{requiredService.customMessage}</Text>
         )}
       </View>
     );
