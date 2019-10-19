@@ -8,7 +8,7 @@ import NativeServicesWatcher from './components/NativeServicesWatcher';
 import Router from './Router';
 import { DropdownAlertProvider } from './services/DropdownAlert';
 import { useHeaderState, HeaderProvider } from './services/Header';
-import { useNativeServices, NativeServicesProvider } from './services/NativeServices';
+import { useNativeServices, NativeServicesProvider, SERVICES } from './services/NativeServices';
 
 let modulesInitialized;
 Promise.all([
@@ -60,10 +60,9 @@ const App = () => {
   return (
     <View style={styles.container}>
       <NativeServicesWatcher
-        services={nativeServices}
+        services={resettingBluetooth ? nativeServices ^ SERVICES.BLUETOOTH : nativeServices}
         onBluetoothActivated={onBluetoothActivated}
         onBluetoothDeactivated={onBluetoothDeactivated}
-        watcherIgnored={watcherIgnored}
       >
         <Router />
       </NativeServicesWatcher>

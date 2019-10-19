@@ -38,8 +38,9 @@ const NativeServicesWatcher = ({
   onGPSActivated,
   onGPSDeactivated,
 }) => {
-  const [bluetoothState, setBluetoothState] = useState();
-  const [gpsState, setGpsState] = useState();
+  const [recentServices, setRecentServices] = useState(0);
+  const [bluetoothState, setBluetoothState] = useState(null);
+  const [gpsState, setGpsState] = useState(null);
 
   const getRequiredService = useCallback(() => {
     if ((services & SERVICES.GPS) && gpsState !== GPSState.AUTHORIZED) {
@@ -52,22 +53,29 @@ const NativeServicesWatcher = ({
   }, [gpsState, bluetoothState]);
 
   useEffect(() => {
-    if (watcherIgnored) return;
-
     let mounted = true;
-    Promise.all([
-      (services & SERVICES.GPS) && GPSState.getStatus(),
-      (services & SERVICES.BLUETOOTH) && BluetoothStateManager.getState(),
-    ]).then(([gpsState, bluetoothState]) => {
+    const gettingsStates = [];
+
+    if (!(recentServices & SERVICES.GPS) && (services & SERVICES.GPS)) {
+      gettingStates.push(GPSState.getStatus());
+    }
+
+    if (!(recentServices & SERVICES.Bluetooth) && (services & SERVICES.Bluetooth)) {
+      gettingStates.push(BluetoothStateManager.getState());
+    }
+
+    Promise.all(gettingsStates).then(([gpsState, bluetoothState]) => {
       if (!mounted) return;
       if (gpsState != null) setGpsState(gpsState);
       if (bluetoothState != null) setBluetoothState(bluetoothState);
+
+      setRecentServices(services);
     });
 
     return () => {
       mounted = false;
     };
-  }, [watcherIgnored]);
+  }, [services]);
 
   useEffect(() => {
     if (gpsState == null) return;
@@ -90,8 +98,6 @@ const NativeServicesWatcher = ({
   }, [bluetoothState === 'PoweredOn']);
 
   useEffect(() => {
-    if (watcherIgnored) return;
-
     let gpsListener;
     if (services & SERVICES.GPS) {
       gpsListener = (state) => {
@@ -109,15 +115,15 @@ const NativeServicesWatcher = ({
     }
 
     return () => {
-      if (services & SERVICES.GPS) {
+      if (gpsListener) {
         GPSState.removeListener(gpsListener);
       }
 
-      if (services & SERVICES.BLUETOOTH) {
+      if (bluetoothListener) {
         bluetoothListener.remove();
       }
     };
-  }, [setGpsState, setBluetoothState, watcherIgnored]);
+  }, [setGpsState, setBluetoothState]);
 
   if (
     ((services & SERVICES.BLUETOOTH) && bluetoothState == null) ||
