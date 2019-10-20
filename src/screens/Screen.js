@@ -21,7 +21,7 @@ import { ImagePickerProvider } from '../services/ImagePicker';
 import { useNativeServices, SERVICES } from '../services/NativeServices';
 import { useNavigation, NavigationProvider } from '../services/Navigation';
 import { useLoading, LoadingProvider } from '../services/Loading';
-import { once as Once, useRenderer } from '../utils';
+import { once as Once, useRenderer, useAsyncEffect } from '../utils';
 
 const once = Once.create();
 
@@ -83,43 +83,50 @@ Screen.Authorized = ({ children }) => {
   const setLoading = useLoading();
   const [resettingBluetooth, setBluetoothResettingPromise] = useState();
   const [nativeServices, setNativeServices] = useNativeServices();
+  const onBluetoothActivatedRef = useRef(null);
 
   // Avoid circular dependencies
   const Router = require('../Router').default;
   const { Header } = Router.router.getComponentForRouteName(navigation.state.routeName).Component;
 
-  const onBluetoothActivated = useCallback(() => {
-    const resettingBluetooth = BluetoothStateManager.disable().then(() => {
-      return BluetoothStateManager.enable();
-    });
-
-    setBluetoothResettingPromise(resettingBluetooth);
-    setNativeServices({ services: nativeServices.services ^ SERVICES.BLUETOOTH });
-  }, [resettingBluetooth, nativeServices.services]);
+  onBluetoothActivatedRef.current = useCallback(() => {
+    setNativeServices({ services: nativeServices.services ^ SERVICES.BLUETOOTH, state: 'resettingBluetooth' });
+  }, [nativeServices]);
 
   useEffect(() => {
+    if (nativeServices.state != 'resettingBluetooth') return;
+
+     const resettingBluetooth = BluetoothStateManager.disable().then(() => {
+       return BluetoothStateManager.enable();
+     });
+
+     setNativeServices({ state: '' });
+     setBluetoothResettingPromise(resettingBluetooth);
+  }, [nativeServices]);
+
+  useAsyncEffect(function* () {
     if (!resettingBluetooth) return;
     if (!me) return;
 
-    resettingBluetooth.then(() => {
-      BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
-      BlePeripheral.addService(me.id, true);
+    try {
+      yield resettingBluetooth;
 
-      return BlePeripheral.start();
-    }).then(() => {
+      // BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
+      // BlePeripheral.addService(me.id, true);
+
+      // yield BlePeripheral.start();
+    }
+    finally {
       setBluetoothResettingPromise(null);
-      setNativeServices({ services: nativeServices.services & SERVICES.BLUETOOTH });
-    }).catch(() => {
-      setBluetoothResettingPromise(null);
-      setNativeServices({ services: nativeServices.services & SERVICES.BLUETOOTH });
-    });
+      setNativeServices({ services: nativeServices.services | SERVICES.BLUETOOTH });
+    }
   }, [me && me.id, resettingBluetooth]);
 
   useEffect(() => {
     const props = nativeServices;
 
     setNativeServices({
-      onBluetoothActivated,
+      onBluetoothActivated: () => onBluetoothActivatedRef.current(),
       services: SERVICES.BLUETOOTH | SERVICES.GPS,
     });
 
@@ -153,7 +160,7 @@ Screen.Authorized = ({ children }) => {
     };
   }, [meQuery.loading]);
 
-  if (meQuery.loading) {
+  if (meQuery.loading && resettingBluetooth) {
     setLoading(true);
 
     return null;

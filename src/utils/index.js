@@ -49,9 +49,9 @@ export const useAsyncEffect = (fn, input) => {
   const [iterator, setIterator] = useState(null);
   const cbQueueRef = useRef([]);
 
-  const dispose = useCallback(async () => {
+  const dispose = useCallback(() => {
     for (let callback of cbQueueRef.current) {
-      await callback();
+      callback();
     }
   }, [generator]);
 
@@ -61,6 +61,14 @@ export const useAsyncEffect = (fn, input) => {
     }
 
     setIterator(generator.next(value));
+  }, [iterator]);
+
+  const genThrow = useCallback((error) => {
+    if (iterator && iterator.done) {
+      return;
+    }
+
+    setIterator(generator.throw(value));
   }, [iterator]);
 
   useEffect(() => {
@@ -97,6 +105,10 @@ export const useAsyncEffect = (fn, input) => {
       iterator.value.then((value) => {
         if (mounted) {
           next(value);
+        }
+      }).catch((error) => {
+        if (mounted) {
+          genThrow(error);
         }
       });
 

@@ -9,6 +9,7 @@ export const SERVICES = {
 
 export const NativeServicesProvider = ({ children }) => {
   const nativeServicesState = useState({
+    state: null,
     services: 0,
     onBluetoothActivated: useCallback(() => {}, [true]),
     onBluetoothDeactivated: useCallback(() => {}, [true]),

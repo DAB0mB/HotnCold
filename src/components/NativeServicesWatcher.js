@@ -9,10 +9,13 @@ import { colors } from '../theme';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    height: '100%',
+    top: 0,
+    left: 0,
     paddingLeft: 20,
     paddingRight: 20,
   },
@@ -42,11 +45,11 @@ const NativeServicesWatcher = ({
   const [gpsState, setGpsState] = useState(null);
 
   const getRequiredService = useCallback(() => {
-    if ((services & SERVICES.GPS) && gpsState !== GPSState.AUTHORIZED) {
+    if ((services & SERVICES.GPS) && gpsState === false) {
       return { name: 'GPS', icon: 'crosshairs-gps' };
     }
 
-    if ((services & SERVICES.BLUETOOTH) && bluetoothState !== 'PoweredOn') {
+    if ((services & SERVICES.BLUETOOTH) && bluetoothState === false) {
       return { name: 'Bluetooth', icon: 'bluetooth' };
     }
   }, [services, gpsState, bluetoothState]);
@@ -69,8 +72,8 @@ const NativeServicesWatcher = ({
 
     Promise.all(gettingStates).then(([gpsState, bluetoothState]) => {
       if (!mounted) return;
-      if (gpsState != null) setGpsState(gpsState);
-      if (bluetoothState != null) setBluetoothState(bluetoothState);
+      if (gpsState != null) setGpsState(gpsState === GPSState.AUTHORIZED);
+      if (bluetoothState != null) setBluetoothState(bluetoothState === 'PoweredOn');
 
       setRecentServices(services);
     });
@@ -80,33 +83,43 @@ const NativeServicesWatcher = ({
     };
   }, [services]);
 
+  const [recentGpsState, setRecentGpsState] = useState(gpsState);
   useEffect(() => {
-    if (gpsState == null) return;
+    if (recentGpsState === gpsState) return;
     if (!(services & SERVICES.GPS)) return;
 
-    if (gpsState === GPSState.AUTHORIZED) {
+    if (gpsState) {
       onGPSActivated();
     } else {
       onGPSDeactivated();
     }
-  }, [gpsState === GPSState.AUTHORIZED]);
 
+    setRecentGpsState(gpsState);
+  }, [services, gpsState]);
+
+  const [recentBluetoothState, setRecentBluetoothState] = useState(bluetoothState);
   useEffect(() => {
-    if (bluetoothState == null) return;
+    if (recentBluetoothState === bluetoothState) return;
     if (!(services & SERVICES.BLUETOOTH)) return;
 
-    if (bluetoothState === 'PoweredOn') {
+    if (bluetoothState) {
       onBluetoothActivated();
     } else {
       onBluetoothDeactivated();
     }
-  }, [bluetoothState === 'PoweredOn']);
+
+    setRecentBluetoothState(bluetoothState);
+  }, [services, bluetoothState]);
 
   useEffect(() => {
     let gpsListener;
     if (services & SERVICES.GPS) {
       gpsListener = (state) => {
-        setGpsState(state);
+        if (state === GPSState.AUTHORIZED) {
+          setGpsState(true);
+        } else {
+          setGpsState(false);
+        }
       };
 
       GPSState.addListener(gpsListener);
@@ -115,7 +128,11 @@ const NativeServicesWatcher = ({
     let bluetoothListener;
     if (services & SERVICES.BLUETOOTH) {
       bluetoothListener = BluetoothStateManager.onStateChange((state) => {
-        setBluetoothState(state);
+        if (state === 'PoweredOn') {
+          setBluetoothState(true);
+        } else {
+          setBluetoothState(false);
+        }
       });
     }
 
@@ -130,26 +147,22 @@ const NativeServicesWatcher = ({
     };
   }, [services, setGpsState, setBluetoothState]);
 
-  if (
-    ((services & SERVICES.BLUETOOTH) && bluetoothState == null) ||
-    ((services & SERVICES.GPS) && gpsState == null)
-  ) {
-    return null;
-  }
-
   const requiredService = getRequiredService();
 
   if (requiredService) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>
-          <Text style={{ color: colors.hot }}>Please turn on your</Text> <Text style={{ color: colors.cold }}>{requiredService.name}</Text><Text style={{ color: colors.hot }}>.</Text>
-        </Text>
-        <McIcon name={requiredService.icon} size={25} color={colors.ink} solid />
-        {requiredService.customMessage && (
-          <Text style={styles.customMessage}>{requiredService.customMessage}</Text>
-        )}
-      </View>
+      <>
+        {children}
+        <View style={styles.container}>
+          <Text style={styles.text}>
+            <Text style={{ color: colors.hot }}>Please turn on your</Text> <Text style={{ color: colors.cold }}>{requiredService.name}</Text><Text style={{ color: colors.hot }}>.</Text>
+          </Text>
+          <McIcon name={requiredService.icon} size={25} color={colors.ink} solid />
+          {requiredService.customMessage && (
+            <Text style={styles.customMessage}>{requiredService.customMessage}</Text>
+          )}
+        </View>
+      </>
     );
   }
 
