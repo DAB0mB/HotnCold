@@ -8,8 +8,7 @@ import CONFIG from 'react-native-config';
 import Router from './Router';
 import { DropdownAlertProvider } from './services/DropdownAlert';
 import { useHeaderState, HeaderProvider } from './services/Header';
-import NativeServicesWatcher from './components/NativeServicesWatcher';
-import { useNativeServices, NativeServicesProvider } from './services/NativeServices';
+import { NativeServicesProvider } from './services/NativeServices';
 
 const initializingModules = Promise.all([
   BleManager.start(),
@@ -24,7 +23,6 @@ const styles = StyleSheet.create({
 
 const App = () => {
   const [header] = useHeaderState();
-  const [nativeServices] = useNativeServices();
   const [modulesInitialized, setModulesInitialized] = useState(false);
 
   useEffect(() => {
@@ -39,9 +37,9 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <NativeServicesWatcher {...nativeServices}>
+      <NativeServicesProvider>
         <Router />
-      </NativeServicesWatcher>
+      </NativeServicesProvider>
       {header}
     </View>
   );
@@ -51,9 +49,7 @@ export default () => {
   return (
     <HeaderProvider>
     <DropdownAlertProvider>
-    <NativeServicesProvider>
       <App />
-    </NativeServicesProvider>
     </DropdownAlertProvider>
     </HeaderProvider>
   );

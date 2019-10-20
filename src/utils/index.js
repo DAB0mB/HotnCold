@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export { default as once } from './once';
 
@@ -123,6 +123,30 @@ export const useAsyncEffect = (fn, input) => {
   }, [iterator]);
 };
 
+export const useCbQueue = (input = [true]) => {
+  const [cbQueue, setCbQueue] = useState([]);
+
+  const call = useCallback(() => {
+    for (let callback of cbQueue) {
+      callback();
+    }
+  }, [cbQueue]);
+
+  const usePush = useCallback((callback, cbInput = [true]) => {
+    useEffect(() => {
+      cbQueue.push(callback);
+    }, [cbQueue]);
+
+    useEffect(() => {
+      return () => {
+        setCbQueue([]);
+      };
+    }, [...input, ...cbInput]);
+  }, input);
+
+  return [call, usePush];
+};
+
 // Will invoke callback as soon as all input params are ready
 export const useCallbackTask = (callback, input) => {
   const [shouldInvoke, setShouldInvoke] = useState(false);
@@ -152,6 +176,16 @@ export const useCallbackTask = (callback, input) => {
       setShouldInvoke(true);
     }
   }, [isReady]);
+};
+
+export const pick = (obj, keys) => {
+  const clone = {};
+
+  for (let k of keys) {
+    clone[k] = obj[k];
+  }
+
+  return clone;
 };
 
 export const sleep = (ms) => {
