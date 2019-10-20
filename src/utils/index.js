@@ -142,7 +142,7 @@ export const useCbQueue = (input = [true]) => {
         setCbQueue([]);
       };
     }, [...input, ...cbInput]);
-  }, input);
+  }, [...input, cbQueue]);
 
   return [call, usePush];
 };

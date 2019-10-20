@@ -109,9 +109,12 @@ Screen.Authorized = ({ children }) => {
 
     awaitingBluetoothReset.current = false;
 
-    const resettingBluetooth = BluetoothStateManager.disable().then(() => {
-      return BluetoothStateManager.enable();
-    });
+    const resettingBluetooth = Promise.all([
+      BlePeripheral.stop(),
+      BluetoothStateManager.disable().then(() => {
+        return BluetoothStateManager.enable();
+      }),
+    ]);
 
     setBluetoothResettingPromise(resettingBluetooth);
   });
@@ -130,7 +133,7 @@ Screen.Authorized = ({ children }) => {
     }
     finally {
       setBluetoothResettingPromise(null);
-      setNativeServices({ services: nativeServices.services | SERVICES.BLUETOOTH });
+      setServices(services | SERVICES.BLUETOOTH);
     }
   }, [me && me.id, resettingBluetooth]);
 
