@@ -8,6 +8,7 @@ import CONFIG from 'react-native-config';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import ActivityIndicator from '../components/ActivityIndicator';
+import ServiceRequiredError from '../components/ServiceRequiredError';
 import graphqlClient from '../graphql/client';
 import * as queries from '../graphql/queries';
 import { MeProvider } from '../services/Auth';
@@ -85,7 +86,11 @@ Screen.Authorized = ({ children }) => {
   const awaitingBluetoothReset = useRef(false);
 
   const {
+    gpsState,
+    bluetoothState,
     services,
+    requiredService,
+    setServiceRequiredRenderFn,
     setServices,
     useServices,
     useBluetoothActivatedCallback,
@@ -159,7 +164,17 @@ Screen.Authorized = ({ children }) => {
     };
   }, [meQuery.loading]);
 
-  if (meQuery.loading && resettingBluetooth) {
+  if (
+    gpsState == null ||
+    bluetoothState == null ||
+    requiredService
+  ) {
+    setLoading(false);
+
+    return null;
+  }
+
+  if (meQuery.loading || resettingBluetooth) {
     setLoading(true);
 
     return null;
@@ -178,7 +193,8 @@ Screen.create = (Component) => {
   const ComponentScreen = ({ navigation }) => {
     // This one belongs to the root component which never unmounts
     const [, setHeader] = useHeaderState();
-    const [isLoading, setLoadingState] = useState(false);
+    const { setServiceRequiredRenderFn, renderServiceRequired } = useNativeServices();
+    const [isLoading, setLoadingState] = useState(null);
     const fadeAnimRef = useRef(null);
     const loadingRef = useRef(null);
     const immediateRef = useRef(null);
@@ -209,12 +225,16 @@ Screen.create = (Component) => {
             <ActivityIndicator />
           </Animated.View>
         );
-      } else {
+      }
+      else if (isLoading) {
         loadingRef.current = (
           <Animated.View pointerEvents='none' style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
             <ActivityIndicator />
           </Animated.View>
         );
+      }
+      else {
+        return;
       }
 
       if (value === isLoading) {
@@ -239,20 +259,39 @@ Screen.create = (Component) => {
     }, [true]);
 
     useEffect(() => {
-      navigation.addListener('willFocus', (e) => {
+      const willFocusListener = navigation.addListener('willFocus', (e) => {
         const { Header } = Router.router.getComponentForRouteName(e.state.routeName).Component;
 
         setHeader(Header && <Header navigation={navigation} />);
       });
 
-      navigation.addListener('willBlur', (e) => {
+      const willBlurListener = navigation.addListener('willBlur', (e) => {
         if (!e.action.routeName) return;
 
         const { Header } = Router.router.getComponentForRouteName(e.action.routeName).Component;
 
         setHeader(Header && <Header navigation={navigation} />);
       });
+
+      return () => {
+        willFocusListener.remove();
+        willBlurListener.remove();
+      };
     }, [true]);
+
+    if (Router.router.getComponentForRouteName(navigation.state.routeName).ScreenComponent === Screen) {
+      useEffect(() => {
+        setServiceRequiredRenderFn(() => () => null);
+
+        const willFocusListener = navigation.addListener('willFocus', () => {
+          setServiceRequiredRenderFn(() => () => null);
+        });
+
+        return () => {
+          willFocusListener.remove();
+        };
+      }, [true]);
+    }
 
     return (
       <ApolloProvider client={graphqlClient}>
@@ -273,6 +312,7 @@ Screen.create = (Component) => {
     );
   };
 
+  ComponentScreen.ScreenComponent = Screen;
   ComponentScreen.Component = Component;
 
   return ComponentScreen;
@@ -280,6 +320,21 @@ Screen.create = (Component) => {
 
 Screen.Authorized.create = (Component) => {
   const ComponentScreen = Screen.create(() => {
+    const { setServiceRequiredRenderFn, renderServiceRequired } = useNativeServices();
+    const navigation = useNavigation();
+
+    useEffect(() => {
+      setServiceRequiredRenderFn(() => (props) => <ServiceRequiredError {...props} />);
+
+      const willFocusListener = navigation.addListener('willFocus', () => {
+        setServiceRequiredRenderFn(() => (props) => <ServiceRequiredError {...props} />);
+      });
+
+      return () => {
+        willFocusListener.remove();
+      };
+    }, [true]);
+
     return (
       <BluetoothLEProvider>
       <GeolocationProvider>
@@ -291,6 +346,7 @@ Screen.Authorized.create = (Component) => {
     );
   });
 
+  ComponentScreen.ScreenComponent = Screen.Authorized;
   ComponentScreen.Component = Component;
 
   return ComponentScreen;

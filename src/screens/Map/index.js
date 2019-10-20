@@ -172,6 +172,7 @@ const Map = () => {
       location = [location.coords.longitude, location.coords.latitude];
 
       if (initial) {
+        // TODO: Use special async callback
         setInitialLocation(location);
         updateReadyState();
       }

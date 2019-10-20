@@ -2,7 +2,6 @@ import React, { createContext, useContext, useCallback, useEffect, useState, use
 import { View, StyleSheet, Text } from 'react-native';
 import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 import GPSState from 'react-native-gps-state';
-import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { colors } from '../theme';
 import { useCbQueue } from '../utils';
@@ -44,20 +43,28 @@ export const NativeServicesProvider = ({ children }) => {
   const [prevServices, setPrevServices] = useState(0);
   const [bluetoothState, setBluetoothState] = useState(null);
   const [gpsState, setGpsState] = useState(null);
+  const [requiredService, setRequiredService] = useState(null);
+  const [renderServiceRequired, setServiceRequiredRenderFn] = useState(() => () => null);
   const [onBluetoothActivated, useBluetoothActivatedCallback] = useCbQueue([services]);
   const [onBluetoothDeactivated, useBluetoothDeactivatedCallback] = useCbQueue([services]);
   const [onGpsActivated, useGpsActivatedCallback] = useCbQueue([services]);
   const [onGpsDeactivated, useGpsDeactivatedCallback] = useCbQueue([services]);
   const [onServicesReset, useServicesResetCallback] = useCbQueue([services]);
 
-  const getRequiredService = useCallback(() => {
+  useEffect(() => {
     if ((services & SERVICES.GPS) && gpsState === false) {
-      return { name: 'GPS', icon: 'crosshairs-gps' };
+      setRequiredService({ name: 'GPS', icon: 'crosshairs-gps' });
+
+      return;
     }
 
     if ((services & SERVICES.BLUETOOTH) && bluetoothState === false) {
-      return { name: 'Bluetooth', icon: 'bluetooth' };
+      setRequiredService({ name: 'Bluetooth', icon: 'bluetooth' });
+
+      return;
     }
+
+    setRequiredService(null);
   }, [services, gpsState, bluetoothState]);
 
   useEffect(() => {
@@ -66,13 +73,15 @@ export const NativeServicesProvider = ({ children }) => {
 
     if (!(prevServices & SERVICES.GPS) && (services & SERVICES.GPS)) {
       gettingStates.push(GPSState.getStatus());
-    } else {
+    }
+    else {
       gettingStates.push(null);
     }
 
     if (!(prevServices & SERVICES.BLUETOOTH) && (services & SERVICES.BLUETOOTH)) {
       gettingStates.push(BluetoothStateManager.getState());
-    } else {
+    }
+    else {
       gettingStates.push(null);
     }
 
@@ -96,7 +105,8 @@ export const NativeServicesProvider = ({ children }) => {
 
     if (gpsState) {
       onGpsActivated();
-    } else {
+    }
+    else {
       onGpsDeactivated();
     }
 
@@ -110,7 +120,8 @@ export const NativeServicesProvider = ({ children }) => {
 
     if (bluetoothState) {
       onBluetoothActivated();
-    } else {
+    }
+    else {
       onBluetoothDeactivated();
     }
 
@@ -123,7 +134,8 @@ export const NativeServicesProvider = ({ children }) => {
       gpsListener = (state) => {
         if (state === GPSState.AUTHORIZED) {
           setGpsState(true);
-        } else {
+        }
+        else {
           setGpsState(false);
         }
       };
@@ -136,7 +148,8 @@ export const NativeServicesProvider = ({ children }) => {
       bluetoothListener = BluetoothStateManager.onStateChange((state) => {
         if (state === 'PoweredOn') {
           setBluetoothState(true);
-        } else {
+        }
+        else {
           setBluetoothState(false);
         }
       });
@@ -166,9 +179,14 @@ export const NativeServicesProvider = ({ children }) => {
   }, [services]);
 
   const contextMemo = {
+    gpsState,
+    bluetoothState,
     services,
     setServices,
     useServices,
+    requiredService,
+    renderServiceRequired,
+    setServiceRequiredRenderFn,
     useBluetoothActivatedCallback,
     useBluetoothDeactivatedCallback,
     useGpsActivatedCallback,
@@ -176,22 +194,11 @@ export const NativeServicesProvider = ({ children }) => {
     useServicesResetCallback,
   };
   const context = useMemo(() => contextMemo, Object.values(contextMemo));
-  const requiredService = getRequiredService();
 
   return (
     <NativeServicesContext.Provider value={context}>
       {children}
-      {requiredService && (
-        <View style={styles.container}>
-          <Text style={styles.text}>
-            <Text style={{ color: colors.hot }}>Please turn on your</Text> <Text style={{ color: colors.cold }}>{requiredService.name}</Text><Text style={{ color: colors.hot }}>.</Text>
-          </Text>
-          <McIcon name={requiredService.icon} size={25} color={colors.ink} solid />
-          {requiredService.customMessage && (
-            <Text style={styles.customMessage}>{requiredService.customMessage}</Text>
-          )}
-        </View>
-      )}
+      {renderServiceRequired(context)}
     </NativeServicesContext.Provider>
   );
 };
