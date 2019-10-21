@@ -8,7 +8,7 @@ import CONFIG from 'react-native-config';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import ActivityIndicator from '../components/ActivityIndicator';
-import ServiceRequiredError from '../components/ServiceRequiredError';
+import ServiceRequired from '../components/ServiceRequired';
 import graphqlClient from '../graphql/client';
 import * as queries from '../graphql/queries';
 import { MeProvider } from '../services/Auth';
@@ -91,7 +91,6 @@ Screen.Authorized = ({ children }) => {
     exceptionalServices,
     setExceptionalServices,
     requiredService,
-    setServiceRequiredRenderFn,
     useServices,
     useBluetoothActivatedCallback,
     useServicesResetCallback,
@@ -187,7 +186,7 @@ Screen.create = (Component) => {
   const ComponentScreen = ({ navigation }) => {
     // This one belongs to the root component which never unmounts
     const [, setHeader] = useHeaderState();
-    const { setServiceRequiredRenderFn, renderServiceRequired } = useNativeServices();
+    const { setServiceRequiredComponent } = useNativeServices();
     const [isLoading, setLoadingState] = useState(null);
     const fadeAnimRef = useRef(null);
     const loadingRef = useRef(null);
@@ -252,12 +251,14 @@ Screen.create = (Component) => {
     }, [true]);
 
     const Route = Router.router.getComponentForRouteName(navigation.state.routeName);
+    const { Header } = Route.Component;
+    const { ScreenComponent } = Route;
 
     useEffect(() => {
-      setHeader(Route.Component.Header && <Route.Component.Header navigation={navigation} />);
+      setHeader(Header && <Header navigation={navigation} />);
 
       const willFocusListener = navigation.addListener('willFocus', () => {
-        setHeader(Route.Component.Header && <Route.Component.Header navigation={navigation} />);
+        setHeader(Header && <Header navigation={navigation} />);
       });
 
       return () => {
@@ -267,10 +268,10 @@ Screen.create = (Component) => {
 
     if (Route.ScreenComponent === Screen) {
       useEffect(() => {
-        setServiceRequiredRenderFn(() => () => null);
+        setServiceRequiredComponent(null);
 
         const willFocusListener = navigation.addListener('willFocus', () => {
-          setServiceRequiredRenderFn(() => () => null);
+          setServiceRequiredComponent(null);
         });
 
         return () => {
@@ -306,14 +307,14 @@ Screen.create = (Component) => {
 
 Screen.Authorized.create = (Component) => {
   const ComponentScreen = Screen.create(() => {
-    const { setServiceRequiredRenderFn, renderServiceRequired } = useNativeServices();
+    const { setServiceRequiredComponent } = useNativeServices();
     const navigation = useNavigation();
 
     useEffect(() => {
-      setServiceRequiredRenderFn(() => (props) => <ServiceRequiredError {...props} />);
+      setServiceRequiredComponent(ServiceRequired);
 
       const willFocusListener = navigation.addListener('willFocus', () => {
-        setServiceRequiredRenderFn(() => (props) => <ServiceRequiredError {...props} />);
+        setServiceRequiredComponent(ServiceRequired);
       });
 
       return () => {

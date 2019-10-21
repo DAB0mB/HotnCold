@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useCallback, useEffect, useState, useMemo } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View } from 'react-native';
 import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 import GPSState from 'react-native-gps-state';
 
@@ -13,31 +13,6 @@ export const SERVICES = {
   BLUETOOTH: 0x10,
 };
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    top: 0,
-    left: 0,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  text: {
-    fontSize: 15,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  customMessage: {
-    fontSize: 12,
-    textAlign: 'center',
-    marginTop: 10,
-    color: colors.cold,
-  }
-});
-
 export const NativeServicesProvider = ({ children }) => {
   const [services, setServices] = useState(0);
   const [exceptionalServices, setExceptionalServices] = useState(0);
@@ -45,22 +20,26 @@ export const NativeServicesProvider = ({ children }) => {
   const [bluetoothState, setBluetoothState] = useState(null);
   const [gpsState, setGpsState] = useState(null);
   const [requiredService, setRequiredService] = useState(null);
-  const [renderServiceRequired, setServiceRequiredRenderFn] = useState(() => () => null);
+  const [ServiceRequired, _setServiceRequiredComponent] = useState(() => () => null);
   const [onBluetoothActivated, useBluetoothActivatedCallback] = useCbQueue([services]);
   const [onBluetoothDeactivated, useBluetoothDeactivatedCallback] = useCbQueue([services]);
   const [onGpsActivated, useGpsActivatedCallback] = useCbQueue([services]);
   const [onGpsDeactivated, useGpsDeactivatedCallback] = useCbQueue([services]);
   const [onServicesReset, useServicesResetCallback] = useCbQueue([services]);
 
+  const setServiceRequiredComponent = useCallback((fn) => {
+    _setServiceRequiredComponent(() => fn);
+  }, [_setServiceRequiredComponent]);
+
   useEffect(() => {
     if ((services & SERVICES.GPS) && !(exceptionalServices & SERVICES.GPS) && gpsState === false) {
-      setRequiredService({ name: 'GPS', icon: 'crosshairs-gps' });
+      setRequiredService(SERVICES.GPS);
 
       return;
     }
 
     if ((services & SERVICES.BLUETOOTH) && !(exceptionalServices & SERVICES.BLUETOOTH) && bluetoothState === false) {
-      setRequiredService({ name: 'Bluetooth', icon: 'bluetooth' });
+      setRequiredService(SERVICES.BLUETOOTH);
 
       return;
     }
@@ -188,8 +167,8 @@ export const NativeServicesProvider = ({ children }) => {
     setExceptionalServices,
     useServices,
     requiredService,
-    renderServiceRequired,
-    setServiceRequiredRenderFn,
+    ServiceRequired,
+    setServiceRequiredComponent,
     useBluetoothActivatedCallback,
     useBluetoothDeactivatedCallback,
     useGpsActivatedCallback,
@@ -201,7 +180,7 @@ export const NativeServicesProvider = ({ children }) => {
   return (
     <NativeServicesContext.Provider value={context}>
       {children}
-      {renderServiceRequired(context)}
+      {requiredService && ServiceRequired && <ServiceRequired service={requiredService} />}
     </NativeServicesContext.Provider>
   );
 };
