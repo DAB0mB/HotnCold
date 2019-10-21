@@ -82,16 +82,16 @@ Screen.Authorized = ({ children }) => {
   const { me } = meQuery.data || {};
   const [, setHeader] = useHeaderState();
   const setLoading = useLoading();
-  const [resettingBluetooth, setBluetoothResettingPromise] = useState();
-  const awaitingBluetoothReset = useRef(false);
+  const [resettingBleState, updateBleResettingState, restoreBleResettingState] = useRenderer();
 
   const {
     gpsState,
     bluetoothState,
     services,
+    exceptionalServices,
+    setExceptionalServices,
     requiredService,
     setServiceRequiredRenderFn,
-    setServices,
     useServices,
     useBluetoothActivatedCallback,
     useServicesResetCallback,
@@ -104,43 +104,37 @@ Screen.Authorized = ({ children }) => {
   useServices(services | SERVICES.BLUETOOTH | SERVICES.GPS);
 
   useBluetoothActivatedCallback(() => {
-    setServices(services ^ SERVICES.BLUETOOTH);
+    // Bluetooth reset is finalized when event is emitted, not when promise resolves
+    if (resettingBleState) {
+      updateBleResettingState();
+      setExceptionalServices(exceptionalServices ^ SERVICES.BLUETOOTH);
+    }
+    else {
+      setExceptionalServices(exceptionalServices | SERVICES.BLUETOOTH);
 
-    awaitingBluetoothReset.current = true;
-  });
+      BlePeripheral.stop()
 
-  useServicesResetCallback(() => {
-    if (!awaitingBluetoothReset.current) return;
-
-    awaitingBluetoothReset.current = false;
-
-    const resettingBluetooth = Promise.all([
-      BlePeripheral.stop(),
       BluetoothStateManager.disable().then(() => {
         return BluetoothStateManager.enable();
       }),
-    ]);
 
-    setBluetoothResettingPromise(resettingBluetooth);
-  });
+      updateBleResettingState();
+    }
+  }, [resettingBleState]);
 
   useAsyncEffect(function* () {
-    if (!resettingBluetooth) return;
+    if (resettingBleState !== 2) return;
     if (!me) return;
 
-    try {
-      yield resettingBluetooth;
+    updateBleResettingState();
 
-      BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
-      BlePeripheral.addService(me.id, true);
+    BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
+    BlePeripheral.addService(me.id, true);
+    // Async, run in background
+    yield BlePeripheral.start();
 
-      yield BlePeripheral.start();
-    }
-    finally {
-      setBluetoothResettingPromise(null);
-      setServices(services | SERVICES.BLUETOOTH);
-    }
-  }, [me && me.id, resettingBluetooth]);
+    restoreBleResettingState();
+  }, [me && me.id, resettingBleState]);
 
   useEffect(() => {
     if (meQuery.called && !meQuery.loading && !meQuery.error && !me) {
@@ -174,7 +168,7 @@ Screen.Authorized = ({ children }) => {
     return null;
   }
 
-  if (meQuery.loading || resettingBluetooth) {
+  if (meQuery.loading || resettingBleState) {
     setLoading(true);
 
     return null;

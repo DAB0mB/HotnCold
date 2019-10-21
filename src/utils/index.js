@@ -34,13 +34,44 @@ export const useRenderer = (callback) => {
     setKey(key => ++key);
   }, [setKey]);
 
+  const restore = useCallback((callback) => {
+    callbackRef.current = callback;
+    setKey(0);
+  }, [setKey]);
+
   useEffect(() => {
     if (key && callbackRef.current) {
       callbackRef.current();
     }
   }, [key, callbackRef]);
 
-  return [key, render];
+  return [key, render, restore];
+};
+
+export const useReadyRef = () => {
+  const readyRef = useRef(0);
+
+  const update = useCallback(() => {
+    readyRef.current++;
+  }, [true]);
+
+  const restore = useCallback(() => {
+    readyRef.current = 0;
+  }, [true]);
+
+  return [readyRef, update, restore];
+};
+
+export const useMountedRef = () => {
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [true]);
+
+  return isMountedRef;
 };
 
 export const useAsyncEffect = (fn, input) => {
@@ -68,7 +99,7 @@ export const useAsyncEffect = (fn, input) => {
       return;
     }
 
-    setIterator(generator.throw(value));
+    setIterator(generator.throw(error));
   }, [iterator]);
 
   useEffect(() => {

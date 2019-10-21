@@ -12,12 +12,14 @@ const handleCustomTransition = ({ scenes }) => {
   const prevScene = scenes[scenes.length - 2];
   const nextScene = scenes[scenes.length - 1];
 
-  // Custom transitions go there
-  if (prevScene
+  if (
+    prevScene
     && prevScene.route.routeName === 'Map'
-    && nextScene.route.routeName === 'Radar') {
+    && nextScene.route.routeName === 'Radar'
+  ) {
     return fromRight();
   }
+
   return fromBottom();
 }
 

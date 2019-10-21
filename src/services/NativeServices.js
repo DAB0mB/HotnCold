@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
 
 export const NativeServicesProvider = ({ children }) => {
   const [services, setServices] = useState(0);
+  const [exceptionalServices, setExceptionalServices] = useState(0);
   const [prevServices, setPrevServices] = useState(0);
   const [bluetoothState, setBluetoothState] = useState(null);
   const [gpsState, setGpsState] = useState(null);
@@ -52,13 +53,13 @@ export const NativeServicesProvider = ({ children }) => {
   const [onServicesReset, useServicesResetCallback] = useCbQueue([services]);
 
   useEffect(() => {
-    if ((services & SERVICES.GPS) && gpsState === false) {
+    if ((services & SERVICES.GPS) && !(exceptionalServices & SERVICES.GPS) && gpsState === false) {
       setRequiredService({ name: 'GPS', icon: 'crosshairs-gps' });
 
       return;
     }
 
-    if ((services & SERVICES.BLUETOOTH) && bluetoothState === false) {
+    if ((services & SERVICES.BLUETOOTH) && !(exceptionalServices & SERVICES.BLUETOOTH) && bluetoothState === false) {
       setRequiredService({ name: 'Bluetooth', icon: 'bluetooth' });
 
       return;
@@ -183,6 +184,8 @@ export const NativeServicesProvider = ({ children }) => {
     bluetoothState,
     services,
     setServices,
+    exceptionalServices,
+    setExceptionalServices,
     useServices,
     requiredService,
     renderServiceRequired,
