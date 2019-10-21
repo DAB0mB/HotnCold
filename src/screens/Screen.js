@@ -153,14 +153,14 @@ Screen.Authorized = ({ children }) => {
     if (meQuery.loading) return;
     if (!Header) return;
 
-    setHeader(<Header navigation={navigation} me={me} />);
+    setHeader(Header && <Header navigation={navigation} me={me} />);
 
-    const listener = navigation.addListener('didFocus', () => {
-      setHeader(<Header navigation={navigation} me={me} />);
+    const willFocusListener = navigation.addListener('willFocus', () => {
+      setHeader(Header && <Header navigation={navigation} me={me} />);
     });
 
     return () => {
-      listener.remove();
+      willFocusListener.remove();
     };
   }, [meQuery.loading]);
 
@@ -258,28 +258,21 @@ Screen.create = (Component) => {
       };
     }, [true]);
 
+    const Route = Router.router.getComponentForRouteName(navigation.state.routeName);
+
     useEffect(() => {
-      const willFocusListener = navigation.addListener('willFocus', (e) => {
-        const { Header } = Router.router.getComponentForRouteName(e.state.routeName).Component;
+      setHeader(Route.Component.Header && <Route.Component.Header navigation={navigation} />);
 
-        setHeader(Header && <Header navigation={navigation} />);
-      });
-
-      const willBlurListener = navigation.addListener('willBlur', (e) => {
-        if (!e.action.routeName) return;
-
-        const { Header } = Router.router.getComponentForRouteName(e.action.routeName).Component;
-
-        setHeader(Header && <Header navigation={navigation} />);
+      const willFocusListener = navigation.addListener('willFocus', () => {
+        setHeader(Route.Component.Header && <Route.Component.Header navigation={navigation} />);
       });
 
       return () => {
         willFocusListener.remove();
-        willBlurListener.remove();
       };
     }, [true]);
 
-    if (Router.router.getComponentForRouteName(navigation.state.routeName).ScreenComponent === Screen) {
+    if (Route.ScreenComponent === Screen) {
       useEffect(() => {
         setServiceRequiredRenderFn(() => () => null);
 
