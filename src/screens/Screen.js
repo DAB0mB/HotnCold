@@ -220,25 +220,24 @@ Screen.create = (Component) => {
           </Animated.View>
         );
       }
-      else if (isLoading) {
+      else {
         loadingRef.current = (
           <Animated.View pointerEvents='none' style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
             <ActivityIndicator />
           </Animated.View>
         );
       }
-      else {
-        return;
-      }
 
-      if (value === isLoading) {
+      if (!!value === !!isLoading) {
         clearImmediate(immediateRef.current);
         immediateRef.current = null;
-      } else {
-        immediateRef.current = setImmediate(() => {
-          if (!mountedRef.current) return;
 
-          immediateRef.current = null;
+        if (isLoading == null) {
+          loadingRef.current = null;
+        }
+      }
+      else {
+        immediateRef.current = setImmediate(() => {
           setLoadingState(value);
         });
       }

@@ -19,7 +19,7 @@ import { useAlertError } from '../../services/DropdownAlert';
 import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
 import { useNavigation } from '../../services/Navigation';
 import { useLoading } from '../../services/Loading';
-import { useInterval, useRenderer } from '../../utils';
+import { useInterval, useRenderer, useMountedRef } from '../../utils';
 import Screen from '../Screen';
 
 const SHOW_FAKE_DATA = false;
@@ -106,6 +106,7 @@ const Map = () => {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [readyState, updateReadyState] = useRenderer();
   const setLoading = useLoading();
+  const isMountedRef = useMountedRef();
 
   const resetMapLoaded = useCallback(() => {
     setMapLoaded(true);
@@ -169,6 +170,8 @@ const Map = () => {
 
   const updateMyLocationInterval = useCallback((initial) => {
     geolocation.getCurrentPosition((location) => {
+      if (!isMountedRef.current) return;
+
       location = [location.coords.longitude, location.coords.latitude];
 
       if (initial) {
@@ -192,10 +195,10 @@ const Map = () => {
     }
   }, [shapeKey, setAreaFeatures]);
 
-  if (readyState !== 2) {
-    setLoading(true);
-  } else {
+  if (readyState === 2) {
     setLoading(false);
+  } else {
+    setLoading(true);
   }
 
   return (
