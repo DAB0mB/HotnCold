@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 const mapServiceToServiceData = (service) => {
   switch (service) {
     case SERVICES.GPS: return { name: 'GPS', icon: 'crosshairs-gps' };
-    case SERVICES.BLUETOOTH: setRequiredService({ name: 'Bluetooth', icon: 'bluetooth' });
+    case SERVICES.BLUETOOTH: return { name: 'Bluetooth', icon: 'bluetooth' };
   }
 };
 

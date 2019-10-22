@@ -195,11 +195,7 @@ const Map = () => {
     }
   }, [shapeKey, setAreaFeatures]);
 
-  if (readyState === 2) {
-    setLoading(false);
-  } else {
-    setLoading(true);
-  }
+  setLoading(readyState !== 2);
 
   return (
     <View style={styles.container}>

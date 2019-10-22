@@ -4,28 +4,32 @@ import { useNavigation } from './Navigation';
 
 const LoadingContext = createContext(null);
 
-export const LoadingProvider = ({ setLoading, children }) => {
+export const LoadingProvider = ({ loadingState, children }) => {
   return (
-    <LoadingContext.Provider value={setLoading}>
+    <LoadingContext.Provider value={loadingState}>
       {children}
     </LoadingContext.Provider>
   );
 };
 
 export const useLoading = () => {
-  const _setLoading = useContext(LoadingContext);
+  const [isLoading, _setLoading] = useContext(LoadingContext);
   const calledRef = useRef(false);
 
-  const setLoading = useCallback((loading) => {
+  const setLoading = useCallback((isLoading) => {
     if (calledRef.current) return;
 
-    _setLoading(loading);
+    _setLoading(isLoading);
     calledRef.current = true;
 
     setImmediate(() => {
-      calledRef.current = false;
+      // Immediately after the last immediate in setLoading queue
+      // TODO: Try to connect to React lifecycle
+      setImmediate(() => {
+        calledRef.current = false;
+      });
     });
-  }, [_setLoading]);
+  }, [isLoading]);
 
   return setLoading;
 };

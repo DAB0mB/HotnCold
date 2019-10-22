@@ -283,7 +283,7 @@ Screen.create = (Component) => {
     return (
       <ApolloProvider client={graphqlClient}>
       <NavigationProvider navigation={navigation}>
-      <LoadingProvider setLoading={setLoading}>
+      <LoadingProvider loadingState={[isLoading, setLoading]}>
       <CookieProvider>
         <StatusBar translucent barStyle="dark-content" backgroundColor='white' />
         <SafeAreaView style={styles.container}>
