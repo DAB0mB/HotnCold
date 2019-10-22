@@ -7,8 +7,8 @@ import BlePeripheral from 'react-native-ble-peripheral';
 import CONFIG from 'react-native-config';
 import Cookie from 'react-native-cookie';
 
+import BaseContainer from './containers/Base';
 import graphqlClient from './graphql/client';
-import BaseRouter from './Router/Base';
 import { BluetoothLEProvider } from './services/BluetoothLE';
 import { CookieProvider } from './services/Cookie';
 import { DateTimePickerProvider } from './services/DateTimePicker';
@@ -50,7 +50,7 @@ const App = () => {
       <ImagePickerProvider>
       <BluetoothLEProvider>
       <GeolocationProvider>
-        <BaseRouter />
+        <BaseContainer />
       </GeolocationProvider>
       </BluetoothLEProvider>
       </ImagePickerProvider>

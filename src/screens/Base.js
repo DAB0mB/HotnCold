@@ -21,10 +21,12 @@ const styles = StyleSheet.create({
   },
 });
 
-Screen.create = (Component) => {
-  return ({ navigation }) => {
-    const { default: Router } = require('../Router');
+const Base = (children) => {
+  return children;
+};
 
+Base.create = (Component) => {
+  return ({ navigation }) => {
     const [isLoading, _setLoading] = useState(null);
     const loadingRef = useRef(null);
 
