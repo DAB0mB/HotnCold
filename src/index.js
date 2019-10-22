@@ -1,18 +1,25 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
+import { ApolloProvider } from '@apollo/react-hooks';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
 import CONFIG from 'react-native-config';
+import Cookie from 'react-native-cookie';
 
-import Router from './Router';
+import graphqlClient from './graphql/client';
+import BaseRouter from './Router/Base';
+import { BluetoothLEProvider } from './services/BluetoothLE';
+import { CookieProvider } from './services/Cookie';
+import { DateTimePickerProvider } from './services/DateTimePicker';
 import { DropdownAlertProvider } from './services/DropdownAlert';
-import { useHeaderState, HeaderProvider } from './services/Header';
-import { NativeServicesProvider } from './services/NativeServices';
+import { GeolocationProvider } from './services/Geolocation';
+import { ImagePickerProvider } from './services/ImagePicker';
 
-const initializingModules = Promise.all([
+const initializingNative = Promise.all([
   BleManager.start(),
   MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
+  __DEV__ && CONFIG.INITIAL_USER_TOKEN && Cookie.set('authToken', CONFIG.INITIAL_USER_TOKEN),
 ]);
 
 const styles = StyleSheet.create({
@@ -22,35 +29,35 @@ const styles = StyleSheet.create({
 });
 
 const App = () => {
-  const [header] = useHeaderState();
-  const [modulesInitialized, setModulesInitialized] = useState(false);
+  const [nativeInitialized, setNativeInitialized] = useState(false);
 
   useEffect(() => {
-    initializingModules.then(() => {
-      setModulesInitialized(true);
+    initializingNative.then(() => {
+      setNativeInitialized(true);
     });
   }, [true]);
 
-  if (!modulesInitialized) {
+  if (!nativeInitialized) {
     return null;
   }
 
   return (
     <View style={styles.container}>
-      <NativeServicesProvider>
-        <Router />
-      </NativeServicesProvider>
-      {header}
+      <ApolloProvider client={graphqlClient}>
+      <CookieProvider>
+      <DropdownAlertProvider>
+      <DateTimePickerProvider>
+      <ImagePickerProvider>
+      <BluetoothLEProvider>
+      <GeolocationProvider>
+        <BaseRouter />
+      </GeolocationProvider>
+      </BluetoothLEProvider>
+      </ImagePickerProvider>
+      </DateTimePickerProvider>
+      </DropdownAlertProvider>
+      </CookieProvider>
+      </ApolloProvider>
     </View>
-  );
-};
-
-export default () => {
-  return (
-    <HeaderProvider>
-    <DropdownAlertProvider>
-      <App />
-    </DropdownAlertProvider>
-    </HeaderProvider>
   );
 };

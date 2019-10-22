@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useCallback, useRef } from 'react';
 
-import { useNavigation } from './Navigation';
-
 const LoadingContext = createContext(null);
 
 export const LoadingProvider = ({ loadingState, children }) => {
@@ -23,7 +21,7 @@ export const useLoading = () => {
     calledRef.current = true;
 
     setImmediate(() => {
-      // Immediately after the last immediate in setLoading queue
+      // Immediately after the immediate queue. See screens/Base.js
       // TODO: Try to connect to React lifecycle
       setImmediate(() => {
         calledRef.current = false;

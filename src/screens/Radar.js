@@ -3,13 +3,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Button, Image, View, Text, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
 import CONFIG from 'react-native-config';
 
-import RootHeader from '../../components/RootHeader';
-import * as queries from '../../graphql/queries';
-import { useMe } from '../../services/Auth';
-import { useAlertError } from '../../services/DropdownAlert';
-import { useBluetoothLE, BluetoothLEProvider } from '../../services/BluetoothLE';
-import { useNavigation } from '../../services/Navigation';
-import Screen from '../Screen';
+import * as queries from '../graphql/queries';
+import { useMe } from '../services/Auth';
+import { useBluetoothLE, BluetoothLEProvider } from '../services/BluetoothLE';
+import { useAlertError } from '../services/DropdownAlert';
+import { useNavigation } from '../services/Navigation';
+import Base from './Base';
+import Discovery from './Discovery';
 
 const styles = StyleSheet.create({
   container: {
@@ -34,7 +34,8 @@ const styles = StyleSheet.create({
 const Radar = () => {
   const me = useMe();
   const ble = useBluetoothLE();
-  const navigation = useNavigation();
+  const discoveryNavigation = useNavigation(Discovery);
+  const baseNavigation = useNavigation(Base);
   const alertError = useAlertError();
   const [discoveredUsers, setDiscoveredUsers] = useState([]);
   const [scanning, setScanning] = useState(false);
@@ -90,7 +91,7 @@ const Radar = () => {
 
   useEffect(() => {
     const backHandler = () => {
-      navigation.goBack();
+      discoveryNavigation.goBack();
 
       return true;
     };
@@ -126,8 +127,8 @@ const Radar = () => {
   }, [ble.central]);
 
   const navToUserProfile = useCallback((user) => {
-    navigation.push('Profile', { user });
-  }, [navigation]);
+    mainNavigation.push('Profile', { user });
+  }, [mainNavigation]);
 
   return (
     <View style={styles.container}>
@@ -144,6 +145,4 @@ const Radar = () => {
   );
 };
 
-Radar.Header = RootHeader;
-
-export default Screen.Authorized.create(Radar);
+export default Discovery.create(Radar);

@@ -1,50 +1,53 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useMemo } from 'react';
 import { BackHandler } from 'react-native';
 
-const NavigationContext = createContext(null);
+const NavigationContext = createContext(new Map());
 
-export const NavigationProvider = ({ navigation, children }) => {
+export const NavigationProvider = ({ key, navigation, children }) => {
+  const navMap = useContext(NavigationContext);
+
   return (
-    <NavigationContext.Provider value={navigation}>
+    <NavigationContext.Provider value={new Map([...navMap.entries(), [key, navigation]])}>
       {children}
     </NavigationContext.Provider>
   );
 };
 
-export const useNavigation = () => {
-  return useContext(NavigationContext);
-};
+export const useNavigation = (key) => {
+  const navMap = useContext(NavigationContext);
+  const navigation = useMemo(() => key ? navMap[key] : Array.from(navMap.values()).pop(), [key]);
 
-export const useBackListener = () => {
-  const navigation = useNavigation();
+  navigation.useBackListener = useCallback(() => {
+    useEffect(() => {
+      let focused = false;
+      let goBack = false;
 
-  useEffect(() => {
-    let focused = false;
-    let goBack = false;
+      const backHandler = () => {
+        if (focused) {
+          navigation.goBack();
+        } else {
+          goBack = true;
+        }
 
-    const backHandler = () => {
-      if (focused) {
-        navigation.goBack();
-      } else {
-        goBack = true;
-      }
+        return true;
+      };
 
-      return true;
-    };
+      const listener = navigation.addListener('didFocus', (e) => {
+        if (goBack) {
+          navigation.goBack();
+        } else {
+          focused = true;
+        }
+      });
 
-    const listener = navigation.addListener('didFocus', (e) => {
-      if (goBack) {
-        navigation.goBack();
-      } else {
-        focused = true;
-      }
-    });
+      BackHandler.addEventListener('hardwareBackPress', backHandler);
 
-    BackHandler.addEventListener('hardwareBackPress', backHandler);
-
-    return () => {
-      listener.remove();
-      BackHandler.removeEventListener('hardwareBackPress', backHandler);
-    };
+      return () => {
+        listener.remove();
+        BackHandler.removeEventListener('hardwareBackPress', backHandler);
+      };
+    }, [true]);
   }, [true]);
+
+  return navigation;
 };

@@ -11,16 +11,15 @@ import CONFIG from 'react-native-config';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { colors, hexToRgba } from '../../theme';
-import RootHeader from '../../components/RootHeader';
-import * as mutations from '../../graphql/mutations';
-import { useMe, useLogout } from '../../services/Auth';
-import { useAlertError } from '../../services/DropdownAlert';
-import { useGeolocation, GeolocationProvider } from '../../services/Geolocation';
-import { useNavigation } from '../../services/Navigation';
-import { useLoading } from '../../services/Loading';
-import { useInterval, useRenderer, useMountedRef } from '../../utils';
-import Screen from '../Screen';
+import * as mutations from '../graphql/mutations';
+import { useMe, useLogout } from '../services/Auth';
+import { useAlertError } from '../services/DropdownAlert';
+import { useGeolocation, GeolocationProvider } from '../services/Geolocation';
+import { useLoading } from '../services/Loading';
+import { useNavigation } from '../services/Navigation';
+import { colors, hexToRgba } from '../theme';
+import { useInterval, useRenderer, useMountedRef } from '../utils';
+import Base from './Base';
 
 const SHOW_FAKE_DATA = false;
 
@@ -95,7 +94,7 @@ const Map = () => {
   const logout = useLogout();
   const mapRef = useRef(null);
   const alertError = useAlertError();
-  const navigation = useNavigation();
+  const baseNavigation = useNavigation(Base);
   const geolocation = useGeolocation();
   const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation] = mutations.updateMyLocation.use();
@@ -128,9 +127,9 @@ const Map = () => {
 
   const logoutAndFlee = useCallback(() => {
     logout().then(() => {
-      navigation.replace('Profile');
+      baseNavigation.replace('Profile');
     }).catch(alertError);
-  }, [logout, alertError, navigation]);
+  }, [logout, alertError, baseNavigation]);
 
   const renderSelection = useCallback(async (e) => {
     const map = mapRef.current;
@@ -276,6 +275,4 @@ const Map = () => {
   );
 };
 
-Map.Header = RootHeader;
-
-export default Screen.Authorized.create(Map);
+export default Discovery.create(Map);

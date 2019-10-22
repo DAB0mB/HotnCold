@@ -19,14 +19,14 @@ import FaIcon from 'react-native-vector-icons/FontAwesome';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import * as mutations from '../../graphql/mutations';
-import { useRegister } from '../../services/Auth';
-import { useDateTimePicker } from '../../services/DateTimePicker';
-import { useAlertError, useAlertSuccess } from '../../services/DropdownAlert';
-import { useImagePicker } from '../../services/ImagePicker';
-import { useNavigation, useBackListener } from '../../services/Navigation';
-import { useRenderer } from '../../utils';
-import Screen from '../Screen';
+import * as mutations from '../graphql/mutations';
+import { useRegister } from '../services/Auth';
+import { useDateTimePicker } from '../services/DateTimePicker';
+import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
+import { useImagePicker } from '../services/ImagePicker';
+import { useNavigation, useBackListener } from '../services/Navigation';
+import { useRenderer } from '../utils';
+import Base from './Base';
 
 const styles = StyleSheet.create({
   container: {
@@ -139,7 +139,7 @@ const Profile = () => {
       if (itsMe) {
         alertSuccess('Profile successfully updated')
       } else {
-        navigation.replace('Map');
+        navigation.replace('Discovery');
       }
     }, [itsMe, alertSuccess, navigation]),
   });
@@ -202,7 +202,7 @@ const Profile = () => {
     };
   }, [setTyping]);
 
-  useBackListener();
+  navigation.useBackListener();
 
   const deletePicture = useCallback(() => {
     setPictures(
@@ -276,4 +276,4 @@ const Profile = () => {
   );
 };
 
-export default Screen.create(Profile);
+export default Base.create(Profile);

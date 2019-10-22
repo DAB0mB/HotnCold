@@ -2,11 +2,9 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { fromRight, fromBottom } from 'react-navigation-transitions'
 
-import {
-  MapScreen,
-  ProfileScreen,
-  RadarScreen,
-} from './screens';
+import MapScreen from './screens/Map';
+import ProfileScreen from './screens/Profile';
+import RadarScreen from './screens/Radar';
 
 const handleCustomTransition = ({ scenes }) => {
   const prevScene = scenes[scenes.length - 2];
