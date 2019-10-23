@@ -24,6 +24,19 @@ import Discovery from '../containers/Discovery';
 
 const SHOW_FAKE_DATA = false;
 
+//
+// FIX: Loading not set right after GPS is turned on
+//
+//
+// FIX: Loading not set right after GPS is turned on
+//
+//
+// FIX: Loading not set right after GPS is turned on
+//
+//
+// FIX: Loading not set right after GPS is turned on
+//
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -46,6 +46,27 @@ export const useRenderer = (callback) => {
   return [key, render, restore];
 };
 
+export const useImmediate = () => {
+  const immediateRef = useRef();
+  const isMountedRef = useMountedRef();
+
+  const _clearImmediate = useCallback(() => {
+    clearImmediate(immediateRef.current);
+  }, [true]);
+
+  const _setImmediate = useCallback((cb) => {
+    _clearImmediate();
+
+    setImmediate(() => {
+      if (isMountedRef.current) {
+        cb();
+      }
+    });
+  }, [true]);
+
+  return [_setImmediate, _clearImmediate];
+};
+
 export const useMountedRef = () => {
   const isMountedRef = useRef(true);
 
