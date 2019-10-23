@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import CONFIG from 'react-native-config';
 
 import * as queries from '../../graphql/queries';
+import { useMe, MeProvider } from '../../services/Auth';
 import { useBluetoothLE } from '../../services/BluetoothLE';
 import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
@@ -17,26 +18,46 @@ import ServiceRequired from './ServiceRequired';
 
 const Discovery = Base.create(() => {
   const { default: DiscoveryRouter } = require('../../routers/Discovery');
+
+  const alertError = useAlertError();
   const baseNavigation = useNavigation();
+  const setLoading = useLoading();
+  const meQuery = queries.me.use({ onError: alertError });
+  const { me } = meQuery.data || {};
+
+  useEffect(() => {
+    if (meQuery.called && !meQuery.loading && !meQuery.error && !me) {
+      // Unauthorized
+      baseNavigation.replace('Profile');
+    }
+  }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNavigation]);
+
+  if (meQuery.loading) {
+    setLoading(true);
+
+    return null;
+  }
+
+  setLoading(false);
 
   return (
-    <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation }}>
-      <LoadingProvider>
-        <NativeServicesProvider ServiceRequiredComponent={ServiceRequired}>
-          <DiscoveryRouter />
-        </NativeServicesProvider>
-      </LoadingProvider>
+    <MeProvider me={me}>
+    <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation, me }}>
+    <LoadingProvider>
+    <NativeServicesProvider ServiceRequiredComponent={ServiceRequired}>
+      <DiscoveryRouter />
+    </NativeServicesProvider>
+    </LoadingProvider>
     </HeaderProvider>
+    </MeProvider>
   );
 });
 
 Discovery.create = (Component) => {
   return ({ navigation: discoveryNavigation }) => {
-    const alertError = useAlertError();
+    const me = useMe();
     const ble = useBluetoothLE();
     const baseNavigation = useNavigation(Base);
-    const meQuery = queries.me.use({ onError: alertError });
-    const { me } = meQuery.data || {};
     const setLoading = useLoading();
     const [resettingBleState, updateBleResettingState, restoreBleResettingState] = useRenderer();
 
@@ -53,6 +74,10 @@ Discovery.create = (Component) => {
     } = useNativeServices();
 
     const [headerProps, setHeaderProps] = useHeader();
+
+    useEffect(() => {
+      setHeaderProps({ ...headerProps, discoveryNavigation });
+    }, [true]);
 
     useServices(services | SERVICES.BLUETOOTH | SERVICES.GPS);
 
@@ -77,7 +102,6 @@ Discovery.create = (Component) => {
 
     useAsyncEffect(function* () {
       if (resettingBleState !== 2) return;
-      if (!me) return;
 
       updateBleResettingState();
 
@@ -87,26 +111,7 @@ Discovery.create = (Component) => {
       yield ble.peripheral.start();
 
       restoreBleResettingState();
-    }, [me && me.id, resettingBleState]);
-
-    useEffect(() => {
-      if (meQuery.called && !meQuery.loading && !meQuery.error && !me) {
-        // Unauthorized
-        baseNavigation.replace('Profile');
-      }
-    }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNavigation]);
-
-    useEffect(() => {
-      if (meQuery.loading) {
-        setHeaderProps({ ...headerProps, discoveryNavigation });
-      }
-
-      setHeaderProps({ ...headerProps, discoveryNavigation, me });
-
-      return () => {
-        setHeaderProps(headerProps);
-      };
-    }, [meQuery.loading]);
+    }, [resettingBleState]);
 
     if (
       gpsState == null ||
@@ -118,7 +123,7 @@ Discovery.create = (Component) => {
       return null;
     }
 
-    if (meQuery.loading || resettingBleState) {
+    if (resettingBleState) {
       setLoading(true);
 
       return null;

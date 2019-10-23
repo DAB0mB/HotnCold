@@ -37,7 +37,7 @@ const Header = ({ baseNavigation, discoveryNavigation, me }) => {
   const [toggled, setToggled] = useState(false);
   const [pointerEvents, setPointerEvents] = useState('auto');
 
-  const editProfile = useCallbackTask(() => {
+  const editProfile = useCallback(() => {
     baseNavigation.push('Profile', { user: me, itsMe: true });
   }, [baseNavigation, me]);
 
