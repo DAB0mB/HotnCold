@@ -36,9 +36,7 @@ Discovery.create = (Component) => Base.create(() => {
       useServicesResetCallback,
     } = useNativeServices();
 
-    const {
-      setHeaderProps,
-    } = useHeader();
+    const [, setHeaderProps] = useHeader();
 
     useServices(services | SERVICES.BLUETOOTH | SERVICES.GPS);
 

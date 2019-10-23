@@ -1,15 +1,14 @@
 import React, { createContext, useContext, useState } from 'react';
 
-import { useNavigation } from './Navigation';
-
 const HeaderContext = createContext(null);
 
-export const HeaderProvider = ({ children }) => {
-  const headerState = useState(null);
+export const HeaderProvider = ({ HeaderComponent, children }) => {
+  const [headerProps, setHeaderProps] = useState({});
 
   return (
-    <HeaderContext.Provider value={headerState}>
+    <HeaderContext.Provider value={[headerProps, setHeaderProps]}>
       {children}
+      <HeaderComponent {...headerProps} />
     </HeaderContext.Provider>
   );
 };

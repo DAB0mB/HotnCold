@@ -3,8 +3,9 @@ import { View, StatusBar, Text, SafeAreaView, StyleSheet, Animated } from 'react
 import CONFIG from 'react-native-config';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
-import { useNavigation, NavigationProvider } from '../services/Navigation';
+import Loader from '../components/Loader';
 import { useLoading, LoadingProvider } from '../services/Loading';
+import { useNavigation, NavigationProvider } from '../services/Navigation';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,9 +22,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Base = (children) => {
-  return children;
-};
+const Base = Symbol('Base');
 
 Base.create = (Component) => {
   return ({ navigation }) => {
@@ -53,14 +52,14 @@ Base.create = (Component) => {
 
           loadingRef.current = (
             <Animated.View style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
-              <ActivityIndicator />
+              <Loader />
             </Animated.View>
           );
         }
         else {
           loadingRef.current = (
             <Animated.View pointerEvents='none' style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
-              <ActivityIndicator />
+              <Loader />
             </Animated.View>
           );
         }

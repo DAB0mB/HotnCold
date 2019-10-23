@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 const SIZE = Platform.OS == 'android' ? Dimensions.get('window').width / 4 : 'large';
 const BUFFER_MS = 500;
 
-const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS, style = {} }) => {
+const Loader = ({ size = SIZE, bufferMs = BUFFER_MS, style = {} }) => {
   const [buffering, setBuffering] = useState(true);
 
   useEffect(() => {
@@ -50,4 +50,4 @@ const ViewLoadingIndicator = ({ size = SIZE, bufferMs = BUFFER_MS, style = {} })
   );
 };
 
-export default ViewLoadingIndicator;
+export default Loader;
