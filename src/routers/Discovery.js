@@ -15,7 +15,7 @@ const Navigator = createStackNavigator({
 }, {
   initialRouteName: 'Map',
   headerMode: 'none',
-  transitionConfig: fromRight,
+  transitionConfig: () => fromRight(),
 });
 
 export default createAppContainer(Navigator);
