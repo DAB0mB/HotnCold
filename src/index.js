@@ -19,7 +19,7 @@ import { ImagePickerProvider } from './services/ImagePicker';
 const initializingNative = Promise.all([
   BleManager.start(),
   MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
-  __DEV__ && CONFIG.INITIAL_USER_TOKEN && Cookie.set('authToken', CONFIG.INITIAL_USER_TOKEN),
+  __DEV__ && CONFIG.INITIAL_USER_TOKEN && Cookie.set(CONFIG.SERVER_URI, 'authToken', CONFIG.INITIAL_USER_TOKEN),
 ]);
 
 const styles = StyleSheet.create({
