@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useRef, useCallb
 import { View, StatusBar, Text, SafeAreaView, StyleSheet, Animated } from 'react-native';
 
 import Loader from '../components/Loader';
-import { useImmediate } from '../utils';
+import { useImmediate, useRenderer } from '../utils';
 
 const styles = StyleSheet.create({
   loadingBuffer: {
@@ -20,62 +20,65 @@ const LoadingContext = createContext(null);
 export const LoadingProvider = ({ children }) => {
   const [isLoading, _setLoading] = useState(null);
   const [setImmediate, clearImmediate] = useImmediate();
+  const [key, render] = useRenderer();
   const loadingRef = useRef(null);
-  const keyRef = useRef(0);
+  const fadeAnimRef = useRef(null);
 
-  let setLoading;
-  {
-    const fadeAnimRef = useRef(null);
+  useEffect(() => {
+    if (isLoading) return;
+    if (!fadeAnimRef.current) return;
 
-    useEffect(() => {
-      if (isLoading) return;
-      if (!fadeAnimRef.current) return;
+    const loadingEl = loadingRef.current;
 
-      Animated.timing(
-        fadeAnimRef.current,
-        {
-          toValue: 0,
-          duration: 333,
-        }
-      ).start(() => {
-        keyRef.current++;
+    Animated.timing(
+      fadeAnimRef.current,
+      {
+        toValue: 0,
+        duration: 333,
+      }
+    ).start(() => {
+      if (loadingEl !== loadingRef.current) {
+        // Dispose
+        loadingRef.current = null;
+      }
+
+      render();
+    });
+  }, [isLoading]);
+
+  const setLoading = useCallback((value) => {
+    if (value) {
+      fadeAnimRef.current = new Animated.Value(1);
+
+      loadingRef.current = (
+        <Animated.View key={key} style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
+          <Loader />
+        </Animated.View>
+      );
+    }
+    else {
+      loadingRef.current = (
+        <Animated.View key={key} pointerEvents='none' style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
+          <Loader />
+        </Animated.View>
+      );
+    }
+
+    if (!!value === !!isLoading) {
+      clearImmediate();
+
+      if (isLoading == null) {
+        loadingRef.current = null;
+      }
+    }
+    else {
+      setImmediate(() => {
+        // TODO: Fix immediate runs after component unmounts.
+        // If you see a memory leak error - ignore it for now. There's no leak.
+        _setLoading(value);
       });
-    }, [isLoading]);
-
-    setLoading = useCallback((value) => {
-      if (value) {
-        fadeAnimRef.current = new Animated.Value(1);
-
-        loadingRef.current = (
-          <Animated.View key={keyRef.current} style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
-            <Loader />
-          </Animated.View>
-        );
-      }
-      else {
-        loadingRef.current = (
-          <Animated.View key={keyRef.current} pointerEvents='none' style={[styles.loadingBuffer, { opacity: fadeAnimRef.current }]}>
-            <Loader />
-          </Animated.View>
-        );
-      }
-
-      if (!!value === !!isLoading) {
-        clearImmediate();
-
-        if (isLoading == null) {
-          loadingRef.current = null;
-        }
-      }
-      else {
-        setImmediate(() => {
-          // TODO: Fix immediate runs after component unmounts.
-          // If you see a memory leak error - ignore it for now. There's no leak.
-          _setLoading(value);
-        });
-      }
-    }, [isLoading]);
-  }
+    }
+  }, [isLoading]);
 
   return (
     <LoadingContext.Provider value={[isLoading, setLoading]}>
