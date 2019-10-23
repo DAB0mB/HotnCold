@@ -39,11 +39,9 @@ target 'hotncold' do
 
 
 
-  pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
 
   pod 'react-native-ble-manager', :path => '../node_modules/react-native-ble-manager'
 
-  pod 'react-native-bluetooth-status', :path => '../node_modules/react-native-bluetooth-status'
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 

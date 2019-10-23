@@ -673,11 +673,6 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@cs125/wait-until@^0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@cs125/wait-until/-/wait-until-0.0.3.tgz#957fc279121704845300dac47ee37a3b34c203d2"
-  integrity sha512-Z3+GXZbAjiiI0cJi1si+WfBBPfmLwZ9Tk4wqyFJGeZHJilyveBCpSktHdJlmqjHBBvrMi8ymXefYi2S833LhRA==
-
 "@mapbox/geo-viewport@>= 0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@mapbox/geo-viewport/-/geo-viewport-0.4.0.tgz#0a8dc5812d3be12c778d6545b2f3f4dec9c633da"
@@ -2477,7 +2472,7 @@ inquirer@^3.0.6:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-invariant@^2.1.0, invariant@^2.2.2, invariant@^2.2.4:
+invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -4073,13 +4068,6 @@ react-native-bluetooth-state-manager@^1.1.0:
   resolved "https://registry.yarnpkg.com/react-native-bluetooth-state-manager/-/react-native-bluetooth-state-manager-1.1.0.tgz#65af22af714bfd7d9142a707ffb59c37b5c5a39b"
   integrity sha512-I1yWuH6EjiGfbu6oG6Bw6uuIqPdSAJpfbC8H38dhqW+CEuRpWFTfyX8XfIZQUPbAsc0thSQDe45NFkx+qNrSVg==
 
-react-native-bluetooth-status@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-bluetooth-status/-/react-native-bluetooth-status-1.3.0.tgz#45c6b8eddec2ee54e9abefa44ca16014e5ae1f6b"
-  integrity sha512-GZ/T61RGYabaSGbfwyyKCiTvaDGSQMQY8XcPpEnU8/5KMLDd+PFSQtbFy2V+XoGFcQ+2rrPA864SkooVKf83Ew==
-  dependencies:
-    "@cs125/wait-until" "^0.0.3"
-
 react-native-config@^0.11.7:
   version "0.11.7"
   resolved "https://registry.yarnpkg.com/react-native-config/-/react-native-config-0.11.7.tgz#a2b323f2ecd76a4df88cbb6bc86eaa2ef9febee7"
@@ -4091,13 +4079,6 @@ react-native-cookie@^0.2.0:
   integrity sha512-FIZF6ALSPLIFVEaRp+Lc9GCv2aL9FeiX/783P8LIfN5uZTXBPB9/XyS8Gyg6Gf/cVGZDKM9/neaHUb3nwIh74w==
   dependencies:
     cookie "^0.3.1"
-
-react-native-cookies@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/react-native-cookies/-/react-native-cookies-3.3.0.tgz#527f65eb2d8a7a000107706bb11beb57f511e701"
-  integrity sha512-GobKo8Kvyuif6ROj6rDAjQJpCSLazcZl6AgZb1z7ldB9FrMtetQzXvIehS0QcwbpnXWyJzXJaY0yrlDjFz+NaA==
-  dependencies:
-    invariant "^2.1.0"
 
 react-native-dropdownalert@^4.2.0:
   version "4.2.0"
@@ -4152,11 +4133,6 @@ react-native-modal@^11.0.2:
   dependencies:
     prop-types "^15.6.2"
     react-native-animatable "^1.3.1"
-
-react-native-permissions@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-1.2.1.tgz#cb1f6e53b8992b3912de5a4cfc1553ac2e82d0f6"
-  integrity sha512-6NOGsA7EsuKT9hfULccQfMrsGmRhBkmN6Uv8nz2QObjEG87XtroQtw4Qi1+tAjIkSHawCeAMJp+SCtiXSGUD5Q==
 
 react-native-reanimated@~1.1.0:
   version "1.1.0"

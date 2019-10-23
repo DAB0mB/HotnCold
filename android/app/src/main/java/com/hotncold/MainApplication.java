@@ -10,7 +10,6 @@ import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import im.shimo.react.cookie.CookieManagerPackage;
 import com.imagepicker.ImagePickerPackage;
-import com.solinor.bluetoothstatus.RNBluetoothManagerPackage;
 import it.innove.BleManagerPackage;
 import com.himelbrand.ble.peripheral.RNBLEPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
@@ -44,7 +43,6 @@ public class MainApplication extends Application implements ReactApplication {
             new AsyncStoragePackage(),
             new CookieManagerPackage(),
             new ImagePickerPackage(),
-            new RNBluetoothManagerPackage(),
             new BleManagerPackage(),
             new RNBLEPackage(),
           new RCTMGLPackage(),

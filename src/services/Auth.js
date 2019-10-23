@@ -1,6 +1,5 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import React, { createContext, useContext, useCallback } from 'react';
-import { BluetoothStatus } from 'react-native-bluetooth-status';
 import CONFIG from 'react-native-config';
 
 import * as fragments from '../graphql/fragments';
