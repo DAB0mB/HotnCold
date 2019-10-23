@@ -24,7 +24,7 @@ import { useRegister } from '../services/Auth';
 import { useDateTimePicker } from '../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
 import { useImagePicker } from '../services/ImagePicker';
-import { useNavigation, useBackListener } from '../services/Navigation';
+import { useNavigation } from '../services/Navigation';
 import { useRenderer } from '../utils';
 import Base from './Base';
 
@@ -276,4 +276,4 @@ const Profile = () => {
   );
 };
 
-export default Base.create(Profile);
+export default Base(Profile);

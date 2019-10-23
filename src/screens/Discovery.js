@@ -12,13 +12,12 @@ import { useLoading } from '../services/Loading';
 import { useNativeServices, SERVICES } from '../services/NativeServices';
 import { useNavigation, NavigationProvider } from '../services/Navigation';
 import { useRenderer, useAsyncEffect } from '../utils';
+import Base from './Base';
 
-const Discovery = Symbol('Discovery');
-
-Discovery.create = (Component) => Base.create(() => {
+const Discovery = (Component) => {
   return ({ navigation: discoveryNavigation }) => {
     const alertError = useAlertError();
-    const baseNavigation = useNavigation();
+    const baseNavigation = useNavigation(Base);
     const meQuery = queries.me.use({ onError: alertError });
     const { me } = meQuery.data || {};
     const setLoading = useLoading();
@@ -36,7 +35,11 @@ Discovery.create = (Component) => Base.create(() => {
       useServicesResetCallback,
     } = useNativeServices();
 
-    const [, setHeaderProps] = useHeader();
+    const [headerProps, setHeaderProps] = useHeader();
+
+    useEffect(() => {
+      setHeaderProps({ discoveryNavigation });
+    }, [true]);
 
     useServices(services | SERVICES.BLUETOOTH | SERVICES.GPS);
 
@@ -83,7 +86,7 @@ Discovery.create = (Component) => Base.create(() => {
     useEffect(() => {
       if (meQuery.loading) return;
 
-      setHeaderProps({ me, baseNavigation, discoveryNavigation });
+      setHeaderProps({ discoveryNavigation, me });
     }, [meQuery.loading]);
 
     if (
@@ -105,11 +108,11 @@ Discovery.create = (Component) => Base.create(() => {
     setLoading(false);
 
     return (
-      <NavigationProvider key={Discovery} navigation={navigation}>
+      <NavigationProvider navKey={Discovery} navigation={discoveryNavigation}>
         <Component />
       </NavigationProvider>
     );
   };
-});
+};
 
 export default Discovery;

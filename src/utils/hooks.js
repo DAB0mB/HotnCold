@@ -190,5 +190,5 @@ export const useCallbackTask = (callback, input) => {
     } else {
       setShouldInvoke(true);
     }
-  }, [isReady]);
+  }, [isReady, ...input]);
 };

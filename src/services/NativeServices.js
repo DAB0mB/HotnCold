@@ -13,23 +13,18 @@ export const SERVICES = {
   BLUETOOTH: 0x10,
 };
 
-export const NativeServicesProvider = ({ children }) => {
+export const NativeServicesProvider = ({ ServiceRequiredComponent, children }) => {
   const [services, setServices] = useState(0);
   const [exceptionalServices, setExceptionalServices] = useState(0);
   const [prevServices, setPrevServices] = useState(0);
   const [bluetoothState, setBluetoothState] = useState(null);
   const [gpsState, setGpsState] = useState(null);
   const [requiredService, setRequiredService] = useState(null);
-  const [ServiceRequired, _setServiceRequiredComponent] = useState(() => () => null);
   const [onBluetoothActivated, useBluetoothActivatedCallback] = useCbQueue([services]);
   const [onBluetoothDeactivated, useBluetoothDeactivatedCallback] = useCbQueue([services]);
   const [onGpsActivated, useGpsActivatedCallback] = useCbQueue([services]);
   const [onGpsDeactivated, useGpsDeactivatedCallback] = useCbQueue([services]);
   const [onServicesReset, useServicesResetCallback] = useCbQueue([services]);
-
-  const setServiceRequiredComponent = useCallback((fn) => {
-    _setServiceRequiredComponent(() => fn);
-  }, [_setServiceRequiredComponent]);
 
   useEffect(() => {
     if ((services & SERVICES.GPS) && !(exceptionalServices & SERVICES.GPS) && gpsState === false) {
@@ -167,8 +162,6 @@ export const NativeServicesProvider = ({ children }) => {
     setExceptionalServices,
     useServices,
     requiredService,
-    ServiceRequired,
-    setServiceRequiredComponent,
     useBluetoothActivatedCallback,
     useBluetoothDeactivatedCallback,
     useGpsActivatedCallback,
@@ -180,7 +173,7 @@ export const NativeServicesProvider = ({ children }) => {
   return (
     <NativeServicesContext.Provider value={context}>
       {children}
-      {requiredService && ServiceRequired && <ServiceRequired service={requiredService} />}
+      {requiredService && ServiceRequiredComponent && <ServiceRequiredComponent service={requiredService} />}
     </NativeServicesContext.Provider>
   );
 };

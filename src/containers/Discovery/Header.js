@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const RootHeader = ({ baseNavigation, discoveryNavigation, me }) => {
+const Header = ({ baseNavigation, discoveryNavigation, me }) => {
   const [toggled, setToggled] = useState(false);
   const [pointerEvents, setPointerEvents] = useState('auto');
 
@@ -64,11 +64,13 @@ const RootHeader = ({ baseNavigation, discoveryNavigation, me }) => {
   }, [toggled]);
 
   useEffect(() => {
+    if (!discoveryNavigation) return;
+
     const backHandler = () => {
-      if (navigation.state.routeName !== 'Radar') return true;
+      if (discoveryNavigation.state.routeName !== 'Radar') return true;
       if (pointerEvents !== 'auto') return true;
 
-      navigation.goBack();
+      discoveryNavigation.goBack();
       setToggled(false);
 
       return true;
@@ -79,7 +81,7 @@ const RootHeader = ({ baseNavigation, discoveryNavigation, me }) => {
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', backHandler);
     };
-  }, [navigation, pointerEvents]);
+  }, [discoveryNavigation, pointerEvents]);
 
   return (
     <LinearGradient colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} style={styles.gradient}>
@@ -88,7 +90,7 @@ const RootHeader = ({ baseNavigation, discoveryNavigation, me }) => {
           <Switch value={toggled} onChange={navToScreen} />
         </View>
         <View style={{ height: styles.logo.height }}>
-          <Image source={require('../assets/logo_light.png')} style={styles.logo} />
+          <Image source={require('../../assets/logo_light.png')} style={styles.logo} />
         </View>
         <TouchableWithoutFeedback onPress={editProfile}>
           <Fa5Icon name='user-edit' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
@@ -98,4 +100,4 @@ const RootHeader = ({ baseNavigation, discoveryNavigation, me }) => {
   );
 };
 
-export default RootHeader;
+export default Header;

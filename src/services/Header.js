@@ -2,17 +2,17 @@ import React, { createContext, useContext, useState } from 'react';
 
 const HeaderContext = createContext(null);
 
-export const HeaderProvider = ({ HeaderComponent, children }) => {
+export const HeaderProvider = ({ HeaderComponent, defaultProps = {}, children }) => {
   const [headerProps, setHeaderProps] = useState({});
 
   return (
     <HeaderContext.Provider value={[headerProps, setHeaderProps]}>
       {children}
-      <HeaderComponent {...headerProps} />
+      <HeaderComponent {...defaultProps} {...headerProps} />
     </HeaderContext.Provider>
   );
 };
 
-export const useHeaderState = () => {
+export const useHeader = () => {
   return useContext(HeaderContext);
 };

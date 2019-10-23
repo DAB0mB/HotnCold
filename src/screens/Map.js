@@ -19,6 +19,7 @@ import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors, hexToRgba } from '../theme';
 import { useInterval, useRenderer, useMountedRef } from '../utils';
+import Discovery from './Discovery';
 import Base from './Base';
 
 const SHOW_FAKE_DATA = false;
@@ -275,4 +276,4 @@ const Map = () => {
   );
 };
 
-export default Discovery.create(Map);
+export default Discovery(Map);

@@ -3,19 +3,19 @@ import { BackHandler } from 'react-native';
 
 const NavigationContext = createContext(new Map());
 
-export const NavigationProvider = ({ key, navigation, children }) => {
+export const NavigationProvider = ({ navKey, navigation, children }) => {
   const navMap = useContext(NavigationContext);
 
   return (
-    <NavigationContext.Provider value={new Map([...navMap.entries(), [key, navigation]])}>
+    <NavigationContext.Provider value={new Map([...navMap.entries(), [navKey, navigation]])}>
       {children}
     </NavigationContext.Provider>
   );
 };
 
-export const useNavigation = (key) => {
+export const useNavigation = (navKey) => {
   const navMap = useContext(NavigationContext);
-  const navigation = useMemo(() => key ? navMap[key] : Array.from(navMap.values()).pop(), [key]);
+  const navigation = useMemo(() => navKey ? navMap.get(navKey) : Array.from(navMap.values()).pop(), [navKey]);
 
   navigation.useBackListener = useCallback(() => {
     useEffect(() => {

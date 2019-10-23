@@ -127,8 +127,8 @@ const Radar = () => {
   }, [ble.central]);
 
   const navToUserProfile = useCallback((user) => {
-    mainNavigation.push('Profile', { user });
-  }, [mainNavigation]);
+    baseNavigation.push('Profile', { user });
+  }, [baseNavigation]);
 
   return (
     <View style={styles.container}>
@@ -145,4 +145,4 @@ const Radar = () => {
   );
 };
 
-export default Discovery.create(Radar);
+export default Discovery(Radar);

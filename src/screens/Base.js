@@ -22,13 +22,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const Base = Symbol('Base');
-
-Base.create = (Component) => {
+const Base = (Component) => {
   return ({ navigation }) => {
     const [isLoading, _setLoading] = useState(null);
     const loadingRef = useRef(null);
 
+    let setLoading;
     {
       const fadeAnimRef = useRef(null);
       const immediateRef = useRef(null);
@@ -46,7 +45,7 @@ Base.create = (Component) => {
         ).start();
       }, [isLoading]);
 
-      const setLoading = useCallback((value) => {
+      setLoading = useCallback((value) => {
         if (value) {
           fadeAnimRef.current = new Animated.Value(1);
 
@@ -81,14 +80,12 @@ Base.create = (Component) => {
     }
 
     return (
-      <NavigationProvider key={Base} navigation={navigation}>
+      <NavigationProvider navKey={Base} navigation={navigation}>
         <LoadingProvider loadingState={[isLoading, setLoading]}>
           <StatusBar translucent barStyle="dark-content" backgroundColor='white' />
           <SafeAreaView style={styles.container}>
-            <Screen>
-              <Component />
-              {loadingRef.current}
-            </Screen>
+            <Component />
+            {loadingRef.current}
           </SafeAreaView>
         </LoadingProvider>
       </NavigationProvider>
