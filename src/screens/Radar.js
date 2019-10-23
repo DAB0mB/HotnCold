@@ -8,8 +8,8 @@ import { useMe } from '../services/Auth';
 import { useBluetoothLE, BluetoothLEProvider } from '../services/BluetoothLE';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
-import Base from './Base';
-import Discovery from './Discovery';
+import Base from '../containers/Base';
+import Discovery from '../containers/Discovery';
 
 const styles = StyleSheet.create({
   container: {
@@ -145,4 +145,4 @@ const Radar = () => {
   );
 };
 
-export default Discovery(Radar);
+export default Discovery.create(Radar);

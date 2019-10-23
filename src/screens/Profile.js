@@ -26,7 +26,7 @@ import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
 import { useImagePicker } from '../services/ImagePicker';
 import { useNavigation } from '../services/Navigation';
 import { useRenderer } from '../utils';
-import Base from './Base';
+import Base from '../containers/Base';
 
 const styles = StyleSheet.create({
   container: {
@@ -276,4 +276,4 @@ const Profile = () => {
   );
 };
 
-export default Base(Profile);
+export default Base.create(Profile);

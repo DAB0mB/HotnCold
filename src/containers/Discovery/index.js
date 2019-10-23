@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import CONFIG from 'react-native-config';
+import BlePeripheral from 'react-native-ble-peripheral';
+import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 
-import DiscoveryRouter from '../../routers/Discovery';
-import BaseScreen from '../../screens/Base';
+import * as queries from '../../graphql/queries';
+import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
+import { useHeader } from '../../services/Header';
+import { useLoading } from '../../services/Loading';
 import { NativeServicesProvider } from '../../services/NativeServices';
-import { useNavigation } from '../../services/Navigation';
+import { useNativeServices, SERVICES } from '../../services/NativeServices';
+import { useNavigation, NavigationProvider } from '../../services/Navigation';
+import { useRenderer, useAsyncEffect } from '../../utils';
+import Base from '../Base';
 import Header from './Header';
 import ServiceRequired from './ServiceRequired';
 
-const Discovery = () => {
+const Discovery = Base.create(() => {
+  const { default: DiscoveryRouter } = require('../../routers/Discovery');
   const baseNavigation = useNavigation();
 
   return (
@@ -18,6 +27,107 @@ const Discovery = () => {
       </NativeServicesProvider>
     </HeaderProvider>
   );
+});
+
+Discovery.create = (Component) => {
+  return ({ navigation: discoveryNavigation }) => {
+    const alertError = useAlertError();
+    const baseNavigation = useNavigation(Base);
+    const meQuery = queries.me.use({ onError: alertError });
+    const { me } = meQuery.data || {};
+    const setLoading = useLoading();
+    const [resettingBleState, updateBleResettingState, restoreBleResettingState] = useRenderer();
+
+    const {
+      gpsState,
+      bluetoothState,
+      services,
+      exceptionalServices,
+      setExceptionalServices,
+      requiredService,
+      useServices,
+      useBluetoothActivatedCallback,
+      useServicesResetCallback,
+    } = useNativeServices();
+
+    const [headerProps, setHeaderProps] = useHeader();
+
+    useEffect(() => {
+      setHeaderProps({ discoveryNavigation });
+    }, [true]);
+
+    useServices(services | SERVICES.BLUETOOTH | SERVICES.GPS);
+
+    useBluetoothActivatedCallback(() => {
+      // Bluetooth reset is finalized when event is emitted, not when promise resolves
+      if (resettingBleState) {
+        updateBleResettingState();
+        setExceptionalServices(exceptionalServices ^ SERVICES.BLUETOOTH);
+      }
+      else {
+        setExceptionalServices(exceptionalServices | SERVICES.BLUETOOTH);
+
+        BlePeripheral.stop()
+
+        BluetoothStateManager.disable().then(() => {
+          return BluetoothStateManager.enable();
+        }),
+
+        updateBleResettingState();
+      }
+    }, [resettingBleState]);
+
+    useAsyncEffect(function* () {
+      if (resettingBleState !== 2) return;
+      if (!me) return;
+
+      updateBleResettingState();
+
+      BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
+      BlePeripheral.addService(me.id, true);
+      // Async, run in background
+      yield BlePeripheral.start();
+
+      restoreBleResettingState();
+    }, [me && me.id, resettingBleState]);
+
+    useEffect(() => {
+      if (meQuery.called && !meQuery.loading && !meQuery.error && !me) {
+        // Unauthorized
+        baseNavigation.replace('Profile');
+      }
+    }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNavigation]);
+
+    useEffect(() => {
+      if (meQuery.loading) return;
+
+      setHeaderProps({ discoveryNavigation, me });
+    }, [meQuery.loading]);
+
+    if (
+      gpsState == null ||
+      bluetoothState == null ||
+      requiredService
+    ) {
+      setLoading(false);
+
+      return null;
+    }
+
+    if (meQuery.loading || resettingBleState) {
+      setLoading(true);
+
+      return null;
+    }
+
+    setLoading(false);
+
+    return (
+      <NavigationProvider navKey={Discovery} navigation={discoveryNavigation}>
+        <Component />
+      </NavigationProvider>
+    );
+  };
 };
 
-export default BaseScreen(Discovery);
+export default Discovery;
