@@ -7,7 +7,7 @@ import * as queries from '../../graphql/queries';
 import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
 import { useHeader } from '../../services/Header';
-import { useLoading } from '../../services/Loading';
+import { LoadingProvider, useLoading } from '../../services/Loading';
 import { NativeServicesProvider } from '../../services/NativeServices';
 import { useNativeServices, SERVICES } from '../../services/NativeServices';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
@@ -22,9 +22,11 @@ const Discovery = Base.create(() => {
 
   return (
     <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation }}>
-      <NativeServicesProvider ServiceRequiredComponent={ServiceRequired}>
-        <DiscoveryRouter />
-      </NativeServicesProvider>
+      <LoadingProvider>
+        <NativeServicesProvider ServiceRequiredComponent={ServiceRequired}>
+          <DiscoveryRouter />
+        </NativeServicesProvider>
+      </LoadingProvider>
     </HeaderProvider>
   );
 });
