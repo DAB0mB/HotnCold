@@ -77,6 +77,10 @@ Discovery.create = (Component) => {
 
     useEffect(() => {
       setHeaderProps({ ...headerProps, discoveryNavigation });
+
+      return () => {
+        setHeaderProps(headerProps);
+      };
     }, [true]);
 
     useServices(services | SERVICES.BLUETOOTH | SERVICES.GPS);
