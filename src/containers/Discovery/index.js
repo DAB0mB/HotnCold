@@ -52,10 +52,6 @@ Discovery.create = (Component) => {
 
     const [headerProps, setHeaderProps] = useHeader();
 
-    useEffect(() => {
-      setHeaderProps({ discoveryNavigation });
-    }, [true]);
-
     useServices(services | SERVICES.BLUETOOTH | SERVICES.GPS);
 
     useBluetoothActivatedCallback(() => {
@@ -99,9 +95,15 @@ Discovery.create = (Component) => {
     }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNavigation]);
 
     useEffect(() => {
-      if (meQuery.loading) return;
+      if (meQuery.loading) {
+        setHeaderProps({ ...headerProps, discoveryNavigation });
+      }
 
-      setHeaderProps({ discoveryNavigation, me });
+      setHeaderProps({ ...headerProps, discoveryNavigation, me });
+
+      return () => {
+        setHeaderProps(headerProps);
+      };
     }, [meQuery.loading]);
 
     if (
