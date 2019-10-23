@@ -1,13 +1,15 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import BleManager from 'react-native-ble-manager';
 import BlePeripheral from 'react-native-ble-peripheral';
+import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 const BleCentralContext = createContext(null);
 const BleEmitterContext = createContext(null);
+const BleStateContext = createContext(null);
 const BlePeripheralContext = createContext(null);
 
 export const BLE_PERMISSIONS = {
@@ -32,27 +34,46 @@ export const BLE_PROPERTIES = {
   EXTEND_PROPS: 0b10000000,
 };
 
-export const useBluetoothLE = ({ configurePeripheral } = {}) => {
-  const peripheral = useContext(BlePeripheralContext);
-  const central = useContext(BleCentralContext);
-  const emitter = useContext(BleEmitterContext);
-
-  return { peripheral, central, emitter };
-};
-
 export const BluetoothLEProvider = ({
   peripheralService = BleManager,
   centralService = BlePeripheral,
+  stateService = BluetoothStateManager,
   eventEmitter = bleManagerEmitter,
   children,
 }) => {
   return (
     <BleCentralContext.Provider value={peripheralService}>
-      <BlePeripheralContext.Provider value={centralService}>
-        <BleEmitterContext.Provider value={eventEmitter}>
-          {children}
-        </BleEmitterContext.Provider>
-      </BlePeripheralContext.Provider>
+    <BlePeripheralContext.Provider value={centralService}>
+    <BleStateContext.Provider value={stateService}>
+    <BleEmitterContext.Provider value={eventEmitter}>
+      {children}
+    </BleEmitterContext.Provider>
+    </BleStateContext.Provider>
+    </BlePeripheralContext.Provider>
     </BleCentralContext.Provider>
   );
+};
+
+export const useBluetoothLE = () => {
+  const peripheral = useContext(BlePeripheralContext);
+  const central = useContext(BleCentralContext);
+  const state = useContext(BleStateContext);
+  const emitter = useContext(BleEmitterContext);
+
+  return useMemo(() => ({
+    peripheral,
+    central,
+    emitter,
+    enable(...args) {
+      return state.enable(...args);
+    },
+    disable(...args) {
+      return state.disable(...args);
+    },
+  }), [
+    peripheral,
+    central,
+    emitter,
+    state,
+  ]);
 };

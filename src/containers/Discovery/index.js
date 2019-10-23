@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import CONFIG from 'react-native-config';
-import BlePeripheral from 'react-native-ble-peripheral';
-import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 
 import * as queries from '../../graphql/queries';
+import { useBluetoothLE } from '../../services/BluetoothLE';
 import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
 import { useHeader } from '../../services/Header';
@@ -34,6 +33,7 @@ const Discovery = Base.create(() => {
 Discovery.create = (Component) => {
   return ({ navigation: discoveryNavigation }) => {
     const alertError = useAlertError();
+    const ble = useBluetoothLE();
     const baseNavigation = useNavigation(Base);
     const meQuery = queries.me.use({ onError: alertError });
     const { me } = meQuery.data || {};
@@ -65,10 +65,10 @@ Discovery.create = (Component) => {
       else {
         setExceptionalServices(exceptionalServices | SERVICES.BLUETOOTH);
 
-        BlePeripheral.stop()
+        ble.peripheral.stop()
 
-        BluetoothStateManager.disable().then(() => {
-          return BluetoothStateManager.enable();
+        ble.disable().then(() => {
+          return ble.enable();
         }),
 
         updateBleResettingState();
@@ -81,10 +81,10 @@ Discovery.create = (Component) => {
 
       updateBleResettingState();
 
-      BlePeripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
-      BlePeripheral.addService(me.id, true);
+      ble.peripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
+      ble.peripheral.addService(me.id, true);
       // Async, run in background
-      yield BlePeripheral.start();
+      yield ble.peripheral.start();
 
       restoreBleResettingState();
     }, [me && me.id, resettingBleState]);
