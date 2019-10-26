@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 export const useInterval = (callback, delay, asap) => {
   const savedCallback = useRef();
@@ -213,3 +213,25 @@ export const useCallbackTask = (callback, input) => {
     }
   }, [isReady, ...input]);
 };
+
+export const useRootLayoutEffect = (() => {
+  let rootObj = null;
+
+  return (callback) => {
+    const obj = {};
+
+    if (!rootObj) {
+      rootObj = obj;
+    }
+
+    useEffect(() => {
+      rootObj = null;
+    });
+
+    useLayoutEffect(() => {
+      if (rootObj === obj) {
+        callback();
+      }
+    });
+  };
+})();

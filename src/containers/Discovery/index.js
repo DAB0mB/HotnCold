@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import CONFIG from 'react-native-config';
 
 import * as queries from '../../graphql/queries';
@@ -25,7 +25,6 @@ const Discovery = Base.create(() => {
   const ble = useBluetoothLE();
   const meQuery = queries.me.use({ onError: alertError });
   const nativeServicesRef = useRef(null);
-  const setLoading = useLoading();
   const { me } = meQuery.data || {};
 
   const onBluetoothActivated = useCallback(() => {
@@ -72,12 +71,8 @@ const Discovery = Base.create(() => {
   }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNavigation]);
 
   if (meQuery.loading) {
-    setLoading(true);
-
-    return null;
+    return useLoading(true);
   }
-
-  setLoading(false);
 
   const isReady = (
     nativeServicesRef.current &&
@@ -87,7 +82,7 @@ const Discovery = Base.create(() => {
     !resettingBleState
   );
 
-  return (
+  return useLoading(false,
     <MeProvider me={me}>
     <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation, me }}>
     <NativeServicesProvider
@@ -96,7 +91,7 @@ const Discovery = Base.create(() => {
       onBluetoothActivated={onBluetoothActivated}
       ref={nativeServicesRef}
     >
-      <LoadingProvider initialLoading={!isReady}>
+      <LoadingProvider loading={!isReady}>
         {isReady && <DiscoveryRouter />}
       </LoadingProvider>
     </NativeServicesProvider>
@@ -108,7 +103,6 @@ const Discovery = Base.create(() => {
 Discovery.create = (Component) => {
   return ({ navigation: discoveryNavigation }) => {
     const [headerProps, setHeaderProps] = useHeader();
-    const setLoading = useLoading();
 
     useEffect(() => {
       setHeaderProps({ ...headerProps, discoveryNavigation });
@@ -117,10 +111,6 @@ Discovery.create = (Component) => {
         setHeaderProps(headerProps);
       };
     }, [true]);
-
-    useLayoutEffect(() => {
-      setLoading(false);
-    });
 
     return (
       <NavigationProvider navKey={Discovery} navigation={discoveryNavigation}>

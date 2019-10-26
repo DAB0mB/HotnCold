@@ -4,7 +4,7 @@ import turfBboxPolygon from '@turf/bbox-polygon';
 import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
-import React, { useLayoutEffect, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback, Text } from 'react-native';
 import Cookie from 'react-native-cookie';
 import CONFIG from 'react-native-config';
@@ -105,7 +105,6 @@ const Map = () => {
   const [selection, setSelection] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [readyState, updateReadyState] = useRenderer();
-  const setLoading = useLoading();
   const isMountedRef = useMountedRef();
 
   const resetMapLoaded = useCallback(() => {
@@ -195,11 +194,7 @@ const Map = () => {
     }
   }, [shapeKey, setAreaFeatures]);
 
-  useLayoutEffect(() => {
-    setLoading(readyState !== 2);
-  });
-
-  return (
+  return useLoading(readyState !== 2,
     <View style={styles.container}>
       <MapboxGL.MapView
         ref={mapRef}
