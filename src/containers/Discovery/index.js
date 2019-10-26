@@ -8,8 +8,7 @@ import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
 import { useHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
-import { NativeServicesProvider } from '../../services/NativeServices';
-import { useNativeServices, SERVICES } from '../../services/NativeServices';
+import NativeServices, { SERVICES } from '../../services/NativeServices';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
 import { useRenderer, useAsyncEffect } from '../../utils';
 import Base from '../Base';
@@ -85,16 +84,16 @@ const Discovery = Base.create(() => {
   return useLoading(false,
     <MeProvider me={me}>
     <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation, me }}>
-    <NativeServicesProvider
-      ServiceRequiredComponent={ServiceRequired}
-      services={SERVICES.BLUETOOTH | SERVICES.GPS}
-      onBluetoothActivated={onBluetoothActivated}
-      ref={nativeServicesRef}
-    >
-      <LoadingProvider loading={!isReady}>
-        {isReady && <DiscoveryRouter />}
-      </LoadingProvider>
-    </NativeServicesProvider>
+      <NativeServices
+        ServiceRequiredComponent={ServiceRequired}
+        services={SERVICES.BLUETOOTH | SERVICES.GPS}
+        onBluetoothActivated={onBluetoothActivated}
+        ref={nativeServicesRef}
+      >
+        <LoadingProvider loading={!isReady}>
+          {isReady && <DiscoveryRouter />}
+        </LoadingProvider>
+      </NativeServices>
     </HeaderProvider>
     </MeProvider>
   );
@@ -102,7 +101,7 @@ const Discovery = Base.create(() => {
 
 Discovery.create = (Component) => {
   return ({ navigation: discoveryNavigation }) => {
-    const [headerProps, setHeaderProps] = useHeader();
+    const { headerProps, setHeaderProps } = useHeader();
 
     useEffect(() => {
       setHeaderProps({ ...headerProps, discoveryNavigation });

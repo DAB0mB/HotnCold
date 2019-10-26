@@ -1,6 +1,4 @@
 import React, {
-  createContext,
-  useContext,
   useCallback,
   useEffect,
   useState,
@@ -13,14 +11,13 @@ import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 import GPSState from 'react-native-gps-state';
 
 const noop = () => {};
-const NativeServicesContext = createContext(null);
 
 export const SERVICES = {
   GPS:       0x01,
   BLUETOOTH: 0x10,
 };
 
-export const NativeServicesProvider = forwardRef(({
+const NativeServices = forwardRef(({
   children,
   onBluetoothActivated = noop,
   onBluetoothDeactivated = noop,
@@ -150,24 +147,21 @@ export const NativeServicesProvider = forwardRef(({
     };
   }, [services, setGpsState, setBluetoothState]);
 
-  const contextMemo = {
+  const imperativeHandle = {
     gpsState,
     bluetoothState,
     exceptionalServices,
     setExceptionalServices,
     requiredService,
   };
-  const context = useMemo(() => contextMemo, Object.values(contextMemo));
-  useImperativeHandle(ref, () => context, [context]);
+  useImperativeHandle(ref, () => imperativeHandle, Object.values(imperativeHandle));
 
   return (
-    <NativeServicesContext.Provider value={context}>
+    <>
       {children}
       {requiredService && ServiceRequiredComponent && <ServiceRequiredComponent service={requiredService} />}
-    </NativeServicesContext.Provider>
+    </>
   );
 });
 
-export const useNativeServices = () => {
-  return useContext(NativeServicesContext);
-};
+export default NativeServices;
