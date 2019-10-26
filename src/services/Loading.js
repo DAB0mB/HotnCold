@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
 import { View, StatusBar, Text, SafeAreaView, StyleSheet, Animated } from 'react-native';
 
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
 
 const LoadingContext = createContext(null);
 
-export const LoadingProvider = ({ children }) => {
+export const LoadingProvider = ({ children, initialLoading }) => {
   const [isLoading, _setLoading] = useState(null);
   const [setImmediate, clearImmediate] = useImmediate();
   const [key, render] = useRenderer();
@@ -79,6 +80,12 @@ export const LoadingProvider = ({ children }) => {
       });
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    if (initialLoading) {
+      setLoading(!!initialLoading);
+    }
+  }, [initialLoading]);
 
   return (
     <LoadingContext.Provider value={[isLoading, setLoading]}>

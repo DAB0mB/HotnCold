@@ -1,11 +1,18 @@
-import React, { createContext, useContext, useCallback, useEffect, useState, useMemo } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import { View } from 'react-native';
 import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 import GPSState from 'react-native-gps-state';
 
-import { colors } from '../theme';
-import { useCbQueue } from '../utils';
-
+const noop = () => {};
 const NativeServicesContext = createContext(null);
 
 export const SERVICES = {
@@ -13,18 +20,20 @@ export const SERVICES = {
   BLUETOOTH: 0x10,
 };
 
-export const NativeServicesProvider = ({ ServiceRequiredComponent, children }) => {
-  const [services, setServices] = useState(0);
+export const NativeServicesProvider = forwardRef(({
+  children,
+  onBluetoothActivated = noop,
+  onBluetoothDeactivated = noop,
+  onGpsActivated = noop,
+  onGpsDeactivated = noop,
+  ServiceRequiredComponent,
+  services,
+}, ref) => {
   const [exceptionalServices, setExceptionalServices] = useState(0);
   const [prevServices, setPrevServices] = useState(0);
   const [bluetoothState, setBluetoothState] = useState(null);
   const [gpsState, setGpsState] = useState(null);
   const [requiredService, setRequiredService] = useState(null);
-  const [onBluetoothActivated, useBluetoothActivatedCallback] = useCbQueue([services]);
-  const [onBluetoothDeactivated, useBluetoothDeactivatedCallback] = useCbQueue([services]);
-  const [onGpsActivated, useGpsActivatedCallback] = useCbQueue([services]);
-  const [onGpsDeactivated, useGpsDeactivatedCallback] = useCbQueue([services]);
-  const [onServicesReset, useServicesResetCallback] = useCbQueue([services]);
 
   useEffect(() => {
     if ((services & SERVICES.GPS) && !(exceptionalServices & SERVICES.GPS) && gpsState === false) {
@@ -130,8 +139,6 @@ export const NativeServicesProvider = ({ ServiceRequiredComponent, children }) =
       });
     }
 
-    onServicesReset();
-
     return () => {
       if (gpsListener) {
         GPSState.removeListener(gpsListener);
@@ -143,32 +150,15 @@ export const NativeServicesProvider = ({ ServiceRequiredComponent, children }) =
     };
   }, [services, setGpsState, setBluetoothState]);
 
-  const useServices = useCallback((newServices) => {
-    useEffect(() => {
-      setServices(newServices);
-
-      return () => {
-        setServices(services);
-      };
-    }, [true]);
-  }, [services]);
-
   const contextMemo = {
     gpsState,
     bluetoothState,
-    services,
-    setServices,
     exceptionalServices,
     setExceptionalServices,
-    useServices,
     requiredService,
-    useBluetoothActivatedCallback,
-    useBluetoothDeactivatedCallback,
-    useGpsActivatedCallback,
-    useGpsDeactivatedCallback,
-    useServicesResetCallback,
   };
   const context = useMemo(() => contextMemo, Object.values(contextMemo));
+  useImperativeHandle(ref, () => context, [context]);
 
   return (
     <NativeServicesContext.Provider value={context}>
@@ -176,7 +166,7 @@ export const NativeServicesProvider = ({ ServiceRequiredComponent, children }) =
       {requiredService && ServiceRequiredComponent && <ServiceRequiredComponent service={requiredService} />}
     </NativeServicesContext.Provider>
   );
-};
+});
 
 export const useNativeServices = () => {
   return useContext(NativeServicesContext);
