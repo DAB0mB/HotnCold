@@ -4113,6 +4113,13 @@ react-native-image-picker@0.28.0:
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-0.28.0.tgz#e3f26df170ea932e9c0404624fbced2f59a300e3"
   integrity sha512-lQfdOyC1mQ/pvfEaUGdoodO1A1clg9kf6YC1WdbWhA6XK+joBd9GQYf8SaCf6/7vM25U4ib+6ux4yvnrS1pOqQ==
 
+react-native-indicator@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-indicator/-/react-native-indicator-1.0.0.tgz#eb4428d996fa374f53346bcc50806805059aab37"
+  integrity sha512-LZUYurF1MlfYk/PkqxPwK/TxagAxRSv0kAV1GSeeIuxCWba0ypxhHdua4OJY7uJw1ZtVmv6lRwQsiMztPVf18w==
+  dependencies:
+    prop-types "^15.6.0"
+
 react-native-linear-gradient@^2.5.6:
   version "2.5.6"
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.5.6.tgz#96215cbc5ec7a01247a20890888aa75b834d44a0"
