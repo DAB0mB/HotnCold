@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CONFIG from 'react-native-config';
 
 import * as queries from '../../graphql/queries';
@@ -24,6 +24,8 @@ const Discovery = Base.create(() => {
   const ble = useBluetoothLE();
   const meQuery = queries.me.use({ onError: alertError });
   const nativeServicesRef = useRef(null);
+  const [requiredService, setRequiredService] = useState(null);
+  const [nativeServicesReady, setNativeServicesReady] = useState(false);
   const { me } = meQuery.data || {};
 
   const onBluetoothActivated = useCallback(() => {
@@ -74,10 +76,8 @@ const Discovery = Base.create(() => {
   }
 
   const isReady = (
-    nativeServicesRef.current &&
-    nativeServicesRef.current.gpsState &&
-    nativeServicesRef.current.bluetoothState &&
-    !nativeServicesRef.current.requiredService &&
+    nativeServicesReady &&
+    !requiredService &&
     !resettingBleState
   );
 
@@ -88,9 +88,11 @@ const Discovery = Base.create(() => {
         ServiceRequiredComponent={ServiceRequired}
         services={SERVICES.BLUETOOTH | SERVICES.GPS}
         onBluetoothActivated={onBluetoothActivated}
+        onRequireService={setRequiredService}
+        onReady={setNativeServicesReady}
         ref={nativeServicesRef}
       >
-        <LoadingProvider loading={!isReady}>
+        <LoadingProvider loading={!isReady && !requiredService}>
           {isReady && <DiscoveryRouter />}
         </LoadingProvider>
       </NativeServices>

@@ -19,10 +19,12 @@ export const SERVICES = {
 
 const NativeServices = forwardRef(({
   children,
+  onReady = noop,
   onBluetoothActivated = noop,
   onBluetoothDeactivated = noop,
   onGpsActivated = noop,
   onGpsDeactivated = noop,
+  onRequireService = noop,
   ServiceRequiredComponent,
   services,
 }, ref) => {
@@ -35,17 +37,24 @@ const NativeServices = forwardRef(({
   useEffect(() => {
     if ((services & SERVICES.GPS) && !(exceptionalServices & SERVICES.GPS) && gpsState === false) {
       setRequiredService(SERVICES.GPS);
+      onRequireService(SERVICES.GPS);
 
       return;
     }
 
     if ((services & SERVICES.BLUETOOTH) && !(exceptionalServices & SERVICES.BLUETOOTH) && bluetoothState === false) {
       setRequiredService(SERVICES.BLUETOOTH);
+      onRequireService(SERVICES.BLUETOOTH);
 
       return;
     }
 
-    setRequiredService(null);
+    if (requiredService != null) {
+      setRequiredService(null);
+      onRequireService(null);
+
+      return;
+    }
   }, [services, gpsState, bluetoothState]);
 
   useEffect(() => {
@@ -147,12 +156,16 @@ const NativeServices = forwardRef(({
     };
   }, [services, setGpsState, setBluetoothState]);
 
+  useEffect(() => {
+    if ((services & SERVICES.GPS) && gpsState == null) return;
+    if ((services & SERVICES.BLUETOOTH) && bluetoothState == null) return;
+
+    onReady(true);
+  }, [gpsState, bluetoothState]);
+
   const imperativeHandle = {
-    gpsState,
-    bluetoothState,
     exceptionalServices,
     setExceptionalServices,
-    requiredService,
   };
   useImperativeHandle(ref, () => imperativeHandle, Object.values(imperativeHandle));
 

@@ -1,33 +1,35 @@
 import { bytesToString } from 'convert-string';
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Button, Image, View, Text, ScrollView, TouchableOpacity, BackHandler } from 'react-native';
+import { StyleSheet, Image, View, TouchableWithoutFeedback, Dimensions, Text } from 'react-native';
 import CONFIG from 'react-native-config';
 
+import Base from '../containers/Base';
+import Discovery from '../containers/Discovery';
 import * as queries from '../graphql/queries';
 import { useMe } from '../services/Auth';
 import { useBluetoothLE, BluetoothLEProvider } from '../services/BluetoothLE';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
-import Base from '../containers/Base';
-import Discovery from '../containers/Discovery';
+import { colors } from '../theme';
+import { pick } from '../utils';
+
+const noop = () => {};
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
   },
-  userItem: {
-    flexDirection: 'row',
+  profilePicture: {
+    width: 115,
+    height: 115,
     alignItems: 'center',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: 'silver'
-  },
-  userItemImage: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
-    borderRadius: 25,
+    justifyContent: 'center',
+    borderColor: colors.hot,
+    borderWidth: 5,
+    borderRadius: 999,
+    resizeMode: 'contain',
+    overflow: 'hidden',
   },
 });
 
@@ -89,19 +91,7 @@ const Radar = () => {
     };
   }, [true]);
 
-  useEffect(() => {
-    const backHandler = () => {
-      discoveryNavigation.goBack();
-
-      return true;
-    };
-
-    BackHandler.addEventListener('hardwareBackPress', backHandler);
-
-    return () => {
-      BackHandler.removeEventListener('hardwareBackPress', backHandler);
-    };
-  }, [true]);
+  discoveryNavigation.useBackListener();
 
   const scan = useCallback(() => {
     let stoppingScan;
@@ -132,15 +122,14 @@ const Radar = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-        {discoveredUsers.map((user) =>
-          <TouchableOpacity key={user.id} style={styles.userItem} onPress={() => navToUserProfile(user)}>
-            <Image style={styles.userItemImage} source={{ uri: user.pictures[0] }} />
-            <Text>{user.firstName}</Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
-      <Button disabled={scanning} title={scanning ? 'scanning...' : 'scan'} onPress={scan} />
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <TouchableWithoutFeedback onPress={scanning ? scan : noop}>
+          <View style={[styles.profilePicture, { borderColor: scanning ? colors.hot : colors.cold }]}>
+            <Image source={{ uri: me.pictures[0] }} resizeMode={styles.profilePicture.resizeMode} style={pick(styles.profilePicture, ['width', 'height'])} />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+      <Text style={{ fontSize: 26, fontWeight: '900', color: colors.ink, textAlign: 'center', margin: 30, position: 'absolute', bottom: 0 }}>{scanning ? 'Looking for people in the venue' : 'Tap on yourself to discover people'}</Text>
     </View>
   );
 };
