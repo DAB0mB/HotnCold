@@ -3,6 +3,7 @@ export const colors = {
   warm: '#d6ec58',
   cold: '#58ecd8',
   ink: '#281745',
+  gray: '#9da4ad',
 };
 
 export const hexToRgba = (hex, a = 1) => {

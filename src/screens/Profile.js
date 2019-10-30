@@ -19,14 +19,15 @@ import FaIcon from 'react-native-vector-icons/FontAwesome';
 import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
 import { useRegister } from '../services/Auth';
 import { useDateTimePicker } from '../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
 import { useImagePicker } from '../services/ImagePicker';
 import { useNavigation } from '../services/Navigation';
+import { colors, hexToRgba } from '../theme';
 import { useRenderer } from '../utils';
-import Base from '../containers/Base';
 
 const styles = StyleSheet.create({
   container: {
@@ -38,50 +39,67 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').width,
   },
   profilePicturePlaceholder: {
-    backgroundColor: 'silver',
+    backgroundColor: colors.gray,
     alignItems: 'center',
     justifyContent: 'center',
   },
   name: {
-    paddingTop: 10,
-    marginLeft: 10,
-    marginRight: 10,
-    fontSize: 20,
-    color: '#666666',
+    margin: 10,
+    fontSize: 30,
+    fontWeight: '900',
+    color: colors.ink,
     borderBottomColor: 'silver',
     flexDirection: 'row',
   },
-  occupation: {
-    paddingBottom: 10,
+  bioField: {
     marginLeft: 10,
     marginRight: 10,
-    fontSize: 15,
-    color: 'gray',
-    borderBottomColor: 'gray',
-    borderBottomWidth: 1,
+    fontSize: 16,
+    color: 'silver',
     flexDirection: 'row',
     alignItems: 'center'
   },
+  bioFieldIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 25,
+  },
   bio: {
-    paddingTop: 10,
-    paddingBottom: 20,
-    marginLeft: 10,
-    marginRight: 10,
+    backgroundColor: hexToRgba(colors.gray, .2),
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: 15,
+    margin: 10,
+    marginTop: 20,
+    padding: 10,
+    paddingTop: 20,
+    flex: 1,
+    textAlignVertical: 'top',
+    fontSize: 16,
+
     color: 'gray',
+  },
+  backButton: {
+    position: 'absolute',
+    flexDirection: 'row',
+    left: 0,
+    top: 0,
+    padding: 10,
   },
   picturesButtons: {
     position: 'absolute',
     flexDirection: 'row',
     right: 0,
     top: 0,
-    padding: 10,
+    paddingTop: 10,
   },
   profileButtons: {
     position: 'absolute',
     flexDirection: 'row',
+    top: Dimensions.get('window').width,
     right: 0,
-    bottom: 0,
-    padding: 10,
+    paddingTop: 10,
   },
   icon: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
@@ -92,6 +110,10 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     marginRight: 10,
   },
+  swiperDot: {
+    height: 4,
+    width: 4,
+  }
 });
 
 const Profile = () => {
@@ -202,7 +224,10 @@ const Profile = () => {
     };
   }, [setTyping]);
 
-  navigation.useBackListener();
+  // Static parameter
+  if (user) {
+    navigation.useBackListener();
+  }
 
   const deletePicture = useCallback(() => {
     setPictures(
@@ -216,13 +241,21 @@ const Profile = () => {
       {!typing && (
         <View style={styles.profilePicture}>
           {/*react-native-swiper doesn't iterate through children properly so I have to compose the array manually*/}
-          <Swiper showButtons loop={false} onIndexChanged={setPictureIndex} key={swiperKey}>
+          <Swiper
+            showButtons
+            loop={false}
+            onIndexChanged={setPictureIndex}
+            key={swiperKey}
+            dotStyle={styles.swiperDot}
+            activeDotColor='white'
+            dotColor='rgba(255, 255, 255, .3)'
+          >
             {pictures.map((picture) => (
               <Image style={styles.profilePicture} key={picture} source={{ uri: picture }} />
             )).concat(editMode && (
               <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()} key='_'>
                 <View style={[styles.profilePicture, styles.profilePicturePlaceholder]}>
-                  <McIcon name='image-plus' size={100} color='rgba(0, 0, 0, 0.8)' solid />
+                  <McIcon name='image-plus' size={100} color='white' solid />
                 </View>
               </TouchableWithoutFeedback>
             )).filter(Boolean)}
@@ -230,44 +263,63 @@ const Profile = () => {
         </View>
       )}
       <View style={styles.name}>
-        <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} placeholder={name ? '' : 'Full Name'} />
-        <Text style={{ fontSize: styles.name.fontSize, color: styles.name.color }}>, </Text>
-        <TouchableWithoutFeedback onPress={() => editMode ? dateTimePicker.show() : () => {}}>
-          <View>
-            <MyText style={{ fontSize: styles.name.fontSize, color: styles.name.color }} value={birthDate && moment(birthDate).format('MMMM Do YYYY')} editable={false} placeholder='Birthday' />
+        <MyText style={{ fontSize: styles.name.fontSize, fontWeight: styles.name.fontWeight, color: styles.name.color }} value={name} onChangeText={setName} maxLength={25} placeholder={name ? '' : 'Full Name'} />
+      </View>
+      <TouchableWithoutFeedback onPress={() => editMode ? dateTimePicker.show() : () => {}}>
+        <View style={styles.bioField}>
+          <View style={styles.bioFieldIcon}>
+            <FaIcon name='user' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
           </View>
-        </TouchableWithoutFeedback>
+          <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={birthDate && moment(birthDate).format('MMMM Do YYYY')} editable={false} placeholder='Birthday' />
+        </View>
+      </TouchableWithoutFeedback>
+      <View style={styles.bioField}>
+        <View style={styles.bioFieldIcon}>
+          <FaIcon name='suitcase' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
+        </View>
+        <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={occupation} onChangeText={setOccupation} maxLength={30} placeholder='Occupation' />
       </View>
-      <View style={styles.occupation}>
-        <FaIcon name='suitcase' size={styles.occupation.fontSize} color={styles.occupation.color} style={{ marginRight: styles.occupation.marginLeft / 2 }} />
-        <MyText style={{ color: styles.occupation.color, fontSize: styles.occupation.fontSize }} value={occupation} onChangeText={setOccupation} maxLength={30} placeholder='Occupation' />
+      <View style={styles.bio}>
+        <View style={{ position: 'absolute', top: -15, right: 20 }}>
+          <FaIcon name='quote-left' color={colors.ink} size={30} />
+        </View>
+        <ScrollView style={{ height: '100%' }}>
+          <MyText style={{ color: styles.bio.color, fontSize: styles.bio.fontSize, textAlignVertical: styles.bio.textAlignVertical }} multiline value={bio} onChangeText={setBio} maxLength={512} placeholder='A short description of yourself: what do you like to do, what do you like to eat, where do you like to go, etc.' />
+        </ScrollView>
       </View>
-      <ScrollView style={styles.bio}>
-        <MyText style={{ color: styles.bio.color, paddingBottom: styles.bio.paddingBottom }} multiline value={bio} onChangeText={setBio} maxLength={512} placeholder='A short description of yourself: what do you like to do, what do you like to eat, where do you like to go, etc.' />
-      </ScrollView>
 
-      {editMode && pictureIndex < pictures.length && (
-        <View style={styles.picturesButtons}>
-          {pictures.length < 6 && (
-            <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
-              <View style={styles.icon}>
-                <McIcon name='image-plus' size={25} color='rgba(0, 0, 0, 0.8)' solid />
-              </View>
-            </TouchableWithoutFeedback>
-          )}
-          <TouchableWithoutFeedback onPress={deletePicture}>
+      {user && !typing && (
+        <View style={styles.backButton}>
+          <TouchableWithoutFeedback onPress={navigation.goBackOnceFocused}>
             <View style={styles.icon}>
-              <McIcon name='delete' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+              <McIcon name='arrow-left' size={25} color='white' solid />
             </View>
           </TouchableWithoutFeedback>
         </View>
       )}
 
-      {editMode && (
+      {editMode && !typing && pictureIndex < pictures.length && (
+        <View style={styles.picturesButtons}>
+          {pictures.length < 6 && (
+            <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()}>
+              <View style={styles.icon}>
+                <McIcon name='image-plus' size={25} color='white' solid />
+              </View>
+            </TouchableWithoutFeedback>
+          )}
+          <TouchableWithoutFeedback onPress={deletePicture}>
+            <View style={styles.icon}>
+              <McIcon name='delete' size={25} color='white' solid />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      )}
+
+      {editMode && !typing && (
         <View style={styles.profileButtons}>
           <TouchableWithoutFeedback onPress={mutateProfile}>
             <View style={styles.icon}>
-              <Fa5Icon name='save' size={25} color='rgba(0, 0, 0, 0.8)' solid />
+              <Fa5Icon name='save' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
             </View>
           </TouchableWithoutFeedback>
         </View>

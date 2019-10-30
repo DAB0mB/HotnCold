@@ -18,20 +18,20 @@ export const useNavigation = (navKey) => {
   const navigation = useMemo(() => navKey ? navMap.get(navKey) : Array.from(navMap.values()).pop(), [navKey]);
 
   navigation.useBackListener = useCallback(() => {
+    let focused = false;
+    let goBack = false;
+
+    const goBackOnceFocused = navigation.goBackOnceFocused = useCallback(() => {
+      if (focused) {
+        navigation.goBack();
+      } else {
+        goBack = true;
+      }
+
+      return true;
+    }, [true]);
+
     useEffect(() => {
-      let focused = false;
-      let goBack = false;
-
-      const backHandler = () => {
-        if (focused) {
-          navigation.goBack();
-        } else {
-          goBack = true;
-        }
-
-        return true;
-      };
-
       const listener = navigation.addListener('didFocus', (e) => {
         if (goBack) {
           navigation.goBack();
@@ -40,11 +40,11 @@ export const useNavigation = (navKey) => {
         }
       });
 
-      BackHandler.addEventListener('hardwareBackPress', backHandler);
+      BackHandler.addEventListener('hardwareBackPress', goBackOnceFocused);
 
       return () => {
         listener.remove();
-        BackHandler.removeEventListener('hardwareBackPress', backHandler);
+        BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocused);
       };
     }, [true]);
   }, [true]);
