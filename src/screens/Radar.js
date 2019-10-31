@@ -1,6 +1,6 @@
 import { bytesToString } from 'convert-string';
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Image, View, TouchableWithoutFeedback, Dimensions, Text } from 'react-native';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { Animated, StyleSheet, Image, View, TouchableWithoutFeedback, Dimensions, Text } from 'react-native';
 import { RippleLoader } from 'react-native-indicator';
 import CONFIG from 'react-native-config';
 
@@ -24,11 +24,11 @@ const picsIndexes = Array.apply(null, { length: ((MY_PIC_SIZE / PEOPLE_PIC_SIZE)
   const i = ij % ((MY_PIC_SIZE / PEOPLE_PIC_SIZE) * (PICS_LAYER_SIZE / MY_PIC_SIZE));
   const j = Math.floor(ij / ((MY_PIC_SIZE / PEOPLE_PIC_SIZE) * (PICS_LAYER_SIZE / MY_PIC_SIZE)));
 
-  if (j % 2 == 0 && i % 2 == 1) {
+  if (j % 2 == 1 && i % 2 == 1) {
     return null;
   }
 
-  if (j % 2 == 1 && i % 2 == 0) {
+  if (j % 2 == 0 && i % 2 == 0) {
     return null;
   }
 
@@ -37,14 +37,6 @@ const picsIndexes = Array.apply(null, { length: ((MY_PIC_SIZE / PEOPLE_PIC_SIZE)
   }
 
   if (i == (MY_PIC_SIZE / PEOPLE_PIC_SIZE) * (PICS_LAYER_SIZE / MY_PIC_SIZE) - 1) {
-    return null;
-  }
-
-  if (i == Math.floor((MY_PIC_SIZE / PEOPLE_PIC_SIZE) * (PICS_LAYER_SIZE / MY_PIC_SIZE) / 2)) {
-    return null;
-  }
-
-  if (j == Math.floor((MY_PIC_SIZE / PEOPLE_PIC_SIZE) * (PICS_LAYER_SIZE / MY_PIC_SIZE) / 2)) {
     return null;
   }
 
@@ -93,11 +85,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   peoplePicture: {
-    width: PEOPLE_PIC_SIZE,
-    height: PEOPLE_PIC_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: colors.cold,
     borderWidth: 3,
     borderRadius: 999,
     resizeMode: 'contain',
@@ -111,7 +100,9 @@ const Radar = () => {
   const discoveryNavigation = useNavigation(Discovery);
   const baseNavigation = useNavigation(Base);
   const alertError = useAlertError();
+  const [mainText, setMainText] = useState('Tap on yourself to discover people');
   const [discoveredUsers, setDiscoveredUsers] = useState(() => picsIndexes.map(() => null));
+  const discoveredUsersRef = useRef(null); discoveredUsersRef.current = discoveredUsers;
   const [scanning, setScanning] = useState(false);
   const [queryUser] = queries.user.use.lazy({
     onError: alertError,
@@ -154,8 +145,22 @@ const Radar = () => {
     };
 
     const onStopScan = () => {
-      discoveredUsersIds = [];
       setScanning(false);
+
+      const discoveredUsers = discoveredUsersRef.current.filter(Boolean);
+
+      // In dev mode we might get extra (dummy) users
+      if (discoveredUsers.length == 1) {
+        setMainText(`Found 1 available person in the venue`);
+      }
+      else if (discoveredUsers.length) {
+        setMainText(`Found ${discoveredUsers.length} available people in the venue`);
+      }
+      else {
+        setMainText(`No one was found. Try looking in the map`);
+      }
+
+      discoveredUsersIds = [];
     };
 
     ble.emitter.addListener('BleManagerDiscoverPeripheral', onDiscoverPeripheral);
@@ -189,6 +194,7 @@ const Radar = () => {
     stopScan().then(() => {
       return ble.central.scan([], 5, false);
     }).then(() => {
+      setMainText('Looking for available people in the venue');
       setScanning(true);
       setDiscoveredUsers(() => picsIndexes.map(() => null));
 
@@ -221,22 +227,44 @@ const Radar = () => {
       <View style={styles.absoluteLayer}>
         <View style={{ width: PICS_LAYER_SIZE, height: PICS_LAYER_SIZE, position: 'relative' }}>
           {picsIndexes.map(([i, j], k) => discoveredUsers[k] && (
-            <TouchableWithoutFeedback key={`(${i}, ${j})`} onPress={() => navToUserProfile(discoveredUsers[k])}>
-              <View
-                style={[styles.peoplePicture, { position: 'absolute', left: PEOPLE_PIC_SIZE * i, top: PEOPLE_PIC_SIZE * j, width: PEOPLE_PIC_SIZE, height: PEOPLE_PIC_SIZE }]}
-              >
-                <Image source={{ uri: discoveredUsers[k].pictures[0] }} resizeMode={styles.peoplePicture.resizeMode} style={pick(styles.peoplePicture, ['width', 'height'])} />
-              </View>
-            </TouchableWithoutFeedback>
-          ))}
+            <PeoplePicture key={k} i={i} j={j} user={discoveredUsers[k]} onPress={navToUserProfile} />
+          )).filter(Boolean)}
         </View>
       </View>
-      <Text style={styles.mainText}>{
-        scanning
-          ? 'Looking for available people in the venue'
-          : 'Tap on yourself to discover people'
-      }</Text>
+      <Text style={styles.mainText}>{mainText}</Text>
     </View>
+  );
+};
+
+const PeoplePicture = ({ i, j, user, onPress = noop }) => {
+  const [visited, setVisited] = useState(false);
+  const [height] = useState(() => new Animated.Value(0));
+
+  const handlePress = useCallback(() => {
+    setVisited(true);
+    onPress(user);
+  }, [onPress]);
+
+  useEffect(() => {
+    Animated.spring(
+      height,
+      {
+        toValue: PEOPLE_PIC_SIZE,
+        duration: 333,
+      }
+    ).start();
+  }, [true]);
+
+  return (
+    <TouchableWithoutFeedback onPress={handlePress}>
+      <View style={{ position: 'absolute', left: PEOPLE_PIC_SIZE * i, top: PEOPLE_PIC_SIZE * j, width: PEOPLE_PIC_SIZE, height: PEOPLE_PIC_SIZE, alignItems: 'center', justifyContent: 'center' }}>
+        <Animated.View
+          style={[styles.peoplePicture, { borderColor: visited ? colors.hot : colors.cold, width: PEOPLE_PIC_SIZE, height }]}
+        >
+          <Animated.Image source={{ uri: user.pictures[0] }} resizeMode={styles.peoplePicture.resizeMode} style={{ width: PEOPLE_PIC_SIZE, height }} />
+        </Animated.View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
