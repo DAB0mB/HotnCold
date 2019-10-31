@@ -6,9 +6,11 @@ import React, {
   useImperativeHandle,
   forwardRef,
 } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 import GPSState from 'react-native-gps-state';
+
+import { useAsyncEffect } from '../utils';
 
 const noop = () => {};
 
@@ -20,6 +22,7 @@ export const SERVICES = {
 const NativeServices = forwardRef(({
   children,
   onReady = noop,
+  onError = noop,
   onBluetoothActivated = noop,
   onBluetoothDeactivated = noop,
   onGpsActivated = noop,
@@ -33,8 +36,69 @@ const NativeServices = forwardRef(({
   const [bluetoothState, setBluetoothState] = useState(null);
   const [gpsState, setGpsState] = useState(null);
   const [requiredService, setRequiredService] = useState(null);
+  const [granted, setGranted] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useAsyncEffect(function* () {
+    // Scope is more clear this way
+    const { check, request, PERMISSIONS, RESULTS } = require('react-native-permissions');
+
+    setGranted(false);
+
+    const grant = function* (permission) {
+      let result;
+
+      tryCatch:
+      try {
+        const curr = yield check(permission);
+
+        if (curr === RESULTS.GRANTED) {
+          result = true;
+          break tryCatch;
+        }
+
+        if (curr === RESULTS.DENIED) {
+          result = (yield request(permission)) === RESULTS.GRANTED;
+          break tryCatch;
+        }
+
+        result = false;
+      } catch (e) {
+        onError(e);
+
+        result = false;
+      }
+
+      if (!result) {
+        setBluetoothState(false);
+        setGpsState(false);
+      }
+
+      return result;
+    };
+
+    if (services & SERVICES.GPS) {
+      if (Platform.OS === 'android') {
+        if (!(yield* grant(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION))) return;
+        if (!(yield* grant(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION))) return;
+      }
+      if (Platform.OS === 'ios') {
+        if (!(yield* grant(PERMISSIONS.IOS.LOCATION_ALWAYS))) return;
+      }
+    }
+
+    if (services & SERVICES.BLUETOOTH) {
+      if (Platform.OS === 'ios') {
+        if (!(yield* grant(PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL))) return;
+      }
+    }
+
+    setGranted(true);
+  }, [services]);
 
   useEffect(() => {
+    if (!granted) return;
+
     if ((services & SERVICES.GPS) && !(exceptionalServices & SERVICES.GPS) && gpsState === false) {
       setRequiredService(SERVICES.GPS);
       onRequireService(SERVICES.GPS);
@@ -55,9 +119,11 @@ const NativeServices = forwardRef(({
 
       return;
     }
-  }, [services, gpsState, bluetoothState]);
+  }, [granted, services, gpsState, bluetoothState]);
 
   useEffect(() => {
+    if (!granted) return;
+
     let mounted = true;
     const gettingStates = [];
 
@@ -86,10 +152,11 @@ const NativeServices = forwardRef(({
     return () => {
       mounted = false;
     };
-  }, [services]);
+  }, [granted, services]);
 
   const [recentGpsState, setRecentGpsState] = useState(gpsState);
   useEffect(() => {
+    if (!granted) return;
     if (recentGpsState === gpsState) return;
     if (!(services & SERVICES.GPS)) return;
 
@@ -101,10 +168,11 @@ const NativeServices = forwardRef(({
     }
 
     setRecentGpsState(gpsState);
-  }, [services, gpsState]);
+  }, [granted, services, gpsState]);
 
   const [recentBluetoothState, setRecentBluetoothState] = useState(bluetoothState);
   useEffect(() => {
+    if (!granted) return;
     if (recentBluetoothState === bluetoothState) return;
     if (!(services & SERVICES.BLUETOOTH)) return;
 
@@ -116,9 +184,11 @@ const NativeServices = forwardRef(({
     }
 
     setRecentBluetoothState(bluetoothState);
-  }, [services, bluetoothState]);
+  }, [granted, services, bluetoothState]);
 
   useEffect(() => {
+    if (!granted) return;
+
     let gpsListener;
     if (services & SERVICES.GPS) {
       gpsListener = (state) => {
@@ -154,14 +224,17 @@ const NativeServices = forwardRef(({
         bluetoothListener.remove();
       }
     };
-  }, [services, setGpsState, setBluetoothState]);
+  }, [granted, services, setGpsState, setBluetoothState]);
 
   useEffect(() => {
+    if (ready) return;
+    if (!granted) return;
     if ((services & SERVICES.GPS) && gpsState == null) return;
     if ((services & SERVICES.BLUETOOTH) && bluetoothState == null) return;
 
+    setReady(true);
     onReady(true);
-  }, [gpsState, bluetoothState]);
+  }, [granted, gpsState, bluetoothState]);
 
   const imperativeHandle = {
     exceptionalServices,

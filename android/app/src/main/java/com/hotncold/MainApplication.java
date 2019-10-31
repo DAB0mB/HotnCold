@@ -3,6 +3,7 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import de.patwoz.rn.bluetoothstatemanager.RNBluetoothStateManagerPackage;
 import br.com.dopaminamob.gpsstate.GPSStatePackage;
 import com.BV.LinearGradient.LinearGradientPackage;
@@ -36,6 +37,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNPermissionsPackage(),
             new RNBluetoothStateManagerPackage(),
             new GPSStatePackage(),
             new LinearGradientPackage(),

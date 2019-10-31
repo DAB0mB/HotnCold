@@ -182,6 +182,9 @@ const Map = () => {
       updateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
         setAreaFeatures(areaFeatures);
       }).catch(alertError);
+    }, alertError, {
+      enableHighAccuracy: true,
+      timeout: 5000,
     });
   }, [updateMyLocation, renderShape, setAreaFeatures]);
 

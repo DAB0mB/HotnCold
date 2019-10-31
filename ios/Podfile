@@ -53,4 +53,6 @@ target 'hotncold' do
 
   pod 'RNBluetoothStateManager', :path => '../node_modules/react-native-bluetooth-state-manager'
 
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
 end

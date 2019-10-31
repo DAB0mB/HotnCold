@@ -89,10 +89,11 @@ const Discovery = Base.create(() => {
         services={SERVICES.BLUETOOTH | SERVICES.GPS}
         onBluetoothActivated={onBluetoothActivated}
         onRequireService={setRequiredService}
+        onError={alertError}
         onReady={setNativeServicesReady}
         ref={nativeServicesRef}
       >
-        <LoadingProvider loading={!isReady && !requiredService}>
+        <LoadingProvider loading={!isReady}>
           {isReady && <DiscoveryRouter />}
         </LoadingProvider>
       </NativeServices>

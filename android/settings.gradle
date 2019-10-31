@@ -1,4 +1,6 @@
 include ':@react-native-mapbox-gl_maps'
+include ':react-native-permissions'
+project(':react-native-permissions').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-permissions/android')
 include ':react-native-bluetooth-state-manager'
 project(':react-native-bluetooth-state-manager').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-bluetooth-state-manager/android')
 include ':react-native-gps-state'
