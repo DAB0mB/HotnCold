@@ -270,7 +270,7 @@ const Profile = () => {
           <View style={styles.bioFieldIcon}>
             <FaIcon name='user' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
           </View>
-          <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={birthDate && moment(birthDate).format('MMMM Do YYYY')} editable={false} placeholder='Birthday' />
+          <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={birthDate && (itsMe ? moment(birthDate).format('MMMM Do YYYY') : `${birthDate} years old`)} editable={false} placeholder='Birthday' />
         </View>
       </TouchableWithoutFeedback>
       <View style={styles.bioField}>

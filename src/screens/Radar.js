@@ -123,7 +123,7 @@ const Radar = () => {
           stopScan();
         }
       }
-    }, [setDiscoveredUsers, discoveredUsers]),
+    }, [discoveredUsers]),
   });
 
   // TODO: Send a couple of query batches, after 2 seconds and after 3 seconds of scanning
@@ -133,7 +133,7 @@ const Radar = () => {
     const onDiscoverPeripheral = (peripheral) => {
       if (peripheral.name !== CONFIG.BLUETOOTH_ADAPTER_NAME) return;
 
-      const userId = peripheral.serviceUUIDs[0];
+      const userId = peripheral.advertising.serviceUUIDs[0];
 
       if (discoveredUsersIds.includes(userId)) return;
 
@@ -261,7 +261,7 @@ const PeoplePicture = ({ i, j, user, onPress = noop }) => {
         <Animated.View
           style={[styles.peoplePicture, { borderColor: visited ? colors.hot : colors.cold, width: PEOPLE_PIC_SIZE, height }]}
         >
-          <Animated.Image source={{ uri: user.pictures[0] }} resizeMode={styles.peoplePicture.resizeMode} style={{ width: PEOPLE_PIC_SIZE, height }} />
+          <Animated.Image source={{ uri: user.pictures[0] }} resizeMode={styles.peoplePicture.resizeMode} style={{ width: PEOPLE_PIC_SIZE, height: PEOPLE_PIC_SIZE }} />
         </Animated.View>
       </View>
     </TouchableWithoutFeedback>
