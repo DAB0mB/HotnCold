@@ -13,8 +13,8 @@ const me = gql `
   ${fragments.user}
 `;
 
-me.use = () => {
-  return useQuery(me);
+me.use = (options) => {
+  return useQuery(me, options);
 };
 
 export default me;
