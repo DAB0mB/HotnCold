@@ -9,10 +9,12 @@ export const DateTimePickerProvider = ({ children }) => {
   const [maximumDate, setMaximumDate] = useState();
   const [minimumDate, setMinimumDate] = useState();
   const [onConfirm, setOnConfirm] = useState(() => () => {});
+  const [onCancel, setOnCancel] = useState(() => () => {});
   const [isVisible, setIsVisible] = useState(false);
 
   const context = useMemo(() => ({
     setDate,
+    setOnCancel,
     setOnConfirm,
     setMode,
     setMaximumDate,
@@ -42,6 +44,7 @@ export const DateTimePickerProvider = ({ children }) => {
         maximumDate={maximumDate}
         minimumDate={minimumDate}
         onConfirm={onConfirm}
+        onCancel={onCancel}
         isVisible={isVisible}
         onCancel={context.hide}
       />
@@ -57,11 +60,21 @@ export const useDateTimePicker = (defaults = {}) => {
       date = defaults.date,
       mode = defaults.mode,
       onConfirm = defaults.onConfirm,
+      onCancel = defaults.onCancel,
       maximumDate = defaults.maximumDate,
       minimumDate = defaults.minimumDate,
     } = {}) {
       if (onConfirm) {
-        dateTimePicker.setOnConfirm(() => onConfirm);
+        dateTimePicker.setOnConfirm(() => (...args) => {
+          dateTimePicker.hide();
+          onConfirm(...args);
+        });
+      }
+      if (onCancel) {
+        dateTimePicker.setOnCancel(() => (...args) => {
+          dateTimePicker.hide();
+          onCancel(...args);
+        });
       }
       if (date) {
         dateTimePicker.setDate(date);
@@ -84,6 +97,7 @@ export const useDateTimePicker = (defaults = {}) => {
   }), [
     ...Object.values(dateTimePicker),
     defaults.onConfirm,
+    defaults.onCancel,
     defaults.date,
     defaults.mode,
     defaults.maximumDate,
