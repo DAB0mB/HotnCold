@@ -74,10 +74,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 10,
     paddingTop: 20,
-    flex: 1,
+    paddingBottom: 20,
     textAlignVertical: 'top',
     fontSize: 16,
-
     color: 'gray',
   },
   backButton: {
@@ -237,7 +236,7 @@ const Profile = () => {
   }, [pictureIndex, pictures, setPictures]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {!typing && (
         <View style={styles.profilePicture}>
           {/*react-native-swiper doesn't iterate through children properly so I have to compose the array manually*/}
@@ -283,9 +282,9 @@ const Profile = () => {
         <View style={{ position: 'absolute', top: -15, right: 20 }}>
           <FaIcon name='quote-left' color={colors.ink} size={30} />
         </View>
-        <ScrollView style={{ height: '100%' }}>
+        <View>
           <MyText style={{ color: styles.bio.color, fontSize: styles.bio.fontSize, textAlignVertical: styles.bio.textAlignVertical }} multiline value={bio} onChangeText={setBio} maxLength={512} placeholder='A short description of yourself: what do you like to do, what do you like to eat, where do you like to go, etc.' />
-        </ScrollView>
+        </View>
       </View>
 
       {user && !typing && (
@@ -324,7 +323,7 @@ const Profile = () => {
           </TouchableWithoutFeedback>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 

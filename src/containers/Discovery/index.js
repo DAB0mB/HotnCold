@@ -65,7 +65,7 @@ const Discovery = Base.create(() => {
   }, [resettingBleState]);
 
   useEffect(() => {
-    if (meQuery.called && !meQuery.loading && !meQuery.error && !me) {
+    if (meQuery.called && !meQuery.loading && (meQuery.error || !me)) {
       // Unauthorized
       baseNavigation.replace('Profile');
     }
@@ -73,6 +73,10 @@ const Discovery = Base.create(() => {
 
   if (meQuery.loading) {
     return useLoading(true);
+  }
+
+  if (meQuery.error || !me) {
+    return useLoading(false);
   }
 
   const isReady = (
