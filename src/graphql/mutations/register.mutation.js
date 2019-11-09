@@ -20,8 +20,12 @@ const register = gql `
       birthDate: $birthDate
       bio: $bio
       pictures: $pictures
-    )
+    ) {
+      ...User
+    }
   }
+
+  ${fragments.user}
 `;
 
 register.use = (defaultArgs = {}, defaultOptions = {}) => {
@@ -35,8 +39,21 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
     bio = defaultArgs.bio,
     pictures = defaultArgs.pictures,
   }) => {
-    // Token should be stored via response.headers, see graphql/client.ts
+    // Token should be stored via response.headers, see graphql/client.js
     return superMutate({
+      update: (client, mutation) => {
+        if (mutation.error) return;
+
+        const me = mutation.data.register;
+
+        if (!me) return;
+
+        client.writeFragment({
+          id: me.id,
+          fragment: fragments.user,
+          data: me,
+        });
+      },
       variables: { firstName, lastName, birthDate, occupation, bio, pictures },
     })
   }, [

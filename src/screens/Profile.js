@@ -159,7 +159,8 @@ const Profile = () => {
     onCompleted: useCallback(() => {
       if (itsMe) {
         alertSuccess('Profile successfully updated')
-      } else {
+      }
+      else {
         navigation.replace('Discovery');
       }
     }, [itsMe, alertSuccess, navigation]),
