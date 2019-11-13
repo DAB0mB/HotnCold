@@ -1,8 +1,6 @@
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useCallback } from 'react';
-
-import * as fragments from '../fragments';
 
 const register = gql `
   mutation Register(
@@ -20,15 +18,12 @@ const register = gql `
       birthDate: $birthDate
       bio: $bio
       pictures: $pictures
-    ) {
-      ...User
-    }
+    )
   }
-
-  ${fragments.user}
 `;
 
 register.use = (defaultArgs = {}, defaultOptions = {}) => {
+  const client = useApolloClient();
   const [superMutate, mutation] = useMutation(register, defaultOptions);
 
   const mutate = useCallback(({
@@ -41,18 +36,10 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
   }) => {
     // Token should be stored via response.headers, see graphql/client.js
     return superMutate({
-      update: (client, mutation) => {
+      update: (_, mutation) => {
         if (mutation.error) return;
 
-        const me = mutation.data.register;
-
-        if (!me) return;
-
-        client.writeFragment({
-          id: me.id,
-          fragment: fragments.user,
-          data: me,
-        });
+        client.clearStore();
       },
       variables: { firstName, lastName, birthDate, occupation, bio, pictures },
     })
