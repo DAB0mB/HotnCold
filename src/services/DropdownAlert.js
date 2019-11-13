@@ -24,7 +24,7 @@ export const DropdownAlertProvider = ({ children }) => {
   return (
     <DropdownAlertContext.Provider value={dropDownAlertContext}>
       {children}
-      <DropdownAlert ref={dropdownAlertRef} translucent />
+      <DropdownAlert ref={dropdownAlertRef} inactiveStatusBarStyle='dark-content' translucent />
     </DropdownAlertContext.Provider>
   );
 };
