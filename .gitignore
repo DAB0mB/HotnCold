@@ -16,4 +16,4 @@ android/.gradle
 android/build
 android/app/build
 android/gradle.properties
-android/app/my-release-key.keystore
+android/app/my-key.keystore
