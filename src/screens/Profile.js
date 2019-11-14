@@ -17,6 +17,7 @@ import { ReactNativeFile } from 'apollo-upload-client';
 import Swiper from 'react-native-swiper';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import DotsLoader from '../components/Loader/DotsLoader';
 import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
 import { useRegister } from '../services/Auth';
@@ -98,6 +99,10 @@ const styles = StyleSheet.create({
     right: 0,
     paddingTop: 10,
   },
+  loader: {
+    alignItems: 'flex-end',
+    margin: 15,
+  },
   icon: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     width: 50,
@@ -123,12 +128,15 @@ const Profile = () => {
   const [swiperKey, renderSwiper] = useRenderer();
   const [pictureIndex, setPictureIndex] = useState(0);
   const [typing, setTyping] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploadCount, setUploadCount] = useState(0);
   const [name, setName] = useState(() => !user ? '' : itsMe ? `${user.firstName} ${user.lastName}` : user.firstName);
   const [birthDate, setBirthDate] = useState(() => !user ? '' : itsMe ? user.birthDate : user.age);
   const [occupation, setOccupation] = useState(() => user ? user.occupation : '');
   const [bio, setBio] = useState(() => user ? user.bio : '');
   // TODO: Change picture order function
   const [pictures, setPictures] = useState(() => user ? user.pictures : []);
+  const [pendingPictures, setPendingPictures] = useState(pictures);
   const dateTimePicker = useDateTimePicker({
     mode: 'date',
     maximumDate: useMemo(() => new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000), [true]),
@@ -153,41 +161,55 @@ const Profile = () => {
       };
     }, [name])
   }, {
-    onError: alertError,
+    onError: useCallback((e) => {
+      setSaving(false);
+      alertError(e);
+    }, [alertError, saving]),
     onCompleted: useCallback(() => {
+      setSaving(false);
+
       if (itsMe) {
         alertSuccess('Profile successfully updated')
       }
       else {
         navigation.replace('Discovery');
       }
-    }, [itsMe, alertSuccess, navigation]),
+    }, [itsMe, alertSuccess, navigation, saving]),
   });
   const [uploadPicture] = mutations.uploadPicture.use({
     onError: alertError,
-    onCompleted: useCallback((data) => {
-      const url = data.uploadPicture;
-
-      renderSwiper();
-      // TODO: Upload only when saving, before that we can show only local images
-      setPictures(
-        [...pictures.slice(0, pictureIndex), url, ...pictures.slice(pictureIndex)]
-      );
-    }, [setPictures, pictures, pictureIndex])
   });
   const imagePicker = useImagePicker({
     mediaType: 'photo',
     maxWidth: 512,
     maxHeight: 512,
   }, useCallback((image) => {
+    setPictures(
+      [...pictures.slice(0, pictureIndex), image.uri, ...pictures.slice(pictureIndex)]
+    );
+    setUploadCount(c => ++c);
+    renderSwiper();
+
     const file = new ReactNativeFile({
       uri: image.uri,
       name: image.fileName,
       type: image.type,
     });
 
-    uploadPicture(file);
-  }, [uploadPicture]));
+    uploadPicture(file).then(({ data }) => {
+      setPendingPictures(pendingPictures => [
+        ...pendingPictures.slice(0, pictureIndex), data.uploadPicture, ...pendingPictures.slice(pictureIndex)
+      ]);
+      setUploadCount(c => --c);
+    });
+  }, [pictureIndex, uploadPicture, pictures]));
+
+  useEffect(() => {
+    if (!saving) return;
+    if (uploadCount) return;
+
+    mutateProfile({ pictures: pendingPictures });
+  }, [saving, uploadCount]);
 
   const MyText = useCallback(React.forwardRef(({ style = {}, ...props }, ref) => (
     <TextInput
@@ -231,8 +253,11 @@ const Profile = () => {
     setPictures(
       [...pictures.slice(0, pictureIndex), ...pictures.slice(pictureIndex + 1)]
     );
+    setPendingPictures(
+      [...pendingPictures.slice(0, pictureIndex), ...pendingPictures.slice(pictureIndex + 1)]
+    );
     renderSwiper();
-  }, [pictureIndex, pictures, setPictures]);
+  }, [pictureIndex, pictures, pendingPictures]);
 
   return (
     <ScrollView style={styles.container}>
@@ -244,11 +269,12 @@ const Profile = () => {
             loop={false}
             onIndexChanged={setPictureIndex}
             key={swiperKey}
+            index={Math.min(pictureIndex, pictures.length - 1)}
             dotStyle={styles.swiperDot}
             activeDotColor='white'
             dotColor='rgba(255, 255, 255, .3)'
           >
-            {pictures.map((picture) => (
+            {pictures.map((picture, i) => (
               <Image style={styles.profilePicture} key={picture} source={{ uri: picture }} />
             )).concat(editMode && (
               <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()} key='_'>
@@ -315,11 +341,17 @@ const Profile = () => {
 
       {editMode && !typing && (
         <View style={styles.profileButtons}>
-          <TouchableWithoutFeedback onPress={mutateProfile}>
-            <View style={styles.icon}>
-              <McIcon name='floppy' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
+          {saving ? (
+            <View style={styles.loader}>
+              <DotsLoader size={10} betweenSpace={10} />
             </View>
-          </TouchableWithoutFeedback>
+          ) : (
+            <TouchableWithoutFeedback onPress={() => setSaving(true)}>
+              <View style={styles.icon}>
+                <McIcon name='floppy' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
+              </View>
+            </TouchableWithoutFeedback>
+          )}
         </View>
       )}
     </ScrollView>

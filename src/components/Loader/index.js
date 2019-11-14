@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, Platform, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 
 import DotsLoader from './DotsLoader';
 
@@ -16,16 +16,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const SIZE = Platform.OS == 'android' ? Dimensions.get('window').width / 4 : 'large';
-const BUFFER_MS = 500;
-
-const Loader = ({ size = SIZE, bufferMs = BUFFER_MS, style = {} }) => {
+const Loader = ({ size, betweenSpace, bufferMs = 500, style = {}, text = 'Loading' }) => {
   const [buffering, setBuffering] = useState(true);
 
   useEffect(() => {
     // React native doesn't clear timeout for some reason
     let mounted = true;
-
+``
     const timeout = setTimeout(() => {
       if (mounted) {
         setBuffering(false);
@@ -42,8 +39,8 @@ const Loader = ({ size = SIZE, bufferMs = BUFFER_MS, style = {} }) => {
     <View style={[styles.container, style]}>
       {!buffering && (
         <>
-          <DotsLoader />
-          <Text style={styles.text}>Loading...</Text>
+          <DotsLoader size={size} betweenSpace={betweenSpace} />
+          <Text style={styles.text}>{text}...</Text>
         </>
       )}
     </View>
