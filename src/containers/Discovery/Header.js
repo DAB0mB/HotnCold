@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { View, Image, Switch, StyleSheet, TouchableWithoutFeedback, BackHandler } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
+import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { colors, hexToRgba } from '../../theme';
 import { useCallbackTask } from '../../utils';
@@ -93,7 +93,7 @@ const Header = ({ baseNavigation, discoveryNavigation, me }) => {
           <Image source={require('../../assets/logo_light.png')} style={styles.logo} />
         </View>
         <TouchableWithoutFeedback onPress={editProfile}>
-          <Fa5Icon name='user-edit' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
+          <McIcon name='account-edit' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
         </TouchableWithoutFeedback>
       </View>
     </LinearGradient>

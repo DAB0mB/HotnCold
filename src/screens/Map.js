@@ -8,7 +8,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback, Text } from 'react-native';
 import Cookie from 'react-native-cookie';
 import CONFIG from 'react-native-config';
-import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as mutations from '../graphql/mutations';

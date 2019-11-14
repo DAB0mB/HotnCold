@@ -15,8 +15,6 @@ import {
 } from 'react-native';
 import { ReactNativeFile } from 'apollo-upload-client';
 import Swiper from 'react-native-swiper';
-import FaIcon from 'react-native-vector-icons/FontAwesome';
-import Fa5Icon from 'react-native-vector-icons/FontAwesome5';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../containers/Base';
@@ -268,20 +266,20 @@ const Profile = () => {
       <TouchableWithoutFeedback onPress={() => editMode ? dateTimePicker.show() : () => {}}>
         <View style={styles.bioField}>
           <View style={styles.bioFieldIcon}>
-            <FaIcon name='user' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
+            <McIcon name='account' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
           </View>
           <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={birthDate && (editMode ? moment(birthDate).format('MMMM Do YYYY') : `${birthDate} years old`)} editable={false} placeholder='Birthday' />
         </View>
       </TouchableWithoutFeedback>
       <View style={styles.bioField}>
         <View style={styles.bioFieldIcon}>
-          <FaIcon name='suitcase' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
+          <McIcon name='briefcase' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
         </View>
         <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={occupation} onChangeText={setOccupation} maxLength={30} placeholder='Occupation' />
       </View>
       <View style={styles.bio}>
         <View style={{ position: 'absolute', top: -15, right: 20 }}>
-          <FaIcon name='quote-left' color={colors.ink} size={30} />
+          <McIcon name='format-quote-open' color={colors.ink} size={30} />
         </View>
         <View>
           <MyText style={{ color: styles.bio.color, fontSize: styles.bio.fontSize, textAlignVertical: styles.bio.textAlignVertical }} multiline value={bio} onChangeText={setBio} maxLength={512} placeholder='A short description of yourself: what do you like to do, what do you like to eat, where do you like to go, etc.' />
@@ -319,7 +317,7 @@ const Profile = () => {
         <View style={styles.profileButtons}>
           <TouchableWithoutFeedback onPress={mutateProfile}>
             <View style={styles.icon}>
-              <Fa5Icon name='save' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
+              <McIcon name='floppy' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
             </View>
           </TouchableWithoutFeedback>
         </View>
