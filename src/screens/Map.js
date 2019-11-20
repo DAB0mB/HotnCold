@@ -5,7 +5,7 @@ import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, Text } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, Text, AppState } from 'react-native';
 import Cookie from 'react-native-cookie';
 import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -13,7 +13,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as mutations from '../graphql/mutations';
 import { useMe, useLogout } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
-import { useGeolocation, GeolocationProvider } from '../services/Geolocation';
+import { useGeoBackgroundTelemetry, useGeolocation, GeolocationProvider } from '../services/Geolocation';
 import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors, hexToRgba } from '../theme';
@@ -22,6 +22,7 @@ import Base from '../containers/Base';
 import Discovery from '../containers/Discovery';
 
 const SHOW_FAKE_DATA = false;
+const LOCATION_UPDATE_INTERVAL = 60 * 1000;
 
 const styles = StyleSheet.create({
   container: {
@@ -166,6 +167,11 @@ const Map = () => {
     });
   }, [mapRef, setSelection, screenFeatures]);
 
+  useGeoBackgroundTelemetry({
+    interval: LOCATION_UPDATE_INTERVAL,
+    fastestInterval: LOCATION_UPDATE_INTERVAL * 2,
+  });
+
   const updateMyLocationInterval = useCallback((initial) => {
     geolocation.getCurrentPosition((location) => {
       if (!isMountedRef.current) return;
@@ -187,7 +193,21 @@ const Map = () => {
     });
   }, [updateMyLocation, renderShape, setAreaFeatures]);
 
-  useInterval(updateMyLocationInterval, 60 * 1000, true);
+  useInterval(updateMyLocationInterval, LOCATION_UPDATE_INTERVAL, true);
+
+  const appStateListener = useCallback((appState) => {
+    if (appState === 'active') {
+      updateMyLocationInterval(false);
+    }
+  }, [updateMyLocationInterval]);
+
+  useEffect(() => {
+    AppState.addEventListener('change', appStateListener);
+
+    return () => {
+      AppState.removeEventListener('change', appStateListener);
+    };
+  }, [appStateListener]);
 
   useEffect(() => {
     if (shapeKey) {

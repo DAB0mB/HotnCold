@@ -1,5 +1,6 @@
-import MapboxGL from '@react-native-mapbox-gl/maps';
 import { ApolloProvider } from '@apollo/react-hooks';
+import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import MapboxGL from '@react-native-mapbox-gl/maps';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import BleManager from 'react-native-ble-manager';
@@ -20,6 +21,25 @@ const initializingNative = Promise.all([
   BleManager.start(),
   MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
   __DEV__ && CONFIG.INITIAL_USER_TOKEN && Cookie.set(CONFIG.SERVER_URI, 'authToken', CONFIG.INITIAL_USER_TOKEN),
+
+  new Promise((resolve, reject) => {
+    BackgroundGeolocation.configure({
+      desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
+      stationaryRadius: 50,
+      distanceFilter: 50,
+      notificationTitle: 'Hot&Cold location tracking',
+      notificationText: 'enabled',
+      debug: __DEV__,
+      startOnBoot: false,
+      stopOnTerminate: true,
+      locationProvider: BackgroundGeolocation.ACTIVITY_PROVIDER,
+      interval: 10000,
+      fastestInterval: 5000,
+      activitiesInterval: 10000,
+      stopOnStillActivity: false,
+      url: `${CONFIG.SERVER_URI}/location`,
+    }, resolve, reject);
+  }),
 ]);
 
 const styles = StyleSheet.create({
