@@ -13,6 +13,16 @@ const me = gql `
   ${fragments.user}
 `;
 
+const me = gql `
+  query MeForChat {
+    me {
+      ...UserForChat
+    }
+  }
+
+  ${fragments.user.forChat}
+`;
+
 me.use = (options) => {
   return useQuery(me, options);
 };

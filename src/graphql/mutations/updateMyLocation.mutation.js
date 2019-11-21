@@ -17,11 +17,11 @@ updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
 
   const mutate = useCallback((location = defaultLocation) => {
     return superMutate({
-      update: (client, mutation) => {
+      update: (cache, mutation) => {
         if (mutation.error) return;
         if (!me) return;
 
-        client.writeFragment({
+        cache.writeFragment({
           id: me.id,
           fragment: fragments.user,
           data: { ...me, location },

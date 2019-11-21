@@ -36,7 +36,7 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
   }) => {
     // Token should be stored via response.headers, see graphql/client.js
     return superMutate({
-      update: (_, mutation) => {
+      update: (cache, mutation) => {
         if (mutation.error) return;
 
         client.clearStore();

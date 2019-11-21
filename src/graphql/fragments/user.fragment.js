@@ -14,6 +14,7 @@ const user = gql `
     location
     occupation
     pictures
+    avatar
   }
 `;
 
@@ -28,5 +29,15 @@ user.withArea = gql `
   ${user}
   ${area}
 `;
+
+user.forChat = gql `
+  fragment UserForChat on User {
+    ...User
+    id: _id
+    firstName: name
+  }
+
+  ${user}
+ `;
 
 export default user;

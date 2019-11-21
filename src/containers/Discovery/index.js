@@ -20,7 +20,7 @@ const Discovery = Base.create(() => {
 
   const [resettingBleState, updateBleResettingState, restoreBleResettingState] = useRenderer();
   const alertError = useAlertError();
-  const baseNavigation = useNavigation();
+  const baseNavigation = useNavigation(Base);
   const ble = useBluetoothLE();
   const meQuery = queries.me.use({ onError: alertError });
   const nativeServicesRef = useRef(null);

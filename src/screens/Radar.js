@@ -220,7 +220,7 @@ const Radar = () => {
       <View style={styles.absoluteLayer}>
         <TouchableWithoutFeedback onPress={scanning ? noop : scan}>
           <View style={[styles.profilePicture, { borderColor: scanning ? colors.hot : colors.cold }]}>
-            <Image source={{ uri: me.pictures[0] }} resizeMode={styles.profilePicture.resizeMode} style={pick(styles.profilePicture, ['width', 'height'])} />
+            <Image source={{ uri: me.avatar }} resizeMode={styles.profilePicture.resizeMode} style={pick(styles.profilePicture, ['width', 'height'])} />
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -261,7 +261,7 @@ const PeoplePicture = ({ i, j, user, onPress = noop }) => {
         <Animated.View
           style={[styles.peoplePicture, { borderColor: visited ? colors.hot : colors.cold, width: PEOPLE_PIC_SIZE, height }]}
         >
-          <Animated.Image source={{ uri: user.pictures[0] }} resizeMode={styles.peoplePicture.resizeMode} style={{ width: PEOPLE_PIC_SIZE, height: PEOPLE_PIC_SIZE }} />
+          <Animated.Image source={{ uri: user.avatar }} resizeMode={styles.peoplePicture.resizeMode} style={{ width: PEOPLE_PIC_SIZE, height: PEOPLE_PIC_SIZE }} />
         </Animated.View>
       </View>
     </TouchableWithoutFeedback>
