@@ -98,7 +98,7 @@ const Radar = () => {
   const me = useMe();
   const ble = useBluetoothLE();
   const discoveryNavigation = useNavigation(Discovery);
-  const baseNavigation = useNavigation(Base);
+  const baseNav = useNavigation(Base);
   const alertError = useAlertError();
   const [mainText, setMainText] = useState('Tap on yourself to discover people');
   const [discoveredUsers, setDiscoveredUsers] = useState(() => picsIndexes.map(() => null));
@@ -207,8 +207,8 @@ const Radar = () => {
   }, [ble.central]);
 
   const navToUserProfile = useCallback((user) => {
-    baseNavigation.push('Profile', { user });
-  }, [baseNavigation]);
+    baseNav.push('Profile', { user });
+  }, [baseNav]);
 
   return (
     <View style={styles.container}>

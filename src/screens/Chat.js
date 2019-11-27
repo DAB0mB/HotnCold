@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { GiftedChat, Message } from 'react-native-gifted-chat';
 
-import Social from '../containers/Social';
+import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
 import { useMe } from '../services/Auth';
@@ -18,9 +18,8 @@ const styles = StyleSheet.create({
 const Chat = () => {
   const me = useMe();
   const alertError = useAlertError();
-  const socialNav = useNavigation(Social);
-  const chat = socialNav.getParam('chat');
-  const recipient = useMemo(() => chat.users.find(u => u.id !== me.id), [chat && chat.id]);
+  const baseNav = useNavigation(Base);
+  const chat = baseNav.getParam('chat');
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
   const messagesQuery = queries.messages.forSocial.use(chat.id, {
@@ -29,7 +28,7 @@ const Chat = () => {
     }, [isLoadingEarlier]),
     onError: alertError,
   });
-  const [sendMessage] = mutations.sendMessage.use(recipient, {
+  const [sendMessage] = mutations.sendMessage.use(chat.id, {
     onError: alertError,
   });
   const messages = useMemo(() => messagesQuery.data && messagesQuery.data.messages, [messagesQuery]);
@@ -46,7 +45,7 @@ const Chat = () => {
 
   const onSend = useCallback(([message]) => {
     sendMessage(message);
-  }, [sendMessage, recipient.id]);
+  }, [sendMessage]);
 
   const onLoadEarlier = useCallback(() => {
     setLoadEarlier(false);

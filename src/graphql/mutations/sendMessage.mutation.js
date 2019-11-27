@@ -5,8 +5,8 @@ import { useCallback } from 'react';
 import * as fragments from '../fragments';
 
 const sendMessage = gql `
-  mutation SendMessage($chatId: ID, $recipientId: ID, $text: String!) {
-    sendMessage(chatId: $chatId, recipientId: $recipientId, text: $text) {
+  mutation SendMessage($chatId: ID!, $text: String!) {
+    sendMessage(chatId: $chatId, text: $text) {
       ...MessageForSocial
     }
   }
@@ -14,7 +14,7 @@ const sendMessage = gql `
   ${fragments.message.forSocial}
 `;
 
-sendMessage.use = ({ recipientId, chatId }, options = {}) => {
+sendMessage.use = ({ chatId }, options = {}) => {
   const [superMutate, mutation] = useMutation(sendMessage, options);
 
   const mutate = useCallback((message, options = {}) => {
@@ -29,18 +29,24 @@ sendMessage.use = ({ recipientId, chatId }, options = {}) => {
       update: (cache, mutation) => {
         if (mutation.error) return;
 
+        const chat = cache.readFragment({
+          id: chatId,
+          fragment: fragments.chat
+        });
+
+        if (!chat) return;
+
         cache.writeFragment({
-          id: message.id,
-          fragment: fragments.message.forSocial,
-          data: mutation.data.sendMessage,
+          id: chatId,
+          fragment: fragments.chat,
+          data: { ...chat, recentMessage: mutation.data },
         });
       },
-      variables: { recipientId, chatId, text: message.text },
+      variables: { chatId, text: message.text },
       ...options,
     })
   }, [
     superMutate,
-    recipientId,
     chatId,
   ]);
 

@@ -95,7 +95,7 @@ const Map = () => {
   const logout = useLogout();
   const mapRef = useRef(null);
   const alertError = useAlertError();
-  const baseNavigation = useNavigation(Base);
+  const baseNav = useNavigation(Base);
   const geolocation = useGeolocation();
   const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation] = mutations.updateMyLocation.use();
@@ -127,9 +127,9 @@ const Map = () => {
 
   const logoutAndFlee = useCallback(() => {
     logout().then(() => {
-      baseNavigation.replace('Profile');
+      baseNav.replace('Profile');
     }).catch(alertError);
-  }, [logout, alertError, baseNavigation]);
+  }, [logout, alertError, baseNav]);
 
   const renderSelection = useCallback(async (e) => {
     const map = mapRef.current;

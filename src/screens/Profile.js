@@ -119,9 +119,9 @@ const styles = StyleSheet.create({
 });
 
 const Profile = () => {
-  const navigation = useNavigation();
-  const user = navigation.getParam('user');
-  const itsMe = navigation.getParam('itsMe');
+  const nav = useNavigation();
+  const user = nav.getParam('user');
+  const itsMe = nav.getParam('itsMe');
   const editMode = !!(!user || itsMe);
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
@@ -172,11 +172,14 @@ const Profile = () => {
         alertSuccess('Profile successfully updated')
       }
       else {
-        navigation.replace('Discovery');
+        nav.replace('Discovery');
       }
-    }, [itsMe, alertSuccess, navigation, saving]),
+    }, [itsMe, alertSuccess, nav, saving]),
   });
   const [uploadPicture] = mutations.uploadPicture.use({
+    onError: alertError,
+  });
+  const [findOrCreateChat] = mutations.findOrCreateChat.use([user.id], {
     onError: alertError,
   });
   const imagePicker = useImagePicker({
@@ -246,7 +249,7 @@ const Profile = () => {
 
   // Static parameter
   if (user) {
-    navigation.useBackListener();
+    nav.useBackListener();
   }
 
   const deletePicture = useCallback(() => {
@@ -258,6 +261,12 @@ const Profile = () => {
     );
     renderSwiper();
   }, [pictureIndex, pictures, pendingPictures]);
+
+  const navToChat = useCallback(async () => {
+    const chat = await findOrCreateChat();
+
+    baseNav.push('chat', { chat });
+  }, [baseNav, findOrCreateChat, user]);
 
   return (
     <ScrollView style={styles.container}>
@@ -314,7 +323,7 @@ const Profile = () => {
 
       {user && !typing && (
         <View style={styles.backButton}>
-          <TouchableWithoutFeedback onPress={navigation.goBackOnceFocused}>
+          <TouchableWithoutFeedback onPress={nav.goBackOnceFocused}>
             <View style={styles.icon}>
               <McIcon name='arrow-left' size={25} color='white' solid />
             </View>
@@ -352,6 +361,16 @@ const Profile = () => {
               </View>
             </TouchableWithoutFeedback>
           )}
+        </View>
+      )}
+
+      {!editMode && !itsMe && (
+        <View style={styles.profileButtons}>
+          <TouchableWithoutFeedback onPress={navToChat}>
+            <View style={styles.icon}>
+              <McIcon name='message' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       )}
     </ScrollView>

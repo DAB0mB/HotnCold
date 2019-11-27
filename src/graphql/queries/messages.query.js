@@ -26,6 +26,7 @@ messages.forSocial = gql `
 messages.use = (chatId, options = {}, ast = messages, $id = 'id') => {
   const query = useQuery(ast, {
     variables: { chatId },
+    fetchPolicy: 'no-cache',
     ...options,
   });
 
@@ -37,6 +38,7 @@ messages.use = (chatId, options = {}, ast = messages, $id = 'id') => {
           chatId,
           anchor: query.data.messages[query.data.messages.length - 1][$id],
         },
+        fetchPolicy: 'no-cache',
         ...options,
       });
     };
