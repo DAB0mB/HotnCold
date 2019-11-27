@@ -10,17 +10,17 @@ const message = gql `
   }
 `;
 
-message.forChat = gql `
-  fragment Message on Message {
+message.forSocial = gql `
+  fragment MessageForSocial on Message {
     ...Message
     id: _id
     user {
-      ...UserForChat
+      ...UserForSocial
     }
   }
 
   ${message}
-  ${user.forChat}
+  ${user.forSocial}
 `;
 
-export default user;
+export default message;

@@ -4,8 +4,8 @@ import gql from 'graphql-tag';
 import * as fragments from '../fragments';
 
 const messages = gql `
-  query Messages($recipientId: ID!) {
-    messages(recipientId: $recipientId) {
+  query Messages($chatId: ID!, $anchor: ID) {
+    messages(chatId: $chatId) {
       ...Message
     }
   }
@@ -13,19 +13,19 @@ const messages = gql `
   ${fragments.message}
 `;
 
-messages.forChat = gql `
-  query MessagesForChat($recipientId: ID!) {
-    messages(recipientId: $recipientId) {
-      ...MessageForChat
+messages.forSocial = gql `
+  query MessagesForSocial($chatId: ID!, $anchor: ID) {
+    messages(chatId: $chatId, anchor: $anchor) {
+      ...MessageForSocial
     }
   }
 
-  ${fragments.message.forChat}
+  ${fragments.message.forSocial}
 `
 
-messages.use = (recipientId, options = {}, queryAst = messages, idField = 'id') => {
-  const query = useQuery(queryAst, {
-    variables: { recipientId },
+messages.use = (chatId, options = {}, ast = messages, $id = 'id') => {
+  const query = useQuery(ast, {
+    variables: { chatId },
     ...options,
   });
 
@@ -34,8 +34,8 @@ messages.use = (recipientId, options = {}, queryAst = messages, idField = 'id') 
     fetchMore(options = {}) {
       return query.fetchMore({
         variables: {
-          recipientId,
-          anchor: query.data.messages[query.data.messages.length - 1][idField],
+          chatId,
+          anchor: query.data.messages[query.data.messages.length - 1][$id],
         },
         ...options,
       });
@@ -43,8 +43,8 @@ messages.use = (recipientId, options = {}, queryAst = messages, idField = 'id') 
   };
 };
 
-messages.forChat.use = (recipientId, options) => {
-  return messages.use(recipientId, options, messages.forChat, '_id');
+messages.forSocial.use = (chatId, options) => {
+  return messages.use(chatId, options, messages.forSocial, '_id');
 };
 
 export default user;

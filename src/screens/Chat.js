@@ -19,10 +19,11 @@ const Chat = () => {
   const me = useMe();
   const alertError = useAlertError();
   const socialNav = useNavigation(Social);
-  const recipient = socialNav.getParam('recipient');
+  const chat = socialNav.getParam('chat');
+  const recipient = useMemo(() => chat.users.find(u => u.id !== me.id), [chat && chat.id]);
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
-  const messagesQuery = queries.messages.forChat.use(recipient.id, {
+  const messagesQuery = queries.messages.forSocial.use(chat.id, {
     onCompleted: useCallback(() => {
       setIsLoadingEarlier(false)
     }, [isLoadingEarlier]),
@@ -56,7 +57,7 @@ const Chat = () => {
   return useLoading(!(messagesQuery.called && !messagesQuery.loading),
     <View style={styles.container}>
       <GiftedChat
-        user={me.forChat}
+        user={me.forSocial}
         messages={messages}
         loadEarlier={loadEarlier}
         isLoadingEarlier={isLoadingEarlier}

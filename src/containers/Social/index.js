@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
 import * as queries from '../../graphql/queries';
@@ -29,6 +30,8 @@ const Social = Base.create(() => {
   const baseNavigation = useNavigation(Base);
   const meQuery = queries.me.use({ onError: alertError });
   const { me } = meQuery.data || {};
+  meQuery.forSocial = queries.me.forSocial.use({ onError: alertError });
+  me.forSocial = meQuery.forSocial.data || {};
 
   useEffect(() => {
     if (meQuery.called && !meQuery.loading && (meQuery.error || !me)) {

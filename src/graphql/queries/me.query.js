@@ -13,18 +13,22 @@ const me = gql `
   ${fragments.user}
 `;
 
-const me = gql `
-  query MeForChat {
+me.forSocial = gql `
+  query MeForSocial {
     me {
       ...UserForChat
     }
   }
 
-  ${fragments.user.forChat}
+  ${fragments.user.forSocial}
 `;
 
-me.use = (options) => {
-  return useQuery(me, options);
+me.use = (options, ast = me) => {
+  return useQuery(ast, options);
+};
+
+me.forSocial.use = (options) => {
+  return me.use(options, me.forSocial);
 };
 
 export default me;

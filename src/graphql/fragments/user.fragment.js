@@ -30,7 +30,7 @@ user.withArea = gql `
   ${area}
 `;
 
-user.forChat = gql `
+user.forSocial = gql `
   fragment UserForChat on User {
     ...User
     id: _id
