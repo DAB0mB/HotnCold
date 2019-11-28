@@ -12,14 +12,14 @@ const message = gql `
 
 message.forSocial = gql `
   fragment MessageForSocial on Message {
-    ...Message
-    id: _id
+    _id: id
+    createdAt
+    text
     user {
       ...UserForSocial
     }
   }
 
-  ${message}
   ${user.forSocial}
 `;
 

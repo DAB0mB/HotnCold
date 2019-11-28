@@ -16,7 +16,7 @@ const me = gql `
 me.forSocial = gql `
   query MeForSocial {
     me {
-      ...UserForChat
+      ...UserForSocial
     }
   }
 

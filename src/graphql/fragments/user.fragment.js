@@ -31,13 +31,11 @@ user.withArea = gql `
 `;
 
 user.forSocial = gql `
-  fragment UserForChat on User {
-    ...User
-    id: _id
-    firstName: name
+  fragment UserForSocial on User {
+    _id: id
+    name: firstName
+    avatar
   }
-
-  ${user}
  `;
 
 export default user;
