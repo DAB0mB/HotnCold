@@ -10,6 +10,7 @@ npm-debug.*
 web-build/
 web-report/
 .env
+yarn-error.log
 
 # Android
 android/.gradle
