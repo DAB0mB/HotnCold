@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { GiftedChat, Message } from 'react-native-gifted-chat';
 
+import { GiftedChat, Message } from '../components/GiftedChat';
 import Base from '../containers/Base';
 import Social from '../containers/Social';
 import * as mutations from '../graphql/mutations';
@@ -24,7 +24,7 @@ const Chat = () => {
   const chat = baseNav.getParam('chat');
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
-  const messagesQuery = queries.messages.forSocial.use(chat.id, {
+  const messagesQuery = queries.messages.use(chat.id, {
     onCompleted: useCallback(() => {
       setIsLoadingEarlier(false)
     }, [isLoadingEarlier]),
@@ -58,7 +58,7 @@ const Chat = () => {
   return useLoading(!messagesQuery.called || messagesQuery.loading,
     <View style={styles.container}>
       <GiftedChat
-        user={me.forSocial}
+        user={me}
         messages={messages}
         loadEarlier={loadEarlier}
         isLoadingEarlier={isLoadingEarlier}

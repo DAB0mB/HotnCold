@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import user from './user.fragment';
@@ -7,20 +8,33 @@ const message = gql `
     id
     createdAt
     text
-  }
-`;
-
-message.forSocial = gql `
-  fragment MessageForSocial on Message {
-    _id: id
-    createdAt
-    text
     user {
-      ...UserForSocial
+      ...User
     }
   }
 
-  ${user.forSocial}
+  ${user}
 `;
+
+message.read = (id) => {
+  const client = useApolloClient();
+
+  return client.readFragment({
+    id,
+    fragment: message,
+    fragmentName: 'Message',
+  });
+};
+
+message.write = (data) => {
+  const client = useApolloClient();
+
+  return client.writeFragment({
+    id: data.id,
+    fragment: message,
+    fragmentName: 'Message',
+    data,
+  });
+};
 
 export default message;

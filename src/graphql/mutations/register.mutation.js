@@ -27,13 +27,15 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
   const [superMutate, mutation] = useMutation(register, defaultOptions);
 
   const mutate = useCallback(({
-    firstName = defaultArgs.firstName,
-    lastName = defaultArgs.lastName,
+    name = defaultArgs.name,
     birthDate = defaultArgs.birthDate,
     occupation = defaultArgs.occupation,
     bio = defaultArgs.bio,
     pictures = defaultArgs.pictures,
   }) => {
+    const lastName = name.split(/ +/g);
+    const firstname = lastName.shift();
+
     // Token should be stored via response.headers, see graphql/client.js
     return superMutate({
       update: (cache, mutation) => {
@@ -45,8 +47,7 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
     })
   }, [
     superMutate,
-    defaultArgs.firstName,
-    defaultArgs.lastName,
+    defaultArgs.name,
     defaultArgs.birthDate,
     defaultArgs.occupation,
     defaultArgs.bio,

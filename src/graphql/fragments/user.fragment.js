@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import area from './area.fragment';
@@ -5,10 +6,8 @@ import area from './area.fragment';
 const user = gql `
   fragment User on User {
     id
-    firstName
-    lastName
+    name
     birthDate
-    # gender
     age
     bio
     location
@@ -18,24 +17,25 @@ const user = gql `
   }
 `;
 
-user.withArea = gql `
-  fragment UserWithArea on User {
-    ...User
-    area {
-      ...Area
-    }
-  }
+user.read = (id) => {
+  const client = useApolloClient();
 
-  ${user}
-  ${area}
-`;
+  return client.readFragment({
+    id,
+    fragment: user,
+    fragmentName: 'User',
+  });
+};
 
-user.forSocial = gql `
-  fragment UserForSocial on User {
-    _id: id
-    name: firstName
-    avatar
-  }
- `;
+user.write = (data) => {
+  const client = useApolloClient();
+
+  return client.writeFragment({
+    id: data.id,
+    fragment: user,
+    fragmentName: 'User',
+    data,
+  });
+};
 
 export default user;

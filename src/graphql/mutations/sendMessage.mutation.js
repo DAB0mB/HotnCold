@@ -8,16 +8,16 @@ import * as fragments from '../fragments';
 const sendMessage = gql `
   mutation SendMessage($chatId: ID!, $text: String!) {
     sendMessage(chatId: $chatId, text: $text) {
-      ...MessageForSocial
+      ...Message
     }
   }
 
-  ${fragments.message.forSocial}
+  ${fragments.message}
 `;
 
 sendMessage.use = ({ chatId }, options = {}) => {
   const [superMutate, mutation] = useMutation(sendMessage, options);
-  const id = UUID();
+  const messageId = UUID();
 
   const mutate = useCallback((message, options = {}) => {
     return superMutate({
@@ -25,14 +25,14 @@ sendMessage.use = ({ chatId }, options = {}) => {
         __typename: 'Mutation',
         sendMessage: {
           __typename: 'Message',
-          id,
+          id: messageId,
           text: message.text,
           createdAt: message.createdAt,
           user: {
             __typename: 'User',
-            id: message.user._id,
+            id: message.user.id,
             avatar: message.user.avatar,
-            firstName: message.user.name,
+            name: message.user.name,
           },
         },
       },
@@ -47,11 +47,27 @@ sendMessage.use = ({ chatId }, options = {}) => {
 
         if (!chat) return;
 
+        const message = mutation.data.sendMessage;
+
         cache.writeFragment({
           id: chatId,
           fragment: fragments.chat,
           fragmentName: 'Chat',
-          data: { ...chat, recentMessage: mutation.data.sendMessage },
+          data: {
+            ...chat,
+            recentMessage: {
+              __typename: 'Message',
+              id: messageId,
+              text: message.text,
+              createdAt: message.createdAt,
+              user: {
+                __typename: 'User',
+                id: message.user.id,
+                avatar: message.user.avatar,
+                name: message.user.name,
+              }
+            },
+          },
         });
       },
       variables: { chatId, text: message.text },

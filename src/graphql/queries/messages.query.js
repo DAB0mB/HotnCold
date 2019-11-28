@@ -5,7 +5,7 @@ import * as fragments from '../fragments';
 
 const messages = gql `
   query Messages($chatId: ID!, $anchor: ID) {
-    messages(chatId: $chatId) {
+    messages(chatId: $chatId, anchor: $anchor) {
       ...Message
     }
   }
@@ -13,18 +13,8 @@ const messages = gql `
   ${fragments.message}
 `;
 
-messages.forSocial = gql `
-  query MessagesForSocial($chatId: ID!, $anchor: ID) {
-    messages(chatId: $chatId, anchor: $anchor) {
-      ...MessageForSocial
-    }
-  }
-
-  ${fragments.message.forSocial}
-`
-
-messages.use = (chatId, options = {}, ast = messages, $id = 'id') => {
-  const query = useQuery(ast, {
+messages.use = (chatId, options = {}, messages) => {
+  const query = useQuery(messages, {
     variables: { chatId },
     fetchPolicy: 'no-cache',
     ...options,
@@ -36,7 +26,7 @@ messages.use = (chatId, options = {}, ast = messages, $id = 'id') => {
       return query.fetchMore({
         variables: {
           chatId,
-          anchor: query.data.messages[query.data.messages.length - 1][$id],
+          anchor: query.data.messages[query.data.messages.length - 1].id,
         },
         fetchPolicy: 'no-cache',
         ...options,
@@ -44,9 +34,3 @@ messages.use = (chatId, options = {}, ast = messages, $id = 'id') => {
     }
   };
 };
-
-messages.forSocial.use = (chatId, options) => {
-  return messages.use(chatId, options, messages.forSocial, '_id');
-};
-
-export default messages;

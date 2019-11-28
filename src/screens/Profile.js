@@ -130,7 +130,7 @@ const Profile = () => {
   const [typing, setTyping] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadCount, setUploadCount] = useState(0);
-  const [name, setName] = useState(() => !user ? '' : itsMe ? `${user.firstName} ${user.lastName}` : user.firstName);
+  const [name, setName] = useState(() => user ? user.name : '');
   const [birthDate, setBirthDate] = useState(() => !user ? '' : itsMe ? user.birthDate : user.age);
   const [occupation, setOccupation] = useState(() => user ? user.occupation : '');
   const [bio, setBio] = useState(() => user ? user.bio : '');
@@ -152,14 +152,7 @@ const Profile = () => {
     occupation,
     pictures,
     birthDate: useMemo(() => new Date(birthDate), [birthDate]),
-    ...useMemo(() => {
-      const [firstName, ...lastName] = name.split(/ +/);
-
-      return {
-        firstName,
-        lastName: lastName.join(' '),
-      };
-    }, [name])
+    name: user.name,
   }, {
     onError: useCallback((e) => {
       setSaving(false);

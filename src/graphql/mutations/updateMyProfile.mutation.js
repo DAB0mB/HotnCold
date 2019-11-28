@@ -34,13 +34,15 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
   const [superMutate, mutation] = useMutation(updateMyProfile, defaultOptions);
 
   const mutate = useCallback(({
-    firstName = defaultArgs.firstName,
-    lastName = defaultArgs.lastName,
+    name = defaultArgs.name,
     birthDate = defaultArgs.birthDate,
     occupation = defaultArgs.occupation,
     bio = defaultArgs.bio,
     pictures = defaultArgs.pictures,
   }) => {
+    const lastName = name.split(/ +/);
+    const firstName = lastName.shift();
+
     return superMutate({
       update: (cache, mutation) => {
         if (mutation.error) return;
@@ -49,7 +51,7 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
         cache.writeFragment({
           id: me.id,
           fragment: fragments.user,
-          data: { ...me, firstName, lastName, birthDate, occupation, bio, pictures },
+          data: { ...me, name, birthDate, occupation, bio, pictures },
         });
       },
       variables: { firstName, lastName, birthDate, occupation, bio, pictures },
@@ -57,8 +59,7 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
   }, [
     me,
     superMutate,
-    defaultArgs.firstName,
-    defaultArgs.lastName,
+    defaultArgs.name,
     defaultArgs.birthDate,
     defaultArgs.occupation,
     defaultArgs.bio,

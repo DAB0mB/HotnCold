@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import message from './message.fragment';
@@ -17,5 +18,26 @@ const chat = gql `
   ${message}
   ${user}
 `;
+
+chat.read = (id) => {
+  const client = useApolloClient();
+
+  return client.readFragment({
+    id,
+    fragment: chat,
+    fragmentName: 'Chat',
+  });
+};
+
+chat.write = (data) => {
+  const client = useApolloClient();
+
+  return client.writeFragment({
+    id: data.id,
+    fragment: chat,
+    fragmentName: 'Chat',
+    data,
+  });
+};
 
 export default chat;

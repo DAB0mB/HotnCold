@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks';
+import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import * as fragments from '../fragments';
@@ -13,22 +13,8 @@ const me = gql `
   ${fragments.user}
 `;
 
-me.forSocial = gql `
-  query MeForSocial {
-    me {
-      ...UserForSocial
-    }
-  }
-
-  ${fragments.user.forSocial}
-`;
-
-me.use = (options, ast = me) => {
-  return useQuery(ast, options);
-};
-
-me.forSocial.use = (options) => {
-  return me.use(options, me.forSocial);
+me.use = (options) => {
+  return useQuery(me, options);
 };
 
 export default me;

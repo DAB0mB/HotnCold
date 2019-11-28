@@ -21,11 +21,7 @@ updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
         if (mutation.error) return;
         if (!me) return;
 
-        cache.writeFragment({
-          id: me.id,
-          fragment: fragments.user,
-          data: { ...me, location },
-        });
+        fragments.user.write({ ...me, location });
       },
       variables: { location },
     })
