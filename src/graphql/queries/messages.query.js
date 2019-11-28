@@ -41,7 +41,7 @@ messages.use = (chatId, options = {}, ast = messages, $id = 'id') => {
         fetchPolicy: 'no-cache',
         ...options,
       });
-    };
+    }
   };
 };
 
@@ -49,4 +49,4 @@ messages.forSocial.use = (chatId, options) => {
   return messages.use(chatId, options, messages.forSocial, '_id');
 };
 
-export default user;
+export default messages;

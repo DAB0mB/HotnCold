@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 const Header = () => {
   return (
     <View style={styles.container}>
-      Chat
+      <Text>Chat</Text>
     </View>
   );
 };

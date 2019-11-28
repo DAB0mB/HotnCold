@@ -52,9 +52,9 @@ const Social = Base.create(() => {
     <View style={styles.container}>
       <MeProvider me={me}>
       <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation, me }}>
-      <LoadingProvider loading={!isReady}>
+      <LoadingProvider>
         <View style={styles.body}>
-          {isReady && <SocialRouter />}
+          <SocialRouter />
         </View>
       </LoadingProvider>
       </HeaderProvider>

@@ -31,7 +31,8 @@ sendMessage.use = ({ chatId }, options = {}) => {
 
         const chat = cache.readFragment({
           id: chatId,
-          fragment: fragments.chat
+          fragment: fragments.chat,
+          fragmentName: 'Chat',
         });
 
         if (!chat) return;
@@ -39,6 +40,7 @@ sendMessage.use = ({ chatId }, options = {}) => {
         cache.writeFragment({
           id: chatId,
           fragment: fragments.chat,
+          fragmentName: 'Chat',
           data: { ...chat, recentMessage: mutation.data },
         });
       },
@@ -53,4 +55,4 @@ sendMessage.use = ({ chatId }, options = {}) => {
   return [mutate, mutation];
 };
 
-export default register;
+export default sendMessage;

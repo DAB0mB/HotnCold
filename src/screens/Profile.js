@@ -179,7 +179,7 @@ const Profile = () => {
   const [uploadPicture] = mutations.uploadPicture.use({
     onError: alertError,
   });
-  const [findOrCreateChat] = mutations.findOrCreateChat.use([user.id], {
+  const [findOrCreateChat] = mutations.findOrCreateChat.use([user && user.id], {
     onError: alertError,
   });
   const imagePicker = useImagePicker({
@@ -263,10 +263,15 @@ const Profile = () => {
   }, [pictureIndex, pictures, pendingPictures]);
 
   const navToChat = useCallback(async () => {
-    const chat = await findOrCreateChat();
+    const result = await findOrCreateChat();
 
-    baseNav.push('chat', { chat });
-  }, [baseNav, findOrCreateChat, user]);
+    // Probably validation issue
+    if (!result || !result.data) return;
+
+    nav.push('Social', {
+      chat: result.data.findOrCreateChat
+    });
+  }, [nav, findOrCreateChat, user]);
 
   return (
     <ScrollView style={styles.container}>

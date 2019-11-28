@@ -23,10 +23,13 @@ findOrCreateChat.use = (_usersIds = [], defaultOptions = {}) => {
       update: (cache, mutation) => {
         if (mutation.error) return;
 
+        const chat = mutation.data.findOrCreateChat;
+
         cache.writeFragment({
-          id: mutation.data.id,
+          id: chat.id,
           fragment: fragments.chat,
-          data: mutation.data,
+          fragmentName: 'Chat',
+          data: chat,
         });
       },
       variables: { usersIds },

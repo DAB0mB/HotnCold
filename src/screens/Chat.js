@@ -3,10 +3,12 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { GiftedChat, Message } from 'react-native-gifted-chat';
 
 import Base from '../containers/Base';
+import Social from '../containers/Social';
 import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
 import { useMe } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
+import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 
 const styles = StyleSheet.create({
@@ -53,7 +55,7 @@ const Chat = () => {
     messagesQuery.fetchMore();
   }, [messagesQuery, loadEarlier]);
 
-  return useLoading(!(messagesQuery.called && !messagesQuery.loading),
+  return useLoading(!messagesQuery.called || messagesQuery.loading,
     <View style={styles.container}>
       <GiftedChat
         user={me.forSocial}
