@@ -22,11 +22,11 @@ const updateMyProfile = gql `
       bio: $bio
       pictures: $pictures
     ) {
-      ...User
+      ...UserProfile
     }
   }
 
-  ${fragments.user}
+  ${fragments.user.profile}
 `;
 
 updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
@@ -48,10 +48,8 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
         if (mutation.error) return;
         if (!me) return;
 
-        cache.writeFragment({
-          id: me.id,
-          fragment: fragments.user,
-          data: { ...me, name, birthDate, occupation, bio, pictures },
+        fragments.user.profile.write(cache, {
+          ...me, name, birthDate, occupation, bio, pictures
         });
       },
       variables: { firstName, lastName, birthDate, occupation, bio, pictures },

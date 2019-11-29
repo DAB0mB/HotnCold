@@ -15,11 +15,12 @@ const sendMessage = gql `
   ${fragments.message}
 `;
 
-sendMessage.use = ({ chatId }, options = {}) => {
+sendMessage.use = (chatId, options = {}) => {
   const [superMutate, mutation] = useMutation(sendMessage, options);
-  const messageId = UUID();
 
   const mutate = useCallback((message, options = {}) => {
+    const messageId = message.id || UUID();
+
     return superMutate({
       optimisticResponse: {
         __typename: 'Mutation',
@@ -39,34 +40,25 @@ sendMessage.use = ({ chatId }, options = {}) => {
       update: (cache, mutation) => {
         if (mutation.error) return;
 
-        const chat = cache.readFragment({
-          id: chatId,
-          fragment: fragments.chat,
-          fragmentName: 'Chat',
-        });
+        const chat = fragments.chat.read(cache, chatId);
 
         if (!chat) return;
 
         const message = mutation.data.sendMessage;
 
-        cache.writeFragment({
-          id: chatId,
-          fragment: fragments.chat,
-          fragmentName: 'Chat',
-          data: {
-            ...chat,
-            recentMessage: {
-              __typename: 'Message',
-              id: messageId,
-              text: message.text,
-              createdAt: message.createdAt,
-              user: {
-                __typename: 'User',
-                id: message.user.id,
-                avatar: message.user.avatar,
-                name: message.user.name,
-              }
-            },
+        fragments.chat.write(cache, {
+          ...chat,
+          recentMessage: {
+            __typename: 'Message',
+            id: messageId,
+            text: message.text,
+            createdAt: message.createdAt,
+            user: {
+              __typename: 'User',
+              id: message.user.id,
+              avatar: message.user.avatar,
+              name: message.user.name,
+            }
           },
         });
       },

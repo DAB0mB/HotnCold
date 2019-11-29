@@ -1,12 +1,12 @@
 export * from 'react-native-gifted-chat';
 
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { GiftedChat as _GiftedChat } from 'react-native-gifted-chat';
 
 const adaptUser = (user) => ({
-  get _id() { return _user.id },
-  get name() { return _user.name },
-  get avatar() { return _user.avatar },
+  get _id() { return user.id },
+  get name() { return user.name },
+  get avatar() { return user.avatar },
 });
 
 const adaptMessage = (message) => ({
@@ -36,12 +36,13 @@ const normalizeMessage = (message) => {
 export const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
   // Create adapted proxies instead of cloning objects, much less expensive when dealing
   // with a large amount of data
-  const user = useMemo(() => adaptUser(user), [_user]);
+  const user = useMemo(() => adaptUser(_user), [_user]);
   const messages = useMemo(() =>
-    Array.apply(null, { length: _messages.length }).map((_, i) => adaptMessage(_messages[i]))
-  , [_messages, _messages.length]);
+    !_messages ? [] :
+    Array.apply(null, { length: _messages.length }).map((undefined, i) => adaptMessage(_messages[i]))
+  , [_messages, _messages && _messages.length]);
 
-  const onSend = useCallback((message) => {
+  const onSend = useCallback(([message]) => {
     if (typeof props.onSend != 'function') return;
 
     message = normalizeMessage(message);
@@ -50,7 +51,7 @@ export const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
   }, [props.onSend]);
 
   return (
-    <GiftedChat
+    <_GiftedChat
       {...props}
       user={user}
       messages={messages}

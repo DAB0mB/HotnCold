@@ -104,18 +104,18 @@ const Radar = () => {
   const [discoveredUsers, setDiscoveredUsers] = useState(() => picsIndexes.map(() => null));
   const discoveredUsersRef = useRef(null); discoveredUsersRef.current = discoveredUsers;
   const [scanning, setScanning] = useState(false);
-  const [queryUser] = queries.user.use.lazy({
+  const [queryUserProfile] = queries.userProfile.use.lazy({
     onError: alertError,
     onCompleted: useCallback((data) => {
-      const user = data.user;
+      const userProfile = data.userProfile;
 
-      if (user && !discoveredUsers.some(u => u && u.id == user.id)) {
+      if (userProfile && !discoveredUsers.some(u => u && u.id == userProfile.id)) {
         const nullIndexes = discoveredUsers.filter(u => !u).map((u, i) => i);
         const i = pickRandom(nullIndexes);
 
         setDiscoveredUsers([]
           .concat(discoveredUsers.slice(0, i))
-          .concat(user)
+          .concat(userProfile)
           .concat(discoveredUsers.slice(i + 1))
         );
 
@@ -139,7 +139,7 @@ const Radar = () => {
 
       discoveredUsersIds.push(userId);
 
-      queryUser({
+      queryUserProfile({
         variables: { userId },
       });
     };
@@ -199,7 +199,7 @@ const Radar = () => {
       setDiscoveredUsers(() => picsIndexes.map(() => null));
 
       if (__DEV__ && CONFIG.RADAR_TEST_USER_ID) {
-        queryUser({
+        queryUserProfile({
           variables: { userId: CONFIG.RADAR_TEST_USER_ID },
         });
       }

@@ -45,7 +45,7 @@ const Chat = () => {
     );
   }, [loadEarlier]);
 
-  const onSend = useCallback(([message]) => {
+  const onSend = useCallback((message) => {
     sendMessage(message);
   }, [sendMessage]);
 

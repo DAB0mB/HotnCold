@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import area from './area.fragment';
@@ -7,33 +6,54 @@ const user = gql `
   fragment User on User {
     id
     name
+    avatar
+  }
+`;
+
+user.profile = gql `
+  fragment UserProfile on User {
+    ...User
     birthDate
     age
     bio
     location
     occupation
     pictures
-    avatar
   }
+
+  ${user}
 `;
 
-user.read = (id) => {
-  const client = useApolloClient();
-
-  return client.readFragment({
+user.read = (cache, id) => {
+  return cache.readFragment({
     id,
     fragment: user,
     fragmentName: 'User',
   });
 };
 
-user.write = (data) => {
-  const client = useApolloClient();
-
-  return client.writeFragment({
+user.write = (cache, data) => {
+  return cache.writeFragment({
     id: data.id,
     fragment: user,
     fragmentName: 'User',
+    data,
+  });
+};
+
+user.profile.read = (cache, id) => {
+  return cache.readFragment({
+    id,
+    fragment: user,
+    fragmentName: 'UserProfile',
+  });
+};
+
+user.profile.write = (cache, data) => {
+  return cache.writeFragment({
+    id: data.id,
+    fragment: user,
+    fragmentName: 'UserProfile',
     data,
   });
 };

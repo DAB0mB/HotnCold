@@ -6,11 +6,11 @@ import * as fragments from '../fragments';
 const me = gql `
   query Me {
     me {
-      ...User
+      ...UserProfile
     }
   }
 
-  ${fragments.user}
+  ${fragments.user.profile}
 `;
 
 me.use = (options) => {

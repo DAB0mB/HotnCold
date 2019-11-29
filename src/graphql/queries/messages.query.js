@@ -13,7 +13,7 @@ const messages = gql `
   ${fragments.message}
 `;
 
-messages.use = (chatId, options = {}, messages) => {
+messages.use = (chatId, options = {}) => {
   const query = useQuery(messages, {
     variables: { chatId },
     fetchPolicy: 'no-cache',
@@ -34,3 +34,5 @@ messages.use = (chatId, options = {}, messages) => {
     }
   };
 };
+
+export default messages;
