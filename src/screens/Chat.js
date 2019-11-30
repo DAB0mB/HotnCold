@@ -36,8 +36,11 @@ const Chat = () => {
   const messages = useMemo(() => messagesQuery.data && messagesQuery.data.messages, [messagesQuery]);
 
   const renderMessage = useCallback((props) => {
-    if (props.previousMessage == null) {
+    if (props.previousMessage == null && props.key !== chat.firstMessage.id) {
       setLoadEarlier(true);
+    }
+    else {
+      setLoadEarlier(false);
     }
 
     return (

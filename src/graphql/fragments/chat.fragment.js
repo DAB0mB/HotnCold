@@ -6,6 +6,9 @@ import user from './user.fragment';
 const chat = gql `
   fragment Chat on Chat {
     id
+    firstMessage {
+      ...Message
+    }
     recentMessage {
       ...Message
     }

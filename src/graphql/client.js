@@ -1,8 +1,9 @@
-import { ApolloLink } from 'apollo-link';
-import { onError } from 'apollo-link-error';
 import { IntrospectionFragmentMatcher, InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
+import { ApolloLink, split } from 'apollo-link';
+import { onError } from 'apollo-link-error';
 import { createUploadLink } from 'apollo-upload-client';
+import { getMainDefinition } from 'apollo-utilities';
 import CONFIG from 'react-native-config';
 
 import introspectionQueryResultData from './fragmentTypes.json';
@@ -31,6 +32,24 @@ const httpLink = createUploadLink({
   uri: CONFIG.GRAPHQL_ENDPOINT,
   credentials: 'include',
 });
+
+const wsLink = new WebSocketLink({
+  uri: CONFIG.GRAPHQL_ENDPOINT.replace(/^https?/, 'ws'),
+  options: {
+    // Automatic reconnect in case of connection error
+    reconnect: true,
+  },
+});
+
+const terminatingLink = split(
+  ({ query }) => {
+    const { kind, operation } = getMainDefinition(query);
+    // If this is a subscription query, use wsLink, otherwise use httpLink
+    return kind === 'OperationDefinition' && operation === 'subscription';
+  },
+  wsLink,
+  httpLink
+);
 
 /* Custom asyn middleware example */
 
@@ -77,7 +96,7 @@ const httpLink = createUploadLink({
 //   });
 // }));
 
-const link = ApolloLink.from([errorLink, httpLink]);
+const link = ApolloLink.from([errorLink, terminatingLink]);
 
 const client = new ApolloClient({
   cache,
