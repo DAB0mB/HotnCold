@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import CONFIG from 'react-native-config';
-import Cookie from 'react-native-cookie';
+import CookieManager from 'react-native-cookie';
 
 const CookieContext = createContext(null);
 
-export const CookieProvider = ({ cookieManager = Cookie, children }) => {
+export const CookieProvider = ({ cookieManager = CookieManager, children }) => {
   return (
     <CookieContext.Provider value={cookieManager}>
       {children}

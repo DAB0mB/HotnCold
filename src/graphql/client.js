@@ -2,9 +2,11 @@ import { IntrospectionFragmentMatcher, InMemoryCache } from 'apollo-cache-inmemo
 import ApolloClient from 'apollo-client';
 import { ApolloLink, split } from 'apollo-link';
 import { onError } from 'apollo-link-error';
+import { WebSocketLink } from 'apollo-link-ws';
 import { createUploadLink } from 'apollo-upload-client';
 import { getMainDefinition } from 'apollo-utilities';
 import CONFIG from 'react-native-config';
+import CookieManager from 'react-native-cookie';
 
 import introspectionQueryResultData from './fragmentTypes.json';
 
@@ -38,6 +40,11 @@ const wsLink = new WebSocketLink({
   options: {
     // Automatic reconnect in case of connection error
     reconnect: true,
+    async connectionParams() {
+      return {
+        cookie: await CookieManager.get(CONFIG.SERVER_URI),
+      };
+    },
   },
 });
 

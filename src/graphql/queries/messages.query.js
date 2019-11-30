@@ -32,7 +32,7 @@ messages.use = (chatId, options = {}) => {
       return {
         ...prev,
         messages: [...prev.messages, messageSent],
-      },
+      };
     },
   });
 
