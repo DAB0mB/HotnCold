@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { GiftedChat as _GiftedChat, Bubble } from 'react-native-gifted-chat';
+import { GiftedChat as _GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
 
 import { colors } from '../theme';
 
@@ -42,9 +42,19 @@ const wrapperStyle = {
   },
 };
 
+const sendTextStyle = {
+  color: colors.ink,
+};
+
 const renderBubble = (props) => {
   return (
     <Bubble {...props} wrapperStyle={wrapperStyle} />
+  );
+};
+
+const renderSend = (props) => {
+  return (
+    <Send {...props} textStyle={sendTextStyle} />
   );
 };
 
@@ -72,6 +82,7 @@ const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
       messages={messages}
       onSend={onSend}
       renderBubble={renderBubble}
+      renderSend={renderSend}
     />
   );
 };
