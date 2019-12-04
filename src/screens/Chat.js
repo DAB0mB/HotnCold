@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { GiftedChat, Message } from '../components/GiftedChat';
+import { GiftedChat } from '../components/GiftedChat';
 import Base from '../containers/Base';
 import Social from '../containers/Social';
 import * as mutations from '../graphql/mutations';
@@ -23,11 +23,18 @@ const Chat = () => {
   const baseNav = useNavigation(Base);
   const chat = baseNav.getParam('chat');
   const [loadEarlier, setLoadEarlier] = useState(false);
-  const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
-  const messagesQuery = queries.messages.use(chat.id, {
-    onCompleted: useCallback(() => {
-      setIsLoadingEarlier(false)
-    }, [isLoadingEarlier]),
+  const [loadingEarlier, setLoadingEarlier] = useState(false);
+  // const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
+  const messagesQuery = queries.messages.use(chat.id, 20, {
+    onCompleted: useCallback(({ messages }) => {
+      const lastMessage = messages[messages.length - 1];
+
+      if ((lastMessage && lastMessage.id) != chat.firstMessage.id) {
+        setLoadEarlier(true);
+      }
+
+      setLoadingEarlier(false);
+    }, []),
     onError: alertError,
   });
   const [sendMessage] = mutations.sendMessage.use(chat.id, {
@@ -35,25 +42,13 @@ const Chat = () => {
   });
   const messages = useMemo(() => messagesQuery.data && messagesQuery.data.messages, [messagesQuery]);
 
-  const renderMessage = useCallback((props) => {
-    if (props.previousMessage == null && props.key !== chat.firstMessage.id) {
-      setLoadEarlier(true);
-    }
-    else {
-      setLoadEarlier(false);
-    }
-
-    return (
-      <Message {...props} />
-    );
-  }, [loadEarlier]);
-
   const onSend = useCallback((message) => {
     sendMessage(message);
   }, [sendMessage]);
 
   const onLoadEarlier = useCallback(() => {
     setLoadEarlier(false);
+    setLoadingEarlier(true);
 
     messagesQuery.fetchMore();
   }, [messagesQuery, loadEarlier]);
@@ -63,17 +58,13 @@ const Chat = () => {
       <GiftedChat
         user={me}
         messages={messages}
-        loadEarlier={loadEarlier}
-        isLoadingEarlier={isLoadingEarlier}
         onLoadEarlier={onLoadEarlier}
         onSend={onSend}
-        renderMessage={renderMessage}
-        scrollToBottom
+        loadingEarlier={loadingEarlier}
+        loadEarlier={loadEarlier}
         keyboardShouldPersistTaps='never'
+        scrollToBottom
       />
-      {
-        Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
-      }
     </View>
   );
 };

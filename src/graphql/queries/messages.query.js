@@ -6,8 +6,8 @@ import * as fragments from '../fragments';
 import * as subscriptions from '../subscriptions';
 
 const messages = gql `
-  query Messages($chatId: ID!, $anchor: ID) {
-    messages(chatId: $chatId, anchor: $anchor) {
+  query Messages($chatId: ID!, $limit: Int!, $anchor: ID) {
+    messages(chatId: $chatId, limit: $limit, anchor: $anchor) {
       ...Message
     }
   }
@@ -15,26 +15,32 @@ const messages = gql `
   ${fragments.message}
 `;
 
-messages.use = (chatId, options = {}) => {
+messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) => {
+  // Manual cache for now. Don't keep anything
+  const [data, setData] = useState();
+
   const query = useQuery(messages, {
-    variables: { chatId },
+    variables: { chatId, limit },
     fetchPolicy: 'no-cache',
     ...options,
   });
-
-  // Manual cache for now.
-  const [data, setData] = useState(query.data);
 
   useEffect(() => {
     setData(query.data);
   }, [query.data]);
 
   useEffect(() => {
+    if (data) {
+      onCompleted(data);
+    }
+  }, [data, onCompleted]);
+
+  useEffect(() => {
     return query.subscribeToMore({
       document: subscriptions.messageSent,
       variables: { chatId },
       updateQuery(prev, { subscriptionData }) {
-        if (!subscriptionData.data) return prev;
+        if (!subscriptionData.data) return;
 
         const { messageSent } = subscriptionData.data;
 
@@ -42,20 +48,22 @@ messages.use = (chatId, options = {}) => {
           messages: [messageSent, ...data.messages]
         });
       },
+      fetchPolicy: 'no-cache',
     });
   }, [query.subscribeToMore, data, chatId]);
 
   return {
     ...query,
     data,
-    fetchMore: useCallback((options = {}) => {
+    fetchMore: useCallback((moreLimit = limit, options = {}) => {
       return query.fetchMore({
         variables: {
           chatId,
+          limit: moreLimit,
           anchor: data.messages[data.messages.length - 1].id,
         },
         updateQuery(prev, { fetchMoreResult }) {
-          if (!fetchMoreResult) return prev;
+          if (!fetchMoreResult) return;
 
           setData({
             messages: [...data.messages, ...fetchMoreResult.messages]
@@ -64,7 +72,7 @@ messages.use = (chatId, options = {}) => {
         fetchPolicy: 'no-cache',
         ...options,
       });
-    }, [query.fetchMore, data, chatId]),
+    }, [query.fetchMore, data, chatId, limit]),
   };
 };
 
