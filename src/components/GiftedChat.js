@@ -1,7 +1,7 @@
-export * from 'react-native-gifted-chat';
-
 import React, { useCallback, useMemo } from 'react';
-import { GiftedChat as _GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat as _GiftedChat, Bubble } from 'react-native-gifted-chat';
+
+import { colors } from '../theme';
 
 const adaptUser = (user) => ({
   get _id() { return user.id },
@@ -33,7 +33,22 @@ const normalizeMessage = (message) => {
   return message;
 };
 
-export const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
+const wrapperStyle = {
+  right: {
+    backgroundColor: colors.hot,
+  },
+  left: {
+    backgroundColor: colors.cold,
+  },
+};
+
+const renderBubble = (props) => {
+  return (
+    <Bubble {...props} wrapperStyle={wrapperStyle} />
+  );
+};
+
+const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
   // Create adapted proxies instead of cloning objects, much less expensive when dealing
   // with a large amount of data
   const user = useMemo(() => adaptUser(_user), [_user]);
@@ -56,6 +71,9 @@ export const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
       user={user}
       messages={messages}
       onSend={onSend}
+      renderBubble={renderBubble}
     />
   );
 };
+
+export default GiftedChat;

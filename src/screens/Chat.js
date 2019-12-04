@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { GiftedChat } from '../components/GiftedChat';
+import GiftedChat from '../components/GiftedChat';
 import Base from '../containers/Base';
 import Social from '../containers/Social';
 import * as mutations from '../graphql/mutations';
@@ -23,17 +23,19 @@ const Chat = () => {
   const baseNav = useNavigation(Base);
   const chat = baseNav.getParam('chat');
   const [loadEarlier, setLoadEarlier] = useState(false);
-  const [loadingEarlier, setLoadingEarlier] = useState(false);
-  // const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
+  const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
   const messagesQuery = queries.messages.use(chat.id, 20, {
     onCompleted: useCallback(({ messages }) => {
       const lastMessage = messages[messages.length - 1];
 
-      if ((lastMessage && lastMessage.id) != chat.firstMessage.id) {
+      if ((lastMessage && lastMessage.id) == chat.firstMessage.id) {
+        setLoadEarlier(false);
+      }
+      else {
         setLoadEarlier(true);
       }
 
-      setLoadingEarlier(false);
+      setIsLoadingEarlier(false);
     }, []),
     onError: alertError,
   });
@@ -47,11 +49,10 @@ const Chat = () => {
   }, [sendMessage]);
 
   const onLoadEarlier = useCallback(() => {
-    setLoadEarlier(false);
-    setLoadingEarlier(true);
+    setIsLoadingEarlier(true);
 
     messagesQuery.fetchMore();
-  }, [messagesQuery, loadEarlier]);
+  }, [messagesQuery, setIsLoadingEarlier]);
 
   return useLoading(!messagesQuery.called || messagesQuery.loading,
     <View style={styles.container}>
@@ -60,8 +61,8 @@ const Chat = () => {
         messages={messages}
         onLoadEarlier={onLoadEarlier}
         onSend={onSend}
-        loadingEarlier={loadingEarlier}
         loadEarlier={loadEarlier}
+        isLoadingEarlier={isLoadingEarlier}
         keyboardShouldPersistTaps='never'
         scrollToBottom
       />
