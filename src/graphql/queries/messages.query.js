@@ -1,5 +1,6 @@
-import { useQuery, useLazyQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { useCallback, useEffect, useState } from 'react';
 
 import * as fragments from '../fragments';
 import * as subscriptions from '../subscriptions';
@@ -21,41 +22,49 @@ messages.use = (chatId, options = {}) => {
     ...options,
   });
 
-  query.subscribeToMore({
-    document: subscriptions.messageSent,
-    variables: { chatId },
-    updateQuery(prev, { subscriptionData }) {
-      if (!subscriptionData.data) return prev;
+  // Manual cache for now.
+  const [data, setData] = useState(query.data);
 
-      const { messageSent } = subscriptionData.data;
+  useEffect(() => {
+    setData(query.data);
+  }, [query.data]);
 
-      return {
-        ...prev,
-        messages: [...prev.messages, messageSent],
-      };
-    },
-  });
+  useEffect(() => {
+    return query.subscribeToMore({
+      document: subscriptions.messageSent,
+      variables: { chatId },
+      updateQuery(prev, { subscriptionData }) {
+        if (!subscriptionData.data) return prev;
+
+        const { messageSent } = subscriptionData.data;
+
+        setData({
+          messages: [messageSent, ...data.messages]
+        });
+      },
+    });
+  }, [query.subscribeToMore, data, chatId]);
 
   return {
     ...query,
-    fetchMore(options = {}) {
+    data,
+    fetchMore: useCallback((options = {}) => {
       return query.fetchMore({
         variables: {
           chatId,
-          anchor: query.data.messages[query.data.messages.length - 1].id,
+          anchor: data.messages[data.messages.length - 1].id,
         },
         updateQuery(prev, { fetchMoreResult }) {
           if (!fetchMoreResult) return prev;
 
-          return {
-            ...prev,
-            messages: [...fetchMoreResult.messages, ...prev.messages],
-          };
+          setData({
+            messages: [...data.messages, ...fetchMoreResult.messages]
+          });
         },
         fetchPolicy: 'no-cache',
         ...options,
       });
-    }
+    }, [query.fetchMore, data, chatId]),
   };
 };
 
