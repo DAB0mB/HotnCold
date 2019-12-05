@@ -40,27 +40,32 @@ sendMessage.use = (chatId, options = {}) => {
       update: (cache, mutation) => {
         if (mutation.error) return;
 
-        const chat = fragments.chat.read(cache, chatId);
+        let chat = fragments.chat.read(cache, chatId);
 
         if (!chat) return;
 
         const message = mutation.data.sendMessage;
 
-        fragments.chat.write(cache, {
-          ...chat,
-          recentMessage: {
-            __typename: 'Message',
-            id: messageId,
-            text: message.text,
-            createdAt: message.createdAt,
-            user: {
-              __typename: 'User',
-              id: message.user.id,
-              avatar: message.user.avatar,
-              name: message.user.name,
-            }
-          },
-        });
+        chat = { ...chat };
+
+        chat.recentMessage = {
+          __typename: 'Message',
+          id: messageId,
+          text: message.text,
+          createdAt: message.createdAt,
+          user: {
+            __typename: 'User',
+            id: message.user.id,
+            avatar: message.user.avatar,
+            name: message.user.name,
+          }
+        };
+
+        if (!chat.firstMessage) {
+          chat.firstMessage = { ...chat.recentMessage };
+        }
+
+        fragments.chat.write(cache, chat);
       },
       variables: { chatId, text: message.text },
       ...options,

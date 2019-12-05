@@ -22,7 +22,7 @@ const Loader = ({ size, betweenSpace, bufferMs = 500, style = {}, text = 'Loadin
   useEffect(() => {
     // React native doesn't clear timeout for some reason
     let mounted = true;
-``
+
     const timeout = setTimeout(() => {
       if (mounted) {
         setBuffering(false);

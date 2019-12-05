@@ -28,7 +28,10 @@ const Chat = () => {
     onCompleted: useCallback(({ messages }) => {
       const lastMessage = messages[messages.length - 1];
 
-      if ((lastMessage && lastMessage.id) == chat.firstMessage.id) {
+      if (
+        (lastMessage && lastMessage.id) ===
+        (chat.firstMessage && chat.firstMessage.id)
+      ) {
         setLoadEarlier(false);
       }
       else {

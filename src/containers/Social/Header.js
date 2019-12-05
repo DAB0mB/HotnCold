@@ -63,15 +63,15 @@ Header.Chat = ({ baseNavigation, chat, me }) => {
   const recipient = useMemo(() => chat.users.find(u => u.id !== me.id), [chat.id, me.id]);
 
   return (
-    <View style={styles.chatContent}>
-      <TouchableWithoutFeedback onPress={baseNavigation.goBackOnceFocused}>
-        <View style={styles.backIcon} onPress>
+    <TouchableWithoutFeedback onPress={baseNavigation.goBackOnceFocused}>
+      <View style={styles.chatContent}>
+        <View style={styles.backIcon}>
           <McIcon name='arrow-left' size={20} color={colors.ink} solid />
         </View>
         <Image style={styles.avatar} source={{ uri: recipient.avatar }} />
         <Text style={styles.name}>{recipient.name}</Text>
-      </TouchableWithoutFeedback>
-    </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

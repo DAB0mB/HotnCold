@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { GiftedChat as _GiftedChat, Bubble, Send } from 'react-native-gifted-chat';
+import { GiftedChat as _GiftedChat, Bubble, Send, Time, MessageText } from 'react-native-gifted-chat';
 
 import { colors } from '../theme';
 
@@ -33,7 +33,13 @@ const normalizeMessage = (message) => {
   return message;
 };
 
-const wrapperStyle = {
+const renderBubble = (props) => {
+  return (
+    <Bubble {...props} wrapperStyle={renderBubble.wrapperStyle} />
+  );
+};
+
+renderBubble.wrapperStyle = {
   right: {
     backgroundColor: colors.hot,
   },
@@ -42,20 +48,41 @@ const wrapperStyle = {
   },
 };
 
-const sendTextStyle = {
+const renderSend = (props) => {
+  return (
+    <Send {...props} textStyle={renderSend.sendTextStyle} />
+  );
+};
+
+renderSend.sendTextStyle = {
   color: colors.ink,
 };
 
-const renderBubble = (props) => {
+const renderTime = (props) => {
   return (
-    <Bubble {...props} wrapperStyle={wrapperStyle} />
+    <Time {...props} timeTextStyle={renderTime.timeTextStyle} />
   );
 };
 
-const renderSend = (props) => {
+renderTime.timeTextStyle = {
+  left: { color: colors.ink },
+  right: { color: 'white' },
+};
+
+const renderMessageText = (props) => {
   return (
-    <Send {...props} textStyle={sendTextStyle} />
+    <MessageText {...props} textStyle={renderMessageText.textStyle} linkStyle={renderMessageText.linkStyle} />
   );
+};
+
+renderMessageText.textStyle = {
+  left: { color: colors.ink },
+  right: { color: 'white' },
+};
+
+renderMessageText.linkStyle = {
+  left: { color: colors.hot },
+  right: { color: colors.cold },
 };
 
 const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
@@ -83,6 +110,8 @@ const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
       onSend={onSend}
       renderBubble={renderBubble}
       renderSend={renderSend}
+      renderTime={renderTime}
+      renderMessageText={renderMessageText}
     />
   );
 };
