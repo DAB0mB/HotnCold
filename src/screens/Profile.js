@@ -148,11 +148,11 @@ const Profile = () => {
   });
   const useProfileMutation = itsMe ? mutations.updateMyProfile.use : useRegister;
   const [mutateProfile] = useProfileMutation({
+    name,
     bio,
     occupation,
     pictures,
     birthDate: useMemo(() => new Date(birthDate), [birthDate]),
-    name: user.name,
   }, {
     onError: useCallback((e) => {
       setSaving(false);

@@ -198,9 +198,9 @@ const Radar = () => {
       setScanning(true);
       setDiscoveredUsers(() => picsIndexes.map(() => null));
 
-      if (__DEV__ && CONFIG.RADAR_TEST_USER_ID) {
+      if (me.lastName === '__TEST__') {
         queryUserProfile({
-          variables: { userId: CONFIG.RADAR_TEST_USER_ID },
+          variables: { userId: '__MOCK__' },
         });
       }
     }).catch(alertError);

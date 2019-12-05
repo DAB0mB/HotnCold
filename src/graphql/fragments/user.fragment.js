@@ -13,6 +13,8 @@ const user = gql `
 user.profile = gql `
   fragment UserProfile on User {
     ...User
+    firstName
+    lastName
     birthDate
     age
     bio
@@ -44,7 +46,7 @@ user.write = (cache, data) => {
 user.profile.read = (cache, id) => {
   return cache.readFragment({
     id,
-    fragment: user,
+    fragment: user.profile,
     fragmentName: 'UserProfile',
   });
 };
@@ -52,7 +54,7 @@ user.profile.read = (cache, id) => {
 user.profile.write = (cache, data) => {
   return cache.writeFragment({
     id: data.id,
-    fragment: user,
+    fragment: user.profile,
     fragmentName: 'UserProfile',
     data,
   });

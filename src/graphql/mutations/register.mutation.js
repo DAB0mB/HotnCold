@@ -33,8 +33,9 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
     bio = defaultArgs.bio,
     pictures = defaultArgs.pictures,
   }) => {
-    const lastName = name.split(/ +/g);
-    const firstname = lastName.shift();
+    const names = name.split(/ +/);
+    const firstName = names.shift();
+    const lastName = names.join(' ');
 
     // Token should be stored via response.headers, see graphql/client.js
     return superMutate({

@@ -40,8 +40,9 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
     bio = defaultArgs.bio,
     pictures = defaultArgs.pictures,
   }) => {
-    const lastName = name.split(/ +/);
-    const firstName = lastName.shift();
+    const names = name.split(/ +/);
+    const firstName = names.shift();
+    const lastName = names.join(' ');
 
     return superMutate({
       update: (cache, mutation) => {
@@ -49,7 +50,7 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
         if (!me) return;
 
         fragments.user.profile.write(cache, {
-          ...me, name, birthDate, occupation, bio, pictures
+          ...me, name, firstName, lastName, birthDate, occupation, bio, pictures
         });
       },
       variables: { firstName, lastName, birthDate, occupation, bio, pictures },
