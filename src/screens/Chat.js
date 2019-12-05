@@ -26,6 +26,8 @@ const Chat = () => {
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
   const messagesQuery = queries.messages.use(chat.id, 20, {
     onCompleted: useCallback(({ messages }) => {
+      if (!messages.length) return;
+
       const recentMessage = messages[messages.length - 1];
 
       if (!chat.firstMessage) {
@@ -34,7 +36,7 @@ const Chat = () => {
 
       chat.recentMessage = recentMessage;
 
-      if ((recentMessage && recentMessage.id) === chat.firstMessage.id) {
+      if (recentMessage.id === chat.firstMessage.id) {
         setLoadEarlier(false);
       }
       else {
