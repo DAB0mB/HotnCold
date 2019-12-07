@@ -4,8 +4,8 @@ import gql from 'graphql-tag';
 import * as fragments from '../fragments';
 
 const userProfile = gql `
-  query UserProfile($userId: ID!) {
-    userProfile(userId: $userId) {
+  query UserProfile($userId: ID, $randromMock: Boolean) {
+    userProfile(userId: $userId, randromMock: $randromMock) {
       ...UserProfile
     }
   }

@@ -7,16 +7,14 @@ import * as queries from '../queries';
 
 const updateMyProfile = gql `
   mutation UpdateMyProfile(
-    $firstName: String!
-    $lastName: String!
+    $name: String!
     $occupation: String!
     $birthDate: DateTime!
     $bio: String!
     $pictures: [String!]!
   ) {
     updateMyProfile(
-      firstName: $firstName
-      lastName: $lastName
+      name: $name
       occupation: $occupation
       birthDate: $birthDate
       bio: $bio
@@ -40,20 +38,16 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
     bio = defaultArgs.bio,
     pictures = defaultArgs.pictures,
   }) => {
-    const names = name.split(/ +/);
-    const firstName = names.shift();
-    const lastName = names.join(' ');
-
     return superMutate({
       update: (cache, mutation) => {
         if (mutation.error) return;
         if (!me) return;
 
         fragments.user.profile.write(cache, {
-          ...me, name, firstName, lastName, birthDate, occupation, bio, pictures
+          ...me, name, birthDate, occupation, bio, pictures
         });
       },
-      variables: { firstName, lastName, birthDate, occupation, bio, pictures },
+      variables: { name, birthDate, occupation, bio, pictures },
     })
   }, [
     me,

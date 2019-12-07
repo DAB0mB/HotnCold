@@ -4,16 +4,14 @@ import { useCallback } from 'react';
 
 const register = gql `
   mutation Register(
-    $firstName: String!
-    $lastName: String!
+    $name: String!
     $occupation: String!
     $birthDate: DateTime!
     $bio: String!
     $pictures: [String!]!
   ) {
     register(
-      firstName: $firstName
-      lastName: $lastName
+      name: $name
       occupation: $occupation
       birthDate: $birthDate
       bio: $bio
@@ -33,10 +31,6 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
     bio = defaultArgs.bio,
     pictures = defaultArgs.pictures,
   }) => {
-    const names = name.split(/ +/);
-    const firstName = names.shift();
-    const lastName = names.join(' ');
-
     // Token should be stored via response.headers, see graphql/client.js
     return superMutate({
       update: (cache, mutation) => {
@@ -44,7 +38,7 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
 
         client.clearStore();
       },
-      variables: { firstName, lastName, birthDate, occupation, bio, pictures },
+      variables: { name, birthDate, occupation, bio, pictures },
     })
   }, [
     superMutate,

@@ -13,8 +13,6 @@ const user = gql `
 user.profile = gql `
   fragment UserProfile on User {
     ...User
-    firstName
-    lastName
     birthDate
     age
     bio
