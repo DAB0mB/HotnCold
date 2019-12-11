@@ -6,9 +6,10 @@ import CONFIG from 'react-native-config';
 
 import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
+import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMe } from '../../services/Auth';
-import { useBluetoothLE, BluetoothLEProvider } from '../../services/BluetoothLE';
+import { useBluetoothLE } from '../../services/BluetoothLE';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
@@ -74,6 +75,8 @@ const styles = StyleSheet.create({
     margin: 30,
     position: 'absolute',
     bottom: 0,
+    left: 0,
+    right: 0,
   },
   profilePicture: {
     width: MY_AVATAR_SIZE,
@@ -97,6 +100,7 @@ const Radar = () => {
   const [discoveredUsers, setDiscoveredUsers] = useState(() => picsIndexes.map(() => null));
   const discoveredUsersRef = useRef(null); discoveredUsersRef.current = discoveredUsers;
   const [scanning, setScanning] = useState(false);
+  const [updateRecentScanTime] = mutations.updateRecentScanTime.use();
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onError: alertError,
     onCompleted: useCallback((data) => {
@@ -133,7 +137,10 @@ const Radar = () => {
       discoveredUsersIds.push(userId);
 
       queryUserProfile({
-        variables: { userId },
+        variables: {
+          userId,
+          recentlyScanned: true,
+        },
       });
     };
 
@@ -190,6 +197,8 @@ const Radar = () => {
       setMainText('Searching for people...');
       setScanning(true);
       setDiscoveredUsers(() => picsIndexes.map(() => null));
+      // Run in background
+      updateRecentScanTime();
 
       if (me.name === '__TEST__') {
         queryUserProfile({

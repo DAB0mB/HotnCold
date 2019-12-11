@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CONFIG from 'react-native-config';
 
+import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { MeProvider } from '../../services/Auth';
 import { useBluetoothLE } from '../../services/BluetoothLE';
@@ -26,6 +27,7 @@ const Discovery = Base.create(() => {
   const nativeServicesRef = useRef(null);
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
+  const [updateRecentScanTime] = mutations.updateRecentScanTime.use();
   const { me } = meQuery.data || {};
 
   const onBluetoothActivated = useCallback(() => {
@@ -61,6 +63,7 @@ const Discovery = Base.create(() => {
     ble.peripheral.addService(me.id, true);
     yield ble.peripheral.start();
 
+    updateRecentScanTime(true);
     restoreBleResettingState();
   }, [resettingBleState]);
 
