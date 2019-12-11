@@ -93,7 +93,7 @@ const Radar = () => {
   const discoveryNavigation = useNavigation(Discovery);
   const baseNav = useNavigation(Base);
   const alertError = useAlertError();
-  const [mainText, setMainText] = useState('Tap on yourself to discover people');
+  const [mainText, setMainText] = useState('Discover active people in the venue');
   const [discoveredUsers, setDiscoveredUsers] = useState(() => picsIndexes.map(() => null));
   const discoveredUsersRef = useRef(null); discoveredUsersRef.current = discoveredUsers;
   const [scanning, setScanning] = useState(false);
@@ -144,13 +144,13 @@ const Radar = () => {
 
       // In dev mode we might get extra (dummy) users
       if (discoveredUsers.length == 1) {
-        setMainText(`Found 1 available person in the venue`);
+        setMainText(`Found 1 available person`);
       }
       else if (discoveredUsers.length) {
-        setMainText(`Found ${discoveredUsers.length} available people in the venue`);
+        setMainText(`Found ${discoveredUsers.length} available people`);
       }
       else {
-        setMainText(`No one was found. Try looking in the map`);
+        setMainText('No one was found :-(');
       }
 
       discoveredUsersIds = [];
@@ -187,7 +187,7 @@ const Radar = () => {
     stopScan().then(() => {
       return ble.central.scan([], 5, false);
     }).then(() => {
-      setMainText('Looking for available people in the venue');
+      setMainText('Searching for people...');
       setScanning(true);
       setDiscoveredUsers(() => picsIndexes.map(() => null));
 
