@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { useDeviceInfo } from '../../services/DeviceInfo';
 import { colors, hexToRgba } from '../../theme';
 import { useCallbackTask } from '../../utils';
 
@@ -34,6 +35,7 @@ const styles = StyleSheet.create({
 });
 
 const Header = ({ baseNavigation, discoveryNavigation, me }) => {
+  const deviceInfo = useDeviceInfo();
   const [toggled, setToggled] = useState(false);
   const [pointerEvents, setPointerEvents] = useState('auto');
 
@@ -86,9 +88,11 @@ const Header = ({ baseNavigation, discoveryNavigation, me }) => {
   return (
     <LinearGradient colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} style={styles.gradient}>
       <View style={styles.container}>
-        <View pointerEvents={pointerEvents}>
-          <Switch value={toggled} onChange={navToScreen} />
-        </View>
+        {deviceInfo.supportsBluetooth && (
+          <View pointerEvents={pointerEvents}>
+            <Switch value={toggled} onChange={navToScreen} />
+          </View>
+        )}
         <View style={{ height: styles.logo.height }}>
           <Image source={require('../../assets/logo_light.png')} style={styles.logo} />
         </View>
