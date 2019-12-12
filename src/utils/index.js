@@ -51,4 +51,8 @@ export const fork = (obj) => {
   Object.setPrototypeOf(clone, proto);
 
   return clone;
-}
+};
+
+export const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};

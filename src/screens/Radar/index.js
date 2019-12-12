@@ -88,6 +88,15 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     overflow: 'hidden',
   },
+  tapContainer: {
+    bottom: -MY_AVATAR_SIZE * 0.88,
+    right: -MY_AVATAR_SIZE * 0.88,
+    transform: [{ rotate: '10deg' }],
+  },
+  tapImage: {
+    height: MY_AVATAR_SIZE,
+    resizeMode: 'contain',
+  },
 });
 
 const Radar = () => {
@@ -100,11 +109,12 @@ const Radar = () => {
   const [discoveredUsers, setDiscoveredUsers] = useState(() => picsIndexes.map(() => null));
   const discoveredUsersRef = useRef(null); discoveredUsersRef.current = discoveredUsers;
   const [scanning, setScanning] = useState(false);
+  const [initialScanned, setInitialScanned] = useState(false);
   const [resettingPeripheral, setResettingPeripheral] = useState(false);
   const [updateRecentScanTime] = mutations.updateRecentScanTime.use();
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onError: alertError,
-    onCompleted: useCallback((data) => {
+    onCompleted: useCallback((data = {}) => {
       const userProfile = data.userProfile;
 
       if (userProfile && !discoveredUsers.some(u => u && u.id == userProfile.id)) {
@@ -123,6 +133,13 @@ const Radar = () => {
       }
     }, [discoveredUsers]),
   });
+
+  useEffect(() => {
+    if (!scanning) return;
+    if (initialScanned) return;
+
+    setInitialScanned(true);
+  }, [initialScanned, scanning]);
 
   const resetPeripheral = useCallback(() => {
     setResettingPeripheral(true);
@@ -162,7 +179,7 @@ const Radar = () => {
         setMainText(`Found ${discoveredUsers.length} available people`);
       }
       else {
-        setMainText('No one was found :-(');
+        setMainText("No one was found :'(");
       }
 
       discoveredUsersIds = [];
@@ -222,9 +239,8 @@ const Radar = () => {
     if (!resettingPeripheral) return;
 
     try {
-      setMainText('Preparing radar...');
+      setMainText('Preparing Bluetooth...');
       setScanning(true);
-      setDiscoveredUsers(() => picsIndexes.map(() => null));
 
       yield ble.disable();
       yield ble.enable();
@@ -237,7 +253,7 @@ const Radar = () => {
       scan();
     }
     catch (e) {
-      setMainText('Something is wrong with your Bluetooth adapter');
+      setMainText("Something went wrong :'(");
       setScanning(false);
       alertError(e);
     }
@@ -251,6 +267,13 @@ const Radar = () => {
       {scanning && (
         <View style={styles.absoluteLayer}>
           <RippleLoader size={MY_AVATAR_SIZE * 2.5} color={colors.hot} />
+        </View>
+      )}
+      {!initialScanned && (
+        <View style={styles.absoluteLayer}>
+          <View style={styles.tapContainer}>
+            <Image style={styles.tapImage} source={require('../../assets/tap_here.png')} />
+          </View>
         </View>
       )}
       <View style={styles.absoluteLayer}>

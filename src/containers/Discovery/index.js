@@ -39,8 +39,6 @@ const Discovery = Base.create(() => {
     return useLoading(false);
   }
 
-  const isReady = nativeServicesReady && !requiredService;
-
   return useLoading(false,
     <MeProvider me={me}>
     <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation, me }}>
@@ -51,8 +49,8 @@ const Discovery = Base.create(() => {
         onError={alertError}
         onReady={setNativeGuardReady}
       >
-        <LoadingProvider loading={!isReady}>
-          {isReady && <DiscoveryRouter />}
+        <LoadingProvider>
+          {nativeServicesReady && !requiredService && <DiscoveryRouter />}
         </LoadingProvider>
       </NativeGuard>
     </HeaderProvider>

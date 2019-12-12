@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
 
 const UserAvatar = ({ i, j, user, avatarSize, onPress = noop }) => {
   const [visited, setVisited] = useState(false);
+  const [revealed, setRevealed] = useState(false);
   const [height] = useState(() => new Animated.Value(0));
 
   const handlePress = useCallback(() => {
@@ -26,6 +27,15 @@ const UserAvatar = ({ i, j, user, avatarSize, onPress = noop }) => {
   }, [onPress]);
 
   useEffect(() => {
+    // Fetch (and cache) before revealing so image can pop up without flashing
+    fetch(user.avatar).then(() => {
+      setRevealed(true);
+    });
+  }, [true]);
+
+  useEffect(() => {
+    if (!revealed) return;
+
     Animated.spring(
       height,
       {
@@ -33,9 +43,9 @@ const UserAvatar = ({ i, j, user, avatarSize, onPress = noop }) => {
         duration: 333,
       }
     ).start();
-  }, [true]);
+  }, [revealed]);
 
-  return (
+  return !revealed ? null : (
     <TouchableWithoutFeedback onPress={handlePress}>
       <View style={{ position: 'absolute', left: avatarSize * i, top: avatarSize * j, width: avatarSize, height: avatarSize, alignItems: 'center', justifyContent: 'center' }}>
         <Animated.View

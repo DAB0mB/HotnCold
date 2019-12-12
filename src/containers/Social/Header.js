@@ -10,15 +10,17 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 50,
-    paddingLeft: 20,
-    paddingRight: 20,
     position: 'absolute',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'stretch',
   },
-  chatContent: {
+  chatHeader: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.ink,
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   backIcon: {
     paddingRight: 10
@@ -31,7 +33,7 @@ const styles = StyleSheet.create({
   },
   name: {
     paddingLeft: 15,
-    color: colors.ink,
+    color: 'white',
     fontSize: 16,
     fontWeight: '900'
   }
@@ -64,9 +66,9 @@ Header.Chat = ({ baseNavigation, chat, me }) => {
 
   return (
     <TouchableWithoutFeedback onPress={baseNavigation.goBackOnceFocused}>
-      <View style={styles.chatContent}>
+      <View style={styles.chatHeader}>
         <View style={styles.backIcon}>
-          <McIcon name='arrow-left' size={20} color={colors.ink} solid />
+          <McIcon name='arrow-left' size={20} color='white' solid />
         </View>
         <Image style={styles.avatar} source={{ uri: recipient.avatar }} />
         <Text style={styles.name}>{recipient.name}</Text>

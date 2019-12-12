@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { View, Image, Switch, StyleSheet, TouchableWithoutFeedback, BackHandler } from 'react-native';
+import { View, Image, StyleSheet, TouchableWithoutFeedback, BackHandler } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -90,7 +90,13 @@ const Header = ({ baseNavigation, discoveryNavigation, me }) => {
       <View style={styles.container}>
         {deviceInfo.supportsBluetooth && (
           <View pointerEvents={pointerEvents}>
-            <Switch value={toggled} onChange={navToScreen} />
+            <TouchableWithoutFeedback onPress={navToScreen}>
+              {toggled ? (
+                <McIcon name='map' size={25} color={hexToRgba(colors.ink, 0.8)} />
+              ) : (
+                <McIcon name='radar' size={25} color={hexToRgba(colors.ink, 0.8)} />
+              )}
+            </TouchableWithoutFeedback>
           </View>
         )}
         <View style={{ height: styles.logo.height }}>

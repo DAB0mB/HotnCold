@@ -103,14 +103,8 @@ const Map = () => {
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
   const [readyState, updateReadyState] = useRenderer();
   const isMountedRef = useMountedRef();
-
-  const resetMapLoaded = useCallback(() => {
-    setMapLoaded(true);
-    updateReadyState();
-  }, [true]);
 
   const resetScreenFeatures = useCallback(async (e) => {
     let bbox = e.properties.visibleBounds;
@@ -224,7 +218,7 @@ const Map = () => {
         styleURL={CONFIG.MAPBOX_STYLE_URL}
         onPress={renderSelection}
         onRegionDidChange={resetScreenFeatures}
-        onDidFinishLoadingMap={resetMapLoaded}
+        onDidFinishLoadingMap={updateReadyState}
         compassViewPosition='top-left'
       >
         <MapboxGL.Camera

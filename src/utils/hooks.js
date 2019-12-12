@@ -38,7 +38,7 @@ export const useRenderer = (callback) => {
   }, [setKey]);
 
   useEffect(() => {
-    if (key && callbackRef.current) {
+    if (key && typeof callbackRef.current == 'function') {
       callbackRef.current();
     }
   }, [key, callbackRef]);

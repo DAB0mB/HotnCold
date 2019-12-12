@@ -18,12 +18,11 @@ const styles = StyleSheet.create({
 
 const LoadingContext = createContext(null);
 
-export const LoadingProvider = ({ children, loading: loadingProp }) => {
+export const LoadingProvider = ({ children }) => {
   const [isLoading, _setLoading] = useState(false);
   const [loadingView, setLoadingView] = useState(null);
   const [fadeAnim, setFadeAnim] = useState(null);
   const indexRef = useRef(0);
-  loadingProp = !!loadingProp;
 
   useEffect(() => {
     if (isLoading) return;
@@ -65,12 +64,6 @@ export const LoadingProvider = ({ children, loading: loadingProp }) => {
     indexRef.current++;
     _setLoading(isLoading);
   }, [isLoading]);
-
-  useEffect(() => {
-    if (loadingProp != null && loadingProp != isLoading) {
-      setLoading(loadingProp);
-    }
-  }, [loadingProp]);
 
   return (
     <LoadingContext.Provider value={[isLoading, setLoading]}>
