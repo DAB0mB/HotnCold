@@ -80,7 +80,7 @@ export const useMountedRef = () => {
 };
 
 export const useAsyncEffect = (fn, input) => {
-  const [initial, setInitial] = useState(true);
+  const initialRef = useRef(false);
   const [generator, setGenerator] = useState(fn);
   const [iterator, setIterator] = useState(null);
   const cbQueueRef = useRef([]);
@@ -108,15 +108,15 @@ export const useAsyncEffect = (fn, input) => {
   }, [iterator]);
 
   useEffect(() => {
-    if (initial) {
-      return () => {
-        setInitial(false);
-      };
+    if (initialRef.current) {
+      initialRef.current = false;
+
+      return;
     }
 
-    setGenerator(fn);
-    setIterator(null);
     cbQueueRef.current = [];
+    setIterator(null);
+    setGenerator(fn);
   }, input);
 
   useEffect(() => {
@@ -157,6 +157,32 @@ export const useAsyncEffect = (fn, input) => {
       mounted = false;
     };
   }, [iterator]);
+};
+
+export const useAsyncCallback = (fn, input) => {
+  const isMountedRef = useMountedRef();
+
+  return useCallback(async () => {
+    const generator = fn();
+    let iterator = generator.next();
+
+    while (!iterator.done) {
+      try {
+        const result = await iterator.value;
+
+        if (isMountedRef.current) {
+          iterator = generator.next(result);
+        }
+      }
+      catch (e) {
+        if (isMountedRef.current) {
+          iterator = generator.throw(e);
+        }
+      }
+    }
+
+    return iterator.value;
+  }, input);
 };
 
 export const useCbQueue = (input = [true]) => {

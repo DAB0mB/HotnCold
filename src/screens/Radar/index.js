@@ -9,11 +9,11 @@ import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMe } from '../../services/Auth';
-import { useBluetoothLE } from '../../services/BluetoothLE';
+import { useBluetoothLE, BLE_MODES } from '../../services/BluetoothLE';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
-import { pick, pickRandom } from '../../utils';
+import { pick, pickRandom, useAsyncEffect } from '../../utils';
 import UserAvatar from './UserAvatar';
 
 const noop = () => {};
@@ -100,6 +100,7 @@ const Radar = () => {
   const [discoveredUsers, setDiscoveredUsers] = useState(() => picsIndexes.map(() => null));
   const discoveredUsersRef = useRef(null); discoveredUsersRef.current = discoveredUsers;
   const [scanning, setScanning] = useState(false);
+  const [resettingPeripheral, setResettingPeripheral] = useState(false);
   const [updateRecentScanTime] = mutations.updateRecentScanTime.use();
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onError: alertError,
@@ -122,6 +123,10 @@ const Radar = () => {
       }
     }, [discoveredUsers]),
   });
+
+  const resetPeripheral = useCallback(() => {
+    setResettingPeripheral(true);
+  }, [true]);
 
   // TODO: Send a couple of query batches, after 2 seconds and after 3 seconds of scanning
   useEffect(() => {
@@ -212,6 +217,35 @@ const Radar = () => {
     baseNav.push('Profile', { user });
   }, [baseNav]);
 
+  useAsyncEffect(function* () {
+    if (ble.activeModes & BLE_MODES.PERIPHERAL) return;
+    if (!resettingPeripheral) return;
+
+    try {
+      setMainText('Preparing radar...');
+      setScanning(true);
+      setDiscoveredUsers(() => picsIndexes.map(() => null));
+
+      yield ble.disable();
+      yield ble.enable();
+
+      ble.peripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
+      ble.peripheral.addService(me.id, true);
+
+      yield ble.peripheral.start();
+
+      scan();
+    }
+    catch (e) {
+      setMainText('Something is wrong with your Bluetooth adapter');
+      setScanning(false);
+      alertError(e);
+    }
+    finally {
+      setResettingPeripheral(false);
+    }
+  }, [!!(ble.activeModes & BLE_MODES.PERIPHERAL), resettingPeripheral]);
+
   return (
     <View style={styles.container}>
       {scanning && (
@@ -220,7 +254,7 @@ const Radar = () => {
         </View>
       )}
       <View style={styles.absoluteLayer}>
-        <TouchableWithoutFeedback onPress={scanning ? noop : scan}>
+        <TouchableWithoutFeedback onPress={scanning ? noop : (ble.activeModes & BLE_MODES.PERIPHERAL) ? scan : resetPeripheral}>
           <View style={[styles.profilePicture, { borderColor: scanning ? colors.hot : colors.cold }]}>
             <Image source={{ uri: me.avatar }} resizeMode={styles.profilePicture.resizeMode} style={pick(styles.profilePicture, ['width', 'height'])} />
           </View>

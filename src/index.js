@@ -68,8 +68,8 @@ const App = () => {
 
   useEffect(() => {
     initializingNative.then((deviceInfo) => {
-      setNativeInitialized(true);
       setDeviceInfo(deviceInfo);
+      setNativeInitialized(true);
     });
   }, [true]);
 

@@ -1,17 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import CONFIG from 'react-native-config';
 
+import NativeGuard, { SERVICES } from '../../components/NativeGuard';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { MeProvider } from '../../services/Auth';
-import { useBluetoothLE } from '../../services/BluetoothLE';
 import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
 import { useHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
-import NativeServices, { SERVICES } from '../../services/NativeServices';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
-import { useRenderer, useAsyncEffect } from '../../utils';
 import Base from '../Base';
 import Header from './Header';
 import ServiceRequired from './ServiceRequired';
@@ -19,53 +17,12 @@ import ServiceRequired from './ServiceRequired';
 const Discovery = Base.create(() => {
   const { default: DiscoveryRouter } = require('../../routers/Discovery');
 
-  const [resettingBleState, updateBleResettingState, restoreBleResettingState] = useRenderer();
   const alertError = useAlertError();
   const baseNavigation = useNavigation(Base);
-  const ble = useBluetoothLE();
   const meQuery = queries.me.use({ onError: alertError });
-  const nativeServicesRef = useRef(null);
   const [requiredService, setRequiredService] = useState(null);
-  const [nativeServicesReady, setNativeServicesReady] = useState(false);
-  const [updateRecentScanTime] = mutations.updateRecentScanTime.use();
+  const [nativeServicesReady, setNativeGuardReady] = useState(false);
   const { me } = meQuery.data || {};
-
-  const onBluetoothActivated = useCallback(() => {
-    const {
-      exceptionalServices,
-      setExceptionalServices,
-    } = nativeServicesRef.current;
-
-    // Bluetooth reset is finalized when event is emitted, not when promise resolves
-    if (resettingBleState) {
-      setExceptionalServices(exceptionalServices ^ SERVICES.BLUETOOTH);
-      updateBleResettingState();
-    }
-    else {
-      setExceptionalServices(exceptionalServices | SERVICES.BLUETOOTH);
-
-      ble.peripheral.stop()
-
-      ble.disable().then(() => {
-        return ble.enable();
-      }),
-
-      updateBleResettingState();
-    }
-  }, [resettingBleState]);
-
-  useAsyncEffect(function* () {
-    if (resettingBleState !== 2) return;
-
-    updateBleResettingState();
-
-    ble.peripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
-    ble.peripheral.addService(me.id, true);
-    yield ble.peripheral.start();
-
-    updateRecentScanTime(true);
-    restoreBleResettingState();
-  }, [resettingBleState]);
 
   useEffect(() => {
     if (meQuery.called && !meQuery.loading && (meQuery.error || !me)) {
@@ -82,28 +39,22 @@ const Discovery = Base.create(() => {
     return useLoading(false);
   }
 
-  const isReady = (
-    nativeServicesReady &&
-    !requiredService &&
-    !resettingBleState
-  );
+  const isReady = nativeServicesReady && !requiredService;
 
   return useLoading(false,
     <MeProvider me={me}>
     <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation, me }}>
-      <NativeServices
+      <NativeGuard
         ServiceRequiredComponent={ServiceRequired}
-        services={SERVICES.BLUETOOTH | SERVICES.GPS}
-        onBluetoothActivated={onBluetoothActivated}
+        services={SERVICES.GPS}
         onRequireService={setRequiredService}
         onError={alertError}
-        onReady={setNativeServicesReady}
-        ref={nativeServicesRef}
+        onReady={setNativeGuardReady}
       >
         <LoadingProvider loading={!isReady}>
           {isReady && <DiscoveryRouter />}
         </LoadingProvider>
-      </NativeServices>
+      </NativeGuard>
     </HeaderProvider>
     </MeProvider>
   );

@@ -31,3 +31,24 @@ export const pickRandom = (vector) => {
 
   return vector[i];
 };
+
+export const fork = (obj) => {
+  if (!(obj instanceof Object)) {
+    return obj;
+  }
+
+  const clone = {};
+  const keys = [];
+  keys.push(...Object.getOwnPropertyNames(obj));
+  keys.push(...Object.getOwnPropertySymbols(obj));
+
+  for (let key of keys) {
+    const descriptor = Object.getOwnPropertyDescriptor(obj, key);
+    Object.defineProperty(clone, key, descriptor);
+  }
+
+  const proto = Object.getPrototypeOf(obj);
+  Object.setPrototypeOf(clone, proto);
+
+  return clone;
+}

@@ -4,22 +4,21 @@ import React, {
   useState,
   useMemo,
   useImperativeHandle,
-  forwardRef,
 } from 'react';
 import { View, Platform } from 'react-native';
-import BluetoothStateManager from 'react-native-bluetooth-state-manager';
-import GPSState from 'react-native-gps-state';
 
+import { BLE_STATES, useBluetoothLE } from '../services/BluetoothLE';
+import { GPS_STATES, useGeolocation } from '../services/Geolocation';
 import { useAsyncEffect } from '../utils';
 
 const noop = () => {};
 
 export const SERVICES = {
-  GPS:       0x01,
-  BLUETOOTH: 0x10,
+  GPS:       0b01,
+  BLUETOOTH: 0b10,
 };
 
-const NativeServices = forwardRef(({
+const NativeGuard = ({
   children,
   onReady = noop,
   onError = noop,
@@ -30,14 +29,15 @@ const NativeServices = forwardRef(({
   onRequireService = noop,
   ServiceRequiredComponent,
   services,
-}, ref) => {
-  const [exceptionalServices, setExceptionalServices] = useState(0);
+}) => {
   const [prevServices, setPrevServices] = useState(0);
   const [bluetoothState, setBluetoothState] = useState(null);
   const [gpsState, setGpsState] = useState(null);
   const [requiredService, setRequiredService] = useState(null);
   const [granted, setGranted] = useState(false);
   const [ready, setReady] = useState(false);
+  const ble = useBluetoothLE();
+  const gps = useGeolocation();
 
   useAsyncEffect(function* () {
     // Scope is more clear this way
@@ -99,14 +99,14 @@ const NativeServices = forwardRef(({
   useEffect(() => {
     if (!granted) return;
 
-    if ((services & SERVICES.GPS) && !(exceptionalServices & SERVICES.GPS) && gpsState === false) {
+    if ((services & SERVICES.GPS) && gpsState === false) {
       setRequiredService(SERVICES.GPS);
       onRequireService(SERVICES.GPS);
 
       return;
     }
 
-    if ((services & SERVICES.BLUETOOTH) && !(exceptionalServices & SERVICES.BLUETOOTH) && bluetoothState === false) {
+    if ((services & SERVICES.BLUETOOTH) && bluetoothState === false) {
       setRequiredService(SERVICES.BLUETOOTH);
       onRequireService(SERVICES.BLUETOOTH);
 
@@ -128,14 +128,14 @@ const NativeServices = forwardRef(({
     const gettingStates = [];
 
     if (!(prevServices & SERVICES.GPS) && (services & SERVICES.GPS)) {
-      gettingStates.push(GPSState.getStatus());
+      gettingStates.push(gps.state.getStatus());
     }
     else {
       gettingStates.push(null);
     }
 
     if (!(prevServices & SERVICES.BLUETOOTH) && (services & SERVICES.BLUETOOTH)) {
-      gettingStates.push(BluetoothStateManager.getState());
+      gettingStates.push(ble.state.getState());
     }
     else {
       gettingStates.push(null);
@@ -143,8 +143,8 @@ const NativeServices = forwardRef(({
 
     Promise.all(gettingStates).then(([gpsState, bluetoothState]) => {
       if (!mounted) return;
-      if (gpsState != null) setGpsState(gpsState === GPSState.AUTHORIZED);
-      if (bluetoothState != null) setBluetoothState(bluetoothState === 'PoweredOn');
+      if (gpsState != null) setGpsState(gpsState === GPS_STATES.AUTHORIZED);
+      if (bluetoothState != null) setBluetoothState(bluetoothState === BLE_STATES.POWRED_ON);
 
       setPrevServices(services);
     });
@@ -192,7 +192,7 @@ const NativeServices = forwardRef(({
     let gpsListener;
     if (services & SERVICES.GPS) {
       gpsListener = (state) => {
-        if (state === GPSState.AUTHORIZED) {
+        if (state === GPS_STATES.AUTHORIZED) {
           setGpsState(true);
         }
         else {
@@ -200,13 +200,13 @@ const NativeServices = forwardRef(({
         }
       };
 
-      GPSState.addListener(gpsListener);
+      gps.state.addListener(gpsListener);
     }
 
     let bluetoothListener;
     if (services & SERVICES.BLUETOOTH) {
-      bluetoothListener = BluetoothStateManager.onStateChange((state) => {
-        if (state === 'PoweredOn') {
+      bluetoothListener = ble.state.onStateChange((state) => {
+        if (state === BLE_STATES.POWRED_ON) {
           setBluetoothState(true);
         }
         else {
@@ -217,7 +217,7 @@ const NativeServices = forwardRef(({
 
     return () => {
       if (gpsListener) {
-        GPSState.removeListener(gpsListener);
+        gps.state.removeListener(gpsListener);
       }
 
       if (bluetoothListener) {
@@ -236,18 +236,12 @@ const NativeServices = forwardRef(({
     onReady(true);
   }, [granted, gpsState, bluetoothState]);
 
-  const imperativeHandle = {
-    exceptionalServices,
-    setExceptionalServices,
-  };
-  useImperativeHandle(ref, () => imperativeHandle, Object.values(imperativeHandle));
-
   return (
     <>
       {children}
       {requiredService && ServiceRequiredComponent && <ServiceRequiredComponent service={requiredService} />}
     </>
   );
-});
+};
 
-export default NativeServices;
+export default NativeGuard;

@@ -8,7 +8,6 @@ import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
 import { useHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
-import NativeServices, { SERVICES } from '../../services/NativeServices';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
 import Base from '../Base';
 import Header from './Header';

@@ -1,25 +1,42 @@
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import React, { createContext, useContext, useMemo } from 'react';
 // @react-native-community/geolocation has issues, don't use it
 import Geolocation from 'react-native-geolocation-service';
-import React, { createContext, useContext } from 'react';
+import GPSState from 'react-native-gps-state';
 
-import { useAsyncEffect } from '../utils';
+import { useAsyncEffect, fork } from '../utils';
 import { useCookie } from './Cookie';
 
 const GeolocationContext = createContext(null);
 
-export const GeolocationProvider = ({ fgService = Geolocation, bgService = BackgroundGeolocation, children }) => {
+export const GPS_STATES = {
+  NOT_DETERMINED:       GPSState.NOT_DETERMINED,
+  RESTRICTED:           GPSState.RESTRICTED,
+  DENIED:               GPSState.DENIED,
+  AUTHORIZED:           GPSState.AUTHORIZED,
+  AUTHORIZED_ALWAYS:    GPSState.AUTHORIZED_ALWAYS,
+  AUTHORIZED_WHENINUSE: GPSState.AUTHORIZED_WHENINUSE,
+};
+
+export const GeolocationProvider = ({
+  fgService = Geolocation,
+  bgService = BackgroundGeolocation,
+  stateManager = GPSState,
+  children
+}) => {
   return (
-    <GeolocationContext.Provider value={{ fgService, bgService }}>
+    <GeolocationContext.Provider value={{ fgService, bgService, stateManager }}>
       {children}
     </GeolocationContext.Provider>
   );
 };
 
 export const useGeolocation = () => {
-  const { fgService } = useContext(GeolocationContext);
+  const { fgService, stateManager } = useContext(GeolocationContext);
 
-  return fgService;
+  return useMemo(() =>
+    Object.assign(fork(fgService), { state: stateManager })
+  , [fgService, stateManager]);
 };
 
 export const useGeoBackgroundTelemetry = (config = {}) => {

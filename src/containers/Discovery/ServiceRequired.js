@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { SERVICES } from '../../services/NativeServices';
+import { SERVICES } from '../../components/NativeGuard';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
