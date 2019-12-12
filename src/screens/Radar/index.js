@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
 const Radar = () => {
   const me = useMe();
   const ble = useBluetoothLE();
-  const discoveryNavigation = useNavigation(Discovery);
+  const discoveryNav = useNavigation(Discovery);
   const baseNav = useNavigation(Base);
   const alertError = useAlertError();
   const [mainText, setMainText] = useState('Discover active people in the venue');
@@ -198,7 +198,7 @@ const Radar = () => {
     };
   }, [true]);
 
-  discoveryNavigation.useBackListener();
+  discoveryNav.useBackListener();
 
   const stopScan = useCallback(() => {
     let stoppingScan;

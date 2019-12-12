@@ -262,7 +262,12 @@ const Profile = () => {
     if (!result || !result.data) return;
 
     nav.push('Social', {
-      chat: result.data.findOrCreateChat
+      childNavigationState: {
+        routeName: 'Chat',
+        params: {
+          chat: result.data.findOrCreateChat
+        }
+      }
     });
   }, [nav, findOrCreateChat, user]);
 

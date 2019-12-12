@@ -14,11 +14,11 @@ import Base from '../Base';
 import Header from './Header';
 import ServiceRequired from './ServiceRequired';
 
-const Discovery = Base.create(() => {
+const Discovery = Base.create(({ navigation }) => {
   const { default: DiscoveryRouter } = require('../../routers/Discovery');
 
   const alertError = useAlertError();
-  const baseNavigation = useNavigation(Base);
+  const baseNav = useNavigation(Base);
   const meQuery = queries.me.use({ onError: alertError });
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeGuardReady] = useState(false);
@@ -27,9 +27,9 @@ const Discovery = Base.create(() => {
   useEffect(() => {
     if (meQuery.called && !meQuery.loading && (meQuery.error || !me)) {
       // Unauthorized
-      baseNavigation.replace('Profile');
+      baseNav.replace('Profile');
     }
-  }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNavigation]);
+  }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNav]);
 
   if (meQuery.loading) {
     return useLoading(true);
@@ -41,7 +41,7 @@ const Discovery = Base.create(() => {
 
   return useLoading(false,
     <MeProvider me={me}>
-    <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation, me }}>
+    <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNav, me }}>
       <NativeGuard
         ServiceRequiredComponent={ServiceRequired}
         services={SERVICES.GPS}
@@ -50,7 +50,7 @@ const Discovery = Base.create(() => {
         onReady={setNativeGuardReady}
       >
         <LoadingProvider>
-          {nativeServicesReady && !requiredService && <DiscoveryRouter />}
+          {nativeServicesReady && !requiredService && <DiscoveryRouter navigation={navigation} />}
         </LoadingProvider>
       </NativeGuard>
     </HeaderProvider>
@@ -59,11 +59,11 @@ const Discovery = Base.create(() => {
 });
 
 Discovery.create = (Component) => {
-  return ({ navigation: discoveryNavigation }) => {
+  return ({ navigation: discoveryNav }) => {
     const { headerProps, setHeaderProps } = useHeader();
 
     useEffect(() => {
-      setHeaderProps({ ...headerProps, discoveryNavigation });
+      setHeaderProps({ ...headerProps, discoveryNav });
 
       return () => {
         setHeaderProps(headerProps);
@@ -71,8 +71,8 @@ Discovery.create = (Component) => {
     }, [true]);
 
     return (
-      <NavigationProvider navKey={Discovery} navigation={discoveryNavigation}>
-        <Component />
+      <NavigationProvider navKey={Discovery} navigation={discoveryNav}>
+        <Component navigation={discoveryNav} />
       </NavigationProvider>
     );
   };

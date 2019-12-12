@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import GiftedChat from '../components/GiftedChat';
-import Base from '../containers/Base';
 import Social from '../containers/Social';
 import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
 const Chat = () => {
   const me = useMe();
   const alertError = useAlertError();
-  const baseNav = useNavigation(Base);
-  const chat = baseNav.getParam('chat');
+  const socialNav = useNavigation(Social);
+  const chat = socialNav.getParam('chat');
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
   const messagesQuery = queries.messages.use(chat.id, 20, {
@@ -77,5 +77,7 @@ const Chat = () => {
     </View>
   );
 };
+
+Chat.Header = require('./Header');
 
 export default Social.create(Chat);

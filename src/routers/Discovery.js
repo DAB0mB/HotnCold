@@ -1,11 +1,10 @@
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
 import { fromRight } from 'react-navigation-transitions';
 
 import MapScreen from '../screens/Map';
 import RadarScreen from '../screens/Radar';
+import createRouter from './createRouter';
 
-const Navigator = createStackNavigator({
+const Discovery = createRouter({
   Radar: {
     screen: RadarScreen,
   },
@@ -18,4 +17,4 @@ const Navigator = createStackNavigator({
   transitionConfig: () => fromRight(),
 });
 
-export default createAppContainer(Navigator);
+export default Discovery;

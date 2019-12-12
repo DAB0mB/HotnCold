@@ -1,12 +1,15 @@
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
 import { fromRight } from 'react-navigation-transitions';
 
 import ChatScreen from '../screens/Chat';
+import InboxScreen from '../screens/Inbox';
+import createRouter from './createRouter';
 
-const Navigator = createStackNavigator({
+const Social = createRouter({
   Chat: {
     screen: ChatScreen,
+  },
+  Inbox: {
+    screen: InboxScreen,
   },
 }, {
   initialRouteName: 'Chat',
@@ -14,4 +17,4 @@ const Navigator = createStackNavigator({
   transitionConfig: () => fromRight(),
 });
 
-export default createAppContainer(Navigator);
+export default Social;

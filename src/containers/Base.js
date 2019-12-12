@@ -14,11 +14,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const Base = () => {
+const Base = ({ navigation }) => {
   const { default: BaseRouter } = require('../routers/Base');
 
   return (
-    <BaseRouter />
+    <BaseRouter navigation={navigation} />
   );
 };
 
@@ -26,10 +26,10 @@ Base.create = (Component) => {
   return ({ navigation }) => {
     return (
       <NavigationProvider navKey={Base} navigation={navigation}>
-        <StatusBar translucent barStyle="dark-content" backgroundColor='white' />
+        <StatusBar translucent barStyle='dark-content' backgroundColor='white' />
         <SafeAreaView style={styles.container}>
           <LoadingProvider>
-            <Component />
+            <Component navigation={navigation} />
           </LoadingProvider>
         </SafeAreaView>
       </NavigationProvider>

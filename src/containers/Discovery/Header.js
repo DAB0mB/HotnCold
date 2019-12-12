@@ -34,24 +34,28 @@ const styles = StyleSheet.create({
   },
 });
 
-const Header = ({ baseNavigation, discoveryNavigation, me }) => {
+const Header = ({ baseNav, discoveryNav }) => {
   const deviceInfo = useDeviceInfo();
   const [toggled, setToggled] = useState(false);
   const [pointerEvents, setPointerEvents] = useState('auto');
 
-  const editProfile = useCallback(() => {
-    baseNavigation.push('Profile', { user: me, itsMe: true });
-  }, [baseNavigation, me]);
+  const navToInbox = useCallback(() => {
+    baseNav.push('Social', {
+      childNavigationState: {
+        routeName: 'Inbox',
+      },
+    });
+  }, [baseNav]);
 
   const navToScreen = useCallbackTask(() => {
-    if (discoveryNavigation.state.routeName === 'Map') {
+    if (discoveryNav.state.routeName === 'Map') {
       setToggled(true);
-      discoveryNavigation.push('Radar');
+      discoveryNav.push('Radar');
     } else {
       setToggled(false);
-      discoveryNavigation.goBack();
+      discoveryNav.goBack();
     }
-  }, [discoveryNavigation]);
+  }, [discoveryNav]);
 
   useEffect(() => {
     setPointerEvents('none');
@@ -66,13 +70,13 @@ const Header = ({ baseNavigation, discoveryNavigation, me }) => {
   }, [toggled]);
 
   useEffect(() => {
-    if (!discoveryNavigation) return;
+    if (!discoveryNav) return;
 
     const backHandler = () => {
-      if (discoveryNavigation.state.routeName !== 'Radar') return true;
+      if (discoveryNav.state.routeName !== 'Radar') return true;
       if (pointerEvents !== 'auto') return true;
 
-      discoveryNavigation.goBack();
+      discoveryNav.goBack();
       setToggled(false);
 
       return true;
@@ -83,7 +87,7 @@ const Header = ({ baseNavigation, discoveryNavigation, me }) => {
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', backHandler);
     };
-  }, [discoveryNavigation, pointerEvents]);
+  }, [discoveryNav, pointerEvents]);
 
   return (
     <LinearGradient colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} style={styles.gradient}>
@@ -102,8 +106,8 @@ const Header = ({ baseNavigation, discoveryNavigation, me }) => {
         <View style={{ height: styles.logo.height }}>
           <Image source={require('../../assets/logo_light.png')} style={styles.logo} />
         </View>
-        <TouchableWithoutFeedback onPress={editProfile}>
-          <McIcon name='account-edit' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
+        <TouchableWithoutFeedback onPress={navToInbox}>
+          <McIcon name='account-group' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
         </TouchableWithoutFeedback>
       </View>
     </LinearGradient>

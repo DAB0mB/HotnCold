@@ -6,6 +6,7 @@ import user from './user.fragment';
 const chat = gql `
   fragment Chat on Chat {
     id
+    title
     firstMessage {
       ...Message
     }
@@ -13,12 +14,12 @@ const chat = gql `
       ...Message
     }
     users {
-      ...User
+      ...UserProfile
     }
   }
 
   ${message}
-  ${user}
+  ${user.profile}
 `;
 
 chat.read = (cache, id) => {

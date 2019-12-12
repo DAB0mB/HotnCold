@@ -1,12 +1,11 @@
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
 import { fromBottom } from 'react-navigation-transitions';
 
 import DiscoveryContainer from '../containers/Discovery';
 import SocialContainer from '../containers/Social';
 import ProfileScreen from '../screens/Profile';
+import createRouter from './createRouter';
 
-const Navigator = createStackNavigator({
+const Base = createRouter({
   Profile: {
     screen: ProfileScreen,
   },
@@ -22,4 +21,4 @@ const Navigator = createStackNavigator({
   transitionConfig: () => fromBottom(),
 });
 
-export default createAppContainer(Navigator);
+export default Base;

@@ -23,20 +23,20 @@ const styles = StyleSheet.create({
   },
 });
 
-const Social = Base.create(() => {
+const Social = Base.create(({ navigation }) => {
   const { default: SocialRouter } = require('../../routers/Social');
 
   const alertError = useAlertError();
-  const baseNavigation = useNavigation(Base);
+  const baseNav = useNavigation(Base);
   const meQuery = queries.me.use({ onError: alertError });
   const { me } = meQuery.data || {};
 
   useEffect(() => {
     if (meQuery.called && !meQuery.loading && (meQuery.error || !me)) {
       // Unauthorized
-      baseNavigation.replace('Profile');
+      baseNav.replace('Profile');
     }
-  }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNavigation]);
+  }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNav]);
 
   if (meQuery.loading) {
     return useLoading(true);
@@ -49,24 +49,24 @@ const Social = Base.create(() => {
   return useLoading(false,
     <View style={styles.container}>
       <MeProvider me={me}>
-      <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNavigation, me }}>
       <LoadingProvider>
+      <HeaderProvider HeaderComponent={Header}>
         <View style={styles.body}>
-          <SocialRouter />
+          <SocialRouter navigation={navigation} />
         </View>
-      </LoadingProvider>
       </HeaderProvider>
+      </LoadingProvider>
       </MeProvider>
     </View>
   );
 });
 
 Social.create = (Component) => {
-  return ({ navigation: socialNavigation }) => {
+  return ({ navigation: socialNav }) => {
     const { headerProps, setHeaderProps } = useHeader();
 
     useEffect(() => {
-      setHeaderProps({ ...headerProps, socialNavigation });
+      setHeaderProps({ ...headerProps, socialNav, Contents: Component.Header });
 
       return () => {
         setHeaderProps(headerProps);
@@ -74,8 +74,8 @@ Social.create = (Component) => {
     }, [true]);
 
     return (
-      <NavigationProvider navKey={Social} navigation={socialNavigation}>
-        <Component />
+      <NavigationProvider navKey={Social} navigation={socialNav}>
+        <Component navigation={socialNav} />
       </NavigationProvider>
     );
   };
