@@ -27,15 +27,15 @@ chats.use = (options = {}) => {
       updateQuery(prev, { subscriptionData }) {
         if (!subscriptionData.data) return;
 
-        const { chatBumed } = subscriptionData.data;
+        const { chatBumped } = subscriptionData.data;
         const chats = prev.chats.slice();
-        const chatIndex = chats.findIndex(c => c.id === chatBumed.id);
+        const chatIndex = chats.findIndex(c => c.id === chatBumped.id);
 
         if (~chatIndex) {
           chats.splice(chatIndex, 1);
         }
 
-        chats.push(chatBumed);
+        chats.push(chatBumped);
 
         return { chats };
       },

@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 
 import * as queries from '../../graphql/queries';
 import { MeProvider } from '../../services/Auth';
@@ -20,6 +21,9 @@ const styles = StyleSheet.create({
     marginTop: 50,
     flex: 1,
   },
+  loading: {
+    backgroundColor: 'transparent',
+  }
 });
 
 const Social = Base.create(({ navigation }) => {
@@ -48,13 +52,13 @@ const Social = Base.create(({ navigation }) => {
   return useLoading(false,
     <View style={styles.container}>
       <MeProvider me={me}>
-        <LoadingProvider>
-          <HeaderProvider HeaderComponent={Header} defaultProps={{ navKey: Social }}>
+        <HeaderProvider HeaderComponent={Header} defaultProps={{ navKey: Social }}>
+          <LoadingProvider loadingStyle={styles.loading}>
             <View style={styles.body}>
               <SocialRouter navigation={navigation} />
             </View>
-          </HeaderProvider>
-        </LoadingProvider>
+          </LoadingProvider>
+        </HeaderProvider>
       </MeProvider>
     </View>
   );
@@ -64,11 +68,17 @@ Social.create = (Component) => {
   return function SocialScreen({ navigation: socialNav }) {
     const { headerProps, setHeaderProps } = useHeader();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       setHeaderProps({ ...headerProps, socialNav, Contents: Component.Header });
 
+      const listener = socialNav.addListener('willBlur', ({ action }) => {
+        if (action.type === NavigationActions.BACK) {
+          setHeaderProps(headerProps);
+        }
+      });
+
       return () => {
-        setHeaderProps(headerProps);
+        listener.remove();
       };
     }, [true]);
 

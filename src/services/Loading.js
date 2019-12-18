@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 
 const LoadingContext = createContext(null);
 
-export const LoadingProvider = ({ children }) => {
+export const LoadingProvider = ({ loadingStyle = {}, children }) => {
   const [isLoading, _setLoading] = useState(false);
   const [loadingView, setLoadingView] = useState(null);
   const [fadeAnim, setFadeAnim] = useState(null);
@@ -48,14 +48,14 @@ export const LoadingProvider = ({ children }) => {
       const fadeAnim = new Animated.Value(1);
       setFadeAnim(fadeAnim);
       setLoadingView(
-        <Animated.View style={[styles.loadingBuffer, { opacity: fadeAnim }]}>
+        <Animated.View style={[styles.loadingBuffer, loadingStyle, { opacity: fadeAnim }]}>
           <Loader />
         </Animated.View>
       );
     }
     else {
       setLoadingView(
-        <Animated.View pointerEvents='none' style={[styles.loadingBuffer, { opacity: fadeAnim }]}>
+        <Animated.View pointerEvents='none' style={[styles.loadingBuffer, loadingStyle, { opacity: fadeAnim }]}>
           <Loader />
         </Animated.View>
       );

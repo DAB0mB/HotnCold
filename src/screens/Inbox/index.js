@@ -2,7 +2,6 @@ import moment from 'moment';
 import React, { useCallback } from 'react';
 import { StyleSheet, View, FlatList, TouchableHighlight, Text, Image } from 'react-native';
 
-import Base from '../../containers/Base';
 import Social from '../../containers/Social';
 import { colors, hexToRgba } from '../../theme';
 import * as queries from '../../graphql/queries';
@@ -72,10 +71,7 @@ const getChatId = c => c.id;
 const Inbox = () => {
   const chatsQuery = queries.chats.use();
   const { chats = [] } = chatsQuery.data || {};
-  const baseNav = useNavigation(Base);
   const socialNav = useNavigation(Social);
-
-  baseNav.useBackListener();
 
   const navToChat = useCallback((chat) => {
     socialNav.push('Chat', { chat });

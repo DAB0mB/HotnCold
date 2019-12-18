@@ -3,7 +3,7 @@ import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../../containers/Base';
-import { colors } from '../../theme';
+import Social from '../../containers/Social';
 import { useMe } from '../../services/Auth';
 import { useNavigation } from '../../services/Navigation';
 
@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.ink,
     paddingLeft: 20,
     paddingRight: 20,
   },
@@ -36,9 +35,12 @@ const styles = StyleSheet.create({
 
 const Header = () => {
   const me = useMe();
+  const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
 
-  baseNav.useBackListener();
+  socialNav.useBackListener(() => {
+    baseNav.goBack();
+  });
 
   const editProfile = useCallback(() => {
     baseNav.push('Profile', { user: me, itsMe: true });
@@ -46,7 +48,7 @@ const Header = () => {
 
   return (
     <View style={styles.header}>
-      <TouchableWithoutFeedback onPress={baseNav.goBackOnceFocused}>
+      <TouchableWithoutFeedback onPress={socialNav.goBackOnceFocused}>
         <View style={styles.backIcon}>
           <McIcon name='arrow-left' size={20} color='white' solid />
         </View>

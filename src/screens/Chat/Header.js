@@ -1,19 +1,18 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet, Image } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
-import { colors } from '../../theme';
 import { useMe } from '../../services/Auth';
 import { useNavigation } from '../../services/Navigation';
+import { pick } from '../../utils';
 
 const styles = StyleSheet.create({
   header: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.ink,
     paddingLeft: 20,
     paddingRight: 20,
   },
@@ -34,33 +33,38 @@ const styles = StyleSheet.create({
   }
 });
 
+const noop = () => {};
+
 const Header = () => {
   const me = useMe();
   const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
   const chat = socialNav.getParam('chat');
-  const [prevNav] = useState(socialNav.isFirstRouteInParent() ? socialNav : baseNav);
+  const activeNav = useMemo(() => socialNav.isFirstRouteInParent() ? baseNav : socialNav, [true]);
   const recipient = useMemo(() => chat.users.find(u => u.id !== me.id), [chat.id, me.id]);
 
-  prevNav.useBackListener();
+  activeNav.useBackListener();
 
   const navToProfile = useCallback(() => {
-    baseNav.push('profile', {
-      user: recipient
+    baseNav.push('Profile', {
+      user: recipient,
+      isRecipient: true,
     });
   }, [baseNav]);
 
   return (
-    <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() && prevNav.goBackOnceFocused}>
+    <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() ? baseNav.goBackOnceFocused : noop}>
       <View style={styles.header}>
-        <TouchableWithoutFeedback onPress={!socialNav.isFirstRouteInParent() && prevNav.goBackOnceFocused}>
+        <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() ? noop : socialNav.goBackOnceFocused}>
           <View style={styles.backIcon}>
             <McIcon name='arrow-left' size={20} color='white' solid />
           </View>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={!socialNav.isFirstRouteInParent() && navToProfile}>
-          <Image style={styles.avatar} source={{ uri: recipient.avatar }} />
-          <Text style={styles.name}>{recipient.name}</Text>
+        <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() ? noop : navToProfile}>
+          <View style={pick(styles.header, ['flexDirection', 'alignItems'])}>
+            <Image style={styles.avatar} source={{ uri: recipient.avatar }} />
+            <Text style={styles.name}>{recipient.name}</Text>
+          </View>
         </TouchableWithoutFeedback>
       </View>
     </TouchableWithoutFeedback>

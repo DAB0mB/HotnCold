@@ -116,9 +116,10 @@ const styles = StyleSheet.create({
 });
 
 const Profile = () => {
-  const nav = useNavigation();
-  const user = nav.getParam('user');
-  const itsMe = nav.getParam('itsMe');
+  const baseNav = useNavigation(Base);
+  const user = baseNav.getParam('user');
+  const isRecipient = baseNav.getParam('isRecipient');
+  const itsMe = baseNav.getParam('itsMe');
   const editMode = !!(!user || itsMe);
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
@@ -162,9 +163,9 @@ const Profile = () => {
         alertSuccess('Profile successfully updated');
       }
       else {
-        nav.replace('Discovery');
+        baseNav.replace('Discovery');
       }
-    }, [itsMe, alertSuccess, nav, saving]),
+    }, [itsMe, alertSuccess, baseNav, saving]),
   });
   const [uploadPicture] = mutations.uploadPicture.use({
     onError: alertError,
@@ -241,7 +242,7 @@ const Profile = () => {
 
   // Static parameter
   if (user) {
-    nav.useBackListener();
+    baseNav.useBackListener();
   }
 
   const deletePicture = useCallback(() => {
@@ -255,12 +256,18 @@ const Profile = () => {
   }, [pictureIndex, pictures, pendingPictures]);
 
   const navToChat = useCallback(async () => {
+    if (isRecipient) {
+      baseNav.goBack();
+
+      return;
+    }
+
     const result = await findOrCreateChat();
 
     // Probably validation issue
     if (!result || !result.data) return;
 
-    nav.push('Social', {
+    baseNav.push('Social', {
       childNavigationState: {
         routeName: 'Chat',
         params: {
@@ -268,7 +275,7 @@ const Profile = () => {
         }
       }
     });
-  }, [nav, findOrCreateChat, user]);
+  }, [baseNav, findOrCreateChat, user]);
 
   return (
     <ScrollView style={styles.container}>
@@ -325,7 +332,7 @@ const Profile = () => {
 
       {user && !typing && (
         <View style={styles.backButton}>
-          <TouchableWithoutFeedback onPress={nav.goBackOnceFocused}>
+          <TouchableWithoutFeedback onPress={baseNav.goBackOnceFocused}>
             <View style={styles.icon}>
               <McIcon name='arrow-left' size={25} color='white' solid />
             </View>
