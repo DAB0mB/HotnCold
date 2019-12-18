@@ -1,6 +1,7 @@
 import moment from 'moment';
 import React, { useCallback } from 'react';
-import { StyleSheet, View, FlatList, TouchableHighlight, Text, Image } from 'react-native';
+import { StyleSheet, View, FlatList, Text, Image } from 'react-native';
+import Ripple from 'react-native-material-ripple';
 
 import Social from '../../containers/Social';
 import { colors, hexToRgba } from '../../theme';
@@ -78,8 +79,8 @@ const Inbox = () => {
   }, [socialNav]);
 
   const renderChatItem = useCallback(({ item: chat, index, separators }) => (
-    <TouchableHighlight
-      onPress={() => navToChat(chat)}
+    <Ripple
+      onPressOut={() => navToChat(chat)}
       onShowUnderlay={separators.highlight}
       onHideUnderlay={separators.unhighlight}
     >
@@ -104,7 +105,7 @@ const Inbox = () => {
           </View>
         </View>
       </View>
-    </TouchableHighlight>
+    </Ripple>
   ), [navToChat]);
 
   return useLoading(chatsQuery.loaded,

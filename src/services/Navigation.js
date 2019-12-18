@@ -52,7 +52,7 @@ export const useNavigation = (navKey) => {
     }, [true]);
 
     // Timing is important. Register immediately
-    useMemo(() => {
+    useLayoutEffect(() => {
       const listener = nav.addListener('didFocus', utilizeFocus);
       BackHandler.addEventListener('hardwareBackPress', goBackOnceFocused);
 

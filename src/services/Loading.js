@@ -1,9 +1,15 @@
-
-import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
+import React, {
+  useLayoutEffect,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from 'react';
 import { StyleSheet, Animated } from 'react-native';
 
 import Loader from '../components/Loader';
-import { useRootLayoutEffect } from '../utils';
 
 const styles = StyleSheet.create({
   loadingBuffer: {
@@ -74,10 +80,15 @@ export const LoadingProvider = ({ loadingStyle = {}, children }) => {
 };
 
 export const useLoading = (loadingParam, children = null) => {
+  const { useNavigation } = require('./Navigation');
+
+  const nav = useNavigation();
   const [isLoading, setLoading] = useContext(LoadingContext);
   loadingParam = !!loadingParam;
 
-  useRootLayoutEffect(() => {
+  useLayoutEffect(() => {
+    if (!nav.isFocused()) return;
+
     if (loadingParam !== isLoading) {
       setLoading(loadingParam);
     }
