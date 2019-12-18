@@ -4,8 +4,8 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../../containers/Base';
 import { colors } from '../../theme';
-import { useMe } from '../services/Auth';
-import { useNavigation } from '../services/Navigation';
+import { useMe } from '../../services/Auth';
+import { useNavigation } from '../../services/Navigation';
 
 const styles = StyleSheet.create({
   header: {
@@ -25,6 +25,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '900'
   },
+  editProfile: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
   editProfileIcon: {
     paddingRight: 10,
   },
@@ -42,19 +46,19 @@ const Header = () => {
 
   return (
     <View style={styles.header}>
-      <View style={{ flex: 1 }}>
-        <TouchableWithoutFeedback onPress={baseNav.goBackOnceFocused}>
-          <View style={styles.backIcon}>
-            <McIcon name='arrow-left' size={20} color='white' solid />
-          </View>
-        </TouchableWithoutFeedback>
-        <Text style={styles.title}>Chats</Text>
-      </View>
-      <TouchableWithoutFeedback onPress={editProfile}>
-        <View style={styles.editProfileIcon}>
-          <McIcon name='account-edit' size={20} color='white' solid />
+      <TouchableWithoutFeedback onPress={baseNav.goBackOnceFocused}>
+        <View style={styles.backIcon}>
+          <McIcon name='arrow-left' size={20} color='white' solid />
         </View>
       </TouchableWithoutFeedback>
+      <Text style={styles.title}>Chats</Text>
+      <View style={styles.editProfile}>
+        <TouchableWithoutFeedback onPress={editProfile}>
+          <View style={styles.editProfileIcon}>
+            <McIcon name='account-edit' size={20} color='white' solid />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
     </View>
   );
 };

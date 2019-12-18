@@ -5,8 +5,8 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
 import { colors } from '../../theme';
-import { useMe } from '../services/Auth';
-import { useNavigation } from '../services/Navigation';
+import { useMe } from '../../services/Auth';
+import { useNavigation } from '../../services/Navigation';
 
 const styles = StyleSheet.create({
   header: {

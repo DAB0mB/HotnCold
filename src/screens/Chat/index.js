@@ -1,14 +1,15 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import GiftedChat from '../components/GiftedChat';
-import Social from '../containers/Social';
-import * as mutations from '../graphql/mutations';
-import * as queries from '../graphql/queries';
-import { useMe } from '../services/Auth';
-import { useAlertError } from '../services/DropdownAlert';
-import { useLoading } from '../services/Loading';
-import { useNavigation } from '../services/Navigation';
+import GiftedChat from '../../components/GiftedChat';
+import Social from '../../containers/Social';
+import * as mutations from '../../graphql/mutations';
+import * as queries from '../../graphql/queries';
+import { useMe } from '../../services/Auth';
+import { useAlertError } from '../../services/DropdownAlert';
+import { useLoading } from '../../services/Loading';
+import { useNavigation } from '../../services/Navigation';
+import Header from './Header';
 
 const styles = StyleSheet.create({
   container: {
@@ -77,6 +78,6 @@ const Chat = () => {
   );
 };
 
-Chat.Header = require('./Header');
+Chat.Header = Header;
 
 export default Social.create(Chat);

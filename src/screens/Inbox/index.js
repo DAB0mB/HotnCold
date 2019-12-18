@@ -4,34 +4,41 @@ import { StyleSheet, View, FlatList, TouchableHighlight, Text, Image } from 'rea
 
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
-import { colors } from '../../theme';
-import * as queries from '../graphql/queries';
-import { useLoading } from '../services/Loading';
-import { useNavigation } from '../services/Navigation';
+import { colors, hexToRgba } from '../../theme';
+import * as queries from '../../graphql/queries';
+import { useLoading } from '../../services/Loading';
+import { useNavigation } from '../../services/Navigation';
+import Header from './Header';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   chatItem: {
+    paddingLeft: 10,
+    paddingRight: 10,
     flexDirection: 'row',
-    height: 100,
   },
   chatAvatar: {
-    height: 100,
+    width: 60,
+    height: '100%',
+    justifyContent: 'center',
   },
   chatAvatarImage: {
     resizeMode: 'contain',
-    height: 100,
+    height: 50,
+    marginRight: 10,
     borderRadius: 999,
   },
   chatDetails: {
     flex: 1,
     flexDirection: 'column',
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   chatDetailsBorder: {
-    borderBottomRadius: 1,
-    borderBottomColor: colors.gray,
+    borderBottomWidth: 1,
+    borderBottomColor: hexToRgba(colors.gray, .5),
   },
   chatDescription: {
     flexDirection: 'row',
@@ -74,7 +81,7 @@ const Inbox = () => {
     socialNav.push('Chat', { chat });
   }, [socialNav]);
 
-  const renderChatItem = useCallback((chat, index, separators) => (
+  const renderChatItem = useCallback(({ item: chat, index, separators }) => (
     <TouchableHighlight
       onPress={() => navToChat(chat)}
       onShowUnderlay={separators.highlight}
@@ -82,7 +89,7 @@ const Inbox = () => {
     >
       <View style={styles.chatItem}>
         <View style={styles.chatAvatar}>
-          <Image style={styles.chatAvatarImage} />
+          <Image style={styles.chatAvatarImage} source={{ uri: chat.picture }} />
         </View>
 
         <View style={[styles.chatDetails, index && styles.chatDetailsBorder].filter(Boolean)}>
@@ -111,6 +118,6 @@ const Inbox = () => {
   );
 };
 
-Inbox.Header = require('./Header');
+Inbox.Header = Header;
 
 export default Social.create(Inbox);

@@ -19,7 +19,7 @@ const Header = ({ socialNav, navKey, Contents = () => null }) => {
   return (
     <NavigationProvider navKey={navKey} navigation={socialNav}>
       <View style={styles.container}>
-        {Contents}
+        <Contents />
       </View>
     </NavigationProvider>
   );

@@ -7,6 +7,7 @@ const chat = gql `
   fragment Chat on Chat {
     id
     title
+    picture
     firstMessage {
       ...Message
     }

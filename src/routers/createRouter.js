@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { createAppContainer } from 'react-navigation';
+import { createAppContainer, NavigationActions } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 const createRouter = (routes, options) => {
@@ -8,16 +8,14 @@ const createRouter = (routes, options) => {
 
   return function Router({ navigation, children }) {
     const loadNavigationState = useCallback(() => {
-      // *Optional
       // Signature: https://reactnavigation.org/docs/en/stack-actions.html#replace
-      const state = navigation.getParam('childNavigationState');
+      const routeState = navigation.getParam('childNavigationState');
 
-      if (state) {
-        return {
-          key: navigation.state.key + '-child',
-          routeName: options && options.initialRouteName,
-          ...state,
-        };
+      if (routeState) {
+        const rootState = Navigator.router.getStateForAction(NavigationActions.init());
+        Object.assign(rootState.routes[0], routeState);
+
+        return rootState;
       }
     }, [navigation]);
 
