@@ -24,7 +24,7 @@ updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
         fragments.user.write(cache, { ...me, location });
       },
       variables: { location },
-    })
+    });
   }, [me, superMutate, defaultLocation]);
 
   return [mutate, mutation];

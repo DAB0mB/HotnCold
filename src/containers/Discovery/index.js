@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import CONFIG from 'react-native-config';
+import React, { useEffect, useState } from 'react';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
-import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { MeProvider } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
@@ -41,25 +39,25 @@ const Discovery = Base.create(({ navigation }) => {
 
   return useLoading(false,
     <MeProvider me={me}>
-    <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNav, me }}>
-      <NativeGuard
-        ServiceRequiredComponent={ServiceRequired}
-        services={SERVICES.GPS}
-        onRequireService={setRequiredService}
-        onError={alertError}
-        onReady={setNativeGuardReady}
-      >
-        <LoadingProvider>
-          {nativeServicesReady && !requiredService && <DiscoveryRouter navigation={navigation} />}
-        </LoadingProvider>
-      </NativeGuard>
-    </HeaderProvider>
+      <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNav, me }}>
+        <NativeGuard
+          ServiceRequiredComponent={ServiceRequired}
+          services={SERVICES.GPS}
+          onRequireService={setRequiredService}
+          onError={alertError}
+          onReady={setNativeGuardReady}
+        >
+          <LoadingProvider>
+            {nativeServicesReady && !requiredService && <DiscoveryRouter navigation={navigation} />}
+          </LoadingProvider>
+        </NativeGuard>
+      </HeaderProvider>
     </MeProvider>
   );
 });
 
 Discovery.create = (Component) => {
-  return ({ navigation: discoveryNav }) => {
+  return function DiscoveryScreen({ navigation: discoveryNav }) {
     const { headerProps, setHeaderProps } = useHeader();
 
     useEffect(() => {

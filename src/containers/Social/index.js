@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import CONFIG from 'react-native-config';
 
 import * as queries from '../../graphql/queries';
 import { MeProvider } from '../../services/Auth';
@@ -49,20 +48,20 @@ const Social = Base.create(({ navigation }) => {
   return useLoading(false,
     <View style={styles.container}>
       <MeProvider me={me}>
-      <LoadingProvider>
-      <HeaderProvider HeaderComponent={Header}>
-        <View style={styles.body}>
-          <SocialRouter navigation={navigation} />
-        </View>
-      </HeaderProvider>
-      </LoadingProvider>
+        <LoadingProvider>
+          <HeaderProvider HeaderComponent={Header} defaultProps={{ navKey: Social }}>
+            <View style={styles.body}>
+              <SocialRouter navigation={navigation} />
+            </View>
+          </HeaderProvider>
+        </LoadingProvider>
       </MeProvider>
     </View>
   );
 });
 
 Social.create = (Component) => {
-  return ({ navigation: socialNav }) => {
+  return function SocialScreen({ navigation: socialNav }) {
     const { headerProps, setHeaderProps } = useHeader();
 
     useEffect(() => {

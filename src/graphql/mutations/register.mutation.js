@@ -39,7 +39,7 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
         client.clearStore();
       },
       variables: { name, birthDate, occupation, bio, pictures },
-    })
+    });
   }, [
     superMutate,
     defaultArgs.name,

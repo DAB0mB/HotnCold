@@ -1,4 +1,4 @@
-import { useMutation, useApolloClient } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useCallback } from 'react';
 import UUID from 'uuid/v4';
@@ -69,7 +69,7 @@ sendMessage.use = (chatId, options = {}) => {
       },
       variables: { chatId, text: message.text },
       ...options,
-    })
+    });
   }, [
     superMutate,
     chatId,

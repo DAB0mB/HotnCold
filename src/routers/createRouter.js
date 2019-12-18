@@ -6,7 +6,7 @@ const createRouter = (routes, options) => {
   const Navigator = createStackNavigator(routes, options);
   const Container = createAppContainer(Navigator);
 
-  return ({ navigation, children }) => {
+  return function Router({ navigation, children }) {
     const loadNavigationState = useCallback(() => {
       // *Optional
       // Signature: https://reactnavigation.org/docs/en/stack-actions.html#replace

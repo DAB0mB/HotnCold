@@ -62,15 +62,15 @@ export const BluetoothLEProvider = ({
 
   return (
     <BleCentralContext.Provider value={peripheralService}>
-    <BlePeripheralContext.Provider value={centralService}>
-    <BleStateContext.Provider value={stateService}>
-    <BleEmitterContext.Provider value={eventEmitter}>
-    <BleModesContext.Provider value={activeModesState}>
-      {children}
-    </BleModesContext.Provider>
-    </BleEmitterContext.Provider>
-    </BleStateContext.Provider>
-    </BlePeripheralContext.Provider>
+      <BlePeripheralContext.Provider value={centralService}>
+        <BleStateContext.Provider value={stateService}>
+          <BleEmitterContext.Provider value={eventEmitter}>
+            <BleModesContext.Provider value={activeModesState}>
+              {children}
+            </BleModesContext.Provider>
+          </BleEmitterContext.Provider>
+        </BleStateContext.Provider>
+      </BlePeripheralContext.Provider>
     </BleCentralContext.Provider>
   );
 };
@@ -111,7 +111,7 @@ export const useBluetoothLE = () => {
         }
         else {
           state.enable(...args).catch(reject);
-          enableCallbacks.push(resolve)
+          enableCallbacks.push(resolve);
         }
       });
     });
@@ -122,7 +122,7 @@ export const useBluetoothLE = () => {
       state.getState().then((s) => {
         if (s === BLE_STATES.POWERED_ON) {
           state.disable(...args).catch(reject);
-          disableCallbacks.push(resolve)
+          disableCallbacks.push(resolve);
         }
         else {
           resolve();

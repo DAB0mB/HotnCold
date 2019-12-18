@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Animated, StyleSheet, Image, View, TouchableWithoutFeedback } from 'react-native';
+import { Animated, StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
 
 import { colors } from '../../theme';
 

@@ -1,11 +1,5 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-  useMemo,
-  useImperativeHandle,
-} from 'react';
-import { View, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 
 import { BLE_STATES, useBluetoothLE } from '../services/BluetoothLE';
 import { GPS_STATES, useGeolocation } from '../services/Geolocation';

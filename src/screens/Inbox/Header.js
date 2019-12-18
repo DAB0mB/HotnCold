@@ -2,6 +2,8 @@ import React, { useCallback } from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import Base from '../../containers/Base';
+import { colors } from '../../theme';
 import { useMe } from '../services/Auth';
 import { useNavigation } from '../services/Navigation';
 

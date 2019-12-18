@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, TouchableWithoutFeedback, Image, StyleSheet } from 'react-native';
-import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
 import { NavigationProvider } from '../../services/Navigation';
 
@@ -16,9 +15,9 @@ const styles = StyleSheet.create({
   }
 });
 
-const Header = ({ socialNav, Contents = () => null }) => {
+const Header = ({ socialNav, navKey, Contents = () => null }) => {
   return (
-    <NavigationProvider navKey={Social} navigation={socialNav}>
+    <NavigationProvider navKey={navKey} navigation={socialNav}>
       <View style={styles.container}>
         {Contents}
       </View>

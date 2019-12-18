@@ -1,7 +1,5 @@
 import gql from 'graphql-tag';
 
-import area from './area.fragment';
-
 const user = gql `
   fragment User on User {
     id

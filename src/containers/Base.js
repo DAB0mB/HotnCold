@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, Text, SafeAreaView, StyleSheet, Animated } from 'react-native';
-import CONFIG from 'react-native-config';
+import React from 'react';
+import { StatusBar, SafeAreaView, StyleSheet } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import { LoadingProvider } from '../services/Loading';
@@ -23,7 +22,7 @@ const Base = ({ navigation }) => {
 };
 
 Base.create = (Component) => {
-  return ({ navigation }) => {
+  return function BaseScreen({ navigation }) {
     return (
       <NavigationProvider navKey={Base} navigation={navigation}>
         <StatusBar translucent barStyle='dark-content' backgroundColor='white' />

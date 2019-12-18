@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import GiftedChat from '../components/GiftedChat';
 import Social from '../containers/Social';

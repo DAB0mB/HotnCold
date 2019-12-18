@@ -1,8 +1,6 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import React, { createContext, useContext, useCallback } from 'react';
-import CONFIG from 'react-native-config';
 
-import * as fragments from '../graphql/fragments';
 import * as mutations from '../graphql/mutations';
 import { useCookie } from './Cookie';
 

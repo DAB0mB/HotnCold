@@ -17,7 +17,7 @@ updateRecentScanTime.use = (options = {}) => {
   const mutate = useCallback((clear) => {
     return superMutate({
       variables: { clear },
-    })
+    });
   }, [me, superMutate]);
 
   return [mutate, mutation];

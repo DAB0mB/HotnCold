@@ -14,7 +14,7 @@ uploadPicture.use = (defaultOptions = {}) => {
   const mutate = useCallback((data) => {
     return superMutate({
       variables: { data },
-    })
+    });
   }, [superMutate]);
 
   return [mutate, mutation];

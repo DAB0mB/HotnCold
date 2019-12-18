@@ -27,7 +27,7 @@ findOrCreateChat.use = (_usersIds = [], defaultOptions = {}) => {
       },
       variables: { usersIds },
       ...options,
-    })
+    });
   }, [
     superMutate,
     _usersIds,

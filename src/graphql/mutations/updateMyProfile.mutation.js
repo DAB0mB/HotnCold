@@ -48,7 +48,7 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
         });
       },
       variables: { name, birthDate, occupation, bio, pictures },
-    })
+    });
   }, [
     me,
     superMutate,

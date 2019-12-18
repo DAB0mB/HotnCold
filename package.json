@@ -5,7 +5,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "postinstall": "jetifier -r",
-    "codegen": "graphql-codegen --config ./codegen.config.js"
+    "codegen": "graphql-codegen --config ./codegen.config.js",
+    "lint": "eslint --fix"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.1",
@@ -66,9 +67,26 @@
     "@graphql-codegen/introspection": "^1.9.1",
     "@react-native-community/cli-platform-android": "^3.0.3",
     "@react-native-community/cli-platform-ios": "^3.0.0",
+    "babel-eslint": "^10.0.3",
     "dotenv": "^8.2.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-native": "^3.8.1",
+    "husky": "^3.1.0",
     "jetifier": "^1.6.4",
+    "lint-staged": "^9.5.0",
     "metro-react-native-babel-preset": "^0.56.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "yarn lint",
+      "git add"
+    ]
   },
   "private": true
 }

@@ -41,12 +41,12 @@ export const DateTimePickerProvider = ({ children }) => {
       {children}
       <DateTimePicker
         date={date}
+        mode={mode}
         maximumDate={maximumDate}
         minimumDate={minimumDate}
         onConfirm={onConfirm}
         onCancel={onCancel}
         isVisible={isVisible}
-        onCancel={context.hide}
       />
     </DateTimePickerContext.Provider>
   );

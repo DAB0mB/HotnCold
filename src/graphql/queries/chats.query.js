@@ -1,7 +1,9 @@
-import { useApolloClient, useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
+import { useEffect } from 'react';
 import gql from 'graphql-tag';
 
 import * as fragments from '../fragments';
+import * as subscriptions from '../subscriptions';
 
 const chats = gql `
   query Chats {

@@ -32,7 +32,7 @@ export const useNavigation = (navKey) => {
     }, [true]);
 
     useEffect(() => {
-      const listener = navigation.addListener('didFocus', (e) => {
+      const listener = navigation.addListener('didFocus', () => {
         if (goBack) {
           navigation.goBack();
         } else {

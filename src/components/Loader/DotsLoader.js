@@ -44,7 +44,7 @@ export default class DotsLoader extends React.PureComponent {
           delay: (i + 1) * 200
         }),
         Animated.timing(self.state.scales[i], { toValue: 0, duration: 300, delay: 50 })
-      ])
+      ]);
     }
 
     Animated.parallel([

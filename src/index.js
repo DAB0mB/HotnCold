@@ -80,21 +80,21 @@ const App = () => {
   return (
     <View style={styles.container}>
       <DeviceInfoProvider info={deviceInfo}>
-      <ApolloProvider client={graphqlClient}>
-      <CookieProvider>
-      <DropdownAlertProvider>
-      <DateTimePickerProvider>
-      <ImagePickerProvider>
-      <BluetoothLEProvider>
-      <GeolocationProvider>
-        <BaseContainer />
-      </GeolocationProvider>
-      </BluetoothLEProvider>
-      </ImagePickerProvider>
-      </DateTimePickerProvider>
-      </DropdownAlertProvider>
-      </CookieProvider>
-      </ApolloProvider>
+        <ApolloProvider client={graphqlClient}>
+          <CookieProvider>
+            <DropdownAlertProvider>
+              <DateTimePickerProvider>
+                <ImagePickerProvider>
+                  <BluetoothLEProvider>
+                    <GeolocationProvider>
+                      <BaseContainer />
+                    </GeolocationProvider>
+                  </BluetoothLEProvider>
+                </ImagePickerProvider>
+              </DateTimePickerProvider>
+            </DropdownAlertProvider>
+          </CookieProvider>
+        </ApolloProvider>
       </DeviceInfoProvider>
     </View>
   );

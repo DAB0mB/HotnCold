@@ -1,7 +1,10 @@
+import moment from 'moment';
 import React, { useCallback } from 'react';
-import { StyleSheet, View, FlatList, TouchableHighlight, Text } from 'react-native';
+import { StyleSheet, View, FlatList, TouchableHighlight, Text, Image } from 'react-native';
 
-import Social from '../containers/Social';
+import Base from '../../containers/Base';
+import Social from '../../containers/Social';
+import { colors } from '../../theme';
 import * as queries from '../graphql/queries';
 import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';

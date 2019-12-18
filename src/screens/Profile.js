@@ -3,15 +3,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   ScrollView,
-  Text,
   TextInput,
   Image,
   StyleSheet,
   Dimensions,
-  BackHandler,
   Keyboard,
   TouchableWithoutFeedback,
-  Platform,
 } from 'react-native';
 import { ReactNativeFile } from 'apollo-upload-client';
 import Swiper from 'react-native-swiper';
@@ -162,7 +159,7 @@ const Profile = () => {
       setSaving(false);
 
       if (itsMe) {
-        alertSuccess('Profile successfully updated')
+        alertSuccess('Profile successfully updated');
       }
       else {
         nav.replace('Discovery');
@@ -207,17 +204,19 @@ const Profile = () => {
     mutateProfile({ pictures: pendingPictures });
   }, [saving, uploadCount]);
 
-  const MyText = useCallback(React.forwardRef(({ style = {}, ...props }, ref) => (
-    <TextInput
-      editable={editMode}
-      autoCompleteType='off'
-      importantForAutofill='no'
-      autoCorrect={false}
-      {...props}
-      style={{ padding: 0, ...style }}
-      ref={ref}
-    />
-  )), [true]);
+  const MyText = useCallback(React.forwardRef(function MyText({ style = {}, ...props }, ref) {
+    return (
+      <TextInput
+        editable={editMode}
+        autoCompleteType='off'
+        importantForAutofill='no'
+        autoCorrect={false}
+        {...props}
+        style={{ padding: 0, ...style }}
+        ref={ref}
+      />
+    );
+  }), [true]);
 
   useEffect(() => {
     if (!editMode) return;
@@ -286,7 +285,7 @@ const Profile = () => {
             activeDotColor='white'
             dotColor='rgba(255, 255, 255, .3)'
           >
-            {pictures.map((picture, i) => (
+            {pictures.map((picture) => (
               <Image style={styles.profilePicture} key={picture} source={{ uri: picture }} />
             )).concat(editMode && (
               <TouchableWithoutFeedback onPress={() => imagePicker.showImagePicker()} key='_'>

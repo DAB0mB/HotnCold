@@ -1,19 +1,17 @@
-import { useMutation } from '@apollo/react-hooks';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import turfBboxPolygon from '@turf/bbox-polygon';
 import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, Text, AppState } from 'react-native';
-import Cookie from 'react-native-cookie';
+import { View, StyleSheet, TouchableWithoutFeedback, AppState } from 'react-native';
 import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as mutations from '../graphql/mutations';
-import { useMe, useLogout } from '../services/Auth';
+import { useLogout } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
-import { useGeoBackgroundTelemetry, useGeolocation, GeolocationProvider } from '../services/Geolocation';
+import { useGeoBackgroundTelemetry, useGeolocation } from '../services/Geolocation';
 import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors, hexToRgba } from '../theme';
@@ -91,7 +89,6 @@ const emptyShape = {
 const SELECTION_RADIUS = 100;
 
 const Map = () => {
-  const me = useMe();
   const logout = useLogout();
   const mapRef = useRef(null);
   const alertError = useAlertError();

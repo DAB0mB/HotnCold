@@ -1,6 +1,5 @@
-import { bytesToString } from 'convert-string';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { Animated, StyleSheet, Image, View, TouchableWithoutFeedback, Dimensions, Text } from 'react-native';
+import { StyleSheet, Image, View, TouchableWithoutFeedback, Dimensions, Text } from 'react-native';
 import { RippleLoader } from 'react-native-indicator';
 import CONFIG from 'react-native-config';
 
@@ -173,13 +172,13 @@ const Radar = () => {
 
       // In dev mode we might get extra (dummy) users
       if (discoveredUsers.length == 1) {
-        setMainText(`Found 1 available person`);
+        setMainText('Found 1 available person');
       }
       else if (discoveredUsers.length) {
         setMainText(`Found ${discoveredUsers.length} available people`);
       }
       else {
-        setMainText("No one was found :'(");
+        setMainText('No one was found :\'(');
       }
 
       discoveredUsersIds = [];
@@ -253,7 +252,7 @@ const Radar = () => {
       scan();
     }
     catch (e) {
-      setMainText("Something went wrong :'(");
+      setMainText('Something went wrong :\'(');
       setScanning(false);
       alertError(e);
     }
