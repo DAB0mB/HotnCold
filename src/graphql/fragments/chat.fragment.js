@@ -11,7 +11,7 @@ const chat = gql `
     firstMessage {
       ...Message
     }
-    recentMessage {
+    recentMessages {
       ...Message
     }
     users {

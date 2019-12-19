@@ -7,7 +7,6 @@ import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMe } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
-import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import Header from './Header';
 
@@ -34,7 +33,7 @@ const Chat = () => {
         chat.firstMessage = recentMessage;
       }
 
-      chat.recentMessage = recentMessage;
+      chat.recentMessages = messages;
 
       if (recentMessage.id === chat.firstMessage.id) {
         setLoadEarlier(false);
@@ -62,11 +61,11 @@ const Chat = () => {
     messagesQuery.fetchMore();
   }, [messagesQuery, setIsLoadingEarlier]);
 
-  return useLoading(!messagesQuery.called || messagesQuery.loading,
+  return (
     <View style={styles.container}>
       <GiftedChat
         user={me}
-        messages={messages}
+        messages={messages || chat.recentMessages}
         onLoadEarlier={onLoadEarlier}
         onSend={onSend}
         loadEarlier={loadEarlier}

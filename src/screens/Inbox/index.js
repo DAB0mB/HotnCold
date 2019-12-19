@@ -96,19 +96,19 @@ const Inbox = () => {
             </View>
 
             <View style={styles.chatTime}>
-              <Text style={styles.chatTimeText}>{moment(chat.recentMessage.createdAt).fromNow()}</Text>
+              <Text style={styles.chatTimeText}>{moment(chat.recentMessages[0].createdAt).fromNow()}</Text>
             </View>
           </View>
 
           <View style={styles.chatRecentMessage}>
-            <Text style={styles.chatRecentMessageText}>{chat.recentMessage.text}</Text>
+            <Text style={styles.chatRecentMessageText}>{chat.recentMessages[0].text}</Text>
           </View>
         </View>
       </View>
     </Ripple>
   ), [navToChat]);
 
-  return useLoading(chatsQuery.loaded,
+  return useLoading(chatsQuery.loading,
     <View style={styles.container}>
       <FlatList data={chats} keyExtractor={getChatId} renderItem={renderChatItem} />
     </View>

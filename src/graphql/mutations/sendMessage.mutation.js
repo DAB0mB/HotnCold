@@ -48,7 +48,7 @@ sendMessage.use = (chatId, options = {}) => {
 
         chat = { ...chat };
 
-        chat.recentMessage = {
+        const recentMessage = {
           __typename: 'Message',
           id: messageId,
           text: message.text,
@@ -61,8 +61,10 @@ sendMessage.use = (chatId, options = {}) => {
           }
         };
 
+        chat.recentMessages = [recentMessage, ...chat.recentMessages].slice(0, 12);
+
         if (!chat.firstMessage) {
-          chat.firstMessage = { ...chat.recentMessage };
+          chat.firstMessage = recentMessage;
         }
 
         fragments.chat.write(cache, chat);
