@@ -43,11 +43,12 @@ export const useNavigation = (navKey) => {
     const goBackOnceFocused = nav.goBackOnceFocused = useCallback(() => {
       if (focused.current) {
         _goBack();
-        BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocused);
       }
       else {
         shouldGoBack.current = true;
       }
+
+      BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocused);
 
       return true;
     }, [true]);
