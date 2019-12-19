@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { NavigationActions } from 'react-navigation';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
 import * as queries from '../../graphql/queries';
@@ -60,12 +61,20 @@ Discovery.create = (Component) => {
   return function DiscoveryScreen({ navigation: discoveryNav }) {
     const { headerProps, setHeaderProps } = useHeader();
 
-    useEffect(() => {
-      setHeaderProps({ ...headerProps, discoveryNav });
+    useLayoutEffect(() => {
+      const listener = discoveryNav.addListener('willBlur', ({ action }) => {
+        if (action.type === NavigationActions.BACK) {
+          setHeaderProps(headerProps);
+        }
+      });
 
       return () => {
-        setHeaderProps(headerProps);
+        listener.remove();
       };
+    }, [true]);
+
+    useEffect(() => {
+      setHeaderProps({ ...headerProps, discoveryNav });
     }, [true]);
 
     return (

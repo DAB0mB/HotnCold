@@ -1,5 +1,5 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { View, Image, StyleSheet, TouchableWithoutFeedback, BackHandler } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { View, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -35,8 +35,9 @@ const styles = StyleSheet.create({
 
 const Header = ({ baseNav, discoveryNav }) => {
   const deviceInfo = useDeviceInfo();
-  const [toggled, setToggled] = useState(false);
-  const [pointerEvents, setPointerEvents] = useState('auto');
+  const alterIcon = useMemo(() =>
+    (discoveryNav && discoveryNav.state.routeName) === 'Radar' ? 'map' : 'radar'
+  , [discoveryNav]);
 
   const navToInbox = useCallback(() => {
     baseNav.push('Social', {
@@ -46,59 +47,23 @@ const Header = ({ baseNav, discoveryNav }) => {
     });
   }, [baseNav]);
 
-  const navToScreen = useCallbackTask(() => {
+  const toggleDiscoveryRoute = useCallbackTask(() => {
     if (discoveryNav.state.routeName === 'Map') {
-      setToggled(true);
       discoveryNav.push('Radar');
-    } else {
-      setToggled(false);
-      discoveryNav.goBack();
+    }
+    else {
+      // Registered in the component body
+      discoveryNav.goBackOnceFocused();
     }
   }, [discoveryNav]);
-
-  useEffect(() => {
-    setPointerEvents('none');
-
-    const timeout = setTimeout(() => {
-      setPointerEvents('auto');
-    }, 333);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [toggled]);
-
-  useEffect(() => {
-    if (!discoveryNav) return;
-
-    const backHandler = () => {
-      if (discoveryNav.state.routeName !== 'Radar') return true;
-      if (pointerEvents !== 'auto') return true;
-
-      discoveryNav.goBack();
-      setToggled(false);
-
-      return true;
-    };
-
-    BackHandler.addEventListener('hardwareBackPress', backHandler);
-
-    return () => {
-      BackHandler.removeEventListener('hardwareBackPress', backHandler);
-    };
-  }, [discoveryNav, pointerEvents]);
 
   return (
     <LinearGradient colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} style={styles.gradient}>
       <View style={styles.container}>
         {deviceInfo.supportsBluetooth && (
-          <View pointerEvents={pointerEvents}>
-            <TouchableWithoutFeedback onPress={navToScreen}>
-              {toggled ? (
-                <McIcon name='map' size={25} color={hexToRgba(colors.ink, 0.8)} />
-              ) : (
-                <McIcon name='radar' size={25} color={hexToRgba(colors.ink, 0.8)} />
-              )}
+          <View>
+            <TouchableWithoutFeedback onPress={toggleDiscoveryRoute}>
+              <McIcon name={alterIcon} size={25} color={hexToRgba(colors.ink, 0.8)} />
             </TouchableWithoutFeedback>
           </View>
         )}

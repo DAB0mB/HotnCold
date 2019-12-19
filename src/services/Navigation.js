@@ -26,26 +26,27 @@ export const useNavigation = (navKey) => {
   const parentNav = useMemo(() => navQueue[navQueue.length - 2], [true]);
   const nav = useMemo(() => navKey ? navMap.get(navKey) : navQueue[navQueue.length - 1], [navKey]);
   const focused = useRef(false);
+  const shouldGoBack = useRef(false);
   const goBack = useRef(null);
 
   const utilizeFocus = useCallback(() => {
-    if (typeof goBack.current == 'function') {
+    focused.current = true;
+
+    if (shouldGoBack.current) {
       goBack.current();
     }
-    else {
-      focused.current = true;
-    }
-
-    return true;
   }, [true]);
 
   nav.useBackListener = useCallback((_goBack = nav.goBack.bind(nav)) => {
+    goBack.current = _goBack;
+
     const goBackOnceFocused = nav.goBackOnceFocused = useCallback(() => {
       if (focused.current) {
         _goBack();
+        BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocused);
       }
       else {
-        goBack.current = _goBack;
+        shouldGoBack.current = true;
       }
 
       return true;
@@ -53,12 +54,12 @@ export const useNavigation = (navKey) => {
 
     // Timing is important. Register immediately
     useLayoutEffect(() => {
-      const listener = nav.addListener('didFocus', utilizeFocus);
       BackHandler.addEventListener('hardwareBackPress', goBackOnceFocused);
+      const didFocusListener = nav.addListener('didFocus', utilizeFocus);
 
       return () => {
-        listener.remove();
         BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocused);
+        didFocusListener.remove();
       };
     }, [true]);
   }, [true]);
@@ -66,10 +67,10 @@ export const useNavigation = (navKey) => {
   if (parentNav && nav.isFirstRouteInParent()) {
     // If this is the first route, didFocus will not be triggered, unless we do it manually
     useLayoutEffect(() => {
-      const listener = parentNav.addListener('didFocus', utilizeFocus);
+      const didFocusListener = parentNav.addListener('didFocus', utilizeFocus);
 
       return () => {
-        listener.remove();
+        didFocusListener.remove();
       };
     }, [true]);
   }

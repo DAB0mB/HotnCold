@@ -69,8 +69,6 @@ Social.create = (Component) => {
     const { headerProps, setHeaderProps } = useHeader();
 
     useLayoutEffect(() => {
-      setHeaderProps({ ...headerProps, socialNav, Contents: Component.Header });
-
       const listener = socialNav.addListener('willBlur', ({ action }) => {
         if (action.type === NavigationActions.BACK) {
           setHeaderProps(headerProps);
@@ -80,6 +78,10 @@ Social.create = (Component) => {
       return () => {
         listener.remove();
       };
+    }, [true]);
+
+    useEffect(() => {
+      setHeaderProps({ ...headerProps, socialNav, Contents: Component.Header });
     }, [true]);
 
     return (
