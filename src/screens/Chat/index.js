@@ -28,6 +28,7 @@ const Chat = () => {
       if (!messages.length) return;
 
       const recentMessage = messages[0];
+      const firstMessage = messages[messages.length - 1];
 
       if (!chat.firstMessage) {
         chat.firstMessage = recentMessage;
@@ -35,7 +36,7 @@ const Chat = () => {
 
       chat.recentMessages = messages;
 
-      if (recentMessage.id === chat.firstMessage.id) {
+      if (firstMessage.id === chat.firstMessage.id) {
         setLoadEarlier(false);
       }
       else {
