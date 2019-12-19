@@ -57,7 +57,8 @@ const NativeGuard = ({
         }
 
         result = false;
-      } catch (e) {
+      }
+      catch (e) {
         onError(e);
 
         result = false;

@@ -4,16 +4,30 @@ import { GiftedChat as _GiftedChat, Bubble, Send, Time, MessageText } from 'reac
 import { colors } from '../theme';
 
 const adaptUser = (user) => ({
-  get _id() { return user.id; },
-  get name() { return user.name; },
-  get avatar() { return user.avatar; },
+  get _id() {
+    return user.id;
+  },
+  get name() {
+    return user.name;
+  },
+  get avatar() {
+    return user.avatar;
+  },
 });
 
 const adaptMessage = (message) => ({
-  get _id() { return message.id; },
-  get createdAt() { return message.createdAt; },
-  get text() { return message.text; },
-  get user() { return adaptUser(message.user); },
+  get _id() {
+    return message.id;
+  },
+  get createdAt() {
+    return message.createdAt;
+  },
+  get text() {
+    return message.text;
+  },
+  get user() {
+    return adaptUser(message.user);
+  },
 });
 
 const normalizeUser = (user) => {

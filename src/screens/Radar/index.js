@@ -204,7 +204,8 @@ const Radar = () => {
 
     if (scanning) {
       stoppingScan = ble.central.stopScan();
-    } else {
+    }
+    else {
       stoppingScan = Promise.resolve();
     }
 

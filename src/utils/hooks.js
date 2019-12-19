@@ -234,7 +234,8 @@ export const useCallbackTask = (callback, input) => {
   return useCallback(() => {
     if (isReady) {
       callback();
-    } else {
+    }
+    else {
       setShouldInvoke(true);
     }
   }, [isReady, ...input]);
