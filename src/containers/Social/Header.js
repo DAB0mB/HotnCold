@@ -2,7 +2,6 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { colors } from '../../theme';
-import { NavigationProvider } from '../../services/Navigation';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,13 +16,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const Header = ({ socialNav, navKey, Contents = () => null }) => {
+const Header = ({ children }) => {
   return (
-    <NavigationProvider navKey={navKey} navigation={socialNav}>
-      <View style={styles.container}>
-        <Contents />
-      </View>
-    </NavigationProvider>
+    <View style={styles.container}>
+      {children}
+    </View>
   );
 };
 
