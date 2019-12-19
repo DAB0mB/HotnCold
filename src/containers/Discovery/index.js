@@ -20,7 +20,7 @@ const Discovery = Base.create(({ navigation }) => {
   const baseNav = useNavigation(Base);
   const meQuery = queries.me.use({ onError: alertError });
   const [requiredService, setRequiredService] = useState(null);
-  const [nativeServicesReady, setNativeGuardReady] = useState(false);
+  const [nativeServicesReady, setNativeServicesReady] = useState(false);
   const { me } = meQuery.data || {};
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const Discovery = Base.create(({ navigation }) => {
           services={SERVICES.GPS}
           onRequireService={setRequiredService}
           onError={alertError}
-          onReady={setNativeGuardReady}
+          onReady={setNativeServicesReady}
         >
           <LoadingProvider>
             {nativeServicesReady && !requiredService && <DiscoveryRouter navigation={navigation} />}
