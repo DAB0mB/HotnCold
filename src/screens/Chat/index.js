@@ -28,7 +28,7 @@ const Chat = () => {
     onCompleted: useCallback(({ messages }) => {
       if (!messages.length) return;
 
-      const recentMessage = messages[messages.length - 1];
+      const recentMessage = messages[0];
 
       if (!chat.firstMessage) {
         chat.firstMessage = recentMessage;

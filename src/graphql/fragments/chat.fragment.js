@@ -24,6 +24,8 @@ const chat = gql `
 `;
 
 chat.read = (cache, id) => {
+  id = `Chat:${id.split(':').pop()}`;
+
   return cache.readFragment({
     id,
     fragment: chat,
@@ -32,8 +34,10 @@ chat.read = (cache, id) => {
 };
 
 chat.write = (cache, data) => {
+  const id = `Chat:${data.id}`;
+
   return cache.writeFragment({
-    id: data.id,
+    id,
     fragment: chat,
     fragmentName: 'Chat',
     data,

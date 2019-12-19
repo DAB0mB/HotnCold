@@ -8,6 +8,8 @@ const area = gql `
 `;
 
 area.read = (cache, id) => {
+  id = `Area:${id.split(':').pop()}`;
+
   return cache.readFragment({
     id,
     fragment: area,
@@ -16,8 +18,10 @@ area.read = (cache, id) => {
 };
 
 area.write = (cache, data) => {
+  const id = `Area:${data.id}`;
+
   return cache.writeFragment({
-    id: data.id,
+    id,
     fragment: area,
     fragmentName: 'Area',
     data,

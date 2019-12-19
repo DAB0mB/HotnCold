@@ -23,6 +23,8 @@ user.profile = gql `
 `;
 
 user.read = (cache, id) => {
+  id = `User:${id.split(':').pop()}`;
+
   return cache.readFragment({
     id,
     fragment: user,
@@ -31,8 +33,10 @@ user.read = (cache, id) => {
 };
 
 user.write = (cache, data) => {
+  const id = `User:${data.id}`;
+
   return cache.writeFragment({
-    id: data.id,
+    id,
     fragment: user,
     fragmentName: 'User',
     data,
@@ -40,6 +44,8 @@ user.write = (cache, data) => {
 };
 
 user.profile.read = (cache, id) => {
+  id = `UserProfile:${id.split(':').pop()}`;
+
   return cache.readFragment({
     id,
     fragment: user.profile,
@@ -48,8 +54,10 @@ user.profile.read = (cache, id) => {
 };
 
 user.profile.write = (cache, data) => {
+  const id = `UserProfile:${data.id}`;
+
   return cache.writeFragment({
-    id: data.id,
+    id,
     fragment: user.profile,
     fragmentName: 'UserProfile',
     data,
