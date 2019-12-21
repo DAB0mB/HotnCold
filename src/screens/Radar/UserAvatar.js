@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Animated, StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
+import { Animated, StyleSheet, View, Image, TouchableWithoutFeedback } from 'react-native';
 
 import { colors } from '../../theme';
 
@@ -28,7 +28,7 @@ const UserAvatar = ({ i, j, user, avatarSize, onPress = noop }) => {
 
   useEffect(() => {
     // Fetch (and cache) before revealing so image can pop up without flashing
-    fetch(user.avatar).then(() => {
+    Image.prefetch(user.avatar).then(() => {
       setRevealed(true);
     });
   }, [true]);

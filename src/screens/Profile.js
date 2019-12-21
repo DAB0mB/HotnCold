@@ -205,6 +205,12 @@ const Profile = () => {
     mutateProfile({ pictures: pendingPictures });
   }, [saving, uploadCount]);
 
+  if (user && !itsMe) {
+    useEffect(() => {
+      user.pictures.forEach(p => Image.prefetch(p));
+    }, [true]);
+  }
+
   const MyText = useCallback(React.forwardRef(function MyText({ style = {}, ...props }, ref) {
     return (
       <TextInput

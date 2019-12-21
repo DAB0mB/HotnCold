@@ -22,6 +22,8 @@ const Discovery = Base.create(({ navigation }) => {
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
   const { me } = meQuery.data || {};
+  // Prepare cache
+  queries.chats.use();
 
   useEffect(() => {
     if (meQuery.called && !meQuery.loading && (meQuery.error || !me)) {

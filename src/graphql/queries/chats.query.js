@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 import { useEffect } from 'react';
+import { Image } from 'react-native';
 import gql from 'graphql-tag';
 
 import * as fragments from '../fragments';
@@ -15,9 +16,18 @@ const chats = gql `
   ${fragments.chat}
 `;
 
-chats.use = (options = {}) => {
+chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
   const query = useQuery(chats, {
     fetchPolicy: 'cache-and-network',
+    onCompleted: (data) => {
+      const { chats } = data;
+
+      if (chats) {
+        chats.forEach(c => Image.prefetch(c.picture));
+      }
+
+      onCompleted(data);
+    },
     ...options,
   });
 
