@@ -8,16 +8,17 @@ import { View, StyleSheet, TouchableWithoutFeedback, AppState } from 'react-nati
 import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import * as mutations from '../graphql/mutations';
-import { useLogout } from '../services/Auth';
-import { useAlertError } from '../services/DropdownAlert';
-import { useGeoBackgroundTelemetry, useGeolocation } from '../services/Geolocation';
-import { useLoading } from '../services/Loading';
-import { useNavigation } from '../services/Navigation';
-import { colors, hexToRgba } from '../theme';
-import { useInterval, useRenderer, useMountedRef } from '../utils';
-import Base from '../containers/Base';
-import Discovery from '../containers/Discovery';
+import * as mutations from '../../graphql/mutations';
+import { useLogout } from '../../services/Auth';
+import { useAlertError } from '../../services/DropdownAlert';
+import { useGeoBackgroundTelemetry, useGeolocation } from '../../services/Geolocation';
+import { useLoading } from '../../services/Loading';
+import { useNavigation } from '../../services/Navigation';
+import { colors, hexToRgba } from '../../theme';
+import { useInterval, useRenderer, useMountedRef } from '../../utils';
+import Base from '../../containers/Base';
+import Discovery from '../../containers/Discovery';
+import SelectionButton from './SelectionButton';
 
 const SHOW_FAKE_DATA = false;
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
@@ -31,21 +32,12 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
-  iconsContainer: {
+  devIconsContainer: {
     position: 'absolute',
     flexDirection: 'row',
     padding: 10,
     right: 0,
     bottom: 0,
-  },
-  icon: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    width: 50,
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 999,
-    marginRight: 10,
   },
 });
 
@@ -121,6 +113,14 @@ const Map = () => {
       baseNav.replace('Profile');
     }).catch(alertError);
   }, [logout, alertError, baseNav]);
+
+  const cancelSelection = useCallback(() => {
+    setSelection(null);
+  }, [true]);
+
+  const navToUsers = useCallback(() => {
+
+  }, [true]);
 
   const renderSelection = useCallback(async (e) => {
     const map = mapRef.current;
@@ -225,21 +225,6 @@ const Map = () => {
           </MapboxGL.ShapeSource>
         )}
 
-        {selection && (
-          <MapboxGL.ShapeSource
-            id='selectionLocation'
-            shape={selection.location}
-          >
-            <MapboxGL.SymbolLayer
-              id='selectionText'
-              sourceLayerID='selection'
-              minZoomLevel={DEFAULT_ZOOM - 3}
-              maxZoomLevel={DEFAULT_ZOOM + 2}
-              style={{ ...styles.selection.text, textField: selection.size.toString() }}
-            />
-          </MapboxGL.ShapeSource>
-        )}
-
         <MapboxGL.ShapeSource
           id='featuresInArea'
           key={shapeKey}
@@ -261,15 +246,21 @@ const Map = () => {
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
 
-      <View style={styles.iconsContainer}>
-        {__DEV__ && (
+      <SelectionButton
+        onUsersPress={navToUsers}
+        onClosePress={cancelSelection}
+        selection={selection}
+      />
+
+      {__DEV__ && (
+        <View style={styles.devIconsContainer}>
           <TouchableWithoutFeedback onPress={logoutAndFlee}>
-            <View style={styles.icon}>
+            <View>
               <McIcon name='logout' size={30} color={hexToRgba(colors.ink, 0.8)} />
             </View>
           </TouchableWithoutFeedback>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };
