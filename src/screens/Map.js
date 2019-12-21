@@ -21,6 +21,8 @@ import Discovery from '../containers/Discovery';
 
 const SHOW_FAKE_DATA = false;
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
+const SELECTION_RADIUS = .2;
+const DEFAULT_ZOOM = 15;
 
 const styles = StyleSheet.create({
   container: {
@@ -86,8 +88,6 @@ const emptyShape = {
   features: [],
 };
 
-const SELECTION_RADIUS = 100;
-
 const Map = () => {
   const logout = useLogout();
   const mapRef = useRef(null);
@@ -128,32 +128,20 @@ const Map = () => {
     if (!map) return;
 
     const selectionCoords = e.geometry.coordinates;
-    const viewCoords = [e.properties.screenPointX, e.properties.screenPointY];
-    const viewMin = [viewCoords[0] - SELECTION_RADIUS, viewCoords[1] - SELECTION_RADIUS];
-    const viewMax = [viewCoords[0] + SELECTION_RADIUS, viewCoords[1] + SELECTION_RADIUS];
-    const [geoMin, geoMax] = await Promise.all([
-      map.getCoordinateFromView(viewMin),
-      map.getCoordinateFromView(viewMax),
-    ]);
-    const selectionRadius = turfDistance([geoMin[0], geoMin[1]], [geoMax[0], geoMin[1]]);
-    const selectionFeatures = turfCircle(selectionCoords, selectionRadius);
+    const selectionFeatures = turfCircle(selectionCoords, SELECTION_RADIUS);
 
     let selectionSize = 0;
     // TODO: Use a quad tree
     screenFeatures.features.forEach(({ geometry: { coordinates: coords } }) => {
-      if (turfDistance(selectionCoords, coords) <= selectionRadius) {
+      if (turfDistance(selectionCoords, coords) <= SELECTION_RADIUS) {
         selectionSize++;
       }
     });
-    // Never show 1 for security reasons
-    if (selectionSize === 1) {
-      selectionSize = 2;
-    }
 
     setSelection({
       location: e,
       features: selectionFeatures,
-      size: selectionSize === 1 ? 2 : selectionSize,
+      size: selectionSize,
       zoom: await map.getZoom(),
     });
   }, [mapRef, setSelection, screenFeatures]);
@@ -219,7 +207,7 @@ const Map = () => {
         compassViewPosition='top-left'
       >
         <MapboxGL.Camera
-          zoomLevel={15}
+          zoomLevel={DEFAULT_ZOOM}
           centerCoordinate={initialLocation}
         />
 
@@ -232,7 +220,7 @@ const Map = () => {
               id='selectionOutline'
               sourceLayerID='selection'
               style={styles.selection.outline}
-              minZoomLevel={selection.zoom - 3}
+              minZoomLevel={DEFAULT_ZOOM - 3}
             />
           </MapboxGL.ShapeSource>
         )}
@@ -245,8 +233,8 @@ const Map = () => {
             <MapboxGL.SymbolLayer
               id='selectionText'
               sourceLayerID='selection'
-              minZoomLevel={selection.zoom - 3}
-              maxZoomLevel={selection.zoom + 2}
+              minZoomLevel={DEFAULT_ZOOM - 3}
+              maxZoomLevel={DEFAULT_ZOOM + 2}
               style={{ ...styles.selection.text, textField: selection.size.toString() }}
             />
           </MapboxGL.ShapeSource>
