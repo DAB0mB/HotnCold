@@ -213,6 +213,8 @@ const Map = () => {
         style={styles.map}
         styleURL={CONFIG.MAPBOX_STYLE_URL}
         onPress={renderSelection}
+        onRegionWillChange={resetScreenFeatures}
+        onRegionIsChanging={resetScreenFeatures}
         onRegionDidChange={resetScreenFeatures}
         onDidFinishLoadingMap={updateReadyState}
         compassViewPosition='top-left'
