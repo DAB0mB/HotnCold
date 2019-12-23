@@ -8,6 +8,7 @@ import { colors, hexToRgba } from '../../theme';
 import * as queries from '../../graphql/queries';
 import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
+import { useMountedRef } from '../../utils';
 import Header from './Header';
 
 const styles = StyleSheet.create({
@@ -73,9 +74,14 @@ const Inbox = () => {
   const chatsQuery = queries.chats.use();
   const { chats = [] } = chatsQuery.data || {};
   const socialNav = useNavigation(Social);
+  const isMountedRef = useMountedRef();
 
   const navToChat = useCallback((chat) => {
-    socialNav.push('Chat', { chat });
+    setTimeout(() => {
+      if (isMountedRef.current) {
+        socialNav.push('Chat', { chat });
+      }
+    }, 200);
   }, [socialNav]);
 
   const renderChatItem = useCallback(({ item: chat, index, separators }) => (

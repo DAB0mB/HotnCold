@@ -19,7 +19,7 @@ export const useMe = () => {
 };
 
 export const useRegister = (...args) => {
-  return mutations.register.use(...args);
+  return mutations.registerUser.use(...args);
 };
 
 export const useLogout = () => {

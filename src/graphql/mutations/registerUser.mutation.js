@@ -2,15 +2,15 @@ import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useCallback } from 'react';
 
-const register = gql `
-  mutation Register(
+const registerUser = gql `
+  mutation RegisterUser(
     $name: String!
     $occupation: String!
     $birthDate: DateTime!
     $bio: String!
     $pictures: [String!]!
   ) {
-    register(
+    registerUser(
       name: $name
       occupation: $occupation
       birthDate: $birthDate
@@ -20,9 +20,9 @@ const register = gql `
   }
 `;
 
-register.use = (defaultArgs = {}, defaultOptions = {}) => {
+registerUser.use = (defaultArgs = {}, defaultOptions = {}) => {
   const client = useApolloClient();
-  const [superMutate, mutation] = useMutation(register, defaultOptions);
+  const [superMutate, mutation] = useMutation(registerUser, defaultOptions);
 
   const mutate = useCallback(({
     name = defaultArgs.name,
@@ -52,4 +52,4 @@ register.use = (defaultArgs = {}, defaultOptions = {}) => {
   return [mutate, mutation];
 };
 
-export default register;
+export default registerUser;

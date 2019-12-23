@@ -20,6 +20,7 @@ import * as mutations from '../graphql/mutations';
 import { useRegister } from '../services/Auth';
 import { useDateTimePicker } from '../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
+import { useLoading } from '../services/Loading';
 import { useImagePicker } from '../services/ImagePicker';
 import { useNavigation } from '../services/Navigation';
 import { colors, hexToRgba } from '../theme';
@@ -117,9 +118,10 @@ const styles = StyleSheet.create({
 
 const Profile = () => {
   const baseNav = useNavigation(Base);
-  const user = baseNav.getParam('user');
   const isRecipient = baseNav.getParam('isRecipient');
   const itsMe = baseNav.getParam('itsMe');
+  const userParam = baseNav.getParam('user');
+  const [user, setUser] = useState(userParam.id && userParam);
   const editMode = !!(!user || itsMe);
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
@@ -132,8 +134,22 @@ const Profile = () => {
   const [birthDate, setBirthDate] = useState(() => !user ? '' : itsMe ? user.birthDate : user.age);
   const [occupation, setOccupation] = useState(() => user ? user.occupation : '');
   const [bio, setBio] = useState(() => user ? user.bio : '');
-  // TODO: Change picture order function
+  // TODO: Implement changePicturePosition() function
   const [pictures, setPictures] = useState(() => user ? user.pictures : []);
+  if (typeof userParam == 'function') {
+    // Async hook. NEVER me
+    const user = userParam();
+    useEffect(() => {
+      if (user) {
+        setName(user.name);
+        setOccupation(user.occupation);
+        setBio(user.bio);
+        setPictures(user.pictures);
+        setBirthDate(user.age);
+        setUser(user);
+      }
+    }, [user]);
+  }
   const [pendingPictures, setPendingPictures] = useState(pictures);
   const dateTimePicker = useDateTimePicker({
     mode: 'date',
@@ -205,11 +221,12 @@ const Profile = () => {
     mutateProfile({ pictures: pendingPictures });
   }, [saving, uploadCount]);
 
-  if (user && !itsMe) {
-    useEffect(() => {
-      user.pictures.forEach(p => Image.prefetch(p));
-    }, [true]);
-  }
+  useEffect(() => {
+    if (itsMe) return;
+    if (!user) return;
+
+    user.pictures.forEach(p => Image.prefetch(p));
+  }, [true]);
 
   const MyText = useCallback(React.forwardRef(function MyText({ style = {}, ...props }, ref) {
     return (
@@ -246,8 +263,7 @@ const Profile = () => {
     };
   }, [setTyping]);
 
-  // Static parameter
-  if (user) {
+  if (baseNav.getParam('user')) {
     baseNav.useBackListener();
   }
 
@@ -283,7 +299,7 @@ const Profile = () => {
     });
   }, [baseNav, findOrCreateChat, user]);
 
-  return (
+  return useLoading(!user, !user ? null :
     <ScrollView style={styles.container}>
       {!typing && (
         <View style={styles.profilePicture}>

@@ -9,6 +9,7 @@ import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as mutations from '../../graphql/mutations';
+import * as queries from '../../graphql/queries';
 import { useLogout } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useGeoBackgroundTelemetry, useGeolocation } from '../../services/Geolocation';
@@ -88,6 +89,7 @@ const Map = () => {
   const geolocation = useGeolocation();
   const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation] = mutations.updateMyLocation.use();
+  const [queryUsers] = queries.users.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
@@ -119,8 +121,14 @@ const Map = () => {
   }, [true]);
 
   const navToUsers = useCallback(() => {
+    if (!selection.size) return;
 
-  }, [true]);
+    baseNav.push('Social', {
+      childNavigationState: {
+        routeName: 'People',
+      },
+    });
+  }, [selection]);
 
   const renderSelection = useCallback(async (e) => {
     const map = mapRef.current;
@@ -137,6 +145,9 @@ const Map = () => {
         selectionSize++;
       }
     });
+
+    // Prepare cache
+    queryUsers(screenFeatures.features.map(f => f.properties.userId));
 
     setSelection({
       location: e,

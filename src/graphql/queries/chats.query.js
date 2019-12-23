@@ -20,10 +20,8 @@ chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
   const query = useQuery(chats, {
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
-      const { chats } = data;
-
-      if (chats) {
-        chats.forEach(c => Image.prefetch(c.picture));
+      if (data.chats) {
+        data.chats.forEach(c => Image.prefetch(c.picture));
       }
 
       onCompleted(data);
