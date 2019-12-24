@@ -23,6 +23,7 @@ const Discovery = Base.create(({ navigation }) => {
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
   const { me } = meQuery.data || {};
   // Prepare cache
+  // TODO: Check if me exists, perform lazy
   queries.chats.use();
 
   useEffect(() => {

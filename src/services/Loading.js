@@ -96,3 +96,7 @@ export const useLoading = (loadingParam, children = null) => {
 
   return children;
 };
+
+export const useBuffer = (loadingParam, children) => {
+  return useLoading(loadingParam, !loadingParam && children);
+};

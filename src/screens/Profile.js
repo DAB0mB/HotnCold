@@ -20,7 +20,7 @@ import * as mutations from '../graphql/mutations';
 import { useRegister } from '../services/Auth';
 import { useDateTimePicker } from '../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
-import { useLoading } from '../services/Loading';
+import { useBuffer } from '../services/Loading';
 import { useImagePicker } from '../services/ImagePicker';
 import { useNavigation } from '../services/Navigation';
 import { colors, hexToRgba } from '../theme';
@@ -121,7 +121,7 @@ const Profile = () => {
   const isRecipient = baseNav.getParam('isRecipient');
   const itsMe = baseNav.getParam('itsMe');
   const userParam = baseNav.getParam('user');
-  const [user, setUser] = useState(userParam.id && userParam);
+  const [user, setUser] = useState(() => userParam && userParam.id && userParam);
   const editMode = !!(!user || itsMe);
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
@@ -299,7 +299,7 @@ const Profile = () => {
     });
   }, [baseNav, findOrCreateChat, user]);
 
-  return useLoading(!user, !user ? null :
+  return useBuffer(typeof userParam == 'function' && !user,
     <ScrollView style={styles.container}>
       {!typing && (
         <View style={styles.profilePicture}>
