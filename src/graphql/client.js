@@ -41,6 +41,8 @@ const wsLink = new WebSocketLink({
     // Automatic reconnect in case of connection error
     reconnect: true,
     async connectionParams() {
+      console.log(wsLink);
+
       return {
         cookie: await CookieManager.get(CONFIG.SERVER_URI),
       };
@@ -109,5 +111,7 @@ const client = new ApolloClient({
   cache,
   link,
 });
+
+client.subscription = wsLink.subscriptionClient;
 
 export default client;

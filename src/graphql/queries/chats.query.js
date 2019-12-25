@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { useEffect } from 'react';
 import { Image } from 'react-native';
 import gql from 'graphql-tag';
@@ -51,6 +51,21 @@ chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
   }, [query.subscribeToMore]);
 
   return query;
+};
+
+chats.use.lazy = ({ onCompleted = () => {}, ...options } = {}) => {
+  const [runQuery, query] = useLazyQuery(chats, {
+    onCompleted: (data) => {
+      if (data && data.chats) {
+        data.chats.forEach(c => Image.prefetch(c.picture));
+      }
+
+      onCompleted(data);
+    },
+    ...options,
+  });
+
+  return [runQuery, query];
 };
 
 export default chats;

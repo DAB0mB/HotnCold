@@ -18,16 +18,39 @@ export const useMe = () => {
   return useContext(MeContext);
 };
 
-export const useRegister = (...args) => {
-  return mutations.registerUser.use(...args);
+export const useRegister = (args, { onCompleted = () => {}, ...options } = {}) => {
+  const client = useApolloClient();
+
+  return mutations.registerUser.use(args, {
+    ...options,
+    onCompleted(data) {
+      const removeListener = client.subscription.onConnected(() => {
+        removeListener();
+        onCompleted(data);
+      });
+
+      client.subscription.connect();
+    },
+  });
 };
 
 export const useLogout = () => {
   const cookie = useCookie();
   const client = useApolloClient();
 
-  return useCallback(async () => {
-    await cookie.clear();
-    await client.clearStore();
+  return useCallback(() => {
+    return Promise.all([
+      cookie.clear(),
+      client.clearStore(),
+      new Promise((resolve) => {
+        const removeListener = client.subscription.onDisconnected(() => {
+          removeListener();
+          resolve();
+        });
+
+        client.subscription.close();
+      }),
+    ]);
+
   }, [client, cookie]);
 };

@@ -22,9 +22,7 @@ const Discovery = Base.create(({ navigation }) => {
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
   const { me } = meQuery.data || {};
-  // Prepare cache
-  // TODO: Check if me exists, perform lazy
-  queries.chats.use();
+  const [queryChats] = queries.chats.use.lazy();
 
   useEffect(() => {
     if (meQuery.called && !meQuery.loading && (meQuery.error || !me)) {
@@ -32,6 +30,12 @@ const Discovery = Base.create(({ navigation }) => {
       baseNav.replace('Profile');
     }
   }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNav]);
+
+  useEffect(() => {
+    if (me) {
+      queryChats();
+    }
+  }, [me && me.id]);
 
   if (meQuery.loading) {
     return useLoading(true);
