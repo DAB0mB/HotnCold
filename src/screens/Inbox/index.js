@@ -6,7 +6,6 @@ import Ripple from 'react-native-material-ripple';
 import Social from '../../containers/Social';
 import { colors, hexToRgba } from '../../theme';
 import * as queries from '../../graphql/queries';
-import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import { useMountedRef } from '../../utils';
 import Header from './Header';
@@ -114,7 +113,7 @@ const Inbox = () => {
     </Ripple>
   ), [navToChat]);
 
-  return useLoading(chatsQuery.loading,
+  return (
     <View style={styles.container}>
       <FlatList data={chats} keyExtractor={getChatId} renderItem={renderChatItem} />
     </View>
