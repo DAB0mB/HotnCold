@@ -157,8 +157,8 @@ export const useAsyncEffect = (fn, input) => {
 export const useAsyncCallback = (fn, input) => {
   const isMountedRef = useMountedRef();
 
-  return useCallback(async () => {
-    const generator = fn();
+  return useCallback(async (...args) => {
+    const generator = fn(...args);
     let iterator = generator.next();
 
     while (!iterator.done) {

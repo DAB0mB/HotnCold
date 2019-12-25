@@ -16,7 +16,7 @@ import { useGeoBackgroundTelemetry, useGeolocation } from '../../services/Geoloc
 import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
-import { useInterval, useRenderer, useMountedRef } from '../../utils';
+import { useInterval, useRenderer, useMountedRef, useAsyncCallback } from '../../utils';
 import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import SelectionButton from './SelectionButton';
@@ -97,7 +97,18 @@ const Map = () => {
   const [readyState, updateReadyState] = useRenderer();
   const isMountedRef = useMountedRef();
 
-  const resetScreenFeatures = useCallback(async (e) => {
+  const resetScreenFeatures = useAsyncCallback(function* (e) {
+    const map = mapRef.current;
+
+    if (!map) return;
+
+    const zoom = yield map.getZoom();
+
+    // Don't capture features at this resolution
+    if (zoom < DEFAULT_ZOOM - 3) {
+      return;
+    }
+
     let bbox = e.properties.visibleBounds;
     bbox = turfBboxPolygon([bbox[0][0], bbox[0][1], bbox[1][0], bbox[1][1]]);
 
@@ -130,10 +141,17 @@ const Map = () => {
     });
   }, [selection]);
 
-  const renderSelection = useCallback(async (e) => {
+  const renderSelection = useAsyncCallback(function* (e) {
     const map = mapRef.current;
 
     if (!map) return;
+
+    const zoom = yield map.getZoom();
+
+    // Don't render selection at this resolution
+    if (zoom < DEFAULT_ZOOM - 3) {
+      return;
+    }
 
     const selectionCoords = e.geometry.coordinates;
     const selectionFeatures = turfCircle(selectionCoords, SELECTION_RADIUS);
@@ -153,7 +171,7 @@ const Map = () => {
       location: e,
       features: selectionFeatures,
       size: selectionSize,
-      zoom: await map.getZoom(),
+      zoom,
     });
   }, [mapRef, setSelection, screenFeatures]);
 
