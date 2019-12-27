@@ -17,7 +17,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DotsLoader from '../components/Loader/DotsLoader';
 import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
-import { useRegister } from '../services/Auth';
+import { useSignUp } from '../services/Auth';
 import { useDateTimePicker } from '../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
 import { useBuffer } from '../services/Loading';
@@ -160,7 +160,7 @@ const Profile = () => {
       setBirthDate(birthDate);
     }, [setBirthDate])
   });
-  const useProfileMutation = itsMe ? mutations.updateMyProfile.use : useRegister;
+  const useProfileMutation = itsMe ? mutations.updateMyProfile.use : useSignUp;
   const [mutateProfile] = useProfileMutation({
     name,
     bio,
@@ -387,7 +387,7 @@ const Profile = () => {
             </View>
           ) : (
             <TouchableWithoutFeedback onPress={() => setSaving(true)}>
-              <View style={styles.icon}>
+              <View style={[styles.icon, { backgroundColor: 'transparent' }]}>
                 <McIcon name='floppy' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
               </View>
             </TouchableWithoutFeedback>
@@ -398,7 +398,7 @@ const Profile = () => {
       {!editMode && !itsMe && (
         <View style={styles.profileButtons}>
           <TouchableWithoutFeedback onPress={navToChat}>
-            <View style={styles.icon}>
+            <View style={[styles.icon, { backgroundColor: 'transparent' }]}>
               <McIcon name='message' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
             </View>
           </TouchableWithoutFeedback>

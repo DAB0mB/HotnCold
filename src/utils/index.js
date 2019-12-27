@@ -1,3 +1,6 @@
+import { isValidNumber } from 'libphonenumber-js';
+import CONFIG from 'react-native-config';
+
 export { default as __ } from './_';
 export * from './hooks';
 export { default as once } from './once';
@@ -55,4 +58,12 @@ export const fork = (obj) => {
 
 export const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+export const validatePhone = (phone) => {
+  return (
+    isValidNumber(phone.replace(/^-/, '+')) ||
+    new RegExp(CONFIG.TEST_PHONE_LOCAL).test(phone) ||
+    new RegExp(CONFIG.TEST_PHONE_SMS).test(phone)
+  );
 };

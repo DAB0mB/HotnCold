@@ -21,6 +21,10 @@ Define environment variables in `.env` file (NEVER COMMIT):
     SERVER_URI
     # URL to Hot&Cold's server GraphQL endpoint
     GRAPHQL_ENDPOINT
+    # Test phone number regexp for local testing
+    TEST_PHONE_LOCAL
+    # Phone number regexp for testing with phone
+    TEST_PHONE_SMS
     # *Optional: The auth token of the user we would like to log-in with
     INITIAL_USER_TOKEN
 

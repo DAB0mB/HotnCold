@@ -10,7 +10,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
-import { useLogout } from '../../services/Auth';
+import { useSignOut } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useGeoBackgroundTelemetry, useGeolocation } from '../../services/Geolocation';
 import { useLoading } from '../../services/Loading';
@@ -82,7 +82,7 @@ const emptyShape = {
 };
 
 const Map = () => {
-  const logout = useLogout();
+  const signOut = useSignOut();
   const mapRef = useRef(null);
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
@@ -121,11 +121,11 @@ const Map = () => {
     });
   }, [setScreenFeatures, areaFeatures]);
 
-  const logoutAndFlee = useCallback(() => {
-    logout().then(() => {
-      baseNav.replace('Profile');
+  const signOutAndFlee = useCallback(() => {
+    signOut().then(() => {
+      baseNav.terminalPush('Auth');
     }).catch(alertError);
-  }, [logout, alertError, baseNav]);
+  }, [signOut, alertError, baseNav]);
 
   const cancelSelection = useCallback(() => {
     setSelection(null);
@@ -285,7 +285,7 @@ const Map = () => {
 
       {__DEV__ && (
         <View style={styles.devIconsContainer}>
-          <TouchableWithoutFeedback onPress={logoutAndFlee}>
+          <TouchableWithoutFeedback onPress={signOutAndFlee}>
             <View>
               <McIcon name='logout' size={30} color={hexToRgba(colors.ink, 0.8)} />
             </View>

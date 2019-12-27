@@ -18,31 +18,34 @@ const Discovery = Base.create(({ navigation }) => {
 
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
-  const meQuery = queries.me.use({ onError: alertError });
+  const myQuery = queries.mine.use({ onError: alertError });
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
-  const { me } = meQuery.data || {};
   const [queryChats] = queries.chats.use.lazy();
+  const { me, myContract } = myQuery.data || {};
 
   useEffect(() => {
-    if (meQuery.called && !meQuery.loading && (meQuery.error || !me)) {
-      // Unauthorized
+    if (!myQuery.called) return;
+    if (myQuery.loading) return;
+    if (myQuery.error) return;
+
+    if (!myContract || !myContract.verified) {
+      baseNav.replace('Auth');
+
+      return;
+    }
+
+    if (!me) {
       baseNav.replace('Profile');
-    }
-  }, [meQuery.called, meQuery.loading, meQuery.error, me, baseNav]);
 
-  useEffect(() => {
-    if (me) {
-      queryChats();
+      return;
     }
-  }, [me && me.id]);
 
-  if (meQuery.loading) {
+    queryChats();
+  }, [myQuery]);
+
+  if (myQuery.loading || myQuery.error) {
     return useLoading(true);
-  }
-
-  if (meQuery.error || !me) {
-    return useLoading(false);
   }
 
   return useLoading(false,

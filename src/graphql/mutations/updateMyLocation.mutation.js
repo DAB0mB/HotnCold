@@ -12,7 +12,7 @@ const updateMyLocation = gql `
 `;
 
 updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
-  const { data: { me } = {} } = queries.me.use();
+  const { data: { me } = {} } = queries.mine.use();
   const [superMutate, mutation] = useMutation(updateMyLocation, defaultOptions);
 
   const mutate = useCallback((location = defaultLocation) => {

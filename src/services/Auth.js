@@ -18,10 +18,10 @@ export const useMe = () => {
   return useContext(MeContext);
 };
 
-export const useRegister = (args, { onCompleted = () => {}, ...options } = {}) => {
+export const useSignUp = (args, { onCompleted = () => {}, ...options } = {}) => {
   const client = useApolloClient();
 
-  return mutations.registerUser.use(args, {
+  return mutations.createUser.use(args, {
     ...options,
     onCompleted(data) {
       const removeListener = client.subscription.onConnected(() => {
@@ -34,7 +34,7 @@ export const useRegister = (args, { onCompleted = () => {}, ...options } = {}) =
   });
 };
 
-export const useLogout = () => {
+export const useSignOut = () => {
   const cookie = useCookie();
   const client = useApolloClient();
 

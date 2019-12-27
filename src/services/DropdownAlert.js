@@ -1,12 +1,27 @@
-import React, { createContext, useCallback, useContext, useMemo, useRef } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import DropdownAlert from 'react-native-dropdownalert';
 
+import { useStatusBar } from './StatusBar';
+
+const $inactiveStatusBarState = Symbol('inactiveStatusBarState');
 const DropdownAlertContext = createContext(null);
 
 export const DropdownAlertProvider = ({ children }) => {
   const dropdownAlertRef = useRef(null);
+  const inactiveStatusBarState = useState({});
+  const [inactiveStatusBar] = inactiveStatusBarState;
 
-  const dropDownAlertContext = useMemo(() => ({
+  const dropdownAlertContext = useMemo(() => ({
+    [$inactiveStatusBarState]: inactiveStatusBarState,
+
     alertWithType(...args) {
       if (dropdownAlertRef.current) {
         dropdownAlertRef.current.alertWithType(...args);
@@ -15,15 +30,33 @@ export const DropdownAlertProvider = ({ children }) => {
   }), [dropdownAlertRef]);
 
   return (
-    <DropdownAlertContext.Provider value={dropDownAlertContext}>
+    <DropdownAlertContext.Provider value={dropdownAlertContext}>
       {children}
-      <DropdownAlert ref={dropdownAlertRef} inactiveStatusBarStyle='dark-content' translucent />
+      <DropdownAlert
+        ref={dropdownAlertRef}
+        inactiveStatusBarStyle={inactiveStatusBar.style}
+        inactiveStatusBarBackgroundColor={inactiveStatusBar.backgroundColor}
+        translucent
+      />
     </DropdownAlertContext.Provider>
   );
 };
 
 export const useDropdownAlert = () => {
-  return useContext(DropdownAlertContext);
+  const dropdownAlert = useContext(DropdownAlertContext);
+  const statusBar = useStatusBar();
+
+  useEffect(() => {
+    const [inactiveStatusBar, setInactiveStatusBar] = dropdownAlert[$inactiveStatusBarState];
+
+    setInactiveStatusBar({ ...inactiveStatusBar, ...statusBar });
+
+    return () => {
+      setInactiveStatusBar(inactiveStatusBar);
+    };
+  }, [dropdownAlert, statusBar]);
+
+  return dropdownAlert;
 };
 
 export const useAlertError = () => {

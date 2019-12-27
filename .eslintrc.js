@@ -24,6 +24,7 @@ module.exports = {
     'react-native'
   ],
   'rules': {
+    'no-async-promise-executor': 'off',
     'react/prop-types': 'off',
     'indent': ['error', 2],
     'linebreak-style': ['error', 'unix'],

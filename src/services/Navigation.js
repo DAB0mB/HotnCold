@@ -7,6 +7,7 @@ import React, {
   useRef,
 } from 'react';
 import { BackHandler } from 'react-native';
+import { StackActions, NavigationActions } from 'react-navigation';
 
 const NavigationContext = createContext(new Map());
 
@@ -35,6 +36,20 @@ export const useNavigation = (navKey) => {
     if (shouldGoBack.current) {
       goBack.current();
     }
+  }, [true]);
+
+  // Push and reset navigation stack
+  nav.terminalPush = useCallback((routeName, params) => {
+    nav.push(routeName, params);
+
+    const didBlurListener = nav.addListener('didBlur', ({ action }) => {
+      didBlurListener.remove();
+
+      nav.dispatch(StackActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName, params, key: action.toChildKey })]
+      }));
+    });
   }, [true]);
 
   nav.useBackListener = useCallback((_goBack = nav.goBack.bind(nav)) => {

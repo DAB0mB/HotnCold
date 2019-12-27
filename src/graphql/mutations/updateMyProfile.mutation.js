@@ -28,7 +28,7 @@ const updateMyProfile = gql `
 `;
 
 updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
-  const { data: { me } = {} } = queries.me.use();
+  const { data: { me } = {} } = queries.mine.use();
   const [superMutate, mutation] = useMutation(updateMyProfile, defaultOptions);
 
   const mutate = useCallback(({

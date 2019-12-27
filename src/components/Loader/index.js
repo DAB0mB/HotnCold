@@ -40,7 +40,7 @@ const Loader = ({ size, betweenSpace, bufferMs = 500, style = {}, text = 'Loadin
       {!buffering && (
         <>
           <DotsLoader size={size} betweenSpace={betweenSpace} />
-          <Text style={styles.text}>{text}...</Text>
+          <Text style={[styles.text, style]}>{text}...</Text>
         </>
       )}
     </View>
