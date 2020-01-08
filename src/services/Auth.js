@@ -4,18 +4,18 @@ import React, { createContext, useContext, useCallback } from 'react';
 import * as mutations from '../graphql/mutations';
 import { useCookie } from './Cookie';
 
-const MeContext = createContext(null);
+const MyContext = createContext(null);
 
-export const MeProvider = ({ me, children }) => {
+export const MyProvider = ({ myContract, me, children }) => {
   return (
-    <MeContext.Provider value={me}>
+    <MyContext.Provider value={{ myContract, me }}>
       {children}
-    </MeContext.Provider>
+    </MyContext.Provider>
   );
 };
 
-export const useMe = () => {
-  return useContext(MeContext);
+export const useMine = () => {
+  return useContext(MyContext);
 };
 
 export const useSignUp = (args, { onCompleted = () => {}, ...options } = {}) => {

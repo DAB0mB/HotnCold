@@ -4,7 +4,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
-import { useMe } from '../../services/Auth';
+import { useMine } from '../../services/Auth';
 import { useNavigation } from '../../services/Navigation';
 import { pick } from '../../utils';
 
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 const noop = () => {};
 
 const Header = () => {
-  const me = useMe();
+  const { me } = useMine();
   const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
   const chat = socialNav.getParam('chat');

@@ -4,7 +4,6 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
-// import { useMe } from '../../services/Auth';
 import { useNavigation } from '../../services/Navigation';
 
 const styles = StyleSheet.create({
@@ -27,7 +26,6 @@ const styles = StyleSheet.create({
 });
 
 const Header = () => {
-  // const me = useMe();
   const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
 

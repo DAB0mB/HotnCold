@@ -7,7 +7,7 @@ import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
-import { useMe } from '../../services/Auth';
+import { useMine } from '../../services/Auth';
 import { useBluetoothLE, BLE_MODES } from '../../services/BluetoothLE';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
 });
 
 const Radar = () => {
-  const me = useMe();
+  const { me, myContract } = useMine();
   const ble = useBluetoothLE();
   const discoveryNav = useNavigation(Discovery);
   const baseNav = useNavigation(Base);
@@ -222,7 +222,7 @@ const Radar = () => {
       // Run in background
       updateRecentScanTime();
 
-      if (me.name === '__TEST__') {
+      if (myContract.isTest) {
         queryUserProfile({
           variables: { randomMock: true },
         });

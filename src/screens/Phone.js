@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { StyleSheet, Text, View, Dimensions, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TextInput, TouchableWithoutFeedback } from 'react-native';
 import CountryPicker, { DARK_THEME as SuperCountryPickerTheme } from 'react-native-country-picker-modal';
 import { TextInputMask } from 'react-native-masked-text';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -110,8 +110,6 @@ const Phone = () => {
   const [countryPickerOpened, setCountryPickerOpened] = useState(false);
   const [findOrCreateContract, findOrCreateContractMutation] = mutations.findOrCreateContract.use(phone, {
     onCompleted: useCallback((data) => {
-      Keyboard.dismiss();
-
       const didBlurListener = authNav.addListener('didBlur', () => {
         didBlurListener.remove();
         setLocalPhone('');

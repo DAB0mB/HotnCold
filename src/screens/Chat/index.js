@@ -5,7 +5,7 @@ import GiftedChat from '../../components/GiftedChat';
 import Social from '../../containers/Social';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
-import { useMe } from '../../services/Auth';
+import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
 import Header from './Header';
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 });
 
 const Chat = () => {
-  const me = useMe();
+  const { me } = useMine();
   const alertError = useAlertError();
   const socialNav = useNavigation(Social);
   const chat = socialNav.getParam('chat');

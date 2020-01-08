@@ -1,6 +1,6 @@
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import React, { useCallback, useState } from 'react';
-import { Dimensions, StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Dimensions, StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Auth from '../containers/Auth';
@@ -71,8 +71,6 @@ const Verify = () => {
   const alertError = useAlertError();
   const [verifyContract] = mutations.verifyContract.use(contract.id, passcode, {
     onCompleted: useCallback(() => {
-      Keyboard.dismiss();
-
       baseNav.terminalPush('Profile');
     }, [baseNav]),
     onError: alertError,

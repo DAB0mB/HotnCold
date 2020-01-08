@@ -6,7 +6,7 @@ import PopOver from '../../components/PopOver';
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
 import { useSignOut } from '../../services/Auth';
-import { useMe } from '../../services/Auth';
+import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
 
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
 });
 
 const Header = () => {
-  const me = useMe();
+  const { me } = useMine();
   const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
   const optionsIconRef = useRef(null);
@@ -96,7 +96,7 @@ const Header = () => {
       <View style={styles.editProfile}>
         <TouchableWithoutFeedback onPress={showOptions}>
           <View style={styles.optionsIcon} ref={optionsIconRef}>
-            <McIcon name='dots-horizontal' size={20} color='white' solid />
+            <McIcon name='dots-vertical' size={20} color='white' solid />
           </View>
         </TouchableWithoutFeedback>
       </View>

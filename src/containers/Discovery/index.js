@@ -3,7 +3,7 @@ import { NavigationActions } from 'react-navigation';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
 import * as queries from '../../graphql/queries';
-import { MeProvider } from '../../services/Auth';
+import { MyProvider } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
 import { useHeader } from '../../services/Header';
@@ -49,7 +49,7 @@ const Discovery = Base.create(({ navigation }) => {
   }
 
   return useLoading(false,
-    <MeProvider me={me}>
+    <MyProvider myContract={myContract} me={me}>
       <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNav, me }}>
         <NativeGuard
           ServiceRequiredComponent={ServiceRequired}
@@ -63,7 +63,7 @@ const Discovery = Base.create(({ navigation }) => {
           </LoadingProvider>
         </NativeGuard>
       </HeaderProvider>
-    </MeProvider>
+    </MyProvider>
   );
 });
 

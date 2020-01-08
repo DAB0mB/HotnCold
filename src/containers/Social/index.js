@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import * as queries from '../../graphql/queries';
-import { MeProvider } from '../../services/Auth';
+import { MyProvider } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { LoadingProvider, useLoading } from '../../services/Loading';
 import { NavigationProvider } from '../../services/Navigation';
@@ -31,7 +31,7 @@ const Social = Base.create(({ navigation }) => {
 
   const alertError = useAlertError();
   const myQuery = queries.mine.use({ onError: alertError });
-  const { me } = myQuery.data || {};
+  const { me, myContract } = myQuery.data || {};
 
   if (myQuery.loading) {
     return useLoading(true);
@@ -43,14 +43,14 @@ const Social = Base.create(({ navigation }) => {
 
   return useLoading(false,
     <View style={styles.container}>
-      <MeProvider me={me}>
+      <MyProvider me={me} myContract={myContract}>
         <LoadingProvider contaienrStyle={styles.loadingContainer}>
           <Header />
           <View style={styles.body}>
             <SocialRouter navigation={navigation} />
           </View>
         </LoadingProvider>
-      </MeProvider>
+      </MyProvider>
     </View>
   );
 });
