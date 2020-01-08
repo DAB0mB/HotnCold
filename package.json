@@ -55,6 +55,7 @@
     "react-native-modal-datetime-picker": "^7.6.0",
     "react-native-permissions": "^2.0.3",
     "react-native-phone-input": "^0.2.4",
+    "react-native-popover-view": "^2.0.5",
     "react-native-reanimated": "~1.1.0",
     "react-native-screens": "1.0.0-alpha.22",
     "react-native-status-bar-height": "^2.4.0",

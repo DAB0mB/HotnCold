@@ -1,10 +1,13 @@
-import React, { useCallback } from 'react';
-import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import React, { useCallback, useRef, useState, useMemo } from 'react';
+import { Alert, View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import PopOver from '../../components/PopOver';
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
+import { useSignOut } from '../../services/Auth';
 import { useMe } from '../../services/Auth';
+import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
 
 const styles = StyleSheet.create({
@@ -28,7 +31,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
   },
-  editProfileIcon: {
+  optionsIcon: {
     paddingRight: 10,
   },
 });
@@ -37,14 +40,50 @@ const Header = () => {
   const me = useMe();
   const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
-
-  socialNav.useBackListener(() => {
-    baseNav.goBack();
-  });
+  const optionsIconRef = useRef(null);
+  const optionsState = useState(false);
+  const [, setShowingOptions] = optionsState;
+  const signOut = useSignOut();
+  const alertError = useAlertError();
 
   const editProfile = useCallback(() => {
     baseNav.push('Profile', { user: me, itsMe: true });
   }, [baseNav, me]);
+
+  const signOutAndFlee = useCallback(() => {
+    Alert.alert('Sign Out', 'Are you sure you would like to proceed?', [
+      {
+        text: 'Cancel',
+      },
+      {
+        text: 'Yes',
+        onPress: () => signOut().then(() => {
+          baseNav.terminalPush('Auth');
+        }).catch(alertError),
+      }
+    ]);
+  }, [signOut, alertError, baseNav]);
+
+  const showOptions = useCallback(() => {
+    setShowingOptions(true);
+  }, [true]);
+
+  const optionsItems = useMemo(() => [
+    {
+      text: 'Edit Profile',
+      icon: 'account-edit',
+      onPress: editProfile,
+    },
+    {
+      text: 'Sign Out',
+      icon: 'logout',
+      onPress: signOutAndFlee,
+    }
+  ], [editProfile]);
+
+  socialNav.useBackListener(() => {
+    baseNav.goBack();
+  });
 
   return (
     <View style={styles.header}>
@@ -55,12 +94,17 @@ const Header = () => {
       </TouchableWithoutFeedback>
       <Text style={styles.title}>Chats</Text>
       <View style={styles.editProfile}>
-        <TouchableWithoutFeedback onPress={editProfile}>
-          <View style={styles.editProfileIcon}>
-            <McIcon name='account-edit' size={20} color='white' solid />
+        <TouchableWithoutFeedback onPress={showOptions}>
+          <View style={styles.optionsIcon} ref={optionsIconRef}>
+            <McIcon name='dots-horizontal' size={20} color='white' solid />
           </View>
         </TouchableWithoutFeedback>
       </View>
+      <PopOver
+        fromView={optionsIconRef.current}
+        state={optionsState}
+        items={optionsItems}
+      />
     </View>
   );
 };

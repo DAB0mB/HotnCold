@@ -4,13 +4,11 @@ import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, AppState } from 'react-native';
+import { View, StyleSheet, AppState } from 'react-native';
 import CONFIG from 'react-native-config';
-import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
-import { useSignOut } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useGeoBackgroundTelemetry, useGeolocation } from '../../services/Geolocation';
 import { useLoading } from '../../services/Loading';
@@ -32,13 +30,6 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-  },
-  devIconsContainer: {
-    position: 'absolute',
-    flexDirection: 'row',
-    padding: 10,
-    right: 0,
-    bottom: 0,
   },
 });
 
@@ -82,7 +73,6 @@ const emptyShape = {
 };
 
 const Map = () => {
-  const signOut = useSignOut();
   const mapRef = useRef(null);
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
@@ -120,12 +110,6 @@ const Map = () => {
       )
     });
   }, [setScreenFeatures, areaFeatures]);
-
-  const signOutAndFlee = useCallback(() => {
-    signOut().then(() => {
-      baseNav.terminalPush('Auth');
-    }).catch(alertError);
-  }, [signOut, alertError, baseNav]);
 
   const cancelSelection = useCallback(() => {
     setSelection(null);
@@ -282,16 +266,6 @@ const Map = () => {
         onClosePress={cancelSelection}
         selection={selection}
       />
-
-      {__DEV__ && (
-        <View style={styles.devIconsContainer}>
-          <TouchableWithoutFeedback onPress={signOutAndFlee}>
-            <View>
-              <McIcon name='logout' size={30} color={hexToRgba(colors.ink, 0.8)} />
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-      )}
     </View>
   );
 };
