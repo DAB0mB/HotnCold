@@ -22,12 +22,12 @@ const mine = gql `
 mine.use = ({ onCompleted = () => {}, ...options } = {}) => {
   return useQuery(mine, {
     onCompleted: (data) => {
-      const { user } = data;
+      const { me } = data;
 
-      if (user) {
-        Image.prefetch(user.avatar);
+      if (me) {
+        Image.prefetch(me.avatar);
 
-        user.pictures.forEach(p => Image.prefetch(p));
+        me.pictures.forEach(p => Image.prefetch(p));
       }
 
       onCompleted(data);
