@@ -47,7 +47,11 @@ Trigger the app on a second tab:
 
 ## Test
 
-Create a new user or edit the user's profile name to be `__TEST__` and you should be able to see at least one fake user on the map and on the radar. To get a feedback from a fake user when chatting with it, you can send the word `echo` to get a response. Alternatively, you can specify a delay time (in seconds) by concatenating a parameter e.g. `echo 5`.
+When signing-in, you can unlock test mode by spam-tapping on the country code field. At some point you it should turn into `-0`, which indicates you've just activated test mode successfully.
+
+There's 2 methods to proceed from this point on: The first one is by filling-out the phone field with 0s, or you can select your country code and fill-out your real number. With the first method you won't receive any text message, authentication will only be done locally, and with the second method, you'll receive an actual text message. Either way, the verification code will appear on screen for testing purposes. Once you continue, the app should function normally; only difference you'll be able to see users-mocks only.
+
+Each supported geographical area should have at least 1 user-mock that should be detectable on the map or by the radar.To get a feedback from a fake user when chatting with it, you can send the word `echo` to get a response. Alternatively, you can specify a delay time (in seconds) by concatenating a parameter e.g. `echo 5`.
 
 ## Prod
 
