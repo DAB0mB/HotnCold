@@ -99,6 +99,7 @@ const Phone = () => {
   const authNav = useNavigation(Auth);
   const alertError = useAlertError();
   const [testing, setTestState] = useState(false);
+  const [loading, setLoading] = useState(false);
   const ccodePrefix = useMemo(() => testing ? '-' : '+', [testing]);
   const [localPhone, setLocalPhone] = useState('');
   const [country, setCountry] = useState(null);
@@ -136,6 +137,22 @@ const Phone = () => {
       clearTimeout(timeout);
     };
   }, [ccodeTapCount]);
+
+  useEffect(() => {
+    if (!findOrCreateContractMutation.loading) {
+      setLoading(false);
+
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setLoading(true);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [findOrCreateContractMutation.loading]);
 
   const updateCcodeTapCount = useCallback(() => {
     if (ccodeTapCount == 4) {
@@ -219,7 +236,7 @@ const Phone = () => {
         <Text style={styles.smsNote}>Carrier SMS charges may apply.</Text>
       </View>
       {validatePhone(phone) && (
-        findOrCreateContractMutation.loading ? (
+        loading ? (
           <View style={styles.next}>
             <DotsLoader size={10} betweenSpace={10} />
           </View>
