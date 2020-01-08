@@ -179,7 +179,7 @@ const Profile = () => {
         alertSuccess('Profile successfully updated');
       }
       else {
-        baseNav.replace('Discovery');
+        baseNav.terminalPush('Discovery');
       }
     }, [itsMe, alertSuccess, baseNav, saving]),
   });

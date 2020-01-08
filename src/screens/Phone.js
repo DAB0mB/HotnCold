@@ -112,7 +112,14 @@ const Phone = () => {
     onCompleted: useCallback((data) => {
       Keyboard.dismiss();
 
-      authNav.terminalPush('Verify', {
+      const didBlurListener = authNav.addListener('didBlur', () => {
+        didBlurListener.remove();
+        setLocalPhone('');
+        setCountry(null);
+        setTestState(false);
+      });
+
+      authNav.push('Verify', {
         phone: `+${phone.slice(1)}`,
         contract: data.findOrCreateContract,
       });

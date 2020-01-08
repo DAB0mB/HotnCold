@@ -22,9 +22,6 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
   },
-  inputsContainer: {
-    marginTop: 20,
-  },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -32,7 +29,7 @@ const styles = StyleSheet.create({
   },
   otp: {
     width: '100%',
-    height: 200,
+    height: 100,
   },
   otpInput: {
     color: 'white',
@@ -47,6 +44,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     color: 'white',
     fontSize: 10,
+  },
+  resend: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    fontSize: 20,
+    color: 'white',
   },
   next: {
     position: 'absolute',
@@ -74,12 +78,14 @@ const Verify = () => {
     onError: alertError,
   });
 
+  authNav.useBackListener();
+
   return (
     <View style={styles.container}>
       <View>
         <Text style={styles.instructions}>A verification code has just been sent to {phone}. Please enter it.</Text>
       </View>
-      <View style={styles.inputsContianer}>
+      <View>
         <View style={styles.otpContainer}>
           <OTPInputView
             style={styles.otp}
@@ -90,9 +96,14 @@ const Verify = () => {
           />
         </View>
         {passcodeHint && (
-          <Text style={styles.passcodeHint}>Your passcode is {passcodeHint}.</Text>
+          <Text style={styles.passcodeHint}>[TEST] Your passcode is {passcodeHint}.</Text>
         )}
       </View>
+      <TouchableWithoutFeedback onPress={authNav.goBackOnceFocused}>
+        <Text style={styles.resend}>
+          <McIcon name='cellphone-message' color='white' size={20} /> <Text>Resend</Text>
+        </Text>
+      </TouchableWithoutFeedback>
       {passcode.length == 4 && (
         <TouchableWithoutFeedback onPress={verifyContract}>
           <Text style={styles.next}>
