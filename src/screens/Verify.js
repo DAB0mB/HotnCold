@@ -1,9 +1,8 @@
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Dimensions, StyleSheet, View, Text, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import DotsLoader from '../components/Loader/DotsLoader';
 import Auth from '../containers/Auth';
 import { HEIGHT as HEADER_HEIGHT } from '../containers/Auth/Header';
 import Base from '../containers/Base';
@@ -59,35 +58,21 @@ const styles = StyleSheet.create({
 });
 
 const Verify = () => {
-  const [passcode, setPasscode] = useState('');
-  const [passcodeHint, setPasscodeHint] = useState(null);
-  const [contractId, setContractId] = useState(null);
   const baseNav = useNavigation(Base);
   const authNav = useNavigation(Auth);
   const phone = authNav.getParam('phone');
-  const useSending = authNav.getParam('sendingHook');
+  const contract = authNav.getParam('contract');
+  const [passcode, setPasscode] = useState('');
+  const [passcodeHint] = useState(contract.isTest ? contract.passcode : null);
   const alertError = useAlertError();
-  const [verifyContract] = mutations.verifyContract.use(contractId, passcode, {
-    onCompleted() {
+  const [verifyContract] = mutations.verifyContract.use(contract.id, passcode, {
+    onCompleted: useCallback(() => {
       Keyboard.dismiss();
 
       baseNav.terminalPush('Profile');
-    },
+    }, [baseNav]),
     onError: alertError,
   });
-
-  useSending(sending => sending
-    .then((contract) => {
-      setContractId(contract.id);
-
-      if (contract.isTest) {
-        setPasscodeHint(contract.passcode);
-      }
-    })
-    .catch((error) => {
-      alertError(error);
-    })
-  );
 
   return (
     <View style={styles.container}>
@@ -109,17 +94,11 @@ const Verify = () => {
         )}
       </View>
       {passcode.length == 4 && (
-        contractId ? (
-          <TouchableWithoutFeedback onPress={verifyContract}>
-            <Text style={styles.next}>
-              <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
-            </Text>
-          </TouchableWithoutFeedback>
-        ) : (
-          <View style={styles.next}>
-            <DotsLoader size={10} betweenSpace={10} />
-          </View>
-        )
+        <TouchableWithoutFeedback onPress={verifyContract}>
+          <Text style={styles.next}>
+            <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
+          </Text>
+        </TouchableWithoutFeedback>
       )}
     </View>
   );

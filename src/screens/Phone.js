@@ -4,6 +4,7 @@ import CountryPicker, { DARK_THEME as SuperCountryPickerTheme } from 'react-nati
 import { TextInputMask } from 'react-native-masked-text';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import DotsLoader from '../components/Loader/DotsLoader';
 import Auth from '../containers/Auth';
 import { HEIGHT as HEADER_HEIGHT } from '../containers/Auth/Header';
 import * as mutations from '../graphql/mutations';
@@ -107,7 +108,15 @@ const Phone = () => {
   const phone = useMemo(() => `${callingCode}${localPhone.replace(/[^\d]/g, '')}`, [callingCode, localPhone]);
   const [ccodeTapCount, setCcodeTapCount] = useState(0);
   const [countryPickerOpened, setCountryPickerOpened] = useState(false);
-  const [findOrCreateContractHandler] = mutations.findOrCreateContract.use(phone, {
+  const [findOrCreateContract, findOrCreateContractMutation] = mutations.findOrCreateContract.use(phone, {
+    onCompleted: useCallback((data) => {
+      Keyboard.dismiss();
+
+      authNav.terminalPush('Verify', {
+        phone: `+${phone.slice(1)}`,
+        contract: data.findOrCreateContract,
+      });
+    }, [authNav, phone]),
     onError: alertError
   });
 
@@ -122,43 +131,6 @@ const Phone = () => {
       clearTimeout(timeout);
     };
   }, [ccodeTapCount]);
-
-  const createSendingHook = useCallback(() => {
-    let creatingContract;
-    try {
-      creatingContract = findOrCreateContractHandler();
-    }
-    catch (e) {
-      alertError(e);
-
-      return;
-    }
-
-    return (callback) => {
-      useEffect(() => {
-        let isMounted = true;
-
-        callback(new Promise(async (resolve, reject) => {
-          try {
-            const { data } = await creatingContract;
-
-            if (isMounted) {
-              resolve(data.findOrCreateContract);
-            }
-          }
-          catch (e) {
-            if (isMounted) {
-              reject(e);
-            }
-          }
-        }));
-
-        return () => {
-          isMounted = false;
-        };
-      }, [true]);
-    };
-  }, [findOrCreateContractHandler]);
 
   const updateCcodeTapCount = useCallback(() => {
     if (ccodeTapCount == 4) {
@@ -176,26 +148,14 @@ const Phone = () => {
   }, [true]);
 
   const openCountryPicker = useCallback(() => {
+    if (findOrCreateContractMutation.loading) return;
+
     setCountryPickerOpened(true);
-  }, [true]);
+  }, [findOrCreateContractMutation]);
 
   const closeCountryPicker = useCallback(() => {
     setCountryPickerOpened(false);
   }, [true]);
-
-  const findOrCreateContract = useCallback(() => {
-    const sendingHook = createSendingHook();
-
-    // Validation error
-    if (!sendingHook) return;
-
-    Keyboard.dismiss();
-
-    authNav.terminalPush('Verify', {
-      phone: `+${phone.slice(1)}`,
-      sendingHook,
-    });
-  }, [authNav, createSendingHook]);
 
   return (
     <View style={styles.container}>
@@ -239,6 +199,7 @@ const Phone = () => {
           </TouchableWithoutFeedback>
           <View style={styles.localPhone}>
             <TextInputMask
+              editable={!findOrCreateContractMutation.loading}
               importantForAutofill='no'
               autoCompleteType='off'
               placeholder='phone number'
@@ -253,11 +214,17 @@ const Phone = () => {
         <Text style={styles.smsNote}>Carrier SMS charges may apply.</Text>
       </View>
       {validatePhone(phone) && (
-        <TouchableWithoutFeedback onPress={findOrCreateContract}>
-          <Text style={styles.next}>
-            <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
-          </Text>
-        </TouchableWithoutFeedback>
+        findOrCreateContractMutation.loading ? (
+          <View style={styles.next}>
+            <DotsLoader size={10} betweenSpace={10} />
+          </View>
+        ) : (
+          <TouchableWithoutFeedback onPress={findOrCreateContract}>
+            <Text style={styles.next}>
+              <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
+            </Text>
+          </TouchableWithoutFeedback>
+        )
       )}
     </View>
   );
