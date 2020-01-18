@@ -2,6 +2,7 @@ import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { NavigationActions } from 'react-navigation';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
+import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { MyProvider } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
@@ -9,6 +10,7 @@ import { HeaderProvider } from '../../services/Header';
 import { useHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
+import { useNotifications } from '../../services/Notifications';
 import Base from '../Base';
 import Header from './Header';
 import ServiceRequired from './ServiceRequired';
@@ -17,8 +19,10 @@ const Discovery = Base.create(({ navigation }) => {
   const { default: DiscoveryRouter } = require('../../routers/Discovery');
 
   const alertError = useAlertError();
+  const notifications = useNotifications();
   const baseNav = useNavigation(Base);
   const myQuery = queries.mine.use({ onError: alertError });
+  const [associateNotificationsToken] = mutations.associateNotificationsToken.use();
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
   const [queryChats] = queries.chats.use.lazy();
@@ -29,19 +33,15 @@ const Discovery = Base.create(({ navigation }) => {
     if (myQuery.loading) return;
     if (myQuery.error) return;
 
-    if (!myContract || !myContract.verified) {
+    if (!myContract || !myContract.signed) {
       baseNav.replace('Auth');
 
       return;
     }
 
-    if (!me) {
-      baseNav.replace('Profile');
-
-      return;
-    }
-
     queryChats();
+
+    return notifications.onTokenRefresh(associateNotificationsToken);
   }, [myQuery]);
 
   if (myQuery.loading || myQuery.error) {

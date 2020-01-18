@@ -7,6 +7,7 @@ Built for both Android and iOS, currently known to support Android only.
 Configure the following services:
 
 - [MapBox](https://www.mapbox.com/).
+- [Firebase](firebase.google.com).
 - [Hot&Cold Server](https://github.com/DAB0mB/HotnCold-server).
 
 Define environment variables in `.env` file (NEVER COMMIT):
@@ -25,8 +26,10 @@ Define environment variables in `.env` file (NEVER COMMIT):
     TEST_PHONE_LOCAL
     # Phone number regexp for testing with phone
     TEST_PHONE_SMS
-    # *Optional: The auth token of the user we would like to log-in with
+    # *Optional: The auth token of the user you would like to log-in with
     INITIAL_USER_TOKEN
+
+To enable push notifications, download `google-services.json` file from Firebase console to `android/app` directory. Later on when there's official iOS support, you would also need to download a file called `GoogleService-Info.plist`. See [further instructions](https://support.google.com/firebase/answer/7015592?hl=en).
 
 Run the following commands in series:
 

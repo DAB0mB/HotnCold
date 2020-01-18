@@ -161,7 +161,7 @@ const Profile = () => {
     }, [setBirthDate])
   });
   const useProfileMutation = itsMe ? mutations.updateMyProfile.use : useSignUp;
-  const [mutateProfile] = useProfileMutation({
+  const [mutateProfile] = [].concat(useProfileMutation({
     name,
     bio,
     occupation,
@@ -182,7 +182,7 @@ const Profile = () => {
         baseNav.terminalPush('Discovery');
       }
     }, [itsMe, alertSuccess, baseNav, saving]),
-  });
+  }));
   const [uploadPicture] = mutations.uploadPicture.use({
     onError: alertError,
   });

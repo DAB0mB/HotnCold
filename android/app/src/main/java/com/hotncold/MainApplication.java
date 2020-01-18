@@ -3,6 +3,9 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import com.marianhello.bgloc.react.BackgroundGeolocationPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import de.patwoz.rn.bluetoothstatemanager.RNBluetoothStateManagerPackage;
@@ -38,6 +41,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFirebasePackage(),
+            new RNFirebaseNotificationsPackage(),
+            new RNFirebaseMessagingPackage(),
             new BackgroundGeolocationPackage(),
             new RNPermissionsPackage(),
             new RNBluetoothStateManagerPackage(),

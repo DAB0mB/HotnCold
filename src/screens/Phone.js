@@ -7,7 +7,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DotsLoader from '../components/Loader/DotsLoader';
 import Auth from '../containers/Auth';
 import { HEIGHT as HEADER_HEIGHT } from '../containers/Auth/Header';
-import * as mutations from '../graphql/mutations';
+import { useRequestSignIn } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
 const Phone = () => {
   const authNav = useNavigation(Auth);
   const alertError = useAlertError();
+  const [loading, setLoading] = useState(false);
   const [testing, setTestState] = useState(false);
   const ccodePrefix = useMemo(() => testing ? '-' : '+', [testing]);
   const [localPhone, setLocalPhone] = useState('');
@@ -108,8 +109,10 @@ const Phone = () => {
   const phone = useMemo(() => `${callingCode}${localPhone.replace(/[^\d]/g, '')}`, [callingCode, localPhone]);
   const [ccodeTapCount, setCcodeTapCount] = useState(0);
   const [countryPickerOpened, setCountryPickerOpened] = useState(false);
-  const [findOrCreateContract, findOrCreateContractMutation] = mutations.findOrCreateContract.use(phone, {
-    onCompleted: useCallback((data) => {
+  const superRequestSignIn = useRequestSignIn(phone, {
+    onCompleted: useCallback((contract) => {
+      setLoading(false);
+
       const didBlurListener = authNav.addListener('didBlur', () => {
         didBlurListener.remove();
         setLocalPhone('');
@@ -119,11 +122,21 @@ const Phone = () => {
 
       authNav.push('Verify', {
         phone: `+${phone.slice(1)}`,
-        contract: data.findOrCreateContract,
+        contract,
       });
     }, [authNav, phone]),
-    onError: alertError
+    onError: useCallback((error) => {
+      setLoading(false);
+
+      alertError(error);
+    }, [alertError]),
   });
+
+  const requestSignIn = useCallback(() => {
+    setLoading(true);
+
+    superRequestSignIn();
+  }, [superRequestSignIn]);
 
   useEffect(() => {
     if (!ccodeTapCount) return;
@@ -153,10 +166,10 @@ const Phone = () => {
   }, [true]);
 
   const openCountryPicker = useCallback(() => {
-    if (findOrCreateContractMutation.loading) return;
+    if (loading) return;
 
     setCountryPickerOpened(true);
-  }, [findOrCreateContractMutation]);
+  }, [loading]);
 
   const closeCountryPicker = useCallback(() => {
     setCountryPickerOpened(false);
@@ -204,7 +217,7 @@ const Phone = () => {
           </TouchableWithoutFeedback>
           <View style={styles.localPhone}>
             <TextInputMask
-              editable={!findOrCreateContractMutation.loading}
+              editable={!loading}
               importantForAutofill='no'
               autoCompleteType='off'
               placeholder='phone number'
@@ -219,12 +232,12 @@ const Phone = () => {
         <Text style={styles.smsNote}>Carrier SMS charges may apply.</Text>
       </View>
       {validatePhone(phone) && (
-        findOrCreateContractMutation.loading ? (
+        loading ? (
           <View style={styles.next}>
             <DotsLoader size={10} betweenSpace={10} />
           </View>
         ) : (
-          <TouchableWithoutFeedback onPress={findOrCreateContract}>
+          <TouchableWithoutFeedback onPress={requestSignIn}>
             <Text style={styles.next}>
               <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
             </Text>

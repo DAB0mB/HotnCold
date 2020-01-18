@@ -3,10 +3,11 @@ import React, { useCallback, useState } from 'react';
 import { Dimensions, StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import DotsLoader from '../components/Loader/DotsLoader';
 import Auth from '../containers/Auth';
 import { HEIGHT as HEADER_HEIGHT } from '../containers/Auth/Header';
 import Base from '../containers/Base';
-import * as mutations from '../graphql/mutations';
+import { useVerifySignIn } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
 
@@ -66,15 +67,33 @@ const Verify = () => {
   const authNav = useNavigation(Auth);
   const phone = authNav.getParam('phone');
   const contract = authNav.getParam('contract');
+  const [loading, setLoading] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [passcodeHint] = useState(contract.isTest ? contract.passcode : null);
   const alertError = useAlertError();
-  const [verifyContract] = mutations.verifyContract.use(contract.id, passcode, {
-    onCompleted: useCallback(() => {
-      baseNav.terminalPush('Profile');
+  const superVerifySignIn = useVerifySignIn(contract, passcode, {
+    onCompleted: useCallback((contract) => {
+      setLoading(false);
+
+      if (contract.signed) {
+        baseNav.terminalPush('Discovery');
+      }
+      else {
+        baseNav.terminalPush('Profile');
+      }
     }, [baseNav]),
-    onError: alertError,
+    onError(error) {
+      setLoading(false);
+
+      alertError(error);
+    },
   });
+
+  const verifySignIn = useCallback(() => {
+    setLoading(true);
+
+    superVerifySignIn();
+  }, [superVerifySignIn]);
 
   authNav.useBackListener();
 
@@ -103,11 +122,17 @@ const Verify = () => {
         </Text>
       </TouchableWithoutFeedback>
       {passcode.length == 4 && (
-        <TouchableWithoutFeedback onPress={verifyContract}>
-          <Text style={styles.next}>
-            <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
-          </Text>
-        </TouchableWithoutFeedback>
+        loading ? (
+          <View style={styles.next}>
+            <DotsLoader size={10} betweenSpace={10} />
+          </View>
+        ) : (
+          <TouchableWithoutFeedback onPress={verifySignIn}>
+            <Text style={styles.next}>
+              <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
+            </Text>
+          </TouchableWithoutFeedback>
+        )
       )}
     </View>
   );

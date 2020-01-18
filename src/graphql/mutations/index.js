@@ -1,4 +1,6 @@
+export { default as associateNotificationsToken } from './associateNotificationsToken.mutation';
 export { default as createUser } from './createUser.mutation';
+export { default as dissociateNotificationsToken } from './dissociateNotificationsToken.mutation';
 export { default as findOrCreateChat } from './findOrCreateChat.mutation';
 export { default as findOrCreateContract } from './findOrCreateContract.mutation';
 export { default as sendMessage } from './sendMessage.mutation';

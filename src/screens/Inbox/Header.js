@@ -8,6 +8,7 @@ import Social from '../../containers/Social';
 import { useSignOut } from '../../services/Auth';
 import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
+import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 
 const styles = StyleSheet.create({
@@ -42,6 +43,7 @@ const Header = () => {
   const baseNav = useNavigation(Base);
   const optionsIconRef = useRef(null);
   const optionsState = useState(false);
+  const [loading, setLoading] = useState(false);
   const [, setShowingOptions] = optionsState;
   const signOut = useSignOut();
   const alertError = useAlertError();
@@ -57,9 +59,17 @@ const Header = () => {
       },
       {
         text: 'Yes',
-        onPress: () => signOut().then(() => {
-          baseNav.terminalPush('Auth');
-        }).catch(alertError),
+        onPress: () => {
+          setLoading(true);
+
+          signOut().then(() => {
+            baseNav.terminalPush('Auth');
+          })
+            .catch((error) => {
+              setLoading(false);
+              alertError(error);
+            });
+        },
       }
     ]);
   }, [signOut, alertError, baseNav]);
@@ -85,7 +95,7 @@ const Header = () => {
     baseNav.goBack();
   });
 
-  return (
+  return useLoading(loading,
     <View style={styles.header}>
       <TouchableWithoutFeedback onPress={socialNav.goBackOnceFocused}>
         <View style={styles.backIcon}>

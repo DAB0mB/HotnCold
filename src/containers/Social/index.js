@@ -21,9 +21,6 @@ const styles = StyleSheet.create({
     marginTop: 50,
     flex: 1
   },
-  loadingContainer: {
-    backgroundColor: 'transparent',
-  }
 });
 
 const Social = Base.create(({ navigation }) => {
@@ -44,7 +41,7 @@ const Social = Base.create(({ navigation }) => {
   return useLoading(false,
     <View style={styles.container}>
       <MyProvider me={me} myContract={myContract}>
-        <LoadingProvider contaienrStyle={styles.loadingContainer}>
+        <LoadingProvider>
           <Header />
           <View style={styles.body}>
             <SocialRouter navigation={navigation} />

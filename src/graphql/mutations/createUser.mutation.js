@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 
 const createUser = gql `
   mutation CreateUser(
+    $notificationsToken: String!
     $name: String!
     $occupation: String!
     $birthDate: DateTime!
@@ -11,6 +12,7 @@ const createUser = gql `
     $pictures: [String!]!
   ) {
     createUser(
+      notificationsToken: $notificationsToken
       name: $name
       occupation: $occupation
       birthDate: $birthDate
@@ -25,6 +27,7 @@ createUser.use = (defaultArgs = {}, defaultOptions = {}) => {
   const [superMutate, mutation] = useMutation(createUser, defaultOptions);
 
   const mutate = useCallback(({
+    notificationsToken = defaultArgs.notificationsToken,
     name = defaultArgs.name,
     birthDate = defaultArgs.birthDate,
     occupation = defaultArgs.occupation,
@@ -38,10 +41,11 @@ createUser.use = (defaultArgs = {}, defaultOptions = {}) => {
 
         client.clearStore();
       },
-      variables: { name, birthDate, occupation, bio, pictures },
+      variables: { notificationsToken, name, birthDate, occupation, bio, pictures },
     });
   }, [
     superMutate,
+    defaultArgs.notificationsToken,
     defaultArgs.name,
     defaultArgs.birthDate,
     defaultArgs.occupation,

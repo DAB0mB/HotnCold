@@ -5,7 +5,7 @@ const contract = gql `
     id
     phone
     isTest
-    verified
+    signed
     passcode
   }
 `;
