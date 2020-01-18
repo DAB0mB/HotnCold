@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'react';
 import { BackHandler } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
@@ -37,6 +38,28 @@ export const useNavigation = (navKey) => {
       goBack.current();
     }
   }, [true]);
+
+  const [dynamicParams] = useState({});
+
+  nav.useParam = useCallback((paramName) => {
+    const state = dynamicParams[paramName] = useState(nav.getParam(paramName));
+
+    return state[0];
+  }, [nav]);
+
+  nav.setParam = useCallback((paramName, paramValue) => {
+    const state = dynamicParams[paramName];
+
+    if (!state) {
+      throw Error(`Nav param state "${paramName}" doesn't exist`);
+    }
+
+    nav.setParams({
+      [paramName]: paramValue
+    });
+
+    return state[1](paramValue);
+  }, [nav]);
 
   // Push and reset navigation stack
   nav.terminalPush = useCallback((routeName, params) => {

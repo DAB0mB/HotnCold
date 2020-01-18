@@ -23,25 +23,23 @@ const styles = StyleSheet.create({
 });
 
 const App = () => {
-  const [nativeInitialized, setNativeInitialized] = useState(false);
-  const [deviceInfo, setDeviceInfo] = useState(null);
+  const [bootstrapped, setBootstrapped] = useState(null);
 
   useEffect(() => {
-    bootstrapping.then(({ deviceInfo }) => {
-      setDeviceInfo(deviceInfo);
-      setNativeInitialized(true);
+    bootstrapping.then((bootstrapped) => {
+      setBootstrapped(bootstrapped);
     });
   }, [true]);
 
-  if (!nativeInitialized) {
+  if (!bootstrapped) {
     return null;
   }
 
   return (
     <View style={styles.container}>
-      <DeviceInfoProvider info={deviceInfo}>
+      <DeviceInfoProvider info={bootstrapped.deviceInfo}>
         <ApolloProvider client={graphqlClient}>
-          <NotificationsProvider>
+          <NotificationsProvider initial={bootstrap.initialNotification}>
             <CookieProvider>
               <DropdownAlertProvider>
                 <DateTimePickerProvider>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import GiftedChat from '../../components/GiftedChat';
@@ -7,6 +7,7 @@ import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
+import { useBuffer } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import Header from './Header';
 
@@ -20,9 +21,11 @@ const Chat = () => {
   const { me } = useMine();
   const alertError = useAlertError();
   const socialNav = useNavigation(Social);
-  const chat = socialNav.getParam('chat');
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
+  const chatId = socialNav.getParam('chatId');
+  let chat = socialNav.getParam('chat');
+
   const messagesQuery = queries.messages.use(chat.id, 20, {
     onCompleted: useCallback(({ messages }) => {
       if (!messages.length) return;
@@ -47,9 +50,24 @@ const Chat = () => {
     }, []),
     onError: alertError,
   });
+
+  let loading = false;
+  if (chatId) {
+    const chatQuery = queries.chat.use();
+    chat = chatQuery.data && chatQuery.data.chat;
+    loading = !chatQuery.called || chatQuery.loading;
+
+    useEffect(() => {
+      if (loading) return;
+
+      socialNav.setParams('chat', chat);
+    }, [loading]);
+  }
+
   const [sendMessage] = mutations.sendMessage.use(chat.id, {
     onError: alertError,
   });
+
   const messages = useMemo(() => messagesQuery.data && messagesQuery.data.messages, [messagesQuery]);
 
   const onSend = useCallback((message) => {
@@ -62,7 +80,7 @@ const Chat = () => {
     messagesQuery.fetchMore();
   }, [messagesQuery, setIsLoadingEarlier]);
 
-  return (
+  return useBuffer(loading,
     <View style={styles.container}>
       <GiftedChat
         user={me}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useCallback, useEffect, useState, useLayoutEffect } from 'react';
 import { NavigationActions } from 'react-navigation';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
@@ -28,6 +28,14 @@ const Discovery = Base.create(({ navigation }) => {
   const [queryChats] = queries.chats.use.lazy();
   const { me, myContract } = myQuery.data || {};
 
+  const tryNavToChat = useCallback((notification) => {
+    if (!notification) return;
+    if (!notification.data) return;
+    if (!notification.data.chatId) return;
+
+    console.log('Opened notification: ', notification);
+  }, [notifications]);
+
   useEffect(() => {
     if (!myQuery.called) return;
     if (myQuery.loading) return;
@@ -41,7 +49,18 @@ const Discovery = Base.create(({ navigation }) => {
 
     queryChats();
 
-    return notifications.onTokenRefresh(associateNotificationsToken);
+    const removeNotificationOpenedListener = notifications.onNotificationOpened(({ notification }) => {
+      tryNavToChat(notification);
+    });
+
+    const removeTokenRefreshListener = notifications.onTokenRefresh(associateNotificationsToken);
+
+    tryNavToChat(notifications.initial);
+
+    return () => {
+      removeNotificationOpenedListener();
+      removeTokenRefreshListener();
+    };
   }, [myQuery]);
 
   if (myQuery.loading || myQuery.error) {
