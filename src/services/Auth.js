@@ -3,7 +3,6 @@ import React, { createContext, useContext, useCallback, useMemo } from 'react';
 
 import * as mutations from '../graphql/mutations';
 import { useCookie } from './Cookie';
-import { useNotifications } from './Notifications';
 
 const MyContext = createContext(null);
 
@@ -40,50 +39,27 @@ export const useRequestSignIn = (phone, { onCompleted = noop, ...options } = {})
 
 export const useVerifySignIn = (contract, passcode, {
   onCompleted = noop,
-  onError = noop,
   ...options
 } = {}) => {
-  const notifications = useNotifications();
-  const [associateNotificationsToken] = mutations.associateNotificationsToken.use();
   const [verifyContract] = mutations.verifyContract.use(contract.id, passcode, {
     ...options,
     onCompleted: useCallback((data) => {
       onCompleted(data.verifyContract);
     }, [onCompleted]),
-    onError,
   });
 
   return useCallback((...args) => {
-    const registeringNotifications = !contract.signed
-      ? Promise.resolve()
-      : notifications.requestPermission().then(() => {
-        return notifications.getToken();
-      })
-        .then((token) => {
-          return associateNotificationsToken(token);
-        })
-        .catch((error) => {
-          onError(error);
-
-          return Promise.reject(error);
-        });
-
-    return registeringNotifications.then(() => {
-      return verifyContract(...args);
-    })
-      .then((data) => {
-        return data.verifyContract;
-      });
-  }, [associateNotificationsToken, verifyContract, contract, notifications, onError]);
+    return verifyContract(...args).then((data) => {
+      return data.verifyContract;
+    });
+  }, [verifyContract]);
 };
 
 export const useSignUp = (args, {
-  onError = noop,
   onCompleted = noop,
   ...options
 } = {}) => {
   const client = useApolloClient();
-  const notifications = useNotifications();
   const [createUser] = mutations.createUser.use(args, {
     ...options,
     onCompleted: useCallback((data) => {
@@ -94,27 +70,13 @@ export const useSignUp = (args, {
 
       client.subscription.connect();
     }, [client, onCompleted]),
-    onError,
   });
 
-  return useCallback((args) => {
-    return notifications.requestPermission().then(() => {
-      return notifications.getToken();
-    })
-      .then((token) => {
-        return createUser({
-          ...args,
-          notificationsToken: token
-        });
-      }, (error) => {
-        onError(error);
-
-        return Promise.reject(error);
-      })
-      .then((data) => {
-        return data.createUser;
-      });
-  }, [createUser, notifications, onError]);
+  return useCallback((...args) => {
+    return createUser(...args).then((data) => {
+      return data.createUser;
+    });
+  }, [createUser]);
 };
 
 export const useSignOut = ({ onCompleted = noop, onError = noop } = {}) => {

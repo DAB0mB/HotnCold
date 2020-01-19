@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 
 const createUser = gql `
   mutation CreateUser(
-    $notificationsToken: String!
     $name: String!
     $occupation: String!
     $birthDate: DateTime!
@@ -12,7 +11,6 @@ const createUser = gql `
     $pictures: [String!]!
   ) {
     createUser(
-      notificationsToken: $notificationsToken
       name: $name
       occupation: $occupation
       birthDate: $birthDate
@@ -27,13 +25,12 @@ createUser.use = (defaultArgs = {}, defaultOptions = {}) => {
   const [superMutate, mutation] = useMutation(createUser, defaultOptions);
 
   const mutate = useCallback(({
-    notificationsToken = defaultArgs.notificationsToken,
     name = defaultArgs.name,
     birthDate = defaultArgs.birthDate,
     occupation = defaultArgs.occupation,
     bio = defaultArgs.bio,
     pictures = defaultArgs.pictures,
-  }) => {
+  } = {}) => {
     // Token should be stored via response.headers, see graphql/client.js
     return superMutate({
       update: (cache, mutation) => {
@@ -41,11 +38,10 @@ createUser.use = (defaultArgs = {}, defaultOptions = {}) => {
 
         client.clearStore();
       },
-      variables: { notificationsToken, name, birthDate, occupation, bio, pictures },
+      variables: { name, birthDate, occupation, bio, pictures },
     });
   }, [
     superMutate,
-    defaultArgs.notificationsToken,
     defaultArgs.name,
     defaultArgs.birthDate,
     defaultArgs.occupation,

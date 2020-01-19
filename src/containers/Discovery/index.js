@@ -11,6 +11,7 @@ import { useHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
 import { useNotifications } from '../../services/Notifications';
+import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
 import Header from './Header';
 import ServiceRequired from './ServiceRequired';
@@ -36,7 +37,7 @@ const Discovery = Base.create(({ navigation }) => {
     console.log('Opened notification: ', notification);
   }, [notifications]);
 
-  useEffect(() => {
+  useAsyncEffect(function* () {
     if (!myQuery.called) return;
     if (myQuery.loading) return;
     if (myQuery.error) return;
@@ -47,20 +48,22 @@ const Discovery = Base.create(({ navigation }) => {
       return;
     }
 
+    // Try nav asap
+    tryNavToChat(notifications.initial);
+    // Start fetching and update cache
     queryChats();
 
-    const removeNotificationOpenedListener = notifications.onNotificationOpened(({ notification }) => {
+    // Listen in background
+    yield notifications.onTokenRefresh(associateNotificationsToken);
+
+    yield notifications.onNotificationOpened(({ notification }) => {
       tryNavToChat(notification);
     });
 
-    const removeTokenRefreshListener = notifications.onTokenRefresh(associateNotificationsToken);
+    // Lastly, fetch token. Only associate it if component is still mounted
+    const notificationsToken = yield notifications.getToken();
 
-    tryNavToChat(notifications.initial);
-
-    return () => {
-      removeNotificationOpenedListener();
-      removeTokenRefreshListener();
-    };
+    associateNotificationsToken(notificationsToken);
   }, [myQuery]);
 
   if (myQuery.loading || myQuery.error) {
