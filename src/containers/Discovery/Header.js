@@ -41,7 +41,7 @@ const Header = ({ baseNav, discoveryNav }) => {
 
   const navToInbox = useCallback(() => {
     baseNav.push('Social', {
-      childNavigationState: {
+      $initialChildRoute: {
         routeName: 'Inbox',
       },
     });

@@ -10,7 +10,7 @@ export const NotificationsProvider = ({
   onTokenRefresh = messaging.onTokenRefresh.bind(messaging),
   requestPermission = messaging.requestPermission.bind(messaging),
   onNotificationOpened = notifications.onNotificationOpened.bind(notifications),
-  initial,
+  trigger,
   children,
 }) => {
   const value = useMemo(() => ({
@@ -18,13 +18,13 @@ export const NotificationsProvider = ({
     onNotificationOpened,
     onTokenRefresh,
     requestPermission,
-    initial,
+    trigger,
   }), [
     getToken,
     onNotificationOpened,
     onTokenRefresh,
     requestPermission,
-    initial,
+    trigger,
   ]);
 
   return (

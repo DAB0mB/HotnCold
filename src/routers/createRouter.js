@@ -9,13 +9,19 @@ const createRouter = (routes, options) => {
   return function Router({ navigation, children }) {
     const loadNavigationState = useCallback(() => {
       // Signature: https://reactnavigation.org/docs/en/stack-actions.html#replace
-      const routeState = navigation.getParam('childNavigationState');
+      const $initialChildRoute = navigation.getParam('$initialChildRoute');
 
-      if (routeState) {
-        const rootState = Navigator.router.getStateForAction(NavigationActions.init());
-        Object.assign(rootState.routes[0], routeState);
+      if ($initialChildRoute) {
+        const state = Navigator.router.getStateForAction(NavigationActions.init());
+        Object.assign(state.routes[0], $initialChildRoute);
 
-        return rootState;
+        return state;
+      }
+
+      const $childState = navigation.getParam('$childState');
+
+      if ($childState) {
+        return Navigator.router.getStateForAction(NavigationActions.init(), $childState);
       }
     }, [navigation]);
 

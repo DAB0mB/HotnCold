@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState, useLayoutEffect } from 'react';
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
+import uuid from 'uuid';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
 import * as mutations from '../../graphql/mutations';
@@ -29,13 +30,44 @@ const Discovery = Base.create(({ navigation }) => {
   const [queryChats] = queries.chats.use.lazy();
   const { me, myContract } = myQuery.data || {};
 
-  const tryNavToChat = useCallback((notification) => {
-    if (!notification) return;
-    if (!notification.data) return;
-    if (!notification.data.chatId) return;
+  const tryNavToChat = useCallback((trigger) => {
+    if (!trigger) return;
+    if (!trigger.notification) return;
+    if (!trigger.notification.data) return;
+    if (!trigger.notification.data.chatId) return;
 
-    console.log('Opened notification: ', notification);
-  }, [notifications]);
+    baseNav.dispatch(StackActions.reset({
+      index: 1,
+      actions: [
+        NavigationActions.navigate({
+          routeName: 'Discovery',
+          key: uuid(),
+        }),
+        NavigationActions.navigate({
+          routeName: 'Social',
+          key: uuid(),
+          params: {
+            $childState: {
+              index: 1,
+              routes: [
+                {
+                  routeName: 'Inbox',
+                  key: uuid(),
+                },
+                {
+                  routeName: 'Chat',
+                  key: uuid(),
+                  params: {
+                    chatId: trigger.notification.data.chatId,
+                  },
+                },
+              ],
+            },
+          },
+        }),
+      ],
+    }));
+  }, [notifications, baseNav]);
 
   useAsyncEffect(function* () {
     if (!myQuery.called) return;
@@ -49,16 +81,13 @@ const Discovery = Base.create(({ navigation }) => {
     }
 
     // Try nav asap
-    tryNavToChat(notifications.initial);
+    tryNavToChat(notifications.trigger);
     // Start fetching and update cache
     queryChats();
 
     // Listen in background
     yield notifications.onTokenRefresh(associateNotificationsToken);
-
-    yield notifications.onNotificationOpened(({ notification }) => {
-      tryNavToChat(notification);
-    });
+    yield notifications.onNotificationOpened(tryNavToChat);
 
     // Lastly, fetch token. Only associate it if component is still mounted
     const notificationsToken = yield notifications.getToken();

@@ -290,7 +290,7 @@ const Profile = () => {
     if (!result || !result.data) return;
 
     baseNav.push('Social', {
-      childNavigationState: {
+      $initialChildRoute: {
         routeName: 'Chat',
         params: {
           chat: result.data.findOrCreateChat
@@ -299,7 +299,7 @@ const Profile = () => {
     });
   }, [baseNav, findOrCreateChat, user]);
 
-  return useBuffer(typeof userParam == 'function' && !user,
+  return useBuffer(typeof userParam == 'function' && !user, () =>
     <ScrollView style={styles.container}>
       {!typing && (
         <View style={styles.profilePicture}>

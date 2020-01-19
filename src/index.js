@@ -39,7 +39,7 @@ const App = () => {
     <View style={styles.container}>
       <DeviceInfoProvider info={bootstrapped.deviceInfo}>
         <ApolloProvider client={graphqlClient}>
-          <NotificationsProvider initial={bootstrap.initialNotification}>
+          <NotificationsProvider trigger={bootstrapped.initialNotification}>
             <CookieProvider>
               <DropdownAlertProvider>
                 <DateTimePickerProvider>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import GiftedChat from '../../components/GiftedChat';
@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
 
 const Chat = () => {
   const { me } = useMine();
+  const updateChatMessagesRef = useRef(null);
   const alertError = useAlertError();
   const socialNav = useNavigation(Social);
   const [loadEarlier, setLoadEarlier] = useState(false);
@@ -26,49 +27,59 @@ const Chat = () => {
   const chatId = socialNav.getParam('chatId');
   let chat = socialNav.getParam('chat');
 
-  const messagesQuery = queries.messages.use(chat.id, 20, {
-    onCompleted: useCallback(({ messages }) => {
-      if (!messages.length) return;
-
-      const recentMessage = messages[0];
-      const firstMessage = messages[messages.length - 1];
-
-      if (!chat.firstMessage) {
-        chat.firstMessage = recentMessage;
-      }
-
-      chat.recentMessages = messages;
-
-      if (firstMessage.id === chat.firstMessage.id) {
-        setLoadEarlier(false);
-      }
-      else {
-        setLoadEarlier(true);
-      }
-
-      setIsLoadingEarlier(false);
-    }, []),
+  const messagesQuery = queries.messages.use(chatId || chat.id, 20, {
+    onCompleted: useCallback(() => {
+      updateChatMessagesRef.current();
+    }, [true]),
     onError: alertError,
   });
 
+  const messages = useMemo(() => messagesQuery.data && messagesQuery.data.messages, [messagesQuery]);
+
   let loading = false;
   if (chatId) {
-    const chatQuery = queries.chat.use();
+    const chatQuery = queries.chat.use(chatId, {
+      onCompleted: useCallback(() => {
+        updateChatMessagesRef.current();
+      }, [true]),
+      onError: alertError,
+    });
     chat = chatQuery.data && chatQuery.data.chat;
     loading = !chatQuery.called || chatQuery.loading;
 
     useEffect(() => {
       if (loading) return;
 
-      socialNav.setParams('chat', chat);
+      socialNav.setParam('chat', chat);
     }, [loading]);
   }
 
-  const [sendMessage] = mutations.sendMessage.use(chat.id, {
+  updateChatMessagesRef.current = useCallback(() => {
+    if (!messages || !messages.length) return;
+    if (!chat) return;
+
+    const recentMessage = messages[0];
+    const firstMessage = messages[messages.length - 1];
+
+    if (!chat.firstMessage) {
+      chat.firstMessage = recentMessage;
+    }
+
+    chat.recentMessages = messages;
+
+    if (firstMessage.id === chat.firstMessage.id) {
+      setLoadEarlier(false);
+    }
+    else {
+      setLoadEarlier(true);
+    }
+
+    setIsLoadingEarlier(false);
+  }, [messages, chat]);
+
+  const [sendMessage] = mutations.sendMessage.use(chatId || chat.id, {
     onError: alertError,
   });
-
-  const messages = useMemo(() => messagesQuery.data && messagesQuery.data.messages, [messagesQuery]);
 
   const onSend = useCallback((message) => {
     sendMessage(message);
@@ -80,7 +91,7 @@ const Chat = () => {
     messagesQuery.fetchMore();
   }, [messagesQuery, setIsLoadingEarlier]);
 
-  return useBuffer(loading,
+  return useBuffer(loading || !chat, () =>
     <View style={styles.container}>
       <GiftedChat
         user={me}
