@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useCallback,
+  useEffect,
   useMemo,
   useLayoutEffect,
   useRef,
@@ -9,10 +10,43 @@ import React, {
 import { BackHandler } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
 
+let focusedNav;
 const NavigationContext = createContext(new Map());
 
 export const NavigationProvider = ({ navKey, navigation, children }) => {
   const navMap = useContext(NavigationContext);
+
+  useEffect(() => {
+    let recentNav = focusedNav;
+    let targetNav = navigation;
+    const prevNavs = Array.from(navMap.values());
+
+    while (targetNav?.isFirstRouteInParent()) {
+      targetNav = prevNavs.pop();
+    }
+
+    // Probably root
+    if (!targetNav) {
+      focusedNav = navigation;
+
+      return;
+    }
+
+    const didFocusListener = targetNav.addListener('didFocus', () => {
+      focusedNav = navigation;
+    });
+
+    const willBlurListener = targetNav.addListener('willBlur', ({ action }) => {
+      if (action.type === NavigationActions.BACK) {
+        focusedNav = recentNav;
+      }
+    });
+
+    return () => {
+      didFocusListener.remove();
+      willBlurListener.remove();
+    };
+  }, [true]);
 
   return (
     <NavigationContext.Provider value={new Map([...navMap.entries(), [navKey, navigation]])}>
@@ -20,6 +54,8 @@ export const NavigationProvider = ({ navKey, navigation, children }) => {
     </NavigationContext.Provider>
   );
 };
+
+export const getFocusedNav = () => focusedNav;
 
 export const useNavigation = (navKey) => {
   const navMap = useContext(NavigationContext);
@@ -39,15 +75,15 @@ export const useNavigation = (navKey) => {
   }, [true]);
 
   // Push and reset navigation stack
-  nav.terminalPush = useCallback((routeName, params) => {
+  nav.terminalPush = useCallback((routeName, params, history = []) => {
     nav.push(routeName, params);
 
     const didBlurListener = nav.addListener('didBlur', ({ action }) => {
       didBlurListener.remove();
 
       nav.dispatch(StackActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName, params, key: action.toChildKey })]
+        index: history.length,
+        actions: [...history, NavigationActions.navigate({ routeName, params, key: action.toChildKey })],
       }));
     });
   }, [true]);

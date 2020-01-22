@@ -19,7 +19,6 @@ import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import SelectionButton from './SelectionButton';
 
-const SHOW_FAKE_DATA = false;
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
 const SELECTION_RADIUS = .2;
 const DEFAULT_ZOOM = 15;
@@ -244,7 +243,7 @@ const Map = () => {
           id='featuresInArea'
           key={shapeKey}
           {...(
-            SHOW_FAKE_DATA ? {
+            CONFIG.FAKE_HEATMAP ? {
               url: 'https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson'
             } : {
               shape: areaFeatures

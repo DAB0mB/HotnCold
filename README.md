@@ -10,7 +10,7 @@ Configure the following services:
 - [Firebase](firebase.google.com).
 - [Hot&Cold Server](https://github.com/DAB0mB/HotnCold-server).
 
-Define environment variables in `.env` file (NEVER COMMIT):
+Define environment variables in `.env.{development|production}` file (NEVER COMMIT):
 
     # A public access token to MapBox's API
     MAPBOX_ACCESS_TOKEN
@@ -26,6 +26,10 @@ Define environment variables in `.env` file (NEVER COMMIT):
     TEST_PHONE_LOCAL
     # Phone number regexp for testing with phone
     TEST_PHONE_SMS
+    # If specified, pressed notifications will remain
+    PERSIST_NOTIFICATIONS
+    # Use fake data for heatmap (long load time)
+    FAKE_HEATMAP
     # *Optional: The auth token of the user you would like to log-in with
     INITIAL_USER_TOKEN
 

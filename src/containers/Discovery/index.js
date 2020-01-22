@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StackActions, NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
+import CONFIG from 'react-native-config';
 import uuid from 'uuid';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
@@ -10,7 +11,7 @@ import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
 import { useNavInHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
-import { useNavigation, NavigationProvider } from '../../services/Navigation';
+import { useNavigation, getFocusedNav, NavigationProvider } from '../../services/Navigation';
 import { useNotifications } from '../../services/Notifications';
 import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
@@ -38,6 +39,11 @@ const Discovery = Base.create(({ navigation }) => {
 
     setNotificationTrigger(null);
 
+    if (!CONFIG.PERSIST_NOTIFICATIONS) {
+      notifications.cancelNotification(notificationTrigger.notification.notificationId);
+      notifications.removeDeliveredNotification(notificationTrigger.notification.notificationId);
+    }
+
     const chatId = notificationTrigger?.notification?.data?.chatId;
 
     if (!chatId) return;
@@ -46,44 +52,36 @@ const Discovery = Base.create(({ navigation }) => {
 
     if (!chat) return;
 
-    const baseRouter = baseNav.dangerouslyGetParent().state;
-    const discoveryRouter = baseRouter.routes.find(r => r.routeName == 'Discovery');
-    const socialRouter = baseRouter.routes.find(r => r.routeName == 'Social');
-    const chatRoute = socialRouter?.router?.routes?.find?.(r => r.routeName == 'Chat');
+    const focusedNav = getFocusedNav();
 
     // We're already chatting with that person
-    if (chatRoute?.params?.chat?.id === chatId) return;
+    if (
+      focusedNav.state.routeName == 'Chat' &&
+      focusedNav.state.params?.chat?.id === chatId
+    ) return;
 
-    baseNav.dispatch(StackActions.reset({
-      index: 1,
-      actions: [
-        NavigationActions.navigate({
-          routeName: 'Discovery',
-          key: discoveryRouter?.key || uuid(),
-        }),
-        NavigationActions.navigate({
-          routeName: 'Social',
-          key: uuid(),
-          params: {
-            $setState: {
-              index: 1,
-              routes: [
-                {
-                  routeName: 'Inbox',
-                  key: uuid(),
-                },
-                {
-                  routeName: 'Chat',
-                  key: uuid(),
-                  params: { chat },
-                },
-              ],
-            },
+    // Reset nav state smoothly
+    baseNav.popToTop();
+
+    baseNav.terminalPush('Social', {
+      $setState: {
+        index: 1,
+        routes: [
+          {
+            key: uuid(),
+            routeName: 'Inbox',
           },
-        }),
-      ],
-    }));
-  }, [baseNav, notificationTrigger]);
+          {
+            key: uuid(),
+            routeName: 'Chat',
+            params: { chat },
+          },
+        ],
+      },
+    }, [
+      NavigationActions.navigate({ routeName: 'Discovery', key: baseNav.state.key }),
+    ]);
+  }, [baseNav, notificationTrigger, chatsQuery]);
 
   useAsyncEffect(function* () {
     if (!myQuery.called) return;

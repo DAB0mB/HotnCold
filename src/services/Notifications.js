@@ -10,6 +10,8 @@ export const NotificationsProvider = ({
   onTokenRefresh = messaging.onTokenRefresh.bind(messaging),
   requestPermission = messaging.requestPermission.bind(messaging),
   onNotificationOpened = notifications.onNotificationOpened.bind(notifications),
+  removeDeliveredNotification = notifications.removeDeliveredNotification.bind(notifications),
+  cancelNotification = notifications.cancelNotification.bind(notifications),
   trigger,
   children,
 }) => {
@@ -17,12 +19,16 @@ export const NotificationsProvider = ({
     getToken,
     onNotificationOpened,
     onTokenRefresh,
+    removeDeliveredNotification,
+    cancelNotification,
     requestPermission,
     trigger,
   }), [
     getToken,
     onNotificationOpened,
     onTokenRefresh,
+    removeDeliveredNotification,
+    cancelNotification,
     requestPermission,
     trigger,
   ]);

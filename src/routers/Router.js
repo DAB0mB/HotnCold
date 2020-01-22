@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useLayoutEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { createAppContainer, NavigationActions } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -6,10 +6,10 @@ const createRouter = (routes, options) => {
   const Navigator = createStackNavigator(routes, options);
   const Container = createAppContainer(Navigator);
 
-  return function Router({ navigation, children }) {
+  function Router({ navigation, children }) {
     const [routerState] = useState(() => Navigator.router.getStateForAction(NavigationActions.init()));
 
-    useLayoutEffect(() => {
+    useEffect(() => {
       if (!navigation) return;
 
       const $setState = navigation.getParam('$setState');
@@ -49,7 +49,19 @@ const createRouter = (routes, options) => {
         {children}
       </Container>
     );
-  };
+  }
+
+  Object.keys(Navigator.router).forEach((key) => {
+    const handler = Navigator.router[key];
+
+    if (typeof handler == 'function') {
+      Router[key] = handler.bind(Navigator.router);
+    }
+  });
+
+  return Router;
 };
 
-export default createRouter;
+export default {
+  create: createRouter
+};

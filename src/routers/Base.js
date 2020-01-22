@@ -4,9 +4,9 @@ import AuthContainer from '../containers/Auth';
 import DiscoveryContainer from '../containers/Discovery';
 import SocialContainer from '../containers/Social';
 import ProfileScreen from '../screens/Profile';
-import createRouter from './createRouter';
+import Router from './Router';
 
-const Base = createRouter({
+const Base = Router.create({
   Profile: {
     screen: ProfileScreen,
   },

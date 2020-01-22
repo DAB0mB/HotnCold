@@ -1,5 +1,4 @@
 apply plugin: "com.android.application"
-apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
 
@@ -72,6 +71,12 @@ import com.android.build.OutputFile
  *   extraPackagerArgs: []
  * ]
  */
+
+project.ext.envConfigFiles = [
+    debug: ".env.development",
+    release: ".env.production"
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 project.ext.react = [
     entryFile: "index.js"

@@ -2,9 +2,9 @@ import { zoomIn } from 'react-navigation-transitions';
 
 import PhoneScreen from '../screens/Phone';
 import VerifyScreen from '../screens/Verify';
-import createRouter from './createRouter';
+import Router from './Router';
 
-const Auth = createRouter({
+const Auth = Router.create({
   Phone: {
     screen: PhoneScreen,
   },

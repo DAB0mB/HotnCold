@@ -2,9 +2,9 @@ import { fromRight } from 'react-navigation-transitions';
 
 import MapScreen from '../screens/Map';
 import RadarScreen from '../screens/Radar';
-import createRouter from './createRouter';
+import Router from './Router';
 
-const Discovery = createRouter({
+const Discovery = Router.create({
   Radar: {
     screen: RadarScreen,
   },
