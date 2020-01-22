@@ -10,6 +10,7 @@ const displayNotification = (message) => {
     .setTitle(props.title)
     .setBody(props.body)
     .setData(props.data)
+    .setNotificationId(message.data.notificationId)
     .android.setChannelId(message.data.channelId)
     .android.setLargeIcon(props.largeIcon);
 
