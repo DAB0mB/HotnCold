@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Header = ({ baseNav, discoveryNav }) => {
+const Header = ({ baseNav, nav: discoveryNav }) => {
   const deviceInfo = useDeviceInfo();
   const alterIcon = useMemo(() =>
     (discoveryNav && discoveryNav.state.routeName) === 'Radar' ? 'map' : 'radar'
@@ -41,7 +41,7 @@ const Header = ({ baseNav, discoveryNav }) => {
 
   const navToInbox = useCallback(() => {
     baseNav.push('Social', {
-      $initialChildRoute: {
+      $setInitialRouteState: {
         routeName: 'Inbox',
       },
     });

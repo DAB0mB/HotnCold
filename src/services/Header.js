@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, {
+  createContext,
+  useLayoutEffect,
+  useEffect,
+  useContext,
+  useState,
+  useMemo,
+} from 'react';
+import { NavigationActions } from 'react-navigation';
 
 const HeaderContext = createContext(null);
 
@@ -21,4 +29,24 @@ export const HeaderProvider = ({ HeaderComponent, defaultProps = {}, children })
 
 export const useHeader = () => {
   return useContext(HeaderContext);
+};
+
+export const useNavInHeader = (nav) => {
+  const { headerProps, setHeaderProps } = useHeader();
+
+  useLayoutEffect(() => {
+    const listener = nav.addListener('willBlur', ({ action }) => {
+      if (action.type === NavigationActions.BACK) {
+        setHeaderProps(headerProps);
+      }
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, [true]);
+
+  useEffect(() => {
+    setHeaderProps({ ...headerProps, nav });
+  }, [true]);
 };

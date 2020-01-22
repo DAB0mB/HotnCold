@@ -119,7 +119,7 @@ const Map = () => {
     if (!selection.size) return;
 
     baseNav.push('Social', {
-      $initialChildRoute: {
+      $setInitialRouteState: {
         routeName: 'People',
       },
     });

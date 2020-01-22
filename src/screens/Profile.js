@@ -290,7 +290,7 @@ const Profile = () => {
     if (!result || !result.data) return;
 
     baseNav.push('Social', {
-      $initialChildRoute: {
+      $setInitialRouteState: {
         routeName: 'Chat',
         params: {
           chat: result.data.findOrCreateChat

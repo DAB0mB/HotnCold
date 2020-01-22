@@ -39,10 +39,9 @@ const Header = () => {
   const { me } = useMine();
   const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
-  // Chat might be in fetch state and we need to wait for it to finish
-  const chat = socialNav.useParam('chat');
+  const chat = socialNav.getParam('chat');
   const activeNav = useMemo(() => socialNav.isFirstRouteInParent() ? baseNav : socialNav, [true]);
-  const recipient = useMemo(() => chat && chat.users.find(u => u.id !== me.id), [chat && chat.id, me.id]);
+  const recipient = useMemo(() => chat.users.find(u => u.id !== me.id), [chat.id, me.id]);
 
   activeNav.useBackListener();
 
@@ -61,14 +60,12 @@ const Header = () => {
             <McIcon name='arrow-left' size={20} color='white' solid />
           </View>
         </TouchableWithoutFeedback>
-        {recipient && (
-          <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() ? noop : navToProfile}>
-            <View style={pick(styles.header, ['flexDirection', 'alignItems'])}>
-              <Image style={styles.avatar} source={{ uri: recipient.avatar }} />
-              <Text style={styles.name}>{recipient.name}</Text>
-            </View>
-          </TouchableWithoutFeedback>
-        )}
+        <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() ? noop : navToProfile}>
+          <View style={pick(styles.header, ['flexDirection', 'alignItems'])}>
+            <Image style={styles.avatar} source={{ uri: recipient.avatar }} />
+            <Text style={styles.name}>{recipient.name}</Text>
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     </TouchableWithoutFeedback>
   );

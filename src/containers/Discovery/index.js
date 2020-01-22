@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StackActions, NavigationActions } from 'react-navigation';
 import uuid from 'uuid';
 
@@ -8,7 +8,7 @@ import * as queries from '../../graphql/queries';
 import { MyProvider } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
-import { useHeader } from '../../services/Header';
+import { useNavInHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
 import { useNotifications } from '../../services/Notifications';
@@ -16,6 +16,8 @@ import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
 import Header from './Header';
 import ServiceRequired from './ServiceRequired';
+
+const $triggered = Symbol('triggered');
 
 const Discovery = Base.create(({ navigation }) => {
   const { default: DiscoveryRouter } = require('../../routers/Discovery');
@@ -27,27 +29,43 @@ const Discovery = Base.create(({ navigation }) => {
   const [associateNotificationsToken] = mutations.associateNotificationsToken.use();
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
-  const [queryChats] = queries.chats.use.lazy();
+  const [notificationTrigger, setNotificationTrigger] = useState(null);
+  const [queryChats, chatsQuery] = queries.chats.use.lazy();
   const { me, myContract } = myQuery.data || {};
 
-  const tryNavToChat = useCallback((trigger) => {
-    if (!trigger) return;
-    if (!trigger.notification) return;
-    if (!trigger.notification.data) return;
-    if (!trigger.notification.data.chatId) return;
+  useEffect(() => {
+    if (!notificationTrigger) return;
+
+    setNotificationTrigger(null);
+
+    const chatId = notificationTrigger?.notification?.data?.chatId;
+
+    if (!chatId) return;
+
+    const chat = chatsQuery.data.chats.find(c => c.id === chatId);
+
+    if (!chat) return;
+
+    const baseRouter = baseNav.dangerouslyGetParent().state;
+    const discoveryRouter = baseRouter.routes.find(r => r.routeName == 'Discovery');
+    const socialRouter = baseRouter.routes.find(r => r.routeName == 'Social');
+    const chatRoute = socialRouter?.router?.routes?.find?.(r => r.routeName == 'Chat');
+
+    // We're already chatting with that person
+    if (chatRoute?.params?.chat?.id === chatId) return;
 
     baseNav.dispatch(StackActions.reset({
       index: 1,
       actions: [
         NavigationActions.navigate({
           routeName: 'Discovery',
-          key: uuid(),
+          key: discoveryRouter?.key || uuid(),
         }),
         NavigationActions.navigate({
           routeName: 'Social',
           key: uuid(),
           params: {
-            $childState: {
+            $setState: {
               index: 1,
               routes: [
                 {
@@ -57,9 +75,7 @@ const Discovery = Base.create(({ navigation }) => {
                 {
                   routeName: 'Chat',
                   key: uuid(),
-                  params: {
-                    chatId: trigger.notification.data.chatId,
-                  },
+                  params: { chat },
                 },
               ],
             },
@@ -67,7 +83,7 @@ const Discovery = Base.create(({ navigation }) => {
         }),
       ],
     }));
-  }, [notifications, baseNav]);
+  }, [baseNav, notificationTrigger]);
 
   useAsyncEffect(function* () {
     if (!myQuery.called) return;
@@ -80,20 +96,34 @@ const Discovery = Base.create(({ navigation }) => {
       return;
     }
 
-    // Try nav asap
-    tryNavToChat(notifications.trigger);
     // Start fetching and update cache
     queryChats();
-
-    // Listen in background
-    yield notifications.onTokenRefresh(associateNotificationsToken);
-    yield notifications.onNotificationOpened(tryNavToChat);
 
     // Lastly, fetch token. Only associate it if component is still mounted
     const notificationsToken = yield notifications.getToken();
 
     associateNotificationsToken(notificationsToken);
   }, [myQuery]);
+
+  useEffect(() => {
+    const chats = chatsQuery?.data?.chats;
+
+    if (!chats?.length) return;
+
+    if (notifications.trigger && !notifications.trigger[$triggered]) {
+      notifications.trigger[$triggered] = true;
+      setNotificationTrigger(notifications.trigger);
+    }
+
+    // Listen in background
+    const removeTokenRefreshListener = notifications.onTokenRefresh(associateNotificationsToken);
+    const removeNotificationOpenedListener = notifications.onNotificationOpened(setNotificationTrigger);
+
+    return () => {
+      removeTokenRefreshListener();
+      removeNotificationOpenedListener();
+    };
+  }, [chatsQuery]);
 
   if (myQuery.loading || myQuery.error) {
     return useLoading(true);
@@ -110,7 +140,9 @@ const Discovery = Base.create(({ navigation }) => {
           onReady={setNativeServicesReady}
         >
           <LoadingProvider>
-            {nativeServicesReady && !requiredService && <DiscoveryRouter navigation={navigation} />}
+            {nativeServicesReady && !requiredService && (
+              <DiscoveryRouter navigation={navigation} />
+            )}
           </LoadingProvider>
         </NativeGuard>
       </HeaderProvider>
@@ -120,23 +152,7 @@ const Discovery = Base.create(({ navigation }) => {
 
 Discovery.create = (Component) => {
   return function DiscoveryScreen({ navigation: discoveryNav }) {
-    const { headerProps, setHeaderProps } = useHeader();
-
-    useLayoutEffect(() => {
-      const listener = discoveryNav.addListener('willBlur', ({ action }) => {
-        if (action.type === NavigationActions.BACK) {
-          setHeaderProps(headerProps);
-        }
-      });
-
-      return () => {
-        listener.remove();
-      };
-    }, [true]);
-
-    useEffect(() => {
-      setHeaderProps({ ...headerProps, discoveryNav });
-    }, [true]);
+    useNavInHeader(discoveryNav);
 
     return (
       <NavigationProvider navKey={Discovery} navigation={discoveryNav}>
