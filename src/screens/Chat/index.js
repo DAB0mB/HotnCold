@@ -6,6 +6,7 @@ import Social from '../../containers/Social';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMine } from '../../services/Auth';
+import { useAppState } from '../../services/AppState';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
 import Header from './Header';
@@ -61,6 +62,8 @@ const Chat = () => {
 
     messagesQuery.fetchMore();
   }, [messagesQuery, setIsLoadingEarlier]);
+
+  useAppState.modelEffect('activeChat', chat);
 
   return (
     <View style={styles.container}>

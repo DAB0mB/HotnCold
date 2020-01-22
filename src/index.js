@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import bootstrap from './bootstrap';
 import BaseContainer from './containers/Base';
 import graphqlClient from './graphql/client';
+import { AppStateProvider } from './services/AppState';
 import { BluetoothLEProvider } from './services/BluetoothLE';
 import { CookieProvider } from './services/Cookie';
 import { DateTimePickerProvider } from './services/DateTimePicker';
@@ -37,25 +38,27 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <DeviceInfoProvider info={bootstrapped.deviceInfo}>
-        <ApolloProvider client={graphqlClient}>
-          <NotificationsProvider trigger={bootstrapped.initialNotification}>
-            <CookieProvider>
-              <DropdownAlertProvider>
-                <DateTimePickerProvider>
-                  <ImagePickerProvider>
-                    <BluetoothLEProvider>
-                      <GeolocationProvider>
-                        <BaseContainer />
-                      </GeolocationProvider>
-                    </BluetoothLEProvider>
-                  </ImagePickerProvider>
-                </DateTimePickerProvider>
-              </DropdownAlertProvider>
-            </CookieProvider>
-          </NotificationsProvider>
-        </ApolloProvider>
-      </DeviceInfoProvider>
+      <AppStateProvider>
+        <DeviceInfoProvider info={bootstrapped.deviceInfo}>
+          <ApolloProvider client={graphqlClient}>
+            <NotificationsProvider trigger={bootstrapped.initialNotification}>
+              <CookieProvider>
+                <DropdownAlertProvider>
+                  <DateTimePickerProvider>
+                    <ImagePickerProvider>
+                      <BluetoothLEProvider>
+                        <GeolocationProvider>
+                          <BaseContainer />
+                        </GeolocationProvider>
+                      </BluetoothLEProvider>
+                    </ImagePickerProvider>
+                  </DateTimePickerProvider>
+                </DropdownAlertProvider>
+              </CookieProvider>
+            </NotificationsProvider>
+          </ApolloProvider>
+        </DeviceInfoProvider>
+      </AppStateProvider>
     </View>
   );
 };

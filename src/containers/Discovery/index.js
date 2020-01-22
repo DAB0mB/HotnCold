@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationActions } from 'react-navigation';
 import CONFIG from 'react-native-config';
-import uuid from 'uuid';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
+import { useAppState } from '../../services/AppState';
 import { MyProvider } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { HeaderProvider } from '../../services/Header';
 import { useNavInHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
-import { useNavigation, getFocusedNav, NavigationProvider } from '../../services/Navigation';
+import { useNavigation, NavigationProvider } from '../../services/Navigation';
 import { useNotifications } from '../../services/Notifications';
 import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
@@ -33,6 +32,7 @@ const Discovery = Base.create(({ navigation }) => {
   const [notificationTrigger, setNotificationTrigger] = useState(null);
   const [queryChats, chatsQuery] = queries.chats.use.lazy();
   const { me, myContract } = myQuery.data || {};
+  const [appState] = useAppState();
 
   useEffect(() => {
     if (!notificationTrigger) return;
@@ -52,36 +52,18 @@ const Discovery = Base.create(({ navigation }) => {
 
     if (!chat) return;
 
-    const focusedNav = getFocusedNav();
+    const { activeChat } = appState;
 
     // We're already chatting with that person
-    if (
-      focusedNav.state.routeName == 'Chat' &&
-      focusedNav.state.params?.chat?.id === chatId
-    ) return;
+    if (activeChat?.id === chatId) return;
 
-    // Reset nav state smoothly
-    baseNav.popToTop();
-
-    baseNav.terminalPush('Social', {
-      $setState: {
-        index: 1,
-        routes: [
-          {
-            key: uuid(),
-            routeName: 'Inbox',
-          },
-          {
-            key: uuid(),
-            routeName: 'Chat',
-            params: { chat },
-          },
-        ],
-      },
-    }, [
-      NavigationActions.navigate({ routeName: 'Discovery', key: baseNav.state.key }),
-    ]);
-  }, [baseNav, notificationTrigger, chatsQuery]);
+    baseNav.push('Social', {
+      $setInitialRouteState: {
+        routeName: 'Chat',
+        params: { chat },
+      }
+    });
+  }, [baseNav, notificationTrigger, chatsQuery, appState]);
 
   useAsyncEffect(function* () {
     if (!myQuery.called) return;
@@ -97,6 +79,7 @@ const Discovery = Base.create(({ navigation }) => {
     // Start fetching and update cache
     queryChats();
 
+    yield notifications.requestPermission();
     // Lastly, fetch token. Only associate it if component is still mounted
     const notificationsToken = yield notifications.getToken();
 
