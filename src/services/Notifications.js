@@ -12,7 +12,7 @@ export const NotificationsProvider = ({
   onNotificationOpened = notifications.onNotificationOpened.bind(notifications),
   removeDeliveredNotification = notifications.removeDeliveredNotification.bind(notifications),
   cancelNotification = notifications.cancelNotification.bind(notifications),
-  trigger,
+  getTrigger = notifications.getInitialNotification.bind(notifications),
   children,
 }) => {
   const value = useMemo(() => ({
@@ -22,7 +22,7 @@ export const NotificationsProvider = ({
     removeDeliveredNotification,
     cancelNotification,
     requestPermission,
-    trigger,
+    getTrigger,
   }), [
     getToken,
     onNotificationOpened,
@@ -30,7 +30,7 @@ export const NotificationsProvider = ({
     removeDeliveredNotification,
     cancelNotification,
     requestPermission,
-    trigger,
+    getTrigger,
   ]);
 
   return (

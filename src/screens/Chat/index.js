@@ -63,7 +63,9 @@ const Chat = () => {
     messagesQuery.fetchMore();
   }, [messagesQuery, setIsLoadingEarlier]);
 
-  useAppState.modelEffect('activeChat', chat);
+  useAppState.scope({
+    activeChat: useMemo(() => chat, [chat.id]),
+  });
 
   return (
     <View style={styles.container}>

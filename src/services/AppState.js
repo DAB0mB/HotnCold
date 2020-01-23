@@ -1,9 +1,27 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 
+const separator = Date.now();
 const AppStateContext = createContext(null);
 
-export const AppStateProvider = ({ children, state = {} }) => {
-  const appState = useState(state);
+export const AppStateProvider = ({ children, value = {} }) => {
+  const appState = useState(value);
+  const [, setAppState] = appState;
+
+  useEffect(() => {
+    const changeListener = ({ appState: activityStatus }) => {
+      setAppState((appState) => ({
+        ...appState,
+        activityStatus,
+      }));
+    };
+
+    AppState.addEventListener('change', changeListener);
+
+    return () => {
+      AppState.removeEventListener('change', changeListener);
+    };
+  }, [true]);
 
   return (
     <AppStateContext.Provider value={appState}>
@@ -16,31 +34,19 @@ export const useAppState = () => {
   return useContext(AppStateContext);
 };
 
-useAppState.modelEffect = (modelName, modelValue) => {
+useAppState.scope = (scope) => {
   const [appState, setAppState] = useAppState();
+  const scopeKeys = Object.keys(scope);
+  const scopeValues = Object.values(scope);
 
   useEffect(() => {
-    const hadValue = modelName in appState;
-    const prevValue = appState[modelName];
-
     setAppState({
       ...appState,
-      [modelName]: modelValue,
+      ...scope,
     });
 
     return () => {
-      setAppState(appState => {
-        appState = { ...appState };
-
-        if (hadValue) {
-          appState[modelName] = prevValue;
-        }
-        else {
-          delete appState[modelName];
-        }
-
-        return appState;
-      });
+      setAppState(appState);
     };
-  }, [modelName, modelValue]);
+  }, [...scopeKeys, separator, ...scopeValues]);
 };

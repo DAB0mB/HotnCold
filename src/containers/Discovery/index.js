@@ -17,8 +17,6 @@ import Base from '../Base';
 import Header from './Header';
 import ServiceRequired from './ServiceRequired';
 
-const $triggered = Symbol('triggered');
-
 const Discovery = Base.create(({ navigation }) => {
   const { default: DiscoveryRouter } = require('../../routers/Discovery');
 
@@ -86,14 +84,14 @@ const Discovery = Base.create(({ navigation }) => {
     associateNotificationsToken(notificationsToken);
   }, [myQuery]);
 
-  useEffect(() => {
-    const chats = chatsQuery?.data?.chats;
+  useAsyncEffect(function* () {
+    if (!chatsQuery.called) return;
+    if (chatsQuery.loading) return;
 
-    if (!chats?.length) return;
+    const initialTrigger = yield notifications.getTrigger();
 
-    if (notifications.trigger && !notifications.trigger[$triggered]) {
-      notifications.trigger[$triggered] = true;
-      setNotificationTrigger(notifications.trigger);
+    if (initialTrigger) {
+      setNotificationTrigger(initialTrigger);
     }
 
     // Listen in background
@@ -104,7 +102,7 @@ const Discovery = Base.create(({ navigation }) => {
       removeTokenRefreshListener();
       removeNotificationOpenedListener();
     };
-  }, [chatsQuery]);
+  }, [chatsQuery.called && !chatsQuery.loading]);
 
   if (myQuery.loading || myQuery.error) {
     return useLoading(true);

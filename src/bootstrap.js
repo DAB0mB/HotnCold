@@ -8,7 +8,6 @@ import firebase from 'react-native-firebase';
 
 const bootstrap = () => Promise.all([
   MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
-  firebase.notifications().getInitialNotification(),
   __DEV__ && CONFIG.INITIAL_USER_TOKEN && Cookie.set(CONFIG.SERVER_URI, 'authToken', CONFIG.INITIAL_USER_TOKEN),
 
   BluetoothStateManager.getState().then((state) => {
@@ -50,9 +49,8 @@ const bootstrap = () => Promise.all([
   }),
 ]).then((results) => {
   return {
-    initialNotification: results[1],
     deviceInfo: {
-      supportsBluetooth: results[3]
+      supportsBluetooth: results[2]
     },
   };
 });
