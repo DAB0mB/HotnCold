@@ -52,6 +52,23 @@ Trigger the app on a second tab:
 
     $ yarn android
 
+You can also bundle a debug-apk file with warnings remaining (Android only, useful for troubleshooting issues). First, make sure that you have the following extension defined in your `android/app/build.gradle` file:
+
+```gradle
+project.ext.react = [
+    // ...
+    bundleInDebug: true
+]
+```
+
+And then run the following:
+
+    # Output: android/app/build/outputs/apk/debug/app-debug.apk
+    $ yarn bundledebug
+    $ android/gradlew assembleDebug
+
+*Make sure to remove `bundleInDebug` option from your `build.gradle` file for continues work!*
+
 ## Test
 
 When signing-in, you can unlock test mode by spam-tapping on the country code field. At some point you it should turn into `-0`, which indicates you've just activated test mode successfully.

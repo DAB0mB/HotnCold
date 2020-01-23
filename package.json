@@ -7,7 +7,7 @@
     "postinstall": "jetifier -r",
     "codegen": "graphql-codegen --config ./codegen.config.js",
     "lint": "eslint --fix",
-    "bundledebug": "react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/generated/assets/react/debug/index.android.bundle --assets-dest ./android/app/build/generated/res/react/debug"
+    "bundledebug": "./scripts/bundledebug.sh"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.1",

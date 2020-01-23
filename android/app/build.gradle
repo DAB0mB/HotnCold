@@ -80,6 +80,7 @@ apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.grad
 
 project.ext.react = [
     entryFile: "index.js"
+    // bundleInDebug: true
 ]
 apply from: "../../node_modules/react-native/react.gradle"
 
