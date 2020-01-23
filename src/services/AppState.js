@@ -46,7 +46,7 @@ useAppState.scope = (scope) => {
     });
 
     return () => {
-      setAppState(appState);
+      setAppState({ ...appState });
     };
   }, [...scopeKeys, separator, ...scopeValues]);
 };

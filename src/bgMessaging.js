@@ -1,20 +1,13 @@
-import firebase from 'react-native-firebase';
+import { handleMessage } from './services/Notifications';
 
-const displayNotification = (message) => {
-  if (!message.data.channelId) return;
+const bgMessaging = ({ data }) => {
+  if (!data.channelId) return;
 
-  const props = JSON.parse(message.data.props);
+  const payload = data.payload ? JSON.parse(data.payload) : {};
 
-  // TODO: Handle iOS
-  const notification = new firebase.notifications.Notification()
-    .setTitle(props.title)
-    .setBody(props.body)
-    .setData(props.data)
-    .setNotificationId(message.data.notificationId)
-    .android.setChannelId(message.data.channelId)
-    .android.setLargeIcon(props.largeIcon);
-
-  return firebase.notifications().displayNotification(notification).catch(err => console.error(err));
+  return handleMessage({ ...data, payload }).catch((err) => {
+    console.error(err);
+  });
 };
 
-export default displayNotification;
+export default bgMessaging;

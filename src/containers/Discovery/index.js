@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import CONFIG from 'react-native-config';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
@@ -11,7 +11,7 @@ import { HeaderProvider } from '../../services/Header';
 import { useNavInHeader } from '../../services/Header';
 import { LoadingProvider, useLoading } from '../../services/Loading';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
-import { useNotifications } from '../../services/Notifications';
+import { useNotifications, handleMessage, CHANNELS } from '../../services/Notifications';
 import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
 import Header from './Header';
@@ -27,22 +27,30 @@ const Discovery = Base.create(({ navigation }) => {
   const [associateNotificationsToken] = mutations.associateNotificationsToken.use();
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
-  const [notificationTrigger, setNotificationTrigger] = useState(null);
   const [queryChats, chatsQuery] = queries.chats.use.lazy();
   const { me, myContract } = myQuery.data || {};
   const [appState] = useAppState();
 
-  useEffect(() => {
-    if (!notificationTrigger) return;
-
-    setNotificationTrigger(null);
-
-    if (!CONFIG.PERSIST_NOTIFICATIONS) {
-      notifications.cancelNotification(notificationTrigger.notification.notificationId);
-      notifications.removeDeliveredNotification(notificationTrigger.notification.notificationId);
+  const onMessage = useCallback((message) => {
+    switch (message.channelId) {
+    case CHANNELS.CHAT_MESSAGES:
+      if (!message.payload.data?.chatId) return;
+      if (message.payload.data.chatId === appState.activeChat?.id) return;
+      break;
     }
 
-    const chatId = notificationTrigger?.notification?.data?.chatId;
+    handleMessage(message).catch(alertError);
+  }, [appState, alertError]);
+
+  const onNotificationOpened = useCallback(({ notification } = {}) => {
+    if (!notification) return;
+
+    if (!CONFIG.PERSIST_NOTIFICATIONS) {
+      notifications.cancelNotification(notification.notificationId);
+      notifications.removeDeliveredNotification(notification.notificationId);
+    }
+
+    const chatId = notification.data.chatId;
 
     if (!chatId) return;
 
@@ -61,7 +69,7 @@ const Discovery = Base.create(({ navigation }) => {
         params: { chat },
       }
     });
-  }, [baseNav, notificationTrigger, chatsQuery, appState]);
+  }, [baseNav, chatsQuery, appState]);
 
   useAsyncEffect(function* () {
     if (!myQuery.called) return;
@@ -91,13 +99,29 @@ const Discovery = Base.create(({ navigation }) => {
     const initialTrigger = yield notifications.getTrigger();
 
     if (initialTrigger) {
-      setNotificationTrigger(initialTrigger);
+      onNotificationOpened(initialTrigger);
     }
 
     // Listen in background
     onCleanup(notifications.onTokenRefresh(associateNotificationsToken));
-    onCleanup(notifications.onNotificationOpened(setNotificationTrigger));
   }, [chatsQuery.called && !chatsQuery.loading]);
+
+  useEffect(() => {
+    if (!chatsQuery.called) return;
+    if (chatsQuery.loading) return;
+
+    const removeMessageListener = notifications.onMessage(onMessage);
+    const removeNotificationOpenedListener = notifications.onNotificationOpened(onNotificationOpened);
+
+    return () => {
+      removeMessageListener();
+      removeNotificationOpenedListener();
+    };
+  }, [
+    chatsQuery.called && !chatsQuery.loading,
+    onMessage,
+    onNotificationOpened,
+  ]);
 
   if (myQuery.loading || myQuery.error) {
     return useLoading(true);
