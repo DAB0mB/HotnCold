@@ -84,7 +84,7 @@ const Discovery = Base.create(({ navigation }) => {
     associateNotificationsToken(notificationsToken);
   }, [myQuery]);
 
-  useAsyncEffect(function* () {
+  useAsyncEffect(function* (onCleanup) {
     if (!chatsQuery.called) return;
     if (chatsQuery.loading) return;
 
@@ -95,13 +95,8 @@ const Discovery = Base.create(({ navigation }) => {
     }
 
     // Listen in background
-    const removeTokenRefreshListener = notifications.onTokenRefresh(associateNotificationsToken);
-    const removeNotificationOpenedListener = notifications.onNotificationOpened(setNotificationTrigger);
-
-    return () => {
-      removeTokenRefreshListener();
-      removeNotificationOpenedListener();
-    };
+    onCleanup(notifications.onTokenRefresh(associateNotificationsToken));
+    onCleanup(notifications.onNotificationOpened(setNotificationTrigger));
   }, [chatsQuery.called && !chatsQuery.loading]);
 
   if (myQuery.loading || myQuery.error) {

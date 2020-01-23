@@ -43,7 +43,7 @@ export const useGeoBackgroundTelemetry = (config = {}) => {
   const { bgService } = useContext(GeolocationContext);
   const cookie = useCookie();
 
-  useAsyncEffect(function* () {
+  useAsyncEffect(function* (onCleanup) {
     const authToken = yield cookie.get('authToken');
 
     yield new Promise((resolve, reject) => {
@@ -58,9 +58,9 @@ export const useGeoBackgroundTelemetry = (config = {}) => {
     const bgEvent = bgService.on('background', () => bgService.start());
     const fgEvent = bgService.on('foreground', () => bgService.stop());
 
-    return () => {
+    onCleanup(() => {
       bgEvent.remove();
       fgEvent.remove();
-    };
+    });
   }, [bgService, cookie]);
 };

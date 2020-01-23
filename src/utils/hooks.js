@@ -84,11 +84,15 @@ export const useAsyncEffect = (fn, input) => {
   const [iterator, setIterator] = useState(null);
   const [generator, setGenerator] = useState(null);
 
-  const dispose = useCallback(() => {
+  const cleanup = useCallback(() => {
     for (let callback of cbQueueRef.current) {
       callback();
     }
   }, [generator]);
+
+  const onCleanup = useCallback((fn) => {
+    cbQueueRef.current.push(fn);
+  }, [true]);
 
   const next = useCallback((value) => {
     if (iterator && iterator.done) {
@@ -109,7 +113,7 @@ export const useAsyncEffect = (fn, input) => {
   useEffect(() => {
     cbQueueRef.current = [];
     setIterator(null);
-    setGenerator(fn);
+    setGenerator(() => fn(onCleanup));
   }, input);
 
   useEffect(() => {
@@ -117,20 +121,13 @@ export const useAsyncEffect = (fn, input) => {
 
     next();
 
-    return dispose;
+    return cleanup;
   }, [generator]);
 
   useEffect(() => {
     if (!iterator) return;
 
     let mounted = true;
-
-    if (typeof iterator.value == 'function') {
-      cbQueueRef.current.push(iterator.value);
-      next(iterator.value);
-
-      return;
-    }
 
     if (iterator.value instanceof Promise) {
       iterator.value.then((value) => {
