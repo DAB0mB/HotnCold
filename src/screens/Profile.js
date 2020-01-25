@@ -1,3 +1,5 @@
+import { ReactNativeFile } from 'apollo-upload-client';
+import * as robot from 'hotncold-robot';
 import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -10,7 +12,6 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { ReactNativeFile } from 'apollo-upload-client';
 import Swiper from 'react-native-swiper';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -20,8 +21,8 @@ import * as mutations from '../graphql/mutations';
 import { useSignUp } from '../services/Auth';
 import { useDateTimePicker } from '../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
-import { useBuffer } from '../services/Loading';
 import { useImagePicker } from '../services/ImagePicker';
+import { useBuffer } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors, hexToRgba } from '../theme';
 import { useRenderer } from '../utils';
@@ -115,6 +116,8 @@ const styles = StyleSheet.create({
     width: 4,
   }
 });
+
+export const $Profile = Symbol('Profile');
 
 const Profile = () => {
   const baseNav = useNavigation(Base);
@@ -298,6 +301,21 @@ const Profile = () => {
       }
     });
   }, [baseNav, findOrCreateChat, user]);
+
+  robot.trap.use($Profile, {
+    name,
+    setName,
+    setBirthDate,
+    setBio,
+    setOccupation,
+    setPictures: useCallback((pictures) => {
+      setPictures(pictures);
+      setPendingPictures(pictures);
+    }, [true]),
+    save: useCallback(() => {
+      setSaving(true);
+    }, [true]),
+  });
 
   return useBuffer(typeof userParam == 'function' && !user, () =>
     <ScrollView style={styles.container}>

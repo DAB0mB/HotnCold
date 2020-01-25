@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 export const useInterval = (callback, delay, asap) => {
   const savedCallback = useRef();
@@ -231,6 +237,33 @@ export const useCallbackTask = (callback, input) => {
       setShouldInvoke(true);
     }
   }, [isReady, ...input]);
+};
+
+export const useStatePromise = (init) => {
+  const resolveRef = useRef(null);
+  const [state, superSetState] = useState(init);
+  const [pending, setPending] = useState(false);
+  const [promise, setPromise] = useState(() => {
+    return new Promise(r => resolveRef.current = r);
+  });
+
+  useEffect(() => {
+    if (pending) {
+      const resolve = resolveRef.current;
+      setPending(false);
+      setPromise(new Promise(r => resolveRef.current = r));
+      resolve(state);
+    }
+  }, [pending]);
+
+  const setState = useCallback((state) => {
+    superSetState(state);
+    setPending(true);
+
+    return promise;
+  }, [state]);
+
+  return [state, setState];
 };
 
 export const useRootLayoutEffect = (() => {

@@ -7,7 +7,8 @@
     "postinstall": "jetifier -r",
     "codegen": "graphql-codegen --config ./codegen.config.js",
     "lint": "eslint --fix",
-    "bundledebug": "./scripts/bundledebug.sh"
+    "bundledebug": "./scripts/bundledebug.sh",
+    "assemblerobot": "cd android && USE_ROBOT=1 ENVFILE=.env.robot ./gradlew assembleRelease"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.1",
@@ -27,6 +28,7 @@
     "apollo-link-ws": "^1.0.19",
     "apollo-upload-client": "^11.0.0",
     "apollo-utilities": "^1.3.2",
+    "babel-plugin-module-resolver": "^4.0.0",
     "convert-string": "^0.1.0",
     "graphql": "^14.5.6",
     "graphql-tag": "^2.10.1",
@@ -44,6 +46,7 @@
     "react-native-country-picker-modal": "^1.10.0",
     "react-native-dropdownalert": "^4.2.0",
     "react-native-firebase": "5.5",
+    "react-native-firebase-test-lab": "^0.0.2",
     "react-native-geolocation-service": "^3.1.0",
     "react-native-gesture-handler": "~1.3.0",
     "react-native-gifted-chat": "^0.11.3",

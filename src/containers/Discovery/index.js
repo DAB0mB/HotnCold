@@ -77,7 +77,7 @@ const Discovery = Base.create(({ navigation }) => {
     if (myQuery.error) return;
 
     if (!myContract || !myContract.signed) {
-      baseNav.replace('Auth');
+      baseNav.terminalPush('Auth');
 
       return;
     }
@@ -123,7 +123,7 @@ const Discovery = Base.create(({ navigation }) => {
     onNotificationOpened,
   ]);
 
-  if (myQuery.loading || myQuery.error) {
+  if (myQuery.loading || myQuery.error || !me) {
     return useLoading(true);
   }
 

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Dimensions, TextInput, TouchableWithoutFeedback
 import CountryPicker, { DARK_THEME as SuperCountryPickerTheme } from 'react-native-country-picker-modal';
 import { TextInputMask } from 'react-native-masked-text';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as robot from 'hotncold-robot';
 
 import DotsLoader from '../components/Loader/DotsLoader';
 import Auth from '../containers/Auth';
@@ -95,6 +96,8 @@ const styles = StyleSheet.create({
   },
 });
 
+export const $Phone = Symbol('Phone');
+
 const Phone = () => {
   const authNav = useNavigation(Auth);
   const alertError = useAlertError();
@@ -174,6 +177,14 @@ const Phone = () => {
   const closeCountryPicker = useCallback(() => {
     setCountryPickerOpened(false);
   }, [true]);
+
+  robot.trap.use($Phone, {
+    requestSignIn,
+    setTestState,
+    setCountry,
+    setLocalPhone,
+    phone,
+  });
 
   return (
     <View style={styles.container}>

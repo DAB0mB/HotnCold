@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 
 import * as mutations from '../graphql/mutations';
+import { useAppState } from './AppState';
 import { useCookie } from './Cookie';
 
 const MyContext = createContext(null);
@@ -80,12 +81,14 @@ export const useSignUp = (args, {
 };
 
 export const useSignOut = ({ onCompleted = noop, onError = noop } = {}) => {
+  const [, setAppState] = useAppState();
   const cookie = useCookie();
   const client = useApolloClient();
   const [dissociateNotificationsToken] = mutations.dissociateNotificationsToken.use();
 
   return useCallback(() => {
     return dissociateNotificationsToken().then(() => Promise.all([
+      setAppState({}),
       cookie.clear(),
       client.clearStore(),
       new Promise((resolve) => {

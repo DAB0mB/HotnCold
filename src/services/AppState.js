@@ -1,18 +1,40 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from 'react';
 import { AppState } from 'react-native';
+
+import { useStatePromise } from '../utils';
 
 const separator = Date.now();
 const AppStateContext = createContext(null);
 
-export const AppStateProvider = ({ children, value = {} }) => {
-  const appState = useState(value);
-  const [, setAppState] = appState;
+export const AppStateProvider = ({ children, init = {} }) => {
+  const [baseState, setBaseState] = useState(init);
+  const [appState, superSetAppState] = useStatePromise();
+
+  const setAppState = useCallback((appState) => {
+    return superSetAppState({
+      ...appState,
+      ...baseState,
+    });
+  }, [baseState]);
 
   useEffect(() => {
     const changeListener = ({ appState: activityStatus }) => {
-      setAppState((appState) => ({
-        ...appState,
+      const baseState = {
         activityStatus,
+      };
+
+      setBaseState(baseState);
+
+      setAppState((appState = {}) => ({
+        ...appState,
+        ...baseState,
       }));
     };
 
@@ -23,8 +45,10 @@ export const AppStateProvider = ({ children, value = {} }) => {
     };
   }, [true]);
 
+  const value = useMemo(() => [appState, setAppState], [appState, setAppState]);
+
   return (
-    <AppStateContext.Provider value={appState}>
+    <AppStateContext.Provider value={value}>
       {children}
     </AppStateContext.Provider>
   );

@@ -3,10 +3,13 @@ import turfBboxPolygon from '@turf/bbox-polygon';
 import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import * as robot from 'hotncold-robot';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { View, StyleSheet, AppState } from 'react-native';
 import CONFIG from 'react-native-config';
 
+import Base from '../../containers/Base';
+import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useAlertError } from '../../services/DropdownAlert';
@@ -15,8 +18,6 @@ import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
 import { useInterval, useRenderer, useMountedRef, useAsyncCallback } from '../../utils';
-import Base from '../../containers/Base';
-import Discovery from '../../containers/Discovery';
 import SelectionButton from './SelectionButton';
 
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
@@ -71,6 +72,8 @@ const emptyShape = {
   features: [],
 };
 
+export const $Map = Symbol('Map');
+
 const Map = () => {
   const mapRef = useRef(null);
   const alertError = useAlertError();
@@ -84,6 +87,7 @@ const Map = () => {
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
   const [readyState, updateReadyState] = useRenderer();
+  const loading = useMemo(() => readyState !== 2, [readyState]);
   const isMountedRef = useMountedRef();
 
   const resetScreenFeatures = useAsyncCallback(function* (e) {
@@ -207,7 +211,11 @@ const Map = () => {
     }
   }, [shapeKey, setAreaFeatures]);
 
-  return useLoading(readyState !== 2,
+  robot.trap.use($Map, {
+    loaded: !loading,
+  });
+
+  return useLoading(loading,
     <View style={styles.container}>
       <MapboxGL.MapView
         ref={mapRef}

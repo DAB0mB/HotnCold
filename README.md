@@ -10,7 +10,7 @@ Configure the following services:
 - [Firebase](firebase.google.com).
 - [Hot&Cold Server](https://github.com/DAB0mB/HotnCold-server).
 
-Define environment variables in `.env.{development|production}` file (NEVER COMMIT):
+Define environment variables in `.env.{ENV_NAME}` file (NEVER COMMIT):
 
     # A public access token to MapBox's API
     MAPBOX_ACCESS_TOKEN
@@ -30,6 +30,8 @@ Define environment variables in `.env.{development|production}` file (NEVER COMM
     PERSIST_NOTIFICATIONS
     # Use fake data for heatmap (long load time)
     FAKE_HEATMAP
+    # Run app with Robot. Robot files will not be bundled if this var is provided
+    USE_ROBOT
     # *Optional: The auth token of the user you would like to log-in with
     INITIAL_USER_TOKEN
 
@@ -71,11 +73,21 @@ And then run the following:
 
 ## Test
 
+### Hidden inputs
+
 When signing-in, you can unlock test mode by spam-tapping on the country code field. At some point you it should turn into `-0`, which indicates you've just activated test mode successfully.
 
 There's 2 methods to proceed from this point on: The first one is by filling-out the phone field with 0s, or you can select your country code and fill-out your real number. With the first method you won't receive any text message, authentication will only be done locally, and with the second method, you'll receive an actual text message. Either way, the verification code will appear on screen for testing purposes. Once you continue, the app should function normally; only difference you'll be able to see users-mocks only.
 
 Each supported geographical area should have at least 1 user-mock that should be detectable on the map or by the radar.To get a feedback from a fake user when chatting with it, you can send the word `echo` to get a response. Alternatively, you can specify a delay time (in seconds) by concatenating a parameter e.g. `echo 5`.
+
+### E2E
+
+Hot&Cold uses [Firebase Test Lab](https://firebase.google.com/docs/test-lab/) in conjunction with an internal module called [Robot](./src/robot). The paradigm is that [Robo](https://firebase.google.com/docs/test-lab/android/robo-ux-test) (notice the lack of T), a tool that Firebase uses to simulate input on real Android devices, doesn't work with React-Native. This is because React-Native wraps native Android view elements in a unique way that is not accessible to Robo, hence Robot was created.
+
+RoboT scripts are located under the [`robot/scopes`](./src/robot/scopes) and have direct control over React elements. In addition to having Robot scripts, you need to record a [Robo script](https://firebase.google.com/docs/test-lab/android/robo-ux-test) with Android-Studio, so you can press native modals, such as alerts, date-time pickers, and permissions. *It's required* that the RoboT script will end end with any native modal, so it will be used as an anchor for Robo, otherwise the tests will be aborted mid-session.
+
+Robot `.apk` can be assembled with `yarn assemble robot` and it will override the `app-release.apk` file.
 
 ## Prod
 

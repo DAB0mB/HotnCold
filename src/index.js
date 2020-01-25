@@ -1,4 +1,5 @@
 import { ApolloProvider } from '@apollo/react-hooks';
+import { Robot } from 'hotncold-robot';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -48,7 +49,9 @@ const App = () => {
                     <ImagePickerProvider>
                       <BluetoothLEProvider>
                         <GeolocationProvider>
-                          <BaseContainer />
+                          <Robot>
+                            <BaseContainer />
+                          </Robot>
                         </GeolocationProvider>
                       </BluetoothLEProvider>
                     </ImagePickerProvider>
