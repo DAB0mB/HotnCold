@@ -14,8 +14,12 @@ import { useNavigation, NavigationProvider } from '../../services/Navigation';
 import { useNotifications, handleMessage, CHANNELS } from '../../services/Notifications';
 import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
-import Header from './Header';
+import Header, { $Header } from './Header';
 import ServiceRequired from './ServiceRequired';
+
+export const $Discovery = {
+  Header: $Header,
+};
 
 const Discovery = Base.create(({ navigation }) => {
   const { default: DiscoveryRouter } = require('../../routers/Discovery');

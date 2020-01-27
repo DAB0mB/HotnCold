@@ -128,6 +128,7 @@ export const assert = (actual, expected) => {
 export const run = async function* ({ onPass = () => {}, onFail = () => {} } = {}) {
   await activeScope.before();
 
+  loopingNodes:
   for (let node of activeScope.nodes) {
     if (node.type == 'scope') {
       const prevActiveScope = activeScope;
@@ -148,7 +149,7 @@ export const run = async function* ({ onPass = () => {}, onFail = () => {} } = {
         activeScope = prevActiveScope;
       }
 
-      continue;
+      continue loopingNodes;
     }
 
     if (node.type == 'flow') {
@@ -180,25 +181,27 @@ export const run = async function* ({ onPass = () => {}, onFail = () => {} } = {
           };
         });
 
-        yield activeFlow.route;
+        yield activeFlow.route.join(' -> ');
 
-        const message = await flowResolution;
+        try {
+          const message = await flowResolution;
 
-        onPass(message);
+          onPass(message);
+        }
+        catch (e) {
+          onFail(e);
+        }
 
         for (let after of activeScope.afterEach) {
           await after();
         }
-      }
-      catch (e) {
-        onFail(e);
       }
       finally {
         // eslint-disable-next-line
         activeFlow = prevActiveFlow;
       }
 
-      continue;
+      continue loopingNodes;
     }
   }
 

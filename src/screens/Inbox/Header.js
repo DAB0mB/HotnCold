@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState, useMemo } from 'react';
 import { Alert, View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as robot from 'hotncold-robot';
 
 import PopOver from '../../components/PopOver';
 import Base from '../../containers/Base';
@@ -36,6 +37,8 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
 });
+
+export const $Header = Symbol('Header');
 
 const Header = () => {
   const { me } = useMine();
@@ -93,6 +96,10 @@ const Header = () => {
 
   socialNav.useBackListener(() => {
     baseNav.goBack();
+  });
+
+  robot.trap.use($Header, {
+    editProfile,
   });
 
   return useLoading(loading,

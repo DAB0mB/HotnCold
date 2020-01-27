@@ -1,3 +1,4 @@
+import * as robot from 'hotncold-robot';
 import React, { useCallback, useMemo } from 'react';
 import { View, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -33,6 +34,8 @@ const styles = StyleSheet.create({
   },
 });
 
+export const $Header = Symbol('Header');
+
 const Header = ({ baseNav, nav: discoveryNav }) => {
   const deviceInfo = useDeviceInfo();
   const alterIcon = useMemo(() =>
@@ -56,6 +59,10 @@ const Header = ({ baseNav, nav: discoveryNav }) => {
       discoveryNav.goBackOnceFocused();
     }
   }, [discoveryNav]);
+
+  robot.trap.use($Header, {
+    navToInbox,
+  });
 
   return (
     <LinearGradient colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']} style={styles.gradient}>

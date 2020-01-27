@@ -4,11 +4,11 @@ import { StyleSheet, View, FlatList, Text, Image } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 
 import Social from '../../containers/Social';
-import { colors, hexToRgba } from '../../theme';
 import * as queries from '../../graphql/queries';
 import { useNavigation } from '../../services/Navigation';
+import { colors, hexToRgba } from '../../theme';
 import { useMountedRef } from '../../utils';
-import Header from './Header';
+import Header, { $Header } from './Header';
 
 const styles = StyleSheet.create({
   container: {
@@ -68,6 +68,10 @@ const styles = StyleSheet.create({
 });
 
 const getChatId = c => c.id;
+
+export const $Inbox = {
+  Header: $Header,
+};
 
 const Inbox = () => {
   const chatsQuery = queries.chats.use();

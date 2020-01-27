@@ -8,6 +8,7 @@ import React, {
   useRef,
 } from 'react';
 import { BackHandler } from 'react-native';
+import CONFIG from 'react-native-config';
 import { StackActions, NavigationActions } from 'react-navigation';
 
 let focusedNav;
@@ -92,6 +93,8 @@ export const useNavigation = (navKey) => {
     goBack.current = _goBack;
 
     const goBackOnceFocused = nav.goBackOnceFocused = useCallback(() => {
+      if (CONFIG.USE_ROBOT) return true;
+
       if (focused.current) {
         _goBack();
       }

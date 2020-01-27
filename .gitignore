@@ -14,7 +14,10 @@ yarn-error.log
 
 # Android
 android/.gradle
+android/.idea
+android/local.properties
 android/build
+android/**/*.iml
 android/app/build
 android/gradle.properties
 android/app/my-key.keystore

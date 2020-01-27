@@ -2,7 +2,7 @@ import React from 'react';
 
 const noop = () => {};
 
-export const Robo = React.Fragment;
+export const Robot = React.Fragment;
 export const scope = noop;
 export const flow = noop;
 export const trap = noop;

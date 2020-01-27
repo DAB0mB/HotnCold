@@ -76,6 +76,7 @@ export const $Map = Symbol('Map');
 
 const Map = () => {
   const mapRef = useRef(null);
+  const cameraRef = useRef(null);
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
   const geolocation = useGeolocation();
@@ -118,7 +119,7 @@ const Map = () => {
     setSelection(null);
   }, [true]);
 
-  const navToUsers = useCallback(() => {
+  const navToPeople = useCallback(() => {
     if (!selection.size) return;
 
     baseNav.push('Social', {
@@ -213,6 +214,12 @@ const Map = () => {
 
   robot.trap.use($Map, {
     loaded: !loading,
+    get map() {
+      return mapRef.current;
+    },
+    get camera() {
+      return cameraRef.current;
+    },
   });
 
   return useLoading(loading,
@@ -229,6 +236,7 @@ const Map = () => {
         compassViewPosition='top-left'
       >
         <MapboxGL.Camera
+          ref={cameraRef}
           zoomLevel={DEFAULT_ZOOM}
           centerCoordinate={initialLocation}
         />
@@ -269,7 +277,7 @@ const Map = () => {
       </MapboxGL.MapView>
 
       <SelectionButton
-        onUsersPress={navToUsers}
+        onUsersPress={navToPeople}
         onClosePress={cancelSelection}
         selection={selection}
       />

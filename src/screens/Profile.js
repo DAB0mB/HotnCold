@@ -164,7 +164,7 @@ const Profile = () => {
     }, [setBirthDate])
   });
   const useProfileMutation = itsMe ? mutations.updateMyProfile.use : useSignUp;
-  const [mutateProfile] = [].concat(useProfileMutation({
+  const [mutateProfile, profileMutation] = [].concat(useProfileMutation({
     name,
     bio,
     occupation,
@@ -315,6 +315,9 @@ const Profile = () => {
     save: useCallback(() => {
       setSaving(true);
     }, [true]),
+    get saveResponse() {
+      return profileMutation?.data?.updateMyProfile;
+    },
   });
 
   return useBuffer(typeof userParam == 'function' && !user, () =>

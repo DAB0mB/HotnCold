@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useState, useMemo, useEffect } from 'react';
+import { StyleSheet, View, BackHandler } from 'react-native';
 
 import { useAsyncEffect } from '../utils';
 import { run } from './runner';
@@ -15,20 +15,29 @@ const styles = StyleSheet.create({
 
 const Robot = ({ children }) => {
   const [route, setRoute] = useState('');
+
   useScopes();
 
   const running = useMemo(() => run({
     onPass({ route, date, payload }) {
-      console.log([`%c [PASS] (${date.toISOString()}) ${route.join(' --> ')}`, payload?.message].filter(Boolean).join(' • '), 'color: green');
+      console.log([`[PASS] (${date.toISOString()}) ${route.join(' --> ')}`, payload?.message].filter(Boolean).join(' • '));
     },
 
     onFail({ route, date, payload }) {
-      const e = [`[FAIL] (${date.toISOString()}) ${route.join(' --> ')}`, payload?.message].filter(Boolean).join(' • ');
-
-      // Will abort the run and print the error
-      throw e;
+      console.error([`[FAIL] (${date.toISOString()}) ${route.join(' --> ')}`, payload?.message].filter(Boolean).join(' • '));
     },
   }), [true]);
+
+  useEffect(() => {
+    // Prevent Robo from moving back
+    const backListener = () => true;
+
+    BackHandler.addEventListener('hardwareBackPress', backListener);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backListener);
+    };
+  }, [true]);
 
   useAsyncEffect(function* () {
     if (route === DONE_ROUTE) return;

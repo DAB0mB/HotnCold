@@ -1,9 +1,9 @@
 [
   {
     "eventType": "PERMISSIONS_REQUEST",
-    "timestamp": 1580057812387,
+    "timestamp": 1580161515020,
     "actionCode": -1,
-    "delayTime": 1500,
+    "delayTime": 0,
     "requestedPermissions": [
       "android.permission.ACCESS_FINE_LOCATION"
     ],
@@ -12,10 +12,47 @@
   },
   {
     "eventType": "VIEW_CLICKED",
-    "timestamp": 1580057829627,
+    "timestamp": 1580161535151,
     "replacementText": "OK",
     "actionCode": -1,
-    "delayTime": 1500,
+    "delayTime": 0,
+    "canScrollTo": true,
+    "elementDescriptors": [
+      {
+        "className": "android.support.v7.widget.AppCompatButton",
+        "recyclerViewChildPosition": -1,
+        "adapterViewChildPosition": -1,
+        "groupViewChildPosition": 3,
+        "resourceId": "android:id/button1",
+        "contentDescription": "",
+        "text": "OK"
+      },
+      {
+        "className": "com.android.internal.widget.ButtonBarLayout",
+        "recyclerViewChildPosition": -1,
+        "adapterViewChildPosition": -1,
+        "groupViewChildPosition": 0,
+        "resourceId": "",
+        "contentDescription": "",
+        "text": ""
+      },
+      {
+        "className": "android.widget.ScrollView",
+        "recyclerViewChildPosition": -1,
+        "adapterViewChildPosition": -1,
+        "groupViewChildPosition": 3,
+        "resourceId": "android:id/buttonPanel",
+        "contentDescription": "",
+        "text": ""
+      }
+    ]
+  },
+  {
+    "eventType": "VIEW_CLICKED",
+    "timestamp": 1580161558229,
+    "replacementText": "OK",
+    "actionCode": -1,
+    "delayTime": 0,
     "canScrollTo": true,
     "elementDescriptors": [
       {
