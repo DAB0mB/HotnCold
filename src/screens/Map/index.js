@@ -4,8 +4,8 @@ import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import * as robot from 'hotncold-robot';
-import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import { View, StyleSheet, AppState } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
 import Base from '../../containers/Base';
@@ -13,11 +13,11 @@ import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useAlertError } from '../../services/DropdownAlert';
-import { useGeoBackgroundTelemetry, useGeolocation } from '../../services/Geolocation';
+import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
 import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
-import { useInterval, useRenderer, useMountedRef, useAsyncCallback } from '../../utils';
+import { useRenderer, useMountedRef, useAsyncCallback } from '../../utils';
 import SelectionButton from './SelectionButton';
 
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
@@ -79,16 +79,13 @@ const Map = () => {
   const cameraRef = useRef(null);
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
-  const geolocation = useGeolocation();
-  const [shapeKey, renderShape] = useRenderer();
   const [updateMyLocation] = mutations.updateMyLocation.use();
   const [queryUsers] = queries.users.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
-  const [readyState, updateReadyState] = useRenderer();
-  const loading = useMemo(() => readyState !== 2, [readyState]);
+  const [loaded, setLoaded] = useRenderer();
   const isMountedRef = useMountedRef();
 
   const resetScreenFeatures = useAsyncCallback(function* (e) {
@@ -168,52 +165,34 @@ const Map = () => {
     fastestInterval: LOCATION_UPDATE_INTERVAL * 2,
   });
 
-  const updateMyLocationInterval = useCallback((initial) => {
-    geolocation.getCurrentPosition((location) => {
+  useEffect(() => {
+    const onLocationUpdate = (location) => {
       if (!isMountedRef.current) return;
 
-      location = [location.coords.longitude, location.coords.latitude];
+      location = [
+        location.coords.longitude,
+        location.coords.latitude,
+      ];
 
-      if (initial) {
-        // TODO: Use special async callback
+      if (!initialLocation) {
         setInitialLocation(location);
-        updateReadyState();
       }
 
       updateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
+        // TODO: Return URL
         setAreaFeatures(areaFeatures);
       }).catch(alertError);
-    }, alertError, {
-      enableHighAccuracy: true,
-      timeout: 5000,
-    });
-  }, [updateMyLocation, renderShape, setAreaFeatures]);
+    };
 
-  useInterval(updateMyLocationInterval, LOCATION_UPDATE_INTERVAL, true);
-
-  const appStateListener = useCallback((appState) => {
-    if (appState === 'active') {
-      updateMyLocationInterval(false);
-    }
-  }, [updateMyLocationInterval]);
-
-  useEffect(() => {
-    AppState.addEventListener('change', appStateListener);
+    MapboxGL.locationManager.addListener(onLocationUpdate);
 
     return () => {
-      AppState.removeEventListener('change', appStateListener);
+      MapboxGL.locationManager.removeListener(onLocationUpdate);
     };
-  }, [appStateListener]);
-
-  useEffect(() => {
-    if (shapeKey) {
-      // Dispose asap once rendered. It's a very heavy object
-      setAreaFeatures(null);
-    }
-  }, [shapeKey, setAreaFeatures]);
+  }, [initialLocation]);
 
   robot.trap.use($Map, {
-    loaded: !loading,
+    loaded,
     get map() {
       return mapRef.current;
     },
@@ -222,7 +201,7 @@ const Map = () => {
     },
   });
 
-  return useLoading(loading,
+  return useLoading(!loaded,
     <View style={styles.container}>
       <MapboxGL.MapView
         ref={mapRef}
@@ -232,7 +211,7 @@ const Map = () => {
         onRegionWillChange={resetScreenFeatures}
         onRegionIsChanging={resetScreenFeatures}
         onRegionDidChange={resetScreenFeatures}
-        onDidFinishLoadingMap={updateReadyState}
+        onDidFinishLoadingMap={setLoaded}
         compassViewPosition='top-left'
       >
         <MapboxGL.Camera
@@ -257,7 +236,6 @@ const Map = () => {
 
         <MapboxGL.ShapeSource
           id='featuresInArea'
-          key={shapeKey}
           {...(
             CONFIG.FAKE_HEATMAP ? {
               url: 'https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson'
