@@ -93,13 +93,13 @@ export const useNavigation = (navKey) => {
     goBack.current = _goBack;
 
     const goBackOnceFocused = nav.goBackOnceFocused = useCallback(() => {
-      if (CONFIG.USE_ROBOT) return true;
-
-      if (focused.current) {
-        _goBack();
-      }
-      else {
-        shouldGoBack.current = true;
+      if (!CONFIG.USE_ROBOT) {
+        if (focused.current) {
+          _goBack();
+        }
+        else {
+          shouldGoBack.current = true;
+        }
       }
 
       BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocused);
