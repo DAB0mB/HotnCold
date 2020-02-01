@@ -2,16 +2,12 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useState,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 import DropdownAlert from 'react-native-dropdownalert';
 
-import { useStatusBar } from './StatusBar';
-
-const $inactiveStatusBarState = Symbol('inactiveStatusBarState');
 const DropdownAlertContext = createContext(null);
 
 export const DropdownAlertProvider = ({ children }) => {
@@ -20,21 +16,20 @@ export const DropdownAlertProvider = ({ children }) => {
   const [inactiveStatusBar] = inactiveStatusBarState;
 
   const dropdownAlertContext = useMemo(() => ({
-    [$inactiveStatusBarState]: inactiveStatusBarState,
-
-    alertWithType(...args) {
+    inactiveStatusBarState,
+    alertWithType(type, title, message) {
       if (dropdownAlertRef.current) {
-        dropdownAlertRef.current.alertWithType(...args);
+        dropdownAlertRef.current.alertWithType(type, title, message);
       }
     }
-  }), [dropdownAlertRef]);
+  }), [true]);
 
   return (
     <DropdownAlertContext.Provider value={dropdownAlertContext}>
       {children}
       <DropdownAlert
         ref={dropdownAlertRef}
-        inactiveStatusBarStyle={inactiveStatusBar.style}
+        inactiveStatusBarStyle={inactiveStatusBar.barStyle}
         inactiveStatusBarBackgroundColor={inactiveStatusBar.backgroundColor}
         translucent
       />
@@ -43,20 +38,7 @@ export const DropdownAlertProvider = ({ children }) => {
 };
 
 export const useDropdownAlert = () => {
-  const dropdownAlert = useContext(DropdownAlertContext);
-  const statusBar = useStatusBar();
-
-  useEffect(() => {
-    const [inactiveStatusBar, setInactiveStatusBar] = dropdownAlert[$inactiveStatusBarState];
-
-    setInactiveStatusBar({ ...inactiveStatusBar, ...statusBar });
-
-    return () => {
-      setInactiveStatusBar(inactiveStatusBar);
-    };
-  }, [dropdownAlert, statusBar]);
-
-  return dropdownAlert;
+  return useContext(DropdownAlertContext);
 };
 
 export const useAlertError = () => {

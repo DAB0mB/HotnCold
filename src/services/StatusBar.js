@@ -1,17 +1,38 @@
-import React, { createContext, useContext } from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 
-const StatusBarContext = createContext(null);
+import { useNavigation } from './Navigation';
+import { useDropdownAlert } from './DropdownAlert';
+
+const statusBarRef = React.createRef();
 
 export const StatusBarProvider = ({ children, ...props }) => {
+  const navigation = useNavigation();
+  const dropdownAlert = useDropdownAlert();
+  const [, setInactiveStatusBar] = dropdownAlert.inactiveStatusBarState;
+
+  useEffect(() => {
+    statusBarRef.current = props;
+    setInactiveStatusBar(props);
+
+    const willFocusListener = navigation.addListener('willFocus', () => {
+      statusBarRef.current = props;
+      setInactiveStatusBar(props);
+    });
+
+    return () => {
+      willFocusListener.remove();
+    };
+  }, [true]);
+
   return (
-    <StatusBarContext.Provider value={props}>
+    <React.Fragment>
       <StatusBar {...props} />
       {children}
-    </StatusBarContext.Provider>
+    </React.Fragment>
   );
 };
 
-export const useStatusBar = () => {
-  return useContext(StatusBarContext);
+export const useStatusBarRef = () => {
+  return statusBarRef;
 };
