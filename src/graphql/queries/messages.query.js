@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 import { useCallback, useEffect, useState } from 'react';
 
 import * as fragments from '../fragments';
-import * as subscriptions from '../subscriptions';
 
 const messages = gql `
   query Messages($chatId: ID!, $limit: Int!, $anchor: ID) {
@@ -16,6 +15,8 @@ const messages = gql `
 `;
 
 messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) => {
+  const subscriptions = require('../subscriptions');
+
   // Manual cache for now. Don't keep anything
   const [data, setData] = useState();
 

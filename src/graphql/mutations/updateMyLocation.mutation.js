@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 import { useCallback } from 'react';
 
 import * as fragments from '../fragments';
-import * as queries from '../queries';
 
 const updateMyLocation = gql `
   mutation UpdateMyLocation($location: Vector2D!) {
@@ -12,6 +11,8 @@ const updateMyLocation = gql `
 `;
 
 updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
+  const queries = require('../queries');
+
   const { data: { me } = {} } = queries.mine.use();
   const [superMutate, mutation] = useMutation(updateMyLocation, defaultOptions);
 

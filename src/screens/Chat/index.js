@@ -1,10 +1,11 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import GiftedChat from '../../components/GiftedChat';
 import Social from '../../containers/Social';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
+import * as subscriptions from '../../graphql/subscriptions';
 import { useMine } from '../../services/Auth';
 import { useAppState } from '../../services/AppState';
 import { useAlertError } from '../../services/DropdownAlert';
@@ -24,6 +25,7 @@ const Chat = () => {
   const chat = socialNav.getParam('chat');
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
+  const [markChatAsRead] = mutations.markChatAsRead.use(chat.id);
   const messagesQuery = queries.messages.use(chat.id, 20, {
     onCompleted: useCallback(({ messages }) => {
       if (!messages.length) return;
@@ -62,6 +64,16 @@ const Chat = () => {
 
     messagesQuery.fetchMore();
   }, [messagesQuery, setIsLoadingEarlier]);
+
+  useEffect(() => {
+    markChatAsRead();
+  }, [true]);
+
+  subscriptions.chatBumped.use({
+    onSubscriptionData: useCallback(() => {
+      markChatAsRead();
+    }, [true]),
+  }),
 
   useAppState.scope({
     activeChat: useMemo(() => chat, [chat.id]),

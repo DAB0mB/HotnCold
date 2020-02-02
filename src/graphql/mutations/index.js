@@ -3,6 +3,7 @@ export { default as createUser } from './createUser.mutation';
 export { default as dissociateNotificationsToken } from './dissociateNotificationsToken.mutation';
 export { default as findOrCreateChat } from './findOrCreateChat.mutation';
 export { default as findOrCreateContract } from './findOrCreateContract.mutation';
+export { default as markChatAsRead } from './markChaAsRead.mutation';
 export { default as sendMessage } from './sendMessage.mutation';
 export { default as updateMyLocation } from './updateMyLocation.mutation';
 export { default as updateMyProfile } from './updateMyProfile.mutation';

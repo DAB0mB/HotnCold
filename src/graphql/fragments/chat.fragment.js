@@ -8,6 +8,7 @@ const chat = gql `
     id
     title
     picture
+    unreadMessagesCount
     firstMessage {
       ...Message
     }

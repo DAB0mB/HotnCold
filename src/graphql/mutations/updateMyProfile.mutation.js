@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 import { useCallback } from 'react';
 
 import * as fragments from '../fragments';
-import * as queries from '../queries';
 
 const updateMyProfile = gql `
   mutation UpdateMyProfile(
@@ -28,6 +27,8 @@ const updateMyProfile = gql `
 `;
 
 updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
+  const queries = require('../queries');
+
   const { data: { me } = {} } = queries.mine.use();
   const [superMutate, mutation] = useMutation(updateMyProfile, defaultOptions);
 

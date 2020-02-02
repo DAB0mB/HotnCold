@@ -59,11 +59,24 @@ const styles = StyleSheet.create({
     color: colors.gray,
   },
   chatRecentMessage: {
-
+    flexDirection: 'row',
   },
   chatRecentMessageText: {
     fontSize: 13,
     color: colors.gray,
+  },
+  unreadMessages: {
+    backgroundColor: colors.hot,
+    borderRadius: 999,
+    height: 20,
+    width: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  unreadMessagesText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 11,
   },
 });
 
@@ -105,12 +118,22 @@ const Inbox = () => {
             </View>
 
             <View style={styles.chatTime}>
-              <Text style={styles.chatTimeText}>{moment(chat.recentMessages[0].createdAt).fromNow()}</Text>
+              <Text style={[styles.chatTimeText, chat.unreadMessagesCount && { color: colors.hot }].filter(Boolean)}>{moment(chat.recentMessages[0].createdAt).fromNow()}</Text>
             </View>
           </View>
 
           <View style={styles.chatRecentMessage}>
-            <Text style={styles.chatRecentMessageText}>{chat.recentMessages[0].text}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.chatRecentMessageText}>{chat.recentMessages[0].text}</Text>
+            </View>
+
+            {!!chat.unreadMessagesCount && (
+              <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+                <View style={styles.unreadMessages}>
+                  <Text style={styles.unreadMessagesText}>{chat.unreadMessagesCount}</Text>
+                </View>
+              </View>
+            )}
           </View>
         </View>
       </View>

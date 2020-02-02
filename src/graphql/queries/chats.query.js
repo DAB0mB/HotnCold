@@ -4,7 +4,6 @@ import { Image } from 'react-native';
 import gql from 'graphql-tag';
 
 import * as fragments from '../fragments';
-import * as subscriptions from '../subscriptions';
 
 const chats = gql `
   query Chats {
@@ -17,6 +16,8 @@ const chats = gql `
 `;
 
 chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
+  const subscriptions = require('../subscriptions');
+
   const query = useQuery(chats, {
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {

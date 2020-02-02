@@ -77,6 +77,7 @@ export const $Map = Symbol('Map');
 const Map = () => {
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
+  const locationUpdatedAtRef = useRef(Date.now());
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
   const [updateMyLocation] = mutations.updateMyLocation.use();
@@ -177,6 +178,11 @@ const Map = () => {
       if (!initialLocation) {
         setInitialLocation(location);
       }
+
+      // Update location once every {LOCATION_UPDATE_INTERVAL}ms
+      if (Date.now() - LOCATION_UPDATE_INTERVAL < locationUpdatedAtRef.current) return;
+
+      locationUpdatedAtRef.current = Date.now();
 
       updateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
         // TODO: Return URL
