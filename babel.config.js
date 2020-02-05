@@ -6,6 +6,9 @@ module.exports = {
       'alias': {
         'hotncold-robot': process.env.USE_ROBOT ? './src/robot' : './src/robot/mock',
       },
+    }],
+    ['babel-plugin-inline-import', {
+      'extensions': ['.md']
     }]
   ],
 };

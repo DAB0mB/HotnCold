@@ -266,6 +266,26 @@ export const useStatePromise = (init) => {
   return [state, setState];
 };
 
+export const useDelayedEffect = (cb, ms, input) => {
+  const timeoutRef = useRef(0);
+
+  const clearDelayedEffect = useCallback(() => {
+    clearTimeout(timeoutRef.current);
+  }, [true]);
+
+  useEffect(() => {
+    const timeoutCb = cb();
+
+    if (typeof timeoutCb != 'function') return;
+
+    timeoutRef.current = setTimeout(timeoutCb, ms);
+
+    return clearDelayedEffect;
+  }, input);
+
+  return clearDelayedEffect;
+};
+
 export const useRootLayoutEffect = (() => {
   let rootObj = null;
 

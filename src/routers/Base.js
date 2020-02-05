@@ -3,10 +3,14 @@ import { fromBottom } from 'react-navigation-transitions';
 import AuthContainer from '../containers/Auth';
 import DiscoveryContainer from '../containers/Discovery';
 import SocialContainer from '../containers/Social';
+import AgreementScreen from '../screens/Agreement';
 import ProfileScreen from '../screens/Profile';
 import Router from './Router';
 
 const Base = Router.create({
+  Agreement: {
+    screen: AgreementScreen,
+  },
   Profile: {
     screen: ProfileScreen,
   },

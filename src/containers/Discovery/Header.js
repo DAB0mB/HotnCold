@@ -2,7 +2,6 @@ import * as robot from 'hotncold-robot';
 import React, { useCallback, useMemo } from 'react';
 import { View, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useDeviceInfo } from '../../services/DeviceInfo';
@@ -12,7 +11,6 @@ import { useCallbackTask } from '../../utils';
 const styles = StyleSheet.create({
   gradient: {
     width: '100%',
-    marginTop: getStatusBarHeight(),
     position: 'absolute',
     padding: 10,
     left: 0,

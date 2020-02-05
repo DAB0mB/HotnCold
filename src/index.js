@@ -2,6 +2,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { Robot } from 'hotncold-robot';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import bootstrap from './bootstrap';
 import BaseContainer from './containers/Base';
@@ -20,7 +21,8 @@ const bootstrapping = bootstrap();
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    paddingTop: getStatusBarHeight(),
+    flex: 1,
   },
 });
 

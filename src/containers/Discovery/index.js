@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import CONFIG from 'react-native-config';
+import { NavigationActions } from 'react-navigation';
+import UUID from 'uuid/v4';
 
 import NativeGuard, { SERVICES } from '../../components/NativeGuard';
 import * as mutations from '../../graphql/mutations';
@@ -81,7 +83,12 @@ const Discovery = Base.create(({ navigation }) => {
     if (myQuery.error) return;
 
     if (!myContract || !myContract.signed) {
-      baseNav.terminalPush('Auth');
+      baseNav.terminalPush('Agreement', {}, [
+        NavigationActions.navigate({
+          key: UUID(),
+          routeName: 'Auth',
+        }),
+      ]);
 
       return;
     }

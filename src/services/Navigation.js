@@ -63,6 +63,11 @@ export const useNavigation = (navKey) => {
   const navQueue = useMemo(() => Array.from(navMap.values()), [true]);
   const parentNav = useMemo(() => navQueue[navQueue.length - 2], [true]);
   const nav = useMemo(() => navKey ? navMap.get(navKey) : navQueue[navQueue.length - 1], [navKey]);
+
+  if (!nav) {
+    throw Error('Navigation object not found. Maybe you forgot to use Base.create()?');
+  }
+
   const focused = useRef(false);
   const shouldGoBack = useRef(false);
   const goBack = useRef(null);
@@ -82,9 +87,20 @@ export const useNavigation = (navKey) => {
     const didBlurListener = nav.addListener('didBlur', ({ action }) => {
       didBlurListener.remove();
 
+      const actions = [
+        ...history,
+        NavigationActions.navigate({ routeName, params, key: action.toChildKey }),
+      ].map(action => ({
+        ...action,
+        params: {
+          ...(action.params || {}),
+          $terminated: true,
+        },
+      }));
+
       nav.dispatch(StackActions.reset({
         index: history.length,
-        actions: [...history, NavigationActions.navigate({ routeName, params, key: action.toChildKey })],
+        actions,
       }));
     });
   }, [true]);

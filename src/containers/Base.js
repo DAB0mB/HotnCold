@@ -1,6 +1,5 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import { LoadingProvider } from '../services/Loading';
 import { NavigationProvider } from '../services/Navigation';
@@ -9,7 +8,6 @@ import { StatusBarProvider } from '../services/StatusBar';
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    paddingTop: getStatusBarHeight(),
     flex: 1,
   },
 });

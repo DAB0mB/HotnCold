@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 const rootScope = {
   type: 'scope',
   before: () => {},
@@ -7,91 +9,108 @@ const rootScope = {
   nodes: [],
 };
 
-let route = [];
-let activeScope = rootScope;
-let activeFlow = null;
-let bootstrapState = 0;
+let affectedFlow = null;
+let affectedScope = rootScope;
+let rejectRun = null;
+let resolveRun = null;
+let routeBuilder = [];
+let runningFlow = null;
+let runningScope = rootScope;
+let mounted = false;
 
 export const scope = (description, handler) => {
-  let prevActiveScope = activeScope;
-  let prevBootstrapState = bootstrapState;
-
-  if (prevBootstrapState == 0) {
-    bootstrapState++;
+  if (!routeBuilder.length) {
+    useEffect(() => {
+      mounted = true;
+    }, [true]);
   }
 
-  try {
-    route.push(description);
+  const parentAffectedScope = affectedScope;
 
-    activeScope = {
+  try {
+    routeBuilder.push(description);
+
+    affectedScope = {
       type: 'scope',
-      route: route.slice(),
+      key: description,
+      route: routeBuilder.slice(),
       before: () => {},
-      beforeEach: activeScope.beforeEach.slice(),
+      beforeEach: affectedScope.beforeEach.slice(),
       after: () => {},
-      afterEach: activeScope.afterEach.slice(),
-      nodes: [],
+      afterEach: affectedScope.afterEach.slice(),
     };
 
-    if (bootstrapState != 2) {
-      prevActiveScope.nodes.push(activeScope);
+    if (mounted) {
+      const existingScope = parentAffectedScope.nodes.find(n => n.key == description);
+      affectedScope = Object.assign(existingScope, affectedScope);
+    }
+    else {
+      affectedScope.nodes = [];
+      parentAffectedScope.nodes.push(affectedScope);
     }
 
     handler();
   }
   finally {
-    route.pop();
-    activeScope = prevActiveScope;
-
-    if (prevBootstrapState == 0) {
-      bootstrapState++;
-    }
+    routeBuilder.pop();
+    affectedScope = parentAffectedScope;
   }
 };
 
 export const flow = (description, handler) => {
-  const prevActiveFlow = activeFlow;
+  const prevAffectedFlow = affectedFlow;
 
   try {
-    route.push(description);
+    routeBuilder.push(description);
 
-    activeFlow = {
+    affectedFlow = {
       type: 'flow',
-      route: route.slice(),
+      key: description,
+      route: routeBuilder.slice(),
       timeout: 5 * 1000,
-      nodes: [],
     };
 
-    if (bootstrapState != 2) {
-      activeScope.nodes.push(activeFlow);
+    if (mounted) {
+      const existingFlow = affectedScope.nodes.find(n => n.key == description);
+      affectedFlow = Object.assign(existingFlow, affectedFlow);
+    }
+    else {
+      affectedFlow.nodes = [];
+      affectedScope.nodes.push(affectedFlow);
     }
 
     handler();
   }
   finally {
-    route.pop();
-    activeFlow = prevActiveFlow;
+    routeBuilder.pop();
+    affectedFlow = prevAffectedFlow;
   }
 };
 
 flow.timeout = (timeout) => {
-  activeFlow.timeout = timeout;
+  affectedFlow.timeout = timeout;
 };
 
 export const trap = (key, handler) => {
-  if (bootstrapState != 2) {
-    activeFlow.nodes.push({
-      type: 'trap',
-      key,
-      handler,
-    });
+  let affectedTrap = {
+    type: 'trap',
+    key,
+    handler,
+  };
+
+  if (mounted) {
+    const existingTrap = affectedFlow.nodes.find(n => n.key == key);
+    affectedTrap = Object.assign(existingTrap, affectedTrap);
+  }
+  else {
+    affectedFlow.nodes.push(affectedTrap);
   }
 };
 
 trap.use = (key, controller = {}) => {
-  if (!activeFlow) return;
+  if (!runningFlow) return;
 
-  const trap = activeFlow.nodes.find(n => n.key === key);
+  const trap = runningFlow.nodes.find(n => n.key === key);
 
   if (!trap) return;
 
@@ -99,18 +118,26 @@ trap.use = (key, controller = {}) => {
 };
 
 export const pass = (payload) => {
-  activeFlow.resolve({
+  if (typeof resolveRun != 'function') {
+    throw Error('pass() called without any flow being run');
+  }
+
+  resolveRun({
     payload,
     date: new Date(),
-    route: activeFlow.route.slice(),
+    route: runningFlow.route.slice(),
   });
 };
 
 export const fail = (payload) => {
-  activeFlow.reject({
+  if (typeof rejectRun != 'function') {
+    throw Error('fail() called without any flow being run');
+  }
+
+  rejectRun({
     payload,
     date: new Date(),
-    route: activeFlow.route.slice(),
+    route: runningFlow.route.slice(),
   });
 };
 
@@ -126,13 +153,13 @@ export const assert = (actual, expected) => {
 };
 
 export const run = async function* ({ onPass = () => {}, onFail = () => {} } = {}) {
-  await activeScope.before();
+  await runningScope.before();
 
   loopingNodes:
-  for (let node of activeScope.nodes) {
+  for (let node of runningScope.nodes) {
     if (node.type == 'scope') {
-      const prevActiveScope = activeScope;
-      activeScope = node;
+      const prevRunningScope = runningScope;
+      runningScope = node;
 
       try {
         const running = run({ onPass, onFail });
@@ -146,18 +173,18 @@ export const run = async function* ({ onPass = () => {}, onFail = () => {} } = {
       }
       finally {
         // eslint-disable-next-line
-        activeScope = prevActiveScope;
+        runningScope = prevRunningScope;
       }
 
       continue loopingNodes;
     }
 
     if (node.type == 'flow') {
-      const prevActiveFlow = activeFlow;
-      activeFlow = node;
+      const prevRunningFlow = runningFlow;
+      runningFlow = node;
 
       try {
-        for (let before of activeScope.beforeEach) {
+        for (let before of runningScope.beforeEach) {
           await before();
         }
 
@@ -165,23 +192,23 @@ export const run = async function* ({ onPass = () => {}, onFail = () => {} } = {
           const timeout = setTimeout(() => {
             fail({
               code: 'TIMEOUT',
-              message: `Timeout (${activeFlow.timeout}ms).`,
-              timeout: activeFlow.timeout,
+              message: `Timeout (${runningFlow.timeout}ms).`,
+              timeout: runningFlow.timeout,
             });
-          }, activeFlow.timeout);
+          }, runningFlow.timeout);
 
-          activeFlow.resolve = (message) => {
+          resolveRun = (message) => {
             clearTimeout(timeout);
             resolve(message);
           };
 
-          activeFlow.reject = (e) => {
+          rejectRun = (e) => {
             clearTimeout(timeout);
             reject(e);
           };
         });
 
-        yield activeFlow.route.join(' -> ');
+        yield runningFlow.route.join(' --> ');
 
         try {
           const message = await flowResolution;
@@ -191,43 +218,39 @@ export const run = async function* ({ onPass = () => {}, onFail = () => {} } = {
         catch (e) {
           onFail(e);
         }
+        finally {
+          resolveRun = null;
+          rejectRun = null;
+        }
 
-        for (let after of activeScope.afterEach) {
+        for (let after of runningScope.afterEach) {
           await after();
         }
       }
       finally {
         // eslint-disable-next-line
-        activeFlow = prevActiveFlow;
+        runningFlow = prevRunningFlow;
       }
 
       continue loopingNodes;
     }
   }
 
-  await activeScope.after();
+  await runningScope.after();
 };
 
 export const before = (handler) => {
-  if (bootstrapState != 2) {
-    activeScope.before = handler;
-  }
+  affectedScope.before = handler;
 };
 
 export const beforeEach = (handler) => {
-  if (bootstrapState != 2) {
-    activeScope.beforeEach.push(handler);
-  }
+  affectedScope.beforeEach.push(handler);
 };
 
 export const after = (handler) => {
-  if (bootstrapState != 2) {
-    activeScope.after = handler;
-  }
+  affectedScope.after = handler;
 };
 
 export const afterEach = (handler) => {
-  if (bootstrapState != 2) {
-    activeScope.afterEach.push(handler);
-  }
+  affectedScope.afterEach.push(handler);
 };

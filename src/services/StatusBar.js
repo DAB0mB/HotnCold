@@ -7,7 +7,7 @@ import { useDropdownAlert } from './DropdownAlert';
 const statusBarRef = React.createRef();
 
 export const StatusBarProvider = ({ children, ...props }) => {
-  const navigation = useNavigation();
+  const nav = useNavigation();
   const dropdownAlert = useDropdownAlert();
   const [, setInactiveStatusBar] = dropdownAlert.inactiveStatusBarState;
 
@@ -15,7 +15,7 @@ export const StatusBarProvider = ({ children, ...props }) => {
     statusBarRef.current = props;
     setInactiveStatusBar(props);
 
-    const willFocusListener = navigation.addListener('willFocus', () => {
+    const willFocusListener = nav.addListener('willFocus', () => {
       statusBarRef.current = props;
       setInactiveStatusBar(props);
     });
@@ -27,7 +27,9 @@ export const StatusBarProvider = ({ children, ...props }) => {
 
   return (
     <React.Fragment>
-      <StatusBar {...props} />
+      {!nav.getParam('$terminated') && (
+        <StatusBar {...props} />
+      )}
       {children}
     </React.Fragment>
   );

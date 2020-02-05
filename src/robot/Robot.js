@@ -20,11 +20,11 @@ const Robot = ({ children }) => {
 
   const running = useMemo(() => run({
     onPass({ route, date, payload }) {
-      console.log([`[PASS] (${date.toISOString()}) ${route.join(' --> ')}`, payload?.message].filter(Boolean).join(' • '));
+      console.log([`[PASS] (${date.toISOString()}) ${route.join(' -> ')}`, payload?.message].filter(Boolean).join(' • '));
     },
 
     onFail({ route, date, payload }) {
-      console.error([`[FAIL] (${date.toISOString()}) ${route.join(' --> ')}`, payload?.message].filter(Boolean).join(' • '));
+      console.error([`[FAIL] (${date.toISOString()}) ${route.join(' -> ')}`, payload?.message].filter(Boolean).join(' • '));
     },
   }), [true]);
 
