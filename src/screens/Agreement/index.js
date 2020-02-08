@@ -1,4 +1,4 @@
-import * as robot from 'hotncold-robot';
+import { useRobot } from 'hotncold-robot';
 import React, { useCallback } from 'react';
 import { Text, View, ScrollView, StyleSheet, Image } from 'react-native';
 import Ripple from 'react-native-material-ripple';
@@ -120,13 +120,14 @@ const privacyStyle = StyleSheet.create({
 export const $Agreement = Symbol('Agreement');
 
 const Agreement = () => {
+  const { useTrap } = useRobot();
   const nav = useNavigation();
 
   const agree = useCallback(() => {
     nav.pop();
   }, [true]);
 
-  robot.trap.use($Agreement, {
+  useTrap($Agreement, {
     agree,
   });
 

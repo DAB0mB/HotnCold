@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { StyleSheet, View, BackHandler } from 'react-native';
 
-import { useAsyncEffect } from '../utils';
-import { run } from './runner';
+import { useAsyncEffect } from '../../utils';
+import { useRobot, RobotProvider } from '../context';
 import useScopes from './scopes';
 
 const DONE_ROUTE = '__DONE__';
@@ -13,18 +13,19 @@ const styles = StyleSheet.create({
   },
 });
 
-const Robot = ({ children }) => {
+const _RobotRunner = ({ children }) => {
+  const { run } = useRobot();
   const [route, setRoute] = useState('');
 
   useScopes();
 
   const running = useMemo(() => run({
     onPass({ route, date, payload }) {
-      console.log([`[PASS] (${date.toISOString()}) ${route.join(' -> ')}`, payload?.message].filter(Boolean).join(' • '));
+      console.log([`[PASS] (${date.toISOString()}) ${route.join(' -> ')}`, payload?.message].filter(Boolean).join('\n'));
     },
 
     onFail({ route, date, payload }) {
-      console.error([`[FAIL] (${date.toISOString()}) ${route.join(' -> ')}`, payload?.message].filter(Boolean).join(' • '));
+      console.error([`[FAIL] (${date.toISOString()}) ${route.join(' -> ')}`, payload?.message].filter(Boolean).join('\n'));
     },
   }), [true]);
 
@@ -58,4 +59,12 @@ const Robot = ({ children }) => {
   );
 };
 
-export default Robot;
+const RobotRunner = (props) => {
+  return (
+    <RobotProvider>
+      <_RobotRunner {...props} />
+    </RobotProvider>
+  );
+};
+
+export default RobotRunner;

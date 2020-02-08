@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Alert } from 'react-native';
 
-import { $Discovery } from '../../containers/Discovery';
-import { $Agreement } from '../../screens/Agreement';
-import { $Inbox } from '../../screens/Inbox';
-import { $Map } from '../../screens/Map';
-import { $Phone } from '../../screens/Phone';
-import { $Profile } from '../../screens/Profile';
-import { $Verify } from '../../screens/Verify';
-import { useDelayedEffect } from '../../utils';
-import { assert, scope, flow, trap, pass } from '../runner';
+import { $Discovery } from '../../../containers/Discovery';
+import { $Agreement } from '../../../screens/Agreement';
+import { $Inbox } from '../../../screens/Inbox';
+import { $Map } from '../../../screens/Map';
+import { $Phone } from '../../../screens/Phone';
+import { $Profile } from '../../../screens/Profile';
+import { $Verify } from '../../../screens/Verify';
+import { useDelayedEffect } from '../../../utils';
+import { useRobot } from '../../context';
 
 export default () => {
+  const { assert, scope, flow, trap, pass } = useRobot();
+
   scope('Profile', () => {
     flow('Profile registration', () => {
       flow.timeout(2 * 60 * 1000);

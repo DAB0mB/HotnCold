@@ -1,4 +1,4 @@
-import * as robot from 'hotncold-robot';
+import { useRobot } from 'hotncold-robot';
 import React, { useCallback, useMemo } from 'react';
 import { View, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
 export const $Header = Symbol('Header');
 
 const Header = ({ baseNav, nav: discoveryNav }) => {
+  const { useTrap } = useRobot();
   const deviceInfo = useDeviceInfo();
   const alterIcon = useMemo(() =>
     (discoveryNav && discoveryNav.state.routeName) === 'Radar' ? 'map' : 'radar'
@@ -58,7 +59,7 @@ const Header = ({ baseNav, nav: discoveryNav }) => {
     }
   }, [discoveryNav]);
 
-  robot.trap.use($Header, {
+  useTrap($Header, {
     navToInbox,
   });
 

@@ -3,7 +3,7 @@ import turfBboxPolygon from '@turf/bbox-polygon';
 import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
-import * as robot from 'hotncold-robot';
+import { useRobot } from 'hotncold-robot';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
@@ -75,6 +75,7 @@ const emptyShape = {
 export const $Map = Symbol('Map');
 
 const Map = () => {
+  const { useTrap } = useRobot();
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
   const locationUpdatedAtRef = useRef(Date.now());
@@ -197,7 +198,7 @@ const Map = () => {
     };
   }, [initialLocation]);
 
-  robot.trap.use($Map, {
+  useTrap($Map, {
     loaded,
     get map() {
       return mapRef.current;

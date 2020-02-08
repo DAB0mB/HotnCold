@@ -1,5 +1,5 @@
 import { ReactNativeFile } from 'apollo-upload-client';
-import * as robot from 'hotncold-robot';
+import { useRobot } from 'hotncold-robot';
 import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
 export const $Profile = Symbol('Profile');
 
 const Profile = () => {
+  const { useTrap } = useRobot();
   const baseNav = useNavigation(Base);
   const isRecipient = baseNav.getParam('isRecipient');
   const itsMe = baseNav.getParam('itsMe');
@@ -302,7 +303,7 @@ const Profile = () => {
     });
   }, [baseNav, findOrCreateChat, user]);
 
-  robot.trap.use($Profile, {
+  useTrap($Profile, {
     name,
     setName,
     setBirthDate,

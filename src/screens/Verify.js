@@ -1,5 +1,5 @@
 import OTPInputView from '@twotalltotems/react-native-otp-input';
-import * as robot from 'hotncold-robot';
+import { useRobot } from 'hotncold-robot';
 import React, { useCallback, useState } from 'react';
 import { Dimensions, StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
 export const $Verify = Symbol('Verify');
 
 const Verify = () => {
+  const { useTrap } = useRobot();
   const baseNav = useNavigation(Base);
   const authNav = useNavigation(Auth);
   const phone = authNav.getParam('phone');
@@ -100,7 +101,7 @@ const Verify = () => {
 
   authNav.useBackListener();
 
-  robot.trap.use($Verify, {
+  useTrap($Verify, {
     passcodeHint,
     setPasscode,
     passcode,

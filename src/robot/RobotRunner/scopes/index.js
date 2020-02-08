@@ -1,9 +1,11 @@
-import { useSignOut } from '../../services/Auth';
-import { scope, before } from '../runner';
+import { useSignOut } from '../../../services/Auth';
+import { useRobot } from '../../context';
 import useDiscoveryScope from './discovery';
 import useProfileScope from './profile';
 
 export default () => {
+  const { scope, before } = useRobot();
+
   scope('Hot&Cold', () => {
     const signOut = useSignOut();
 
