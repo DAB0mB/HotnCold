@@ -6,7 +6,7 @@ import { $Agreement } from '../../../screens/Agreement';
 import { $Inbox } from '../../../screens/Inbox';
 import { $Map } from '../../../screens/Map';
 import { $Phone } from '../../../screens/Phone';
-import { $Profile } from '../../../screens/Profile';
+import { $ProfileEditor } from '../../../screens/ProfileEditor';
 import { $Verify } from '../../../screens/Verify';
 import { useDelayedEffect } from '../../../utils';
 import { useRobot } from '../../context';
@@ -68,7 +68,7 @@ export default () => {
         }, 1000, [passcode, verifySignIn]);
       });
 
-      trap($Profile, ({ name, setName, setBirthDate, setBio, setOccupation, setPictures, save }) => {
+      trap($ProfileEditor, ({ name, setName, setBirthDate, setBio, setOccupation, setPictures, save }) => {
         useDelayedEffect(() => () => {
           setName('C3P-O');
           setBirthDate(new Date('1/1/2000'));
@@ -117,7 +117,7 @@ export default () => {
         }, 1500, [true]);
       });
 
-      trap($Profile, ({ setName, name, save, saveResponse }) => {
+      trap($ProfileEditor, ({ setName, name, save, saveResponse }) => {
         const newName = 'R2D2';
 
         useDelayedEffect(() => () => {

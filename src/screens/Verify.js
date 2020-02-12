@@ -83,7 +83,7 @@ const Verify = () => {
         baseNav.terminalPush('Discovery');
       }
       else {
-        baseNav.terminalPush('Profile');
+        baseNav.terminalPush('ProfileEditor');
       }
     }, [baseNav]),
     onError(error) {

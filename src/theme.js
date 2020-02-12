@@ -4,6 +4,7 @@ export const colors = {
   cold: '#58ecd8',
   ink: '#281745',
   gray: '#9da4ad',
+  lightGray: '#ebecee',
 };
 
 export const hexToRgba = (hex, a = 1) => {

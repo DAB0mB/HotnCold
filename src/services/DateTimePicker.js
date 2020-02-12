@@ -64,18 +64,18 @@ export const useDateTimePicker = (defaults = {}) => {
       maximumDate = defaults.maximumDate,
       minimumDate = defaults.minimumDate,
     } = {}) {
-      if (onConfirm) {
-        dateTimePicker.setOnConfirm(() => (...args) => {
-          dateTimePicker.hide();
+      dateTimePicker.setOnConfirm(() => (...args) => {
+        dateTimePicker.hide();
+        if (typeof onConfirm == 'function') {
           onConfirm(...args);
-        });
-      }
-      if (onCancel) {
-        dateTimePicker.setOnCancel(() => (...args) => {
-          dateTimePicker.hide();
+        }
+      });
+      dateTimePicker.setOnCancel(() => (...args) => {
+        dateTimePicker.hide();
+        if (typeof onCancel == 'function') {
           onCancel(...args);
-        });
-      }
+        }
+      });
       if (date) {
         dateTimePicker.setDate(date);
       }

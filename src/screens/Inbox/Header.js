@@ -42,7 +42,7 @@ export const $Header = Symbol('Header');
 
 const Header = () => {
   const { useTrap } = useRobot();
-  const { me } = useMine();
+  const { myContract, me } = useMine();
   const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
   const optionsIconRef = useRef(null);
@@ -53,8 +53,8 @@ const Header = () => {
   const alertError = useAlertError();
 
   const editProfile = useCallback(() => {
-    baseNav.push('Profile', { user: me, itsMe: true });
-  }, [baseNav, me]);
+    baseNav.push('ProfileEditor', { mine: { myContract, me } });
+  }, [baseNav, myContract, me]);
 
   const signOutAndFlee = useCallback(() => {
     Alert.alert('Sign Out', 'Are you sure you would like to proceed?', [
