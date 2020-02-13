@@ -55,7 +55,7 @@ Auth.create = (Component) => {
   return function AuthScreen({ navigation: authNav }) {
     return (
       <NavigationProvider navKey={Auth} navigation={authNav}>
-        <StatusBarProvider translucent barStyle='light-content' backgroundColor={colors.ink}>
+        <StatusBarProvider translucent barStyle='dark-content' backgroundColor={'white'}>
           <View style={styles.bodyFiller} />
           <View style={styles.body}>
             <Component navigation={authNav} />

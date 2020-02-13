@@ -25,8 +25,8 @@ The App is not intended for children under 18 years of age, and we do not knowin
 
 We collect information from and about users of our App:
 
-- Directly from you when you provide it to us.
-- Automatically when you use the App.
+\- Directly from you when you provide it to us.
+\- Automatically when you use the App.
 
 ### Information You Provide to Us
 
@@ -65,10 +65,10 @@ The technologies we use for automatic information collection may include:
 
  When you use the App or its content, certain third parties may use automatic information collection technologies to collect information about you or your device. These third parties may include:
 
-- Advertisers, ad networks, and ad servers.
-- Analytics companies.
-- Your mobile device manufacturer.
-- Your mobile service provider.
+\- Advertisers, ad networks, and ad servers.
+\- Analytics companies.
+\- Your mobile device manufacturer.
+\- Your mobile service provider.
 
 These third parties may use tracking technologies to collect information about you when you use this app. The information they collect may be associated with your personal information or they may collect information, including personal information, about your online activities over time and across different websites, apps, and other online services websites. They may use this information to provide you with interest-based (behavioral) advertising or other targeted content.
 
@@ -135,4 +135,7 @@ You are responsible for ensuring we have an up-to-date active and deliverable em
 
 ### Contact Information
 
-To ask questions or comment about this privacy policy and our privacy practices, contact us at: [emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan), [sksoliman@gmail.com](mailto:sksoliman@gmail.com) (Sherry).
+To ask questions or comment about this privacy policy and our privacy practices, contact us at:
+
+\- [emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan)
+\- [sksoliman@gmail.com](mailto:sksoliman@gmail.com) (Sherry)

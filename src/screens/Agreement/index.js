@@ -1,12 +1,11 @@
 import { useRobot } from 'hotncold-robot';
 import React, { useCallback } from 'react';
 import { Text, View, ScrollView, StyleSheet, Image } from 'react-native';
-import Ripple from 'react-native-material-ripple';
+import { RaisedTextButton } from 'react-native-material-buttons';
 
 import Markdown, { styles as _mdStyles } from '../../components/Markdown';
 import Base from '../../containers/Base';
 import { useNavigation } from '../../services/Navigation';
-import { StatusBarProvider } from '../../services/StatusBar';
 import { colors } from '../../theme';
 import privacyMD from './privacy.md';
 import termsMD from './terms.md';
@@ -14,21 +13,19 @@ import termsMD from './terms.md';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.ink,
+    backgroundColor: colors.lightGray,
+  },
+  header: {
+    marginTop: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    marginBottom: 20,
+    padding: 11,
   },
   logo: {
-    width: 200,
-    marginBottom: 10,
+    height: 25,
     resizeMode: 'contain',
-  },
-  body: {
-    paddingLeft: 15,
-    paddingRight: 15,
-  },
-  mianTitle: {
-    color: 'white',
-    fontSize: 30,
-    marginBottom: 10,
   },
   agreeButton: {
     margin: 30,
@@ -37,12 +34,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderColor: 'white',
   },
-  agreeButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 15,
-    padding: 15,
-  },
   copyrights: {
     fontSize: 12,
     marginBottom: 10,
@@ -50,41 +41,19 @@ const styles = StyleSheet.create({
 });
 
 const mdStyles = StyleSheet.create({
-  heading1: {
-    ..._mdStyles.heading1,
-    textAlign: 'left',
-  },
   heading2: {
     ..._mdStyles.heading2,
-    textAlign: 'left',
+    textAlign: 'center',
+    alignSelf: 'center',
+    color: colors.hot,
+    width: '100%',
+    fontWeight: '600',
+    marginTop: 20,
+    marginBottom: 20,
   },
   heading3: {
     ..._mdStyles.heading3,
-    textAlign: 'left',
-  },
-  heading4: {
-    ..._mdStyles.heading4,
-    textAlign: 'left',
-  },
-  heading5: {
-    ..._mdStyles.heading5,
-    textAlign: 'left',
-  },
-  heading6: {
-    ..._mdStyles.heading6,
-    textAlign: 'left',
-  },
-  heading7: {
-    ..._mdStyles.heading7,
-    textAlign: 'left',
-  },
-  heading8: {
-    ..._mdStyles.heading8,
-    textAlign: 'left',
-  },
-  text: {
-    color: 'white',
-    textAlign: 'justify',
+    fontWeight: '600',
   },
   listUnorderedItem: {
     marginTop: -10,
@@ -92,13 +61,13 @@ const mdStyles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   listOrderedItemIcon: {
-    color: 'white',
+    fontWeight: '600',
     paddingTop: 10,
     paddingLeft: 2,
     paddingRight: 8,
   },
   listUnorderedItemIcon: {
-    color: colors.ink,
+    fontWeight: '600',
     paddingTop: 10,
     paddingLeft: 2,
     paddingRight: 8,
@@ -106,15 +75,15 @@ const mdStyles = StyleSheet.create({
 });
 
 const termsStyle = StyleSheet.create({
-  ...mdStyles
+  ...mdStyles,
+  listUnorderedItemIcon: {
+    ...mdStyles.listOrderedItemIcon,
+    color: colors.lightGray,
+  },
 });
 
 const privacyStyle = StyleSheet.create({
   ...mdStyles,
-  listUnorderedItemIcon: {
-    ...mdStyles.listUnorderedItemIcon,
-    color: 'white',
-  },
 });
 
 export const $Agreement = Symbol('Agreement');
@@ -133,18 +102,24 @@ const Agreement = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBarProvider translucent barStyle='light-content' backgroundColor={colors.ink}>
-        <ScrollView style={styles.body}>
-          <Image source={require('../../assets/logo_dark.png')} style={styles.logo} />
-          <Text style={styles.mianTitle}>License Agreement</Text>
+      <ScrollView style={styles.body}>
+        <View style={styles.header}>
+          <Image source={require('../../assets/logo_light.png')} style={styles.logo} />
+        </View>
+        <View style={{ paddingLeft: 15, paddingRight: 15 }}>
           <Markdown style={termsStyle}>{termsMD}</Markdown>
           <Markdown style={privacyStyle}>{privacyMD}</Markdown>
-          <Ripple onPressOut={agree} style={styles.agreeButton}>
-            <Text style={styles.agreeButtonText}>Agree and Continue</Text>
-          </Ripple>
+          <View style={{ padding: 5, paddingTop: 20, paddingBottom: 20 }}>
+            <RaisedTextButton
+              onPress={agree}
+              color={colors.hot}
+              title='Agree and Continue'
+              titleColor='white'
+            />
+          </View>
           <Text style={[mdStyles.text, styles.copyrights]}>© Hot &amp; Cold App, Inc 2020</Text>
-        </ScrollView>
-      </StatusBarProvider>
+        </View>
+      </ScrollView>
     </View>
   );
 };

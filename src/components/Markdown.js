@@ -1,6 +1,9 @@
 import React, { useMemo, useCallback } from 'react';
-import { Text, Linking } from 'react-native';
-import _Markdown from 'react-native-markdown-renderer';
+import { View, Text, Linking } from 'react-native';
+import SuperMarkdown, {
+  renderRules as superRules,
+  hasParents,
+} from 'react-native-markdown-renderer';
 
 const noop = () => {};
 
@@ -19,10 +22,23 @@ const Markdown = ({ _handleUrl = noop, ...props }) => {
         </Text>
       );
     },
+
+    list_item(node, children, parent, styles) {
+      if (hasParents(parent, 'bullet_list')) {
+        return (
+          <View key={node.key} style={styles.listUnorderedItem}>
+            <Text style={styles.listUnorderedItemIcon}>*</Text>
+            <View style={[styles.listItem]}>{children}</View>
+          </View>
+        );
+      }
+
+      return superRules.list_item(node, children, parent, styles);
+    },
   }), [handleUrl]);
 
   return (
-    <_Markdown rules={rules} {...props}></_Markdown>
+    <SuperMarkdown rules={rules} {...props}></SuperMarkdown>
   );
 };
 
