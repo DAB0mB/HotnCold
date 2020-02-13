@@ -83,7 +83,7 @@ Each supported geographical area should have at least 1 user-mock that should be
 
 ### E2E
 
-Hot&Cold uses [Firebase Test Lab](https://firebase.google.com/docs/test-lab/) in conjunction with an internal module called [Robot](./src/robot). The paradigm is that [Robo](https://firebase.google.com/docs/test-lab/android/robo-ux-test) (notice the lack of T), a tool that Firebase uses to simulate input on real Android devices, doesn't work with React-Native. This is because React-Native wraps native Android view elements in a unique way that is not accessible to Robo, hence Robot was created.
+Hot&Cold uses [Firebase Test Lab](https://firebase.google.com/docs/test-lab/) in conjunction with an internal module called [Robot](./src/robot). The paradigm is that [Robo](https://firebase.google.com/docs/test-lab/android/robo-ux-test) (notice the lack of T), a tool that Firebase uses to simulate input on real Android devices, doesn't work with React-Native. This is because React-Native wraps native Android view elements in a unique way that is not accessible to Robo, hence Robot was created. See this [Meidum post](https://medium.com/@eytanmanor/4bc475f4bb2) about Bobcat (aka Robot) for further info.
 
 RoboT scripts are located under the [`robot/scopes`](./src/robot/scopes) and have direct control over React elements. In addition to having Robot scripts, you need to record a [Robo script](https://firebase.google.com/docs/test-lab/android/robo-ux-test) with Android-Studio, so you can press native modals, such as alerts, date-time pickers, and permissions. *It's required* that the RoboT script will end end with any native modal, so it will be used as an anchor for Robo, otherwise the tests will be aborted mid-session.
 
