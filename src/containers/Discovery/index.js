@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 import { NavigationActions } from 'react-navigation';
 import UUID from 'uuid/v4';
@@ -18,6 +19,13 @@ import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
 import Header, { $Header } from './Header';
 import ServiceRequired from './ServiceRequired';
+
+const styles = StyleSheet.create({
+  body: {
+    backgroundColor: 'white',
+    flex: 1
+  },
+});
 
 export const $Discovery = {
   Header: $Header,
@@ -164,9 +172,11 @@ Discovery.create = (Component) => {
     useNavInHeader(discoveryNav);
 
     return (
-      <NavigationProvider navKey={Discovery} navigation={discoveryNav}>
-        <Component navigation={discoveryNav} />
-      </NavigationProvider>
+      <View style={styles.body}>
+        <NavigationProvider navKey={Discovery} navigation={discoveryNav}>
+          <Component navigation={discoveryNav} />
+        </NavigationProvider>
+      </View>
     );
   };
 };

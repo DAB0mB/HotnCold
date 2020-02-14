@@ -10,7 +10,7 @@ import { HEIGHT as HEADER_HEIGHT } from '../containers/Auth/Header';
 import { useRequestSignIn } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
-import { colors } from '../theme';
+import { colors, hexToRgba } from '../theme';
 import { validatePhone } from '../utils';
 
 const CountryPickerTheme = {
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   countryPickerArrow: {
+    color: 'black',
   },
   phoneContainer: {
     flexDirection: 'row',
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   ccodeText: {
+    color: 'black',
     fontSize: 15,
     padding: 0,
     minWidth: 50,
@@ -209,6 +211,7 @@ const Phone = () => {
                 textAlign='right'
                 placeholder={ccodePrefix}
                 style={styles.ccodeText}
+                placeholderTextColor={hexToRgba('#000', .5)}
               >
                 {callingCode}
               </TextInput>
@@ -224,6 +227,7 @@ const Phone = () => {
               value={localPhone}
               onChangeText={resetLocalPhone}
               style={styles.localPhoneText}
+              placeholderTextColor={hexToRgba('#000', .5)}
             />
           </View>
         </View>

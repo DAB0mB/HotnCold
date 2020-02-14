@@ -14,10 +14,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flex: 1,
   },
-  body: {
+  router: {
     flex: 1,
   },
-  bodyComponent: {
+  body: {
+    backgroundColor: 'white',
     marginTop: 50,
     flex: 1
   },
@@ -43,7 +44,7 @@ const Social = Base.create(({ navigation }) => {
       <MyProvider me={me} myContract={myContract}>
         <LoadingProvider>
           <Header />
-          <View style={styles.body}>
+          <View style={styles.router}>
             <SocialRouter navigation={navigation} />
           </View>
         </LoadingProvider>
@@ -58,7 +59,7 @@ Social.create = (Component) => {
   return function SocialScreen({ navigation: socialNav }) {
     return (
       <NavigationProvider navKey={Social} navigation={socialNav}>
-        <View style={styles.bodyComponent}>
+        <View style={styles.body}>
           <Component navigation={socialNav} />
         </View>
         <Header>

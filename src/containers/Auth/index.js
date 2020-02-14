@@ -14,14 +14,6 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  bodyFiller: {
-    position: 'absolute',
-    // -1 will make transition look without glitches
-    left: -1,
-    top: -1,
-    right: -1,
-    bottom: -1,
-  },
   body: {
     position: 'absolute',
     left: 0,
@@ -52,7 +44,6 @@ Auth.create = (Component) => {
     return (
       <NavigationProvider navKey={Auth} navigation={authNav}>
         <StatusBarProvider translucent barStyle='dark-content' backgroundColor={'white'}>
-          <View style={styles.bodyFiller} />
           <View style={styles.body}>
             <Component navigation={authNav} />
           </View>

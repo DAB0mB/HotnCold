@@ -4,6 +4,7 @@ export const colors = {
   cold: '#58ecd8',
   ink: '#281745',
   gray: '#9da4ad',
+  default: '#9d9d9d',
   lightGray: '#ebecee',
 };
 

@@ -48,13 +48,8 @@ const styles = StyleSheet.create({
   },
   resend: {
     position: 'absolute',
+    color: 'black',
     left: 0,
-    bottom: 0,
-    fontSize: 20,
-  },
-  next: {
-    position: 'absolute',
-    right: 0,
     bottom: 0,
     fontSize: 20,
   },
@@ -139,7 +134,7 @@ const Verify = () => {
       />
       <TouchableWithoutFeedback onPress={authNav.goBackOnceFocused}>
         <Text style={styles.resend}>
-          <McIcon name='cellphone-message' size={20} /> <Text>Resend</Text>
+          <McIcon name='cellphone-message' size={20} color='black' /> <Text>Resend</Text>
         </Text>
       </TouchableWithoutFeedback>
     </View>
