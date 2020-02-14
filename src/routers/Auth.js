@@ -14,7 +14,28 @@ const Auth = Router.create({
 }, {
   initialRouteName: 'Phone',
   headerMode: 'none',
-  transitionConfig: () => zoomIn(),
+  transitionConfig: () => {
+    const zoomInConfig = zoomIn();
+
+    return {
+      transitionSpec: {
+        ...zoomInConfig.transitionSpec
+      },
+      screenInterpolator: ({ position, scene }) => {
+        const { index } = scene;
+
+        const opacity = position.interpolate({
+          inputRange: [index - 1, index, index + 1],
+          outputRange: [0, 1, 0],
+        });
+
+        return {
+          ...zoomInConfig.screenInterpolator({ position, scene }),
+          opacity,
+        };
+      },
+    };
+  },
 });
 
 export default Auth;

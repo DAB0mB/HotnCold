@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 
-import { colors } from '../../theme';
-
 export const HEIGHT = 130;
 
 const styles = StyleSheet.create({
@@ -14,10 +12,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    backgroundColor: colors.ink,
   },
   logo: {
-    height: 30,
+    height: 42,
     resizeMode: 'contain',
   },
 });
@@ -25,7 +22,7 @@ const styles = StyleSheet.create({
 const Header = () => {
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/logo_dark.png')} style={styles.logo} />
+      <Image source={require('../../assets/logo_any.png')} style={styles.logo} />
     </View>
   );
 };

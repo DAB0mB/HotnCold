@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { StyleSheet, Text, View, Dimensions, TextInput, TouchableWithoutFeedback } from 'react-native';
-import CountryPicker, { DARK_THEME as SuperCountryPickerTheme } from 'react-native-country-picker-modal';
+import CountryPicker, { LIGHT_THEME as SuperCountryPickerTheme } from 'react-native-country-picker-modal';
 import { TextInputMask } from 'react-native-masked-text';
-import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { RaisedTextButton } from 'react-native-material-buttons';
 import { useRobot } from 'hotncold-robot';
 
-import DotsLoader from '../components/Loader/DotsLoader';
 import Auth from '../containers/Auth';
 import { HEIGHT as HEADER_HEIGHT } from '../containers/Auth/Header';
 import { useRequestSignIn } from '../services/Auth';
@@ -16,7 +15,8 @@ import { validatePhone } from '../utils';
 
 const CountryPickerTheme = {
   ...SuperCountryPickerTheme,
-  backgroundColor: colors.ink,
+  backgroundColor: colors.lightGray,
+  primaryColorVariant: colors.gray,
 };
 
 const COUNTRIES = ['US', 'IL', 'KR'];
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     maxHeight: Dimensions.get('window').height - (HEADER_HEIGHT * 2),
   },
   instructions: {
-    color: 'white',
     textAlign: 'center',
   },
   inputsContainer: {
@@ -41,8 +40,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'stretch',
-    borderBottomWidth: 1.5,
-    borderBottomColor: 'white',
+    borderBottomWidth: 1,
   },
   countryPicker: {
     flex: 1,
@@ -50,7 +48,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   countryPickerArrow: {
-    color: 'white',
   },
   phoneContainer: {
     flexDirection: 'row',
@@ -61,38 +58,26 @@ const styles = StyleSheet.create({
   ccode: {
     padding: 0,
     marginRight: 10,
-    borderBottomWidth: 1.5,
-    borderBottomColor: 'white',
+    borderBottomWidth: 1,
   },
   ccodeText: {
     fontSize: 15,
-    color: 'white',
     padding: 0,
     minWidth: 50,
   },
   localPhone: {
     padding: 0,
-    borderBottomWidth: 1.5,
-    borderBottomColor: 'white',
+    borderBottomWidth: 1,
   },
   localPhoneText: {
     fontSize: 15,
-    color: 'white',
     minWidth: 150,
     padding: 0,
   },
   smsNote: {
     alignSelf: 'flex-start',
-    color: 'white',
     marginTop: 10,
     fontSize: 10,
-  },
-  next: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    fontSize: 20,
-    color: 'white',
   },
 });
 
@@ -111,6 +96,7 @@ const Phone = () => {
     (country && country.callingCode.length) ? `${ccodePrefix}${country.callingCode[0]}` : ''
   , [country, ccodePrefix]);
   const phone = useMemo(() => `${callingCode}${localPhone.replace(/[^\d]/g, '')}`, [callingCode, localPhone]);
+  const isPhoneValid = useMemo(() => validatePhone(phone), [phone]);
   const [ccodeTapCount, setCcodeTapCount] = useState(0);
   const [countryPickerOpened, setCountryPickerOpened] = useState(false);
   const superRequestSignIn = useRequestSignIn(phone, {
@@ -137,10 +123,12 @@ const Phone = () => {
   });
 
   const requestSignIn = useCallback(() => {
+    if (loading) return;
+
     setLoading(true);
 
     superRequestSignIn();
-  }, [superRequestSignIn]);
+  }, [loading, superRequestSignIn]);
 
   useEffect(() => {
     if (!ccodeTapCount) return;
@@ -220,7 +208,6 @@ const Phone = () => {
                 editable={false}
                 textAlign='right'
                 placeholder={ccodePrefix}
-                placeholderTextColor='rgba(255, 255, 255, .2)'
                 style={styles.ccodeText}
               >
                 {callingCode}
@@ -236,26 +223,21 @@ const Phone = () => {
               type='cel-phone'
               value={localPhone}
               onChangeText={resetLocalPhone}
-              placeholderTextColor='rgba(255, 255, 255, .2)'
               style={styles.localPhoneText}
             />
           </View>
         </View>
         <Text style={styles.smsNote}>Carrier SMS charges may apply.</Text>
       </View>
-      {validatePhone(phone) && (
-        loading ? (
-          <View style={styles.next}>
-            <DotsLoader size={10} betweenSpace={10} />
-          </View>
-        ) : (
-          <TouchableWithoutFeedback onPress={requestSignIn}>
-            <Text style={styles.next}>
-              <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
-            </Text>
-          </TouchableWithoutFeedback>
-        )
-      )}
+      <RaisedTextButton
+        style={{ marginTop: 30 }}
+        onPress={requestSignIn}
+        color={colors.hot}
+        title='send'
+        titleColor='white'
+        key={!isPhoneValid}
+        disabled={!isPhoneValid}
+      />
     </View>
   );
 };

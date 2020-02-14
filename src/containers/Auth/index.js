@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 
 import { LoadingProvider } from '../../services/Loading';
 import { NavigationProvider } from '../../services/Navigation';
 import { StatusBarProvider } from '../../services/StatusBar';
-import { colors } from '../../theme';
 import Base from '../Base';
 import Header, { HEIGHT as HEADER_HEIGHT } from './Header';
 import Loader from './Loader';
@@ -13,10 +12,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
-    backgroundColor: colors.ink,
+    position: 'relative',
   },
   bodyFiller: {
-    backgroundColor: colors.ink,
     position: 'absolute',
     // -1 will make transition look without glitches
     left: -1,
@@ -31,11 +29,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     top: HEADER_HEIGHT,
     padding: 20,
-    backgroundColor: colors.ink,
   },
-  loadingContainer: {
-    backgroundColor: colors.ink,
-  }
 });
 
 const Auth = Base.create(({ navigation }) => {
@@ -43,8 +37,10 @@ const Auth = Base.create(({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <LoadingProvider containerStyle={styles.loadingContainer} LoaderComponent={Loader}>
-        <AuthRouter navigation={navigation} />
+      <LoadingProvider LoaderComponent={Loader}>
+        <ImageBackground source={require('./auth-background.png')} style={{ width: '100%', height: '100%' }}>
+          <AuthRouter navigation={navigation} />
+        </ImageBackground>
         <Header />
       </LoadingProvider>
     </View>

@@ -5,6 +5,10 @@ import BluetoothStateManager from 'react-native-bluetooth-state-manager';
 import CONFIG from 'react-native-config';
 import Cookie from 'react-native-cookie';
 import firebase from 'react-native-firebase';
+import { ThemeColors } from 'react-navigation';
+
+// I'm gonna use a custom theming system anyways. This is irrelevant and only interrupts
+ThemeColors.light.body = 'transparent';
 
 const bootstrap = () => Promise.all([
   MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),

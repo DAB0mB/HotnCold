@@ -1,16 +1,17 @@
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import { useRobot } from 'hotncold-robot';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { Dimensions, StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
+import { RaisedTextButton } from 'react-native-material-buttons';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import DotsLoader from '../components/Loader/DotsLoader';
 import Auth from '../containers/Auth';
 import { HEIGHT as HEADER_HEIGHT } from '../containers/Auth/Header';
 import Base from '../containers/Base';
 import { useVerifySignIn } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
+import { colors } from '../theme';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,7 +22,6 @@ const styles = StyleSheet.create({
     maxHeight: Dimensions.get('window').height - (HEADER_HEIGHT * 2),
   },
   instructions: {
-    color: 'white',
     textAlign: 'center',
   },
   otpContainer: {
@@ -34,17 +34,16 @@ const styles = StyleSheet.create({
     height: 100,
   },
   otpInput: {
-    color: 'white',
     fontSize: 20,
     fontWeight: '900',
     borderWidth: 0,
     borderBottomWidth: 1,
+    borderColor: 'black',
   },
   passcodeHint: {
     position: 'absolute',
     left: 0,
     bottom: 0,
-    color: 'white',
     fontSize: 10,
   },
   resend: {
@@ -52,14 +51,12 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     fontSize: 20,
-    color: 'white',
   },
   next: {
     position: 'absolute',
     right: 0,
     bottom: 0,
     fontSize: 20,
-    color: 'white',
   },
 });
 
@@ -74,6 +71,7 @@ const Verify = () => {
   const [loading, setLoading] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [passcodeHint] = useState(contract.isTest ? contract.passcode : null);
+  const isPasscodeReady = useMemo(() => passcode.length == 4, [passcode]);
   const alertError = useAlertError();
   const superVerifySignIn = useVerifySignIn(contract, passcode, {
     onCompleted: useCallback((contract) => {
@@ -94,10 +92,12 @@ const Verify = () => {
   });
 
   const verifySignIn = useCallback(() => {
+    if (loading) return;
+
     setLoading(true);
 
     superVerifySignIn();
-  }, [superVerifySignIn]);
+  }, [superVerifySignIn, loading]);
 
   authNav.useBackListener();
 
@@ -128,24 +128,20 @@ const Verify = () => {
           <Text style={styles.passcodeHint}>[TEST] Your passcode is {passcodeHint}.</Text>
         )}
       </View>
+      <RaisedTextButton
+        style={{ marginTop: 30 }}
+        onPress={verifySignIn}
+        color={colors.hot}
+        title='verify'
+        titleColor='white'
+        key={!isPasscodeReady}
+        disabled={!isPasscodeReady}
+      />
       <TouchableWithoutFeedback onPress={authNav.goBackOnceFocused}>
         <Text style={styles.resend}>
-          <McIcon name='cellphone-message' color='white' size={20} /> <Text>Resend</Text>
+          <McIcon name='cellphone-message' size={20} /> <Text>Resend</Text>
         </Text>
       </TouchableWithoutFeedback>
-      {passcode.length == 4 && (
-        loading ? (
-          <View style={styles.next}>
-            <DotsLoader size={10} betweenSpace={10} />
-          </View>
-        ) : (
-          <TouchableWithoutFeedback onPress={verifySignIn}>
-            <Text style={styles.next}>
-              <Text>Next</Text> <McIcon name='arrow-right' color='white' size={20} />
-            </Text>
-          </TouchableWithoutFeedback>
-        )
-      )}
     </View>
   );
 };

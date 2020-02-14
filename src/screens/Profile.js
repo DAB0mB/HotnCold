@@ -14,7 +14,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
-import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
+import { useAlertError } from '../services/DropdownAlert';
 import { useBuffer } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors, hexToRgba } from '../theme';

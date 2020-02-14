@@ -1,10 +1,11 @@
+import bootstrap from './bootstrap';
+
 import { ApolloProvider } from '@apollo/react-hooks';
 import { RobotRunner } from 'hotncold-robot';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
-import bootstrap from './bootstrap';
 import BaseContainer from './containers/Base';
 import graphqlClient from './graphql/client';
 import { AppStateProvider } from './services/AppState';

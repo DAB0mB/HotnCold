@@ -113,7 +113,7 @@ const Agreement = () => {
             <RaisedTextButton
               onPress={agree}
               color={colors.hot}
-              title='Agree and Continue'
+              title='agree & continue'
               titleColor='white'
             />
           </View>
