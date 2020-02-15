@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   },
   instructions: {
     textAlign: 'center',
+    color: 'black',
   },
   otpContainer: {
     flexDirection: 'row',
@@ -45,13 +46,14 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     fontSize: 10,
+    color: 'black',
   },
   resend: {
     position: 'absolute',
-    color: 'black',
     left: 0,
     bottom: 0,
     fontSize: 20,
+    color: 'black',
   },
 });
 

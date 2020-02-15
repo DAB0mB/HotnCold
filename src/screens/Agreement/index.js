@@ -1,8 +1,10 @@
 import { useRobot } from 'hotncold-robot';
 import React, { useCallback } from 'react';
-import { Text, View, ScrollView, StyleSheet, Image } from 'react-native';
+import { TouchableWithoutFeedback, Text, View, ScrollView, StyleSheet, Image } from 'react-native';
 import { RaisedTextButton } from 'react-native-material-buttons';
+import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import Bar from '../../components/Bar';
 import Markdown, { styles as _mdStyles } from '../../components/Markdown';
 import Base from '../../containers/Base';
 import { useNavigation } from '../../services/Navigation';
@@ -16,15 +18,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGray,
   },
   header: {
-    marginTop: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'white',
     marginBottom: 20,
-    padding: 11,
   },
   logo: {
     height: 25,
+    marginLeft: 'auto',
+    marginRight: 'auto',
     resizeMode: 'contain',
   },
   agreeButton: {
@@ -91,9 +90,12 @@ export const $Agreement = Symbol('Agreement');
 const Agreement = () => {
   const { useTrap } = useRobot();
   const nav = useNavigation();
+  const hasBack = nav.getParam('hasBack');
+
+  nav.useBackListener();
 
   const agree = useCallback(() => {
-    nav.pop();
+    nav.goBackOnceFocused();
   }, [true]);
 
   useTrap($Agreement, {
@@ -103,9 +105,17 @@ const Agreement = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.body}>
-        <View style={styles.header}>
+        <Bar style={styles.header}>
           <Image source={require('../../assets/logo_light.png')} style={styles.logo} />
-        </View>
+
+          {hasBack && (
+            <TouchableWithoutFeedback onPress={nav.goBackOnceFocused}>
+              <View style={{ position: 'absolute', left: 0 }}>
+                <McIcon name='arrow-left' size={25} color={colors.hot} />
+              </View>
+            </TouchableWithoutFeedback>
+          )}
+        </Bar>
         <View style={{ paddingLeft: 15, paddingRight: 15 }}>
           <Markdown style={termsStyle}>{termsMD}</Markdown>
           <Markdown style={privacyStyle}>{privacyMD}</Markdown>

@@ -16,6 +16,7 @@ import { TextField } from 'react-native-material-textfield';
 import { RaisedTextButton } from 'react-native-material-buttons';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import Bar from '../components/Bar';
 import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
 import { useSignUp } from '../services/Auth';
@@ -37,15 +38,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightGray,
   },
   header: {
-    backgroundColor: 'white',
-    flexDirection: 'row',
     marginBottom: 20,
-    marginTop: 1,
-    padding: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
-    alignItems: 'center',
-    position: 'relative',
   },
   headerTitle: {
     textAlign: 'center',
@@ -166,6 +159,7 @@ const ProfileEditor = () => {
   }
 
   // Component state
+  const [scrollEnabled, setScrollEnabled] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadCount, setUploadCount] = useState(0);
   const [errors, setErrors] = useState({});
@@ -258,6 +252,15 @@ const ProfileEditor = () => {
     setSaving(true);
   }, [name, birthDate, occupation, bio]);
 
+  const onDragStart = useCallback(() => {
+    setScrollEnabled(false);
+  }, [true]);
+
+  const onDragRelease = useCallback((state) => {
+    setScrollEnabled(true);
+    reorderPictures(state);
+  }, [true]);
+
   useEffect(() => {
     if (!saving) return;
     if (uploadCount) return;
@@ -326,19 +329,19 @@ const ProfileEditor = () => {
   });
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
+    <ScrollView style={styles.container} scrollEnabled={scrollEnabled} nestedScrollEnabled={scrollEnabled}>
+      <Bar style={styles.header}>
         <View style={{ flex: 1 }}>
           <Text style={styles.headerTitle}>My Profile</Text>
         </View>
         {myContract.signed && (
           <TouchableWithoutFeedback onPress={baseNav.goBackOnceFocused}>
-            <View style={{ position: 'absolute', right: 20, bottom: 0, top: 0, justifyContent: 'center' }}>
+            <View style={{ position: 'absolute', right: 0 }}>
               <Text style={styles.headerDone}>Done</Text>
             </View>
           </TouchableWithoutFeedback>
         )}
-      </View>
+      </Bar>
 
       <View style={styles.picturesBack}>
         <View style={styles.picturesBackItem}>
@@ -356,7 +359,8 @@ const ProfileEditor = () => {
           activeBlockCenteringDuration={200}
           dragActivationTreshold={200}
           itemsPerRow={3}
-          onDragRelease={reorderPictures}
+          onDragStart={onDragStart}
+          onDragRelease={onDragRelease}
         >
           {pictures.map((uri, i) => (
             <View key={i} style={{ flex: 1 }} onTap={() => addPicture(i)}>

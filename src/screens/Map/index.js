@@ -4,8 +4,8 @@ import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
 import turfDistance from '@turf/distance';
 import { useRobot } from 'hotncold-robot';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import { TouchableWithoutFeedback, Image, View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 
 import Base from '../../containers/Base';
@@ -13,6 +13,7 @@ import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useAlertError } from '../../services/DropdownAlert';
+import { useScreenFrame } from '../../services/Frame';
 import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
 import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
@@ -30,6 +31,16 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  watermarkContainer: {
+    position: 'absolute',
+    left: 8,
+    top: 8,
+  },
+  watermarkImage: {
+    width: 80,
+    height: 20,
+    opacity: 1 / 3,
   },
 });
 
@@ -89,6 +100,16 @@ const Map = () => {
   const [selection, setSelection] = useState(null);
   const [loaded, setLoaded] = useRenderer();
   const isMountedRef = useMountedRef();
+  const [bigBubbleActivated, setBigBubbleActivated] = useState(false);
+
+  useScreenFrame({
+    bigBubble: useMemo(() => ({
+      activeIconName: 'mailbox-open',
+      inactiveIconName: 'mailbox',
+      onPress: () => setBigBubbleActivated(a => !a),
+      activated: bigBubbleActivated,
+    }), [bigBubbleActivated]),
+  });
 
   const resetScreenFeatures = useAsyncCallback(function* (e) {
     const map = mapRef.current;
@@ -127,6 +148,10 @@ const Map = () => {
       },
     });
   }, [selection]);
+
+  const showAttribution = useCallback(() => {
+    mapRef.current.showAttribution();
+  }, [true]);
 
   const renderSelection = useAsyncCallback(function* (e) {
     const map = mapRef.current;
@@ -219,7 +244,8 @@ const Map = () => {
         onRegionIsChanging={resetScreenFeatures}
         onRegionDidChange={resetScreenFeatures}
         onDidFinishLoadingMap={setLoaded}
-        compassViewPosition='top-left'
+        attributionEnabled={false}
+        logoEnabled={false}
       >
         <MapboxGL.Camera
           ref={cameraRef}
@@ -260,6 +286,12 @@ const Map = () => {
 
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
+
+      <View style={styles.watermarkContainer}>
+        <TouchableWithoutFeedback onPress={showAttribution}>
+          <Image source={require('./mapbox.png')} resizeMode="contain" style={styles.watermarkImage} />
+        </TouchableWithoutFeedback>
+      </View>
 
       <SelectionButton
         onUsersPress={navToPeople}

@@ -142,7 +142,13 @@ const Inbox = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList data={chats} keyExtractor={getChatId} renderItem={renderChatItem} />
+      {chats.length ? (
+        <FlatList data={chats} keyExtractor={getChatId} renderItem={renderChatItem} />
+      ) : (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <Text style={{ textAlign: 'center' }}>Well, you might wanna strike a conversation with someone..</Text>
+        </View>
+      )}
     </View>
   );
 };

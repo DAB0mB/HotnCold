@@ -10,14 +10,13 @@ import * as queries from '../../graphql/queries';
 import { useAppState } from '../../services/AppState';
 import { MyProvider } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
-import { HeaderProvider } from '../../services/Header';
-import { useNavInHeader } from '../../services/Header';
+import { FrameProvider } from '../../services/Frame';
 import { LoadingProvider, useLoading } from '../../services/Loading';
 import { useNavigation, NavigationProvider } from '../../services/Navigation';
 import { useNotifications, handleMessage, CHANNELS } from '../../services/Notifications';
 import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
-import Header, { $Header } from './Header';
+import Frame, { $Frame } from './Frame';
 import ServiceRequired from './ServiceRequired';
 
 const styles = StyleSheet.create({
@@ -28,7 +27,7 @@ const styles = StyleSheet.create({
 });
 
 export const $Discovery = {
-  Header: $Header,
+  Frame: $Frame,
 };
 
 const Discovery = Base.create(({ navigation }) => {
@@ -147,30 +146,30 @@ const Discovery = Base.create(({ navigation }) => {
   }
 
   return useLoading(false,
-    <MyProvider myContract={myContract} me={me}>
-      <HeaderProvider HeaderComponent={Header} defaultProps={{ baseNav, me }}>
-        <NativeGuard
-          ServiceRequiredComponent={ServiceRequired}
-          services={SERVICES.GPS}
-          onRequireService={setRequiredService}
-          onError={alertError}
-          onReady={setNativeServicesReady}
-        >
-          <LoadingProvider>
-            {nativeServicesReady && !requiredService && (
-              <DiscoveryRouter navigation={navigation} />
-            )}
-          </LoadingProvider>
-        </NativeGuard>
-      </HeaderProvider>
-    </MyProvider>
+    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+      <MyProvider myContract={myContract} me={me}>
+        <FrameProvider FrameComponent={Frame}>
+          <NativeGuard
+            ServiceRequiredComponent={ServiceRequired}
+            services={SERVICES.GPS}
+            onRequireService={setRequiredService}
+            onError={alertError}
+            onReady={setNativeServicesReady}
+          >
+            <LoadingProvider>
+              {nativeServicesReady && !requiredService && (
+                <DiscoveryRouter navigation={navigation} />
+              )}
+            </LoadingProvider>
+          </NativeGuard>
+        </FrameProvider>
+      </MyProvider>
+    </View>
   );
 });
 
 Discovery.create = (Component) => {
   return function DiscoveryScreen({ navigation: discoveryNav }) {
-    useNavInHeader(discoveryNav);
-
     return (
       <View style={styles.body}>
         <NavigationProvider navKey={Discovery} navigation={discoveryNav}>

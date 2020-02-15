@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     maxHeight: Dimensions.get('window').height - (HEADER_HEIGHT * 2),
   },
   instructions: {
+    color: 'black',
     textAlign: 'center',
   },
   inputsContainer: {
@@ -41,11 +42,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
     borderBottomWidth: 1,
+    borderBottomColor: 'black',
   },
   countryPicker: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   countryPickerArrow: {
     color: 'black',
@@ -60,6 +62,7 @@ const styles = StyleSheet.create({
     padding: 0,
     marginRight: 10,
     borderBottomWidth: 1,
+    borderBottomColor: 'black',
   },
   ccodeText: {
     color: 'black',
@@ -70,13 +73,16 @@ const styles = StyleSheet.create({
   localPhone: {
     padding: 0,
     borderBottomWidth: 1,
+    borderBottomColor: 'black',
   },
   localPhoneText: {
     fontSize: 15,
     minWidth: 150,
     padding: 0,
+    color: 'black',
   },
   smsNote: {
+    color: 'black',
     alignSelf: 'flex-start',
     marginTop: 10,
     fontSize: 10,

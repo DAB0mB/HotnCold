@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { StyleSheet, Image, View, TouchableWithoutFeedback, Dimensions, Text } from 'react-native';
 import { RippleLoader } from 'react-native-indicator';
 import CONFIG from 'react-native-config';
@@ -10,6 +10,7 @@ import * as queries from '../../graphql/queries';
 import { useMine } from '../../services/Auth';
 import { useBluetoothLE, BLE_MODES } from '../../services/BluetoothLE';
 import { useAlertError } from '../../services/DropdownAlert';
+import { useScreenFrame } from '../../services/Frame';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
 import { pick, pickRandom, useAsyncEffect } from '../../utils';
@@ -111,6 +112,7 @@ const Radar = () => {
   const [initialScanned, setInitialScanned] = useState(false);
   const [resettingPeripheral, setResettingPeripheral] = useState(false);
   const [updateRecentScanTime] = mutations.updateRecentScanTime.use();
+  const [bigBubbleActivated, setBigBubbleActivated] = useState(false);
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onError: alertError,
     onCompleted: useCallback((data = {}) => {
@@ -131,6 +133,15 @@ const Radar = () => {
         }
       }
     }, [discoveredUsers]),
+  });
+
+  useScreenFrame({
+    bigBubble: useMemo(() => ({
+      activeIconName: 'podcast',
+      inactiveIconName: 'account',
+      onPress: () => setBigBubbleActivated(a => !a),
+      activated: bigBubbleActivated,
+    }), [bigBubbleActivated]),
   });
 
   useEffect(() => {

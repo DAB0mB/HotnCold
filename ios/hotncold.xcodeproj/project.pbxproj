@@ -15,6 +15,7 @@
 		238994A6133C4B76A3A0EF49 /* RNCookieManagerTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = F8EABE299BE64FC0BDDF6537 /* RNCookieManagerTests.xctest */; };
 		0FA700C104F242FC99334728 /* libRCTBackgroundGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 540BE752518B4B2498855D6A /* libRCTBackgroundGeolocation.a */; };
 		6817B3FF98F64D9698255BFC /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FEAB28F38F2240F1808FDA93 /* libRNFirebase.a */; };
+		7BF87D67D61B45EBBFF2DDFC /* libRNViewOverflow.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07D097FBBB5640D580B91AA2 /* libRNViewOverflow.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,8 @@
 		540BE752518B4B2498855D6A /* libRCTBackgroundGeolocation.a */ = {isa = PBXFileReference; name = "libRCTBackgroundGeolocation.a"; path = "libRCTBackgroundGeolocation.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		77E2CB62BF4C4E34AE3F5C4A /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; name = "RNFirebase.xcodeproj"; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		FEAB28F38F2240F1808FDA93 /* libRNFirebase.a */ = {isa = PBXFileReference; name = "libRNFirebase.a"; path = "libRNFirebase.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		EC6C3DF4C5794318A1153D80 /* RNViewOverflow.xcodeproj */ = {isa = PBXFileReference; name = "RNViewOverflow.xcodeproj"; path = "../node_modules/react-native-view-overflow/ios/RNViewOverflow.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		07D097FBBB5640D580B91AA2 /* libRNViewOverflow.a */ = {isa = PBXFileReference; name = "libRNViewOverflow.a"; path = "libRNViewOverflow.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +71,7 @@
 				238994A6133C4B76A3A0EF49 /* RNCookieManagerTests.xctest in Resources */,
 				0FA700C104F242FC99334728 /* libRCTBackgroundGeolocation.a in Frameworks */,
 				6817B3FF98F64D9698255BFC /* libRNFirebase.a in Frameworks */,
+				7BF87D67D61B45EBBFF2DDFC /* libRNViewOverflow.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +117,7 @@
 				3B005D3463874E6F824091C8 /* RNCookieManager.xcodeproj */,
 				8766F0A0FAD84DABB8BBEF9C /* RCTBackgroundGeolocation.xcodeproj */,
 				77E2CB62BF4C4E34AE3F5C4A /* RNFirebase.xcodeproj */,
+				EC6C3DF4C5794318A1153D80 /* RNViewOverflow.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -314,6 +319,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -321,6 +327,7 @@
 					"$(SRCROOT)/../node_modules/react-native-cookie/ios",
 					"$(SRCROOT)/../node_modules/@mauron85/react-native-background-geolocation/ios/RCTBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
 				);
 			};
 			name = Debug;
@@ -348,6 +355,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -355,6 +363,7 @@
 					"$(SRCROOT)/../node_modules/react-native-cookie/ios",
 					"$(SRCROOT)/../node_modules/@mauron85/react-native-background-geolocation/ios/RCTBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
 				);
 			};
 			name = Release;
@@ -381,6 +390,7 @@
 					"$(SRCROOT)/../node_modules/react-native-cookie/ios",
 					"$(SRCROOT)/../node_modules/@mauron85/react-native-background-geolocation/ios/RCTBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
 				);
 			};
 			name = Debug;
@@ -406,6 +416,7 @@
 					"$(SRCROOT)/../node_modules/react-native-cookie/ios",
 					"$(SRCROOT)/../node_modules/@mauron85/react-native-background-geolocation/ios/RCTBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
+					"$(SRCROOT)/../node_modules/react-native-view-overflow/ios",
 				);
 			};
 			name = Release;

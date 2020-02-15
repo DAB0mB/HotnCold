@@ -208,17 +208,15 @@ export const useCbQueue = (input = [true]) => {
 };
 
 // Will invoke callback as soon as all input params are ready
-export const useCallbackTask = (callback, input) => {
+export const useCallbackWhen = (callback, cond) => {
   const [shouldInvoke, setShouldInvoke] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
-    for (let i of input) {
-      if (i == null) {
-        setIsReady(false);
+  useLayoutEffect(() => {
+    if (!cond) {
+      setIsReady(false);
 
-        return;
-      }
+      return;
     }
 
     setIsReady(true);
@@ -227,7 +225,7 @@ export const useCallbackTask = (callback, input) => {
       callback();
       setShouldInvoke(false);
     }
-  }, input);
+  }, [cond]);
 
   return useCallback(() => {
     if (isReady) {
@@ -236,7 +234,7 @@ export const useCallbackTask = (callback, input) => {
     else {
       setShouldInvoke(true);
     }
-  }, [isReady, ...input]);
+  }, [isReady, cond]);
 };
 
 export const useStatePromise = (init) => {

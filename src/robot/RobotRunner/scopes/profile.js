@@ -105,7 +105,7 @@ export default () => {
     flow('Profile editing', () => {
       flow.timeout(1 * 60 * 1000);
 
-      trap($Discovery.Header, ({ navToInbox }) => {
+      trap($Discovery.Frame, ({ navToInbox }) => {
         useDelayedEffect(() => () => {
           navToInbox();
         }, 2500, [true]);

@@ -3421,6 +3421,13 @@ flatted@^2.0.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-2.0.1.tgz#69e57caa8f0eacbc281d2e2cb458d46fdb449e08"
   integrity sha512-a1hQMktqW9Nmqr5aktAux3JMNqaucxGcjtjWnZLHX7yyPCmlSV3M54nGYbqT8K+0GhF3NBgmJCc3ma+WOgX8Jg==
 
+fluidbottomnavigation-rn@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/fluidbottomnavigation-rn/-/fluidbottomnavigation-rn-0.1.1.tgz#4cc76b86bdd69ca174bf365d5b8741fca378db49"
+  integrity sha512-77LJBnRerNIg2AYS9RqGvfrEJjnSSYG3USGqGv7kzzkGQWt+gEN2okLEtAzSmc2ZNUTUx73hso4qGGOFc+13zw==
+  dependencies:
+    react-native-view-overflow "^0.0.3"
+
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -6567,6 +6574,13 @@ react-native-screens@1.0.0-alpha.22:
   dependencies:
     debounce "^1.2.0"
 
+react-native-side-menu@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/react-native-side-menu/-/react-native-side-menu-1.1.3.tgz#6ef5d2232ecf718312df6cedef019148bac3073a"
+  integrity sha1-bvXSIy7PcYMS32zt7wGRSLrDBzo=
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-sortable-grid@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/react-native-sortable-grid/-/react-native-sortable-grid-2.0.0.tgz#61129a4614a93b6d3ed1693a7485a036f986ce53"
@@ -6616,6 +6630,11 @@ react-native-vector-icons@^6.6.0:
     lodash "^4.0.0"
     prop-types "^15.6.2"
     yargs "^13.2.2"
+
+react-native-view-overflow@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-view-overflow/-/react-native-view-overflow-0.0.3.tgz#d7b08e8c1e5047a2cf07f3ece82025899f930674"
+  integrity sha512-CcX61kqFyO41WAmqARr/1A7YgTkd1GoQGJl0LYrzl+4CL5uw2CAu68T+1DPapt7RdgvSMLZIPlNvj4TzdJY/hw==
 
 react-native-web@^0.11.4:
   version "0.11.7"
