@@ -117,7 +117,7 @@ const SideMenu = ({
   }, [true]);
 
   const navToFAQ = useCallback(() => {
-
+    baseNav.push('FAQ');
   }, [true]);
 
   const menu = (

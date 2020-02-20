@@ -5,7 +5,7 @@ import { RaisedTextButton } from 'react-native-material-buttons';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../../components/Bar';
-import Markdown, { styles as _mdStyles } from '../../components/Markdown';
+import Markdown, { hncMdStyles } from '../../components/Markdown';
 import Base from '../../containers/Base';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
@@ -39,50 +39,16 @@ const styles = StyleSheet.create({
   },
 });
 
-const mdStyles = StyleSheet.create({
-  heading2: {
-    ..._mdStyles.heading2,
-    textAlign: 'center',
-    alignSelf: 'center',
-    color: colors.hot,
-    width: '100%',
-    fontWeight: '600',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  heading3: {
-    ..._mdStyles.heading3,
-    fontWeight: '600',
-  },
-  listUnorderedItem: {
-    marginTop: -10,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  listOrderedItemIcon: {
-    fontWeight: '600',
-    paddingTop: 10,
-    paddingLeft: 2,
-    paddingRight: 8,
-  },
-  listUnorderedItemIcon: {
-    fontWeight: '600',
-    paddingTop: 10,
-    paddingLeft: 2,
-    paddingRight: 8,
-  },
-});
-
 const termsStyle = StyleSheet.create({
-  ...mdStyles,
+  ...hncMdStyles,
   listUnorderedItemIcon: {
-    ...mdStyles.listOrderedItemIcon,
+    ...hncMdStyles.listOrderedItemIcon,
     color: colors.lightGray,
   },
 });
 
 const privacyStyle = StyleSheet.create({
-  ...mdStyles,
+  ...hncMdStyles,
 });
 
 export const $Agreement = Symbol('Agreement');
@@ -127,7 +93,7 @@ const Agreement = () => {
               titleColor='white'
             />
           </View>
-          <Text style={[mdStyles.text, styles.copyrights]}>© Hot &amp; Cold App, Inc 2020</Text>
+          <Text style={[hncMdStyles.text, styles.copyrights]}>© Hot &amp; Cold App, Inc 2020</Text>
         </View>
       </ScrollView>
     </View>
