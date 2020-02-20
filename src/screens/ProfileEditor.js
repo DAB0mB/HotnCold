@@ -178,7 +178,7 @@ const ProfileEditor = () => {
   const [occupation, setOccupation] = useState(me.occupation);
   const [bio, setBio] = useState(me.bio);
 
-  const [picUploads, setPicUploads] = useState(() => {
+  const [picturesBuffer, setPicturesBuffer] = useState(() => {
     return me.pictures.reduce((pictures, uri) => {
       pictures[uri] = Promise.resolve(uri);
 
@@ -186,7 +186,7 @@ const ProfileEditor = () => {
     }, {});
   });
 
-  const prePics = useMemo(() => Object.keys(picUploads), [picUploads]);
+  const prepics = useMemo(() => Object.keys(picturesBuffer), [picturesBuffer]);
 
   const dateTimePicker = useDateTimePicker({
     mode: 'date',
@@ -203,7 +203,7 @@ const ProfileEditor = () => {
     name,
     bio,
     occupation,
-    pictures: prePics,
+    pictures: prepics,
     birthDate: useMemo(() => new Date(birthDate), [birthDate]),
   }, {
     onError: useCallback((e) => {
@@ -263,14 +263,14 @@ const ProfileEditor = () => {
 
   const reorderPictures = useCallback(({ itemOrder }) => {
     const orderedPictures = itemOrder.reduce((orderedPictures, { key }) => {
-      const path = prePics[key];
-      orderedPictures[path] = picUploads[path];
+      const path = prepics[key];
+      orderedPictures[path] = picturesBuffer[path];
 
       return orderedPictures;
     }, {});
 
-    setPicUploads(orderedPictures);
-  }, [picUploads, prePics]);
+    setPicturesBuffer(orderedPictures);
+  }, [picturesBuffer, prepics]);
 
   const onDragStart = useCallback(() => {
     setScrollEnabled(false);
@@ -286,7 +286,7 @@ const ProfileEditor = () => {
 
     let pictures;
     try {
-      pictures = yield Promise.all(Object.values(picUploads));
+      pictures = yield Promise.all(Object.values(picturesBuffer));
     }
     catch (e) {
       alertError(e);
@@ -295,7 +295,7 @@ const ProfileEditor = () => {
     }
 
     updateProfile({ pictures });
-  }, [saving, updateProfile, alertError, picUploads]);
+  }, [saving, updateProfile, alertError, picturesBuffer]);
 
   const deletePicture = useCallback((i) => {
     // DANGEROUS!
@@ -326,19 +326,19 @@ const ProfileEditor = () => {
 
       const orderedPicUploads = {};
 
-      prePics.slice(0, pictureIndex).forEach((prePic) => {
-        orderedPicUploads[prePic] = picUploads[prePic];
+      prepics.slice(0, pictureIndex).forEach((prePic) => {
+        orderedPicUploads[prePic] = picturesBuffer[prePic];
       });
 
       orderedPicUploads[image.uri] = fetchingPic;
 
-      prePics.slice(pictureIndex + 1).forEach((prePic) => {
-        orderedPicUploads[prePic] = picUploads[prePic];
+      prepics.slice(pictureIndex + 1).forEach((prePic) => {
+        orderedPicUploads[prePic] = picturesBuffer[prePic];
       });
 
-      setPicUploads(orderedPicUploads);
+      setPicturesBuffer(orderedPicUploads);
     });
-  }, [imagePicker, uploadPicture, picUploads, prePics]);
+  }, [imagePicker, uploadPicture, picturesBuffer, prepics]);
 
   const onFocus = useCallback(() => {
     setErrors({});
@@ -370,10 +370,10 @@ const ProfileEditor = () => {
       return updatingProfile?.data?.updateMyProfile;
     },
     setPictures: useCallback((uris) => {
-      setPicUploads(uris.reduce((picUploads, uri) => {
-        picUploads[uri] = Promise.resolve(uri);
+      setPicturesBuffer(uris.reduce((picturesBuffer, uri) => {
+        picturesBuffer[uri] = Promise.resolve(uri);
 
-        return picUploads;
+        return picturesBuffer;
       }, {}));
     }, [true]),
   });
@@ -412,7 +412,7 @@ const ProfileEditor = () => {
           onDragStart={onDragStart}
           onDragRelease={onDragRelease}
         >
-          {prePics.map((uri, i) => (
+          {prepics.map((uri, i) => (
             <View key={i} style={{ flex: 1 }} onTap={() => addPicture(i)}>
               <Image style={styles.picturesGridItem} source={{ uri }} />
               <View style={styles.pictureActionContainer}>
@@ -426,8 +426,8 @@ const ProfileEditor = () => {
 
         <View pointerEvents='box-none' style={styles.picturesFront}>
           {Array.apply(null, { length: 6 }).map((_, i) => {
-            const Container = i < prePics.length ? React.Fragment : (props) => (
-              <TouchableWithoutFeedback {...props} onPress={() => addPicture(prePics.length)} />
+            const Container = i < prepics.length ? React.Fragment : (props) => (
+              <TouchableWithoutFeedback {...props} onPress={() => addPicture(prepics.length)} />
             );
 
             return (
