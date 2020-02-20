@@ -1,7 +1,7 @@
 import { ReactNativeFile } from 'apollo-upload-client';
 import { useRobot } from 'hotncold-robot';
 import moment from 'moment';
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useCallback, useMemo, useState, useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -25,6 +25,7 @@ import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
 import { useImagePicker } from '../services/ImagePicker';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
+import { useAsyncEffect } from '../utils';
 
 const NO_EMPTY = 'Field cannot be empty';
 const MINE_DEFAULT = {
@@ -161,7 +162,6 @@ const ProfileEditor = () => {
   // Component state
   const [scrollEnabled, setScrollEnabled] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [uploadCount, setUploadCount] = useState(0);
   const [errors, setErrors] = useState({});
   const picturesGridRef = useRef();
 
@@ -176,8 +176,16 @@ const ProfileEditor = () => {
   const [birthDate, setBirthDate] = useState(me.birthDate);
   const [occupation, setOccupation] = useState(me.occupation);
   const [bio, setBio] = useState(me.bio);
-  const [pictures, setPictures] = useState(me.pictures || []);
-  const [pendingPictures, setPendingPictures] = useState(pictures);
+
+  const [picUploads, setPicUploads] = useState(() => {
+    return me.pictures.reduce((pictures, uri) => {
+      pictures[uri] = Promise.resolve(uri);
+
+      return pictures;
+    }, {});
+  });
+
+  const prePics = useMemo(() => Object.keys(picUploads), [picUploads]);
 
   const dateTimePicker = useDateTimePicker({
     mode: 'date',
@@ -194,7 +202,7 @@ const ProfileEditor = () => {
     name,
     bio,
     occupation,
-    pictures,
+    pictures: prePics,
     birthDate: useMemo(() => new Date(birthDate), [birthDate]),
   }, {
     onError: useCallback((e) => {
@@ -252,6 +260,17 @@ const ProfileEditor = () => {
     setSaving(true);
   }, [name, birthDate, occupation, bio]);
 
+  const reorderPictures = useCallback(({ itemOrder }) => {
+    const orderedPictures = itemOrder.reduce((orderedPictures, { key }) => {
+      const path = prePics[key];
+      orderedPictures[path] = picUploads[path];
+
+      return orderedPictures;
+    }, {});
+
+    setPicUploads(orderedPictures);
+  }, [picUploads, prePics]);
+
   const onDragStart = useCallback(() => {
     setScrollEnabled(false);
   }, [true]);
@@ -259,55 +278,66 @@ const ProfileEditor = () => {
   const onDragRelease = useCallback((state) => {
     setScrollEnabled(true);
     reorderPictures(state);
-  }, [true]);
+  }, [reorderPictures]);
 
-  useEffect(() => {
+  useAsyncEffect(function* () {
     if (!saving) return;
-    if (uploadCount) return;
 
-    updateProfile({ pictures: pendingPictures });
-  }, [saving, uploadCount, updateProfile, pendingPictures]);
+    let pictures;
+    try {
+      pictures = yield Promise.all(Object.values(picUploads));
+    }
+    catch (e) {
+      alertError(e);
+
+      return;
+    }
+
+    updateProfile({ pictures });
+  }, [saving, updateProfile, alertError, picUploads]);
 
   const deletePicture = useCallback((i) => {
     // DANGEROUS!
     picturesGridRef.current.setState({ activeBlock: i }, () => {
       picturesGridRef.current.deleteBlock();
     });
+  // Note that it's connected to the following callback
   }, [true]);
 
   const addPicture = useCallback((pictureIndex) => {
     imagePicker.launchImageLibrary({}, (image) => {
-      setPictures(
-        [...pictures.slice(0, pictureIndex), image.uri, ...pictures.slice(pictureIndex)]
-      );
-      setUploadCount(c => ++c);
+      const fetchingPic = new Promise((resolve, reject) => {
+        const file = new ReactNativeFile({
+          uri: image.uri,
+          name: image.fileName,
+          type: image.type,
+        });
 
-      const file = new ReactNativeFile({
-        uri: image.uri,
-        name: image.fileName,
-        type: image.type,
+        uploadPicture(file).then(({ data }) => {
+          resolve(data.uploadPicture);
+        })
+          .catch((e) => {
+            alertError(e);
+
+            reject(e);
+          });
       });
 
-      uploadPicture(file).then(({ data }) => {
-        setPendingPictures(pendingPictures => [
-          ...pendingPictures.slice(0, pictureIndex), data.uploadPicture, ...pendingPictures.slice(pictureIndex)
-        ]);
-        setUploadCount(c => --c);
+      const orderedPicUploads = {};
+
+      prePics.slice(0, pictureIndex).forEach((prePic) => {
+        orderedPicUploads[prePic] = picUploads[prePic];
       });
+
+      orderedPicUploads[image.uri] = fetchingPic;
+
+      prePics.slice(pictureIndex + 1).forEach((prePic) => {
+        orderedPicUploads[prePic] = picUploads[prePic];
+      });
+
+      setPicUploads(orderedPicUploads);
     });
-  }, [imagePicker, uploadPicture, pictures]);
-
-  const reorderPictures = useCallback(({ itemOrder }) => {
-    const ordered = itemOrder.map(({ key }) => {
-      const picture = pictures[key];
-      const pendingPicture = pictures[key];
-
-      return { picture, pendingPicture };
-    });
-
-    setPictures(ordered.map(o => o.picture));
-    setPendingPictures(ordered.map(o => o.pendingPicture));
-  }, [pictures, pendingPictures]);
+  }, [imagePicker, uploadPicture, picUploads, prePics]);
 
   const onFocus = useCallback(() => {
     setErrors({});
@@ -319,9 +349,13 @@ const ProfileEditor = () => {
     birthDate, setBirthDate,
     bio, setBio,
     occupation, setOccupation,
+
     setPictures: useCallback((pictures) => {
-      setPictures(pictures);
-      setPendingPictures(pictures);
+      setPicUploads(pictures.reduce((picUploads, uri) => {
+        picUploads[uri] = Promise.resolve(uri);
+
+        return picUploads;
+      }, {}));
     }, [true]),
     get saveResponse() {
       return updatingProfile?.data?.updateMyProfile;
@@ -362,7 +396,7 @@ const ProfileEditor = () => {
           onDragStart={onDragStart}
           onDragRelease={onDragRelease}
         >
-          {pictures.map((uri, i) => (
+          {prePics.map((uri, i) => (
             <View key={i} style={{ flex: 1 }} onTap={() => addPicture(i)}>
               <Image style={styles.picturesGridItem} source={{ uri }} />
               <View style={styles.pictureActionContainer}>
@@ -376,8 +410,8 @@ const ProfileEditor = () => {
 
         <View pointerEvents='box-none' style={styles.picturesFront}>
           {Array.apply(null, { length: 6 }).map((_, i) => {
-            const Container = i < pictures.length ? React.Fragment : (props) => (
-              <TouchableWithoutFeedback {...props} onPress={() => addPicture(pictures.length)} />
+            const Container = i < prePics.length ? React.Fragment : (props) => (
+              <TouchableWithoutFeedback {...props} onPress={() => addPicture(prePics.length)} />
             );
 
             return (
