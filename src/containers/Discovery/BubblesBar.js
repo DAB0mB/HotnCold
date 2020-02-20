@@ -8,12 +8,9 @@ import {
   Easing,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import ViewOverflow from 'react-native-view-overflow';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { colors } from '../../theme';
-
-const AnimatedViewOverflow = Animated.createAnimatedComponent(ViewOverflow);
 
 class BubblesBar extends Component {
   constructor(props) {
@@ -136,7 +133,7 @@ class BubblesBar extends Component {
             }
           }}
         >
-          <AnimatedViewOverflow style={[styles.item, { translateY: -30 }]}>
+          <View style={styles.item}>
             <View style={styles.itemMask} />
             <Animated.View
               style={[
@@ -164,7 +161,7 @@ class BubblesBar extends Component {
                 {item.title}
               </Animated.Text>
             </Animated.View>
-          </AnimatedViewOverflow>
+          </View>
         </TouchableWithoutFeedback>
       );
     });
@@ -288,10 +285,10 @@ class BubblesBar extends Component {
   render() {
     return (
       <View style={styles.border}>
-        <AnimatedViewOverflow style={styles.container}>
+        <View style={styles.container}>
           {this._renderBubbles()}
           {this._renderBigBubble()}
-        </AnimatedViewOverflow>
+        </View>
       </View>
     );
   }
@@ -328,7 +325,6 @@ const styles = {
     height: 60,
   },
   container: {
-    position: 'absolute',
     flexDirection: 'row',
     height: 60,
     width: '100%',
@@ -336,6 +332,7 @@ const styles = {
     backgroundColor: 'white'
   },
   item: {
+    marginBottom: 60,
     borderRadius: 30,
     height: 60,
     width: 60,

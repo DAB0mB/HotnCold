@@ -12,6 +12,7 @@ import Header from './Header';
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
+    backgroundColor: 'white',
     flex: 1,
   },
   router: {
