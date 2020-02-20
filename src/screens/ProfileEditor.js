@@ -25,7 +25,7 @@ import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
 import { useImagePicker } from '../services/ImagePicker';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
-import { useAsyncEffect } from '../utils';
+import { useAsyncEffect, useRenderer } from '../utils';
 
 const NO_EMPTY = 'Field cannot be empty';
 const MINE_DEFAULT = {
@@ -146,13 +146,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export const $ProfileEditor = Symbol('ProfileEditor');
+export const $ProfileEditor = {};
 
 const ProfileEditor = () => {
   const { useTrap } = useRobot();
   const alertError = useAlertError();
   const alertSuccess = useAlertSuccess();
   const baseNav = useNavigation(Base);
+  const [inputsKey, renderInputs] = useRenderer();
   const { myContract, me } = baseNav.getParam('mine') || MINE_DEFAULT;
 
   if (myContract.signed) {
@@ -345,21 +346,36 @@ const ProfileEditor = () => {
 
   useTrap($ProfileEditor, {
     save,
-    name, setName,
-    birthDate, setBirthDate,
-    bio, setBio,
-    occupation, setOccupation,
-
-    setPictures: useCallback((pictures) => {
-      setPicUploads(pictures.reduce((picUploads, uri) => {
+    name,
+    birthDate,
+    bio,
+    occupation,
+    setName(name) {
+      setName(name);
+      renderInputs();
+    },
+    setBirthDate(birthdate) {
+      setBirthDate(birthdate);
+      renderInputs();
+    },
+    setBio(bio) {
+      setBio(bio);
+      renderInputs();
+    },
+    setOccupation(occupation) {
+      setOccupation(occupation);
+      renderInputs();
+    },
+    get saveResponse() {
+      return updatingProfile?.data?.updateMyProfile;
+    },
+    setPictures: useCallback((uris) => {
+      setPicUploads(uris.reduce((picUploads, uri) => {
         picUploads[uri] = Promise.resolve(uri);
 
         return picUploads;
       }, {}));
     }, [true]),
-    get saveResponse() {
-      return updatingProfile?.data?.updateMyProfile;
-    },
   });
 
   return (
@@ -430,6 +446,7 @@ const ProfileEditor = () => {
       <View style={[styles.input, { flexDirection: 'row' }]}>
         <View style={{ flex: 1, marginRight: 10 }}>
           <TextField
+            key={inputsKey}
             onFocus={onFocus}
             ref={nameRef}
             value={name}
@@ -467,6 +484,7 @@ const ProfileEditor = () => {
 
       <View style={styles.input}>
         <TextField
+          key={inputsKey}
           onFocus={onFocus}
           ref={occupationRef}
           error={errors.occupation}
@@ -483,6 +501,7 @@ const ProfileEditor = () => {
 
       <View style={styles.input}>
         <TextField
+          key={inputsKey}
           onFocus={onFocus}
           ref={bioRef}
           error={errors.bio}

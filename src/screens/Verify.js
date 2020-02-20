@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const $Verify = Symbol('Verify');
+export const $Verify = {};
 
 const Verify = () => {
   const { useTrap } = useRobot();

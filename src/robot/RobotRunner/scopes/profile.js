@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 
 import { $Discovery } from '../../../containers/Discovery';
 import { $Agreement } from '../../../screens/Agreement';
-import { $Inbox } from '../../../screens/Inbox';
 import { $Map } from '../../../screens/Map';
 import { $Phone } from '../../../screens/Phone';
 import { $ProfileEditor } from '../../../screens/ProfileEditor';
@@ -105,16 +104,20 @@ export default () => {
     flow('Profile editing', () => {
       flow.timeout(1 * 60 * 1000);
 
-      trap($Discovery.Frame, ({ navToInbox }) => {
+      trap($Discovery.Frame, ({ openSideMenu }) => {
         useDelayedEffect(() => () => {
-          navToInbox();
+          openSideMenu();
         }, 2500, [true]);
       });
 
-      trap($Inbox.Header, ({ editProfile }) => {
-        useDelayedEffect(() => () => {
-          editProfile();
-        }, 1500, [true]);
+      trap($Discovery.SideMenu, ({ opened, navToProfileEditor }) => {
+        useDelayedEffect(() => {
+          if (!opened) return;
+
+          return () => {
+            navToProfileEditor();
+          };
+        }, 1500, [opened]);
       });
 
       trap($ProfileEditor, ({ setName, name, save, saveResponse }) => {

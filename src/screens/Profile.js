@@ -1,4 +1,3 @@
-import { useRobot } from 'hotncold-robot';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
@@ -126,7 +125,6 @@ const MyText = React.forwardRef(function MyText({ style = {}, ...props }, ref) {
 });
 
 const Profile = () => {
-  const { useTrap } = useRobot();
   const baseNav = useNavigation(Base);
   const isRecipient = baseNav.getParam('isRecipient');
   const userParam = baseNav.getParam('user');
@@ -190,8 +188,6 @@ const Profile = () => {
       }
     });
   }, [baseNav, findOrCreateChat, user]);
-
-  useTrap($Profile, { name, bio, age, pictures, occupation });
 
   return useBuffer(typeof userParam == 'function' && !user, () =>
     <ScrollView style={styles.container}>

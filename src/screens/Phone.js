@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const $Phone = Symbol('Phone');
+export const $Phone = {};
 
 const Phone = () => {
   const { useTrap } = useRobot();

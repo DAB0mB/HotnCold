@@ -51,7 +51,7 @@ const privacyStyle = StyleSheet.create({
   ...hncMdStyles,
 });
 
-export const $Agreement = Symbol('Agreement');
+export const $Agreement = {};
 
 const Agreement = () => {
   const { useTrap } = useRobot();

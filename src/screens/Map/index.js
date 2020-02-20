@@ -83,7 +83,7 @@ const emptyShape = {
   features: [],
 };
 
-export const $Map = Symbol('Map');
+export const $Map = {};
 
 const Map = () => {
   const { useTrap } = useRobot();

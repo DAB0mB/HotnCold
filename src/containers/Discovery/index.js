@@ -17,9 +17,15 @@ import { useNotifications, handleMessage, CHANNELS } from '../../services/Notifi
 import { useAsyncEffect } from '../../utils';
 import Base from '../Base';
 import Frame, { $Frame } from './Frame';
+import { $SideMenu } from './SideMenu';
 import ServiceRequired from './ServiceRequired';
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    justifyContent: 'flex-end',
+  },
   body: {
     backgroundColor: 'white',
     flex: 1
@@ -28,6 +34,7 @@ const styles = StyleSheet.create({
 
 export const $Discovery = {
   Frame: $Frame,
+  SideMenu: $SideMenu,
 };
 
 const Discovery = Base.create(({ navigation }) => {
@@ -146,7 +153,7 @@ const Discovery = Base.create(({ navigation }) => {
   }
 
   return useLoading(false,
-    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+    <View style={styles.container}>
       <MyProvider myContract={myContract} me={me}>
         <FrameProvider FrameComponent={Frame}>
           <NativeGuard

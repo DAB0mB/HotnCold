@@ -1,3 +1,4 @@
+import { useRobot } from 'hotncold-robot';
 import React, { useCallback, useState } from 'react';
 import { Alert, ScrollView, View, Text, ImageBackground, Image, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -66,12 +67,15 @@ const Separator = () => {
 
 const noop = () => {};
 
+export const $SideMenu = {};
+
 const SideMenu = ({
   onClose = noop,
   onOpen = noop,
   opened,
   children,
 }) => {
+  const { useTrap } = useRobot();
   const [initialOpened, setInitialOpened] = useState(opened);
   const [bgStyle, setBgStyle] = useState({ width: 0 });
   const { me, myContract } = useMine();
@@ -119,6 +123,15 @@ const SideMenu = ({
   const navToFAQ = useCallback(() => {
     baseNav.push('FAQ');
   }, [true]);
+
+  useTrap($SideMenu, {
+    opened,
+    navToInbox,
+    navToProfileEditor,
+    ensureSignOut,
+    navToAgreement,
+    navToFAQ,
+  });
 
   const menu = (
     <View style={styles.container}>

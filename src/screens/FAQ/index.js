@@ -1,4 +1,3 @@
-import { useRobot } from 'hotncold-robot';
 import React from 'react';
 import { TouchableWithoutFeedback, Text, View, ScrollView, StyleSheet, Image } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,15 +30,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export const $FAQ = Symbol('FAQ');
-
 const FAQ = () => {
-  const { useTrap } = useRobot();
   const nav = useNavigation();
 
   nav.useBackListener();
-
-  useTrap($FAQ, {});
 
   return (
     <View style={styles.container}>

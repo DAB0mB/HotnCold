@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useRobot } from 'hotncold-robot';
 
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
@@ -26,18 +25,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export const $Header = Symbol('Header');
-
 const Header = () => {
-  const { useTrap } = useRobot();
   const socialNav = useNavigation(Social);
   const baseNav = useNavigation(Base);
 
   socialNav.useBackListener(() => {
     baseNav.goBack();
   });
-
-  useTrap($Header, {});
 
   return (
     <View style={styles.header}>

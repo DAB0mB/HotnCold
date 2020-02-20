@@ -1,5 +1,5 @@
 import { useRobot } from 'hotncold-robot';
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useCallback, useState, useLayoutEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -53,7 +53,7 @@ const Bubble = {
   Radar: 1,
 };
 
-export const $Frame = Symbol('Frame');
+export const $Frame = {};
 
 const Frame = ({
   nav: discoveryNav,
@@ -91,29 +91,39 @@ const Frame = ({
     setActiveBubble(Bubble[discoveryNav.state.routeName]);
   }, [discoveryNav]);
 
-  const goToRadar = useCallbackWhen(() => {
+  const navToRadar = useCallbackWhen(() => {
     discoveryNav.push('Radar');
   }, activeBubble != Bubble.Radar && discoveryNav?.state.routeName === 'Map' && icons !== empty);
 
-  const goToMap = useCallbackWhen(() => {
+  const navToMap = useCallbackWhen(() => {
     discoveryNav.goBackOnceFocused();
   }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Radar' && icons !== empty);
 
+  const openSideMenu = useCallback(() => {
+    setSideMenuOpened(true);
+  }, [true]);
+
+  const closeSideMenu = useCallback(() => {
+    setSideMenuOpened(false);
+  }, [true]);
+
   useTrap($Frame, {
-    goToRadar,
-    goToMap,
+    navToRadar,
+    navToMap,
+    openSideMenu,
+    closeSideMenu,
   });
 
   return (
     <View style={{ flex: 1 }}>
-      <SideMenu opened={sideMenuOpened} onClose={() => setSideMenuOpened(false)}>
+      <SideMenu opened={sideMenuOpened} onClose={closeSideMenu}>
         <Bar>
           <View style={{ flex: 1 }}>
             <Text style={styles.headerTitle}>Map</Text>
           </View>
 
           <View style={{ position: 'absolute', left: 0 }}>
-            <Hamburger color={colors.hot} type='cross' onPress={() => setSideMenuOpened(true)} active={sideMenuOpened} />
+            <Hamburger color={colors.hot} type='cross' onPress={openSideMenu} active={sideMenuOpened} />
           </View>
         </Bar>
 
@@ -124,8 +134,8 @@ const Frame = ({
           tintColor={colors.hot}
           bigBubble={bigBubble}
           bubbles={[
-            { title: 'Map', iconSource: icons.map, onSelect: goToMap },
-            { title: 'Radar', iconSource: icons.radar, onSelect: goToRadar },
+            { title: 'Map', iconSource: icons.map, onSelect: navToMap },
+            { title: 'Radar', iconSource: icons.radar, onSelect: navToRadar },
           ]}
         />
       </SideMenu>
