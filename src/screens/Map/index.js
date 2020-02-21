@@ -7,6 +7,7 @@ import { useRobot } from 'hotncold-robot';
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { TouchableWithoutFeedback, Image, View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
+import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
@@ -104,8 +105,7 @@ const Map = () => {
 
   useScreenFrame({
     bigBubble: useMemo(() => ({
-      activeIconName: 'mailbox-open',
-      inactiveIconName: 'mailbox',
+      icon: <MIcon name='person-pin-circle' size={50} color='white' />,
       onPress: () => setBigBubbleActivated(a => !a),
       activated: bigBubbleActivated,
     }), [bigBubbleActivated]),

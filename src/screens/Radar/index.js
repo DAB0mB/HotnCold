@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { StyleSheet, Image, View, TouchableWithoutFeedback, Dimensions, Text } from 'react-native';
 import { RippleLoader } from 'react-native-indicator';
 import CONFIG from 'react-native-config';
+import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
@@ -137,8 +138,7 @@ const Radar = () => {
 
   useScreenFrame({
     bigBubble: useMemo(() => ({
-      activeIconName: 'podcast',
-      inactiveIconName: 'account',
+      icon: <McIcon name='podcast' size={50} color='white' />,
       onPress: () => setBigBubbleActivated(a => !a),
       activated: bigBubbleActivated,
     }), [bigBubbleActivated]),

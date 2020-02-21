@@ -8,7 +8,6 @@ import {
   Easing,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { colors } from '../../theme';
 
@@ -175,10 +174,10 @@ class BubblesBar extends Component {
           <TouchableWithoutFeedback onPress={this.state.bigBubble.onPress}>
             <View style={[{ backgroundColor: this.state.bigBubble.inactiveBgColor }, styles.bigBubbleRipple]}>
               <View style={styles.bigBubbleReflection} />
-              <McIcon name={this.state.bigBubble.inactiveIconName} size={50} color='white' />
+              {this.props.bigBubble.icon}
               <Animated.View style={[{ width: this.bigBubbleActiveSize, height: this.bigBubbleActiveSize, opacity: this.bigBubbleActiveOpacity, backgroundColor: this.state.bigBubble.activeBgColor }, styles.bigBubbleActiveLayer]}>
                 <View style={styles.bigBubbleReflection} />
-                <McIcon name={this.state.bigBubble.activeIconName} size={50} color='white' />
+                {this.props.bigBubble.icon}
               </Animated.View>
             </View>
           </TouchableWithoutFeedback>
@@ -310,8 +309,7 @@ BubblesBar.propTypes = {
   })),
   bigBubble: PropTypes.shape({
     onPress: PropTypes.func,
-    activeIconName: PropTypes.string,
-    inactiveIconName: PropTypes.string,
+    icon: PropTypes.element,
     activeBgColor: PropTypes.string,
     inactiveBgColor: PropTypes.string,
   }),
