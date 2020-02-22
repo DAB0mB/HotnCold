@@ -7,6 +7,7 @@ import AgreementScreen from '../screens/Agreement';
 import FAQScreen from '../screens/FAQ';
 import ProfileScreen from '../screens/Profile';
 import ProfileEditorScreen from '../screens/ProfileEditor';
+import StatusEditorScreen from '../screens/StatusEditor';
 import Router from './Router';
 
 const Base = Router.create({
@@ -21,6 +22,9 @@ const Base = Router.create({
   },
   ProfileEditor: {
     screen: ProfileEditorScreen,
+  },
+  StatusEditor: {
+    screen: StatusEditorScreen,
   },
   Auth: {
     screen: AuthContainer,

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
-import SuperPopover from 'react-native-popover-view';
+import Popover from 'react-native-popover-view';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { colors, hexToRgba } from '../theme';
@@ -23,24 +23,24 @@ const styles = StyleSheet.create({
   },
 });
 
-const PopOver = ({ items, state, ...props }) => {
+const MenuPopover = ({ items, state, ...props }) => {
   const [isVisible, setVisibility] = state;
 
-  const hidePopOver = useCallback(() => {
+  const hidePopover = useCallback(() => {
     setVisibility(false);
   }, [true]);
 
   return (
-    <SuperPopover
+    <Popover
       {...props}
       debug={__DEV__}
       isVisible={isVisible}
-      onRequestClose={hidePopOver}
+      onRequestClose={hidePopover}
     >
       <View style={{ width: 150, height: items.length * 50 }}>
         {items.map((item, index) => (
           <TouchableWithoutFeedback key={item.text} onPress={() => {
-            hidePopOver(); item.onPress(); 
+            hidePopover(); item.onPress();
           }}>
             <View style={[styles.item, index && styles.itemBorder].filter(Boolean)}>
               <Text style={styles.itemText}>
@@ -50,8 +50,8 @@ const PopOver = ({ items, state, ...props }) => {
           </TouchableWithoutFeedback>
         ))}
       </View>
-    </SuperPopover>
+    </Popover>
   );
 };
 
-export default PopOver;
+export default MenuPopover;

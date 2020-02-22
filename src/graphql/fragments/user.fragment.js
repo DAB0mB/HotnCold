@@ -1,5 +1,7 @@
 import gql from 'graphql-tag';
 
+import status from './status.fragment';
+
 const user = gql `
   fragment User on User {
     id
@@ -17,8 +19,13 @@ user.profile = gql `
     location
     occupation
     pictures
+    discoverable
+    status {
+      ...Status
+    }
   }
 
+  ${status}
   ${user}
 `;
 
@@ -44,7 +51,7 @@ user.write = (cache, data) => {
 };
 
 user.profile.read = (cache, id) => {
-  id = `UserProfile:${id.split(':').pop()}`;
+  id = `User:${id.split(':').pop()}`;
 
   return cache.readFragment({
     id,
@@ -54,7 +61,7 @@ user.profile.read = (cache, id) => {
 };
 
 user.profile.write = (cache, data) => {
-  const id = `UserProfile:${data.id}`;
+  const id = `User:${data.id}`;
 
   return cache.writeFragment({
     id,

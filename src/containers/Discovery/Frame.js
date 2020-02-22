@@ -5,8 +5,11 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../../components/Bar';
 import Hamburger from '../../components/Hamburger';
+import { useMine } from '../../services/Auth';
+import { useNavigation }  from '../../services/Navigation';
 import { colors } from '../../theme';
 import { useCallbackWhen } from '../../utils';
+import Base from '../Base';
 import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
 
@@ -60,6 +63,8 @@ const Frame = ({
   bigBubble: bigBubbleProp = empty,
   children,
 }) => {
+  const mine = useMine();
+  const baseNav = useNavigation(Base);
   const [activeBubble, setActiveBubble] = useState(Bubble.Map);
   const [icons, setIcons] = useState(empty);
   const [sideMenuOpened, setSideMenuOpened] = useState(false);
@@ -107,6 +112,10 @@ const Frame = ({
     setSideMenuOpened(false);
   }, [true]);
 
+  const navToStatusEditor = useCallback(() => {
+    baseNav.push('StatusEditor', { mine });
+  }, [baseNav]);
+
   useTrap($Frame, {
     navToRadar,
     navToMap,
@@ -124,6 +133,10 @@ const Frame = ({
 
           <View style={{ position: 'absolute', left: 0 }}>
             <Hamburger color={colors.hot} type='cross' onPress={openSideMenu} active={sideMenuOpened} />
+          </View>
+
+          <View style={{ position: 'absolute', right: 0 }}>
+            <McIcon name='thought-bubble' size={30} color={colors.hot} onPress={navToStatusEditor} />
           </View>
         </Bar>
 

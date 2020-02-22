@@ -113,7 +113,13 @@ const Radar = () => {
   const [initialScanned, setInitialScanned] = useState(false);
   const [resettingPeripheral, setResettingPeripheral] = useState(false);
   const [updateRecentScanTime] = mutations.updateRecentScanTime.use();
-  const [bigBubbleActivated, setBigBubbleActivated] = useState(false);
+  const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.discoverable);
+  const [makeDiscoverable] = mutations.makeDiscoverable.use({
+    onError: alertError,
+  });
+  const [makeIncognito] = mutations.makeIncognito.use({
+    onError: alertError,
+  });
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onError: alertError,
     onCompleted: useCallback((data = {}) => {
@@ -136,12 +142,25 @@ const Radar = () => {
     }, [discoveredUsers]),
   });
 
+  const onBigBubblePress = useCallback(() => {
+    if (bigBubbleActivated) {
+      makeIncognito();
+    }
+    else {
+      makeDiscoverable();
+    }
+  }, [bigBubbleActivated, makeIncognito, makeDiscoverable]);
+
+  useEffect(() => {
+    setBigBubbleActivated(me.discoverable);
+  }, [me.discoverable]);
+
   useScreenFrame({
     bigBubble: useMemo(() => ({
       icon: <McIcon name='podcast' size={50} color='white' />,
-      onPress: () => setBigBubbleActivated(a => !a),
+      onPress: onBigBubblePress,
       activated: bigBubbleActivated,
-    }), [bigBubbleActivated]),
+    }), [bigBubbleActivated, onBigBubblePress]),
   });
 
   useEffect(() => {

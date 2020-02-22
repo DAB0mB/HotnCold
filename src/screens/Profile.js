@@ -21,6 +21,7 @@ import { colors, hexToRgba } from '../theme';
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
+    backgroundColor: 'white',
     flex: 1,
   },
   profilePicture: {
@@ -128,6 +129,7 @@ const Profile = () => {
   const baseNav = useNavigation(Base);
   const isRecipient = baseNav.getParam('isRecipient');
   const userParam = baseNav.getParam('user');
+  const itsMe = baseNav.getParam('itsMe');
   const alertError = useAlertError();
 
   // User state
@@ -238,11 +240,13 @@ const Profile = () => {
       </View>
 
       <View style={styles.profileButtons}>
-        <TouchableWithoutFeedback onPress={navToChat}>
-          <View style={[styles.icon, { backgroundColor: 'transparent' }]}>
-            <McIcon name='message' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
-          </View>
-        </TouchableWithoutFeedback>
+        {!itsMe && (
+          <TouchableWithoutFeedback onPress={navToChat}>
+            <View style={[styles.icon, { backgroundColor: 'transparent' }]}>
+              <McIcon name='message' size={25} color={hexToRgba(colors.ink, 0.8)} solid />
+            </View>
+          </TouchableWithoutFeedback>
+        )}
       </View>
     </ScrollView>
   );

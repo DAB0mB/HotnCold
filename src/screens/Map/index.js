@@ -13,6 +13,7 @@ import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
+import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
@@ -87,6 +88,7 @@ const emptyShape = {
 export const $Map = {};
 
 const Map = () => {
+  const { me } = useMine();
   const { useTrap } = useRobot();
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
@@ -101,14 +103,33 @@ const Map = () => {
   const [selection, setSelection] = useState(null);
   const [loaded, setLoaded] = useRenderer();
   const isMountedRef = useMountedRef();
-  const [bigBubbleActivated, setBigBubbleActivated] = useState(false);
+  const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.status?.location);
+  const [dropStatus] = mutations.dropStatus.use({
+    onError: alertError,
+  });
+  const [pickupStatus] = mutations.pickupStatus.use({
+    onError: alertError,
+  });
+
+  const onBigBubblePress = useCallback(() => {
+    if (bigBubbleActivated) {
+      pickupStatus();
+    }
+    else {
+      dropStatus();
+    }
+  }, [bigBubbleActivated, dropStatus, pickupStatus]);
+
+  useEffect(() => {
+    setBigBubbleActivated(me.status && !me.status.expired);
+  }, [me.status && !me.status.expired]);
 
   useScreenFrame({
     bigBubble: useMemo(() => ({
       icon: <MIcon name='person-pin-circle' size={50} color='white' />,
-      onPress: () => setBigBubbleActivated(a => !a),
+      onPress: onBigBubblePress,
       activated: bigBubbleActivated,
-    }), [bigBubbleActivated]),
+    }), [bigBubbleActivated, onBigBubblePress]),
   });
 
   const resetScreenFeatures = useAsyncCallback(function* (e) {
