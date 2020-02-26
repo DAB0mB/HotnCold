@@ -9,19 +9,15 @@ import { TouchableWithoutFeedback, Image, View, StyleSheet } from 'react-native'
 import CONFIG from 'react-native-config';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
-import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
-import * as queries from '../../graphql/queries';
 import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
 import { useLoading } from '../../services/Loading';
-import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
 import { useRenderer, useMountedRef, useAsyncCallback } from '../../utils';
-import SelectionButton from './SelectionButton';
 
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
 const SELECTION_RADIUS = .2;
@@ -94,9 +90,7 @@ const Map = () => {
   const cameraRef = useRef(null);
   const locationUpdatedAtRef = useRef(Date.now());
   const alertError = useAlertError();
-  const baseNav = useNavigation(Base);
   const [updateMyLocation] = mutations.updateMyLocation.use();
-  const [queryUsers] = queries.users.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
@@ -156,20 +150,6 @@ const Map = () => {
     });
   }, [setScreenFeatures, areaFeatures]);
 
-  const cancelSelection = useCallback(() => {
-    setSelection(null);
-  }, [true]);
-
-  const navToPeople = useCallback(() => {
-    if (!selection.size) return;
-
-    baseNav.push('Social', {
-      $setInitialRouteState: {
-        routeName: 'People',
-      },
-    });
-  }, [selection]);
-
   const showAttribution = useCallback(() => {
     mapRef.current.showAttribution();
   }, [true]);
@@ -196,9 +176,6 @@ const Map = () => {
         selectionSize++;
       }
     });
-
-    // Prepare cache
-    queryUsers(screenFeatures.features.map(f => f.properties.userId));
 
     setSelection({
       location: e,
@@ -275,17 +252,32 @@ const Map = () => {
         />
 
         {selection && (
-          <MapboxGL.ShapeSource
-            id='selection'
-            shape={selection.features}
-          >
-            <MapboxGL.LineLayer
-              id='selectionOutline'
-              sourceLayerID='selection'
-              style={styles.selection.outline}
-              minZoomLevel={DEFAULT_ZOOM - 3}
-            />
-          </MapboxGL.ShapeSource>
+          <React.Fragment>
+            <MapboxGL.ShapeSource
+              id='selection'
+              shape={selection.features}
+            >
+              <MapboxGL.LineLayer
+                id='selectionOutline'
+                sourceLayerID='selection'
+                style={styles.selection.outline}
+                minZoomLevel={DEFAULT_ZOOM - 3}
+              />
+            </MapboxGL.ShapeSource>
+
+            <MapboxGL.ShapeSource
+              id='selectionLocation'
+              shape={selection.location}
+            >
+              <MapboxGL.SymbolLayer
+                id='selectionText'
+                sourceLayerID='selection'
+                minZoomLevel={selection.zoom - 3}
+                maxZoomLevel={selection.zoom + 2}
+                style={{ ...styles.selection.text, textField: selection.size.toString() }}
+              />
+            </MapboxGL.ShapeSource>
+          </React.Fragment>
         )}
 
         <MapboxGL.ShapeSource
@@ -313,12 +305,6 @@ const Map = () => {
           <Image source={require('./mapbox.png')} resizeMode="contain" style={styles.watermarkImage} />
         </TouchableWithoutFeedback>
       </View>
-
-      <SelectionButton
-        onUsersPress={navToPeople}
-        onClosePress={cancelSelection}
-        selection={selection}
-      />
     </View>
   );
 };
