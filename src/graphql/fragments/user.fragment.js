@@ -10,9 +10,21 @@ const user = gql `
   }
 `;
 
+user.result = gql `
+  fragment UserResult on User {
+    ...User
+    status {
+      ...Status
+    }
+  }
+
+  ${user}
+  ${status}
+`;
+
 user.profile = gql `
   fragment UserProfile on User {
-    ...User
+    ...UserResult
     birthDate
     age
     bio
@@ -20,13 +32,9 @@ user.profile = gql `
     occupation
     pictures
     discoverable
-    status {
-      ...Status
-    }
   }
 
-  ${status}
-  ${user}
+  ${user.result}
 `;
 
 user.read = (cache, id) => {
@@ -46,6 +54,27 @@ user.write = (cache, data) => {
     id,
     fragment: user,
     fragmentName: 'User',
+    data,
+  });
+};
+
+user.result.read = (cache, id) => {
+  id = `User:${id.split(':').pop()}`;
+
+  return cache.readFragment({
+    id,
+    fragment: user.result,
+    fragmentName: 'UserResult',
+  });
+};
+
+user.result.write = (cache, data) => {
+  const id = `User:${data.id}`;
+
+  return cache.writeFragment({
+    id,
+    fragment: user.result,
+    fragmentName: 'UserResult',
     data,
   });
 };

@@ -27,7 +27,7 @@ createStatus.use = (text, defaultOptions = {}) => {
 
       const status = mutation.data.createStatus;
       fragments.status.write(cache, status);
-      fragments.user.profile.write(cache, {
+      fragments.user.result.write(cache, {
         ...me,
         status,
       });

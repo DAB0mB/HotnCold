@@ -1,155 +1,137 @@
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { StyleSheet, Image, View, TouchableWithoutFeedback, Dimensions, Text } from 'react-native';
-import { RippleLoader } from 'react-native-indicator';
-import CONFIG from 'react-native-config';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Dimensions, Image, StyleSheet, View, Text, FlatList, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import StatusPopover from '../../components/StatusPopover';
 import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMine } from '../../services/Auth';
-import { useBluetoothLE, BLE_MODES } from '../../services/BluetoothLE';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
-import { pick, pickRandom, useAsyncEffect } from '../../utils';
-import UserAvatar from './UserAvatar';
+import { useAsyncCallback, useSelf } from '../../utils';
+import PulseLoader from './PulseLoader';
 
-const noop = () => {};
-
-const MY_AVATAR_SIZE = Dimensions.get('window').width / 3;
-const USER_AVATAR_SIZE = MY_AVATAR_SIZE / 3;
-const AVATARS_LAYER_SIZE = MY_AVATAR_SIZE * 3;
-
-const picsIndexes = Array.apply(null, { length: ((MY_AVATAR_SIZE / USER_AVATAR_SIZE) * (AVATARS_LAYER_SIZE / MY_AVATAR_SIZE)) ** 2 }).map((_, ij) => {
-  const i = ij % ((MY_AVATAR_SIZE / USER_AVATAR_SIZE) * (AVATARS_LAYER_SIZE / MY_AVATAR_SIZE));
-  const j = Math.floor(ij / ((MY_AVATAR_SIZE / USER_AVATAR_SIZE) * (AVATARS_LAYER_SIZE / MY_AVATAR_SIZE)));
-
-  if (j % 2 == 1 && i % 2 == 1) {
-    return null;
-  }
-
-  if (j % 2 == 0 && i % 2 == 0) {
-    return null;
-  }
-
-  if (!i) {
-    return null;
-  }
-
-  if (i == (MY_AVATAR_SIZE / USER_AVATAR_SIZE) * (AVATARS_LAYER_SIZE / MY_AVATAR_SIZE) - 1) {
-    return null;
-  }
-
-  if (
-    i < (MY_AVATAR_SIZE / USER_AVATAR_SIZE) * (AVATARS_LAYER_SIZE / MY_AVATAR_SIZE) - (MY_AVATAR_SIZE / USER_AVATAR_SIZE) && i >= (MY_AVATAR_SIZE / USER_AVATAR_SIZE) &&
-    j < (MY_AVATAR_SIZE / USER_AVATAR_SIZE) * (AVATARS_LAYER_SIZE / MY_AVATAR_SIZE) - (MY_AVATAR_SIZE / USER_AVATAR_SIZE) && j >= (MY_AVATAR_SIZE / USER_AVATAR_SIZE)
-  ) {
-    return null;
-  }
-
-  return [i, j];
-}).filter(Boolean);
+const USER_AVATAR_SIZE = Dimensions.get('window').width / 3 - Dimensions.get('window').width / 16;
+const USERS_LIST_PADDING = Dimensions.get('window').width / 3 / 1.7;
+const SCAN_INTERVAL = 60 * 1000;
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
-    flexDirection: 'column',
     flex: 1,
+    backgroundColor: 'white',
   },
   absoluteLayer: {
     position: 'absolute',
+    left: 0,
     top: 0,
-    bottom: 0,
-    left: 0,
     right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mainText: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: colors.ink,
-    textAlign: 'center',
-    margin: 30,
-    position: 'absolute',
     bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  profilePicture: {
-    width: MY_AVATAR_SIZE,
-    height: MY_AVATAR_SIZE,
-    alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 5,
-    borderRadius: 999,
-    resizeMode: 'contain',
-    overflow: 'hidden',
+    alignItems: 'center',
   },
-  tapContainer: {
-    bottom: -MY_AVATAR_SIZE * 0.88,
-    right: -MY_AVATAR_SIZE * 0.88,
-    transform: [{ rotate: '10deg' }],
-  },
-  tapImage: {
-    height: MY_AVATAR_SIZE,
-    resizeMode: 'contain',
-  },
+  userItemContainer: { alignItems: 'center', justifyContent: 'center', margin: 10 },
+  userAvatar: { width: USER_AVATAR_SIZE, height: USER_AVATAR_SIZE, borderRadius: 999 },
+  userName: { color: colors.ink, fontSize: 17 },
+  usersListContent: { marginVertical: 10 },
+  usersListCol: { justifyContent: 'space-between', overflow: 'visible' },
 });
 
+const extractUserKey = u => u.id;
+let expectedScanTime = 0;
+
 const Radar = () => {
-  const { me, myContract } = useMine();
-  const ble = useBluetoothLE();
-  const discoveryNav = useNavigation(Discovery);
+  const self = useSelf();
+  const { me } = useMine();
   const baseNav = useNavigation(Base);
+  const discoveryNav = useNavigation(Discovery);
   const alertError = useAlertError();
-  const [mainText, setMainText] = useState('Discover active people in the venue');
-  const [discoveredUsers, setDiscoveredUsers] = useState(() => picsIndexes.map(() => null));
-  const discoveredUsersRef = useRef(null); discoveredUsersRef.current = discoveredUsers;
-  const [scanning, setScanning] = useState(false);
-  const [initialScanned, setInitialScanned] = useState(false);
-  const [resettingPeripheral, setResettingPeripheral] = useState(false);
-  const [updateRecentScanTime] = mutations.updateRecentScanTime.use();
+  const [nearbyUsers, setNearbyUsers] = useState([]);
+  const [fetchingUsers, setFetchingUsers] = useState(false);
   const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.discoverable);
+  const statusState = useState(false);
+  const [, setStatusVisiblity] = statusState;
+  const [userPopover, setUserPopover] = useState({});
+
+  const [queryNearbyUsers, nearbyUsersQuery] = queries.nearbyUsers.use.lazy({
+    onCompleted: useAsyncCallback(function* (data = {}) {
+      const { nearbyUsers } = data;
+
+      if (!nearbyUsers) return;
+
+      yield Promise.all(
+        nearbyUsers.map(u => Image.prefetch(u.avatar))
+      );
+
+      setFetchingUsers(false);
+      setNearbyUsers(nearbyUsers);
+    }, [true]),
+    onError: alertError,
+  });
+
   const [makeDiscoverable] = mutations.makeDiscoverable.use({
     onError: alertError,
   });
+
   const [makeIncognito] = mutations.makeIncognito.use({
     onError: alertError,
   });
-  const [queryUserProfile] = queries.userProfile.use.lazy({
-    onError: alertError,
-    onCompleted: useCallback((data = {}) => {
-      const userProfile = data.userProfile;
 
-      if (userProfile && !discoveredUsers.some(u => u && u.id == userProfile.id)) {
-        const nullIndexes = discoveredUsers.filter(u => !u).map((u, i) => i);
-        const i = pickRandom(nullIndexes);
+  discoveryNav.useBackListener();
 
-        setDiscoveredUsers([]
-          .concat(discoveredUsers.slice(0, i))
-          .concat(userProfile)
-          .concat(discoveredUsers.slice(i + 1))
-        );
-
-        if (nullIndexes.length == 1) {
-          stopScan();
-        }
-      }
-    }, [discoveredUsers]),
-  });
-
-  const onBigBubblePress = useCallback(() => {
+  const onBigBubblePress = useAsyncCallback(function* () {
     if (bigBubbleActivated) {
-      makeIncognito();
+      yield makeIncognito();
+
+      setNearbyUsers([]);
+      stopScanning();
     }
     else {
-      makeDiscoverable();
+      yield makeDiscoverable();
+
+      startScanning();
     }
   }, [bigBubbleActivated, makeIncognito, makeDiscoverable]);
+
+  const startScanning = self.startScanning = useCallback(() => {
+    self.scanning = true;
+
+    if (expectedScanTime - Date.now() <= 0) {
+      expectedScanTime = Date.now() + SCAN_INTERVAL;
+
+      setFetchingUsers(true);
+      queryNearbyUsers({
+        fetchPolicy: 'cache-and-network',
+      });
+    }
+    else {
+      queryNearbyUsers({
+        fetchPolicy: 'cache-only',
+      });
+    }
+
+    self.scanTimeout = setTimeout(() => {
+      self.startScanning();
+    }, expectedScanTime - Date.now());
+  }, [queryNearbyUsers]);
+
+  const stopScanning = self.stopScanning = useCallback(() => {
+    self.scanning = false;
+    clearTimeout(self.scanTimeout);
+  }, [true]);
+
+  useEffect(() => {
+    if (me.discoverable) {
+      startScanning();
+    }
+
+    return () => {
+      stopScanning();
+    };
+  }, [true]);
 
   useEffect(() => {
     setBigBubbleActivated(me.discoverable);
@@ -163,164 +145,77 @@ const Radar = () => {
     }), [bigBubbleActivated, onBigBubblePress]),
   });
 
-  useEffect(() => {
-    if (!scanning) return;
-    if (initialScanned) return;
+  const getUserItemStyle = useCallback((index) => {
+    if (index % 3 == 0) {
+      return { transform: [{ translateX: 10 }] };
+    }
 
-    setInitialScanned(true);
-  }, [initialScanned, scanning]);
+    if (index == nearbyUsers.length - 1 || index % 3 == 2) {
+      return { transform: [{ translateX: -10 }] };
+    }
 
-  const resetPeripheral = useCallback(() => {
-    setResettingPeripheral(true);
-  }, [true]);
+    if (index % 3 == 1) {
+      return { transform: [{ translateY: USERS_LIST_PADDING }] };
+    }
+  }, [nearbyUsers]);
 
-  // TODO: Send a couple of query batches, after 2 seconds and after 3 seconds of scanning
-  useEffect(() => {
-    let discoveredUsersIds = [];
+  const renderUserItem = useCallback(({ item: user, index }) => {
+    let fromView;
 
-    const onDiscoverPeripheral = (peripheral) => {
-      if (peripheral.name !== CONFIG.BLUETOOTH_ADAPTER_NAME) return;
+    const onPress = () => {
+      if (!fromView) return;
 
-      const userId = peripheral.advertising.serviceUUIDs[0];
-
-      if (discoveredUsersIds.includes(userId)) return;
-
-      discoveredUsersIds.push(userId);
-
-      queryUserProfile({
-        variables: {
-          userId,
-          recentlyScanned: true,
-        },
-      });
+      setUserPopover({ user, fromView });
+      setStatusVisiblity(true);
     };
 
-    const onStopScan = () => {
-      setScanning(false);
-
-      const discoveredUsers = discoveredUsersRef.current.filter(Boolean);
-
-      // In dev mode we might get extra (dummy) users
-      if (discoveredUsers.length == 1) {
-        setMainText('Found 1 available person');
-      }
-      else if (discoveredUsers.length) {
-        setMainText(`Found ${discoveredUsers.length} available people`);
-      }
-      else {
-        setMainText('No one was found :\'(');
-      }
-
-      discoveredUsersIds = [];
-    };
-
-    ble.emitter.addListener('BleManagerDiscoverPeripheral', onDiscoverPeripheral);
-    ble.emitter.addListener('BleManagerStopScan', onStopScan);
-
-    return () => {
-      ble.emitter.removeListener('BleManagerDiscoverPeripheral', onDiscoverPeripheral);
-      ble.emitter.removeListener('BleManagerStopScan', onStopScan);
-
-      if (scanning) {
-        ble.central.stopScan();
-      }
-    };
-  }, [true]);
-
-  discoveryNav.useBackListener();
-
-  const stopScan = useCallback(() => {
-    let stoppingScan;
-
-    if (scanning) {
-      stoppingScan = ble.central.stopScan();
-    }
-    else {
-      stoppingScan = Promise.resolve();
-    }
-
-    return stoppingScan.catch(alertError);
-  }, [ble.central]);
-
-  const scan = useCallback(() => {
-    stopScan().then(() => {
-      return ble.central.scan([], 5, false);
-    }).then(() => {
-      setMainText('Searching for people...');
-      setScanning(true);
-      setDiscoveredUsers(() => picsIndexes.map(() => null));
-      // Run in background
-      updateRecentScanTime();
-
-      if (myContract.isTest) {
-        queryUserProfile({
-          variables: { randomMock: true },
-        });
-      }
-    }).catch(alertError);
-  }, [ble.central]);
-
-  const navToUserProfile = useCallback((user) => {
-    baseNav.push('Profile', { user });
-  }, [baseNav]);
-
-  useAsyncEffect(function* () {
-    if (ble.activeModes & BLE_MODES.PERIPHERAL) return;
-    if (!resettingPeripheral) return;
-
-    try {
-      setMainText('Preparing Bluetooth...');
-      setScanning(true);
-
-      yield ble.disable();
-      yield ble.enable();
-
-      ble.peripheral.setName(CONFIG.BLUETOOTH_ADAPTER_NAME);
-      ble.peripheral.addService(me.id, true);
-
-      yield ble.peripheral.start();
-
-      scan();
-    }
-    catch (e) {
-      setMainText('Something went wrong :\'(');
-      setScanning(false);
-      alertError(e);
-    }
-    finally {
-      setResettingPeripheral(false);
-    }
-  }, [!!(ble.activeModes & BLE_MODES.PERIPHERAL), resettingPeripheral]);
+    return (
+      <TouchableWithoutFeedback onPress={onPress}>
+        <View style={[styles.userItemContainer, getUserItemStyle(index)]}>
+          <Image style={styles.userAvatar} source={{ uri: user.avatar }} ref={r => fromView = r} />
+          <Text style={styles.userName}>{user.name}</Text>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }, [getUserItemStyle]);
 
   return (
     <View style={styles.container}>
-      {scanning && (
-        <View style={styles.absoluteLayer}>
-          <RippleLoader size={MY_AVATAR_SIZE * 2.5} color={colors.hot} />
+      <View style={styles.absoluteLayer}>
+        <PulseLoader playing={bigBubbleActivated} />
+      </View>
+
+      {!bigBubbleActivated && (
+        <View style={[styles.absoluteLayer, { padding: 50 }]}>
+          <Text style={{ textAlign: 'center' }}>Please turn <Text style={{ fontWeight: '900' }}>ON</Text> your radar to start scanning for people.</Text>
         </View>
       )}
-      {!initialScanned && (
-        <View style={styles.absoluteLayer}>
-          <View style={styles.tapContainer}>
-            <Image style={styles.tapImage} source={require('../../assets/tap_here.png')} />
-          </View>
-        </View>
+
+      {bigBubbleActivated && (
+        <React.Fragment>
+          {nearbyUsersQuery.called && !fetchingUsers && !nearbyUsers.length && (
+            <View style={[styles.absoluteLayer, { padding: 50 }]}>
+              <Text style={{ textAlign: 'center' }}>No one nearby was found. Keep exploring!</Text>
+            </View>
+          )}
+
+          <FlatList
+            numColumns={3}
+            contentContainerStyle={[styles.usersListContent, nearbyUsers.length % 3 == 0 && { paddingBottom: USERS_LIST_PADDING }].filter(Boolean)}
+            columnWrapperStyle={styles.usersListCol}
+            data={nearbyUsers}
+            keyExtractor={extractUserKey}
+            renderItem={renderUserItem}
+          />
+
+          <StatusPopover
+            isPartial
+            state={statusState}
+            baseNav={baseNav}
+            {...userPopover}
+          />
+        </React.Fragment>
       )}
-      <View style={styles.absoluteLayer}>
-        <TouchableWithoutFeedback onPress={scanning ? noop : (ble.activeModes & BLE_MODES.PERIPHERAL) ? scan : resetPeripheral}>
-          <View style={[styles.profilePicture, { borderColor: scanning ? colors.hot : colors.cold }]}>
-            <Image source={{ uri: me.avatar }} resizeMode={styles.profilePicture.resizeMode} style={pick(styles.profilePicture, ['width', 'height'])} />
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
-      <View style={styles.absoluteLayer}>
-        <View style={{ width: AVATARS_LAYER_SIZE, height: AVATARS_LAYER_SIZE, position: 'relative' }}>
-          {picsIndexes.map(([i, j], k) => discoveredUsers[k] && (
-            <UserAvatar key={k} i={i} j={j} user={discoveredUsers[k]} onPress={navToUserProfile} avatarSize={USER_AVATAR_SIZE} />
-          )).filter(Boolean)}
-        </View>
-      </View>
-      <Text style={styles.mainText}>{mainText}</Text>
     </View>
   );
 };

@@ -40,19 +40,18 @@ target 'hotncold' do
 
 
 
-  pod 'react-native-ble-manager', :path => '../node_modules/react-native-ble-manager'
 
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
   pod 'react-native-gps-state', :path => '../node_modules/react-native-gps-state'
 
-  pod 'RNBluetoothStateManager', :path => '../node_modules/react-native-bluetooth-state-manager'
 
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
+  pod 'ReactNativeART', :path => '../node_modules/@react-native-community/art'
 
 end

@@ -4,8 +4,8 @@ import gql from 'graphql-tag';
 import * as fragments from '../fragments';
 
 const userProfile = gql `
-  query UserProfile($userId: ID, $randomMock: Boolean, $recentlyScanned: Boolean) {
-    userProfile(userId: $userId, randomMock: $randomMock, recentlyScanned: $recentlyScanned) {
+  query UserProfile($userId: ID!) {
+    userProfile(userId: $userId) {
       ...UserProfile
     }
   }
@@ -13,9 +13,10 @@ const userProfile = gql `
   ${fragments.user.profile}
 `;
 
-userProfile.use = (options = {}) => {
+userProfile.use = (userId, options = {}) => {
   return useQuery(userProfile, {
     fetchPolicy: 'no-cache',
+    variables: { userId },
     ...options,
   });
 };

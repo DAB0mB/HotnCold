@@ -10,13 +10,27 @@ const makeDiscoverable = gql `
   }
 `;
 
-makeDiscoverable.use = (defaultOptions) => {
+makeDiscoverable.use = (defaultOptions = {}) => {
   const queries = require('../queries');
 
   const { data: { me } = {} } = queries.mine.use();
   const [superMutate, mutation] = useMutation(makeDiscoverable, defaultOptions);
 
-  const mutate = useCallback((options) => {
+  const mutate = useCallback((options = {}) => {
+    const onError = defaultOptions.onError || Promise.reject.bind(Promise);
+
+    if (!me.status) {
+      const error = Error('You must create a status first');
+
+      return onError(error);
+    }
+
+    if (!me.location) {
+      const error = Error('Make sure your location services are on');
+
+      return onError(error);
+    }
+
     // Token should be stored via response.headers, see graphql/client.js
     return superMutate({
       optimisticResponse: {
@@ -33,7 +47,7 @@ makeDiscoverable.use = (defaultOptions) => {
       },
       ...options,
     });
-  }, [superMutate, me]);
+  }, [...Object.values(defaultOptions), superMutate, me]);
 
   return [mutate, mutation];
 };

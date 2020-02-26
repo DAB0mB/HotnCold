@@ -33,8 +33,6 @@ const styles = StyleSheet.create({
   }
 });
 
-const noop = () => {};
-
 const Header = () => {
   const { me } = useMine();
   const socialNav = useNavigation(Social);
@@ -52,22 +50,58 @@ const Header = () => {
     });
   }, [baseNav]);
 
+  const { Container, Back, Thumb } = useMemo(() => {
+    if (socialNav.isFirstRouteInParent()) {
+      return {
+        Container({ children }) {
+          return (
+            <TouchableWithoutFeedback onPress={baseNav.goBackOnceFocused}>
+              {children}
+            </TouchableWithoutFeedback>
+          );
+        },
+        Back: React.Fragment,
+        Thumb: React.Fragment,
+      };
+    }
+    else {
+      return {
+        Container: React.Fragment,
+        Back({ children }) {
+          return (
+            <TouchableWithoutFeedback onPress={socialNav.goBackOnceFocused}>
+              {children}
+            </TouchableWithoutFeedback>
+          );
+        },
+        Thumb({ children }) {
+          return (
+            <TouchableWithoutFeedback onPress={navToProfile}>
+              {children}
+            </TouchableWithoutFeedback>
+          );
+        },
+      };
+    }
+  }, [true]);
+
   return (
-    <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() ? baseNav.goBackOnceFocused : noop}>
+    <Container>
       <View style={styles.header}>
-        <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() ? noop : socialNav.goBackOnceFocused}>
+        <Back>
           <View style={styles.backIcon}>
             <McIcon name='arrow-left' size={20} color='white' solid />
           </View>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={socialNav.isFirstRouteInParent() ? noop : navToProfile}>
+        </Back>
+
+        <Thumb>
           <View style={pick(styles.header, ['flexDirection', 'alignItems'])}>
             <Image style={styles.avatar} source={{ uri: recipient.avatar }} />
             <Text style={styles.name}>{recipient.name}</Text>
           </View>
-        </TouchableWithoutFeedback>
+        </Thumb>
       </View>
-    </TouchableWithoutFeedback>
+    </Container>
   );
 };
 

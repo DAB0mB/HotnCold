@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
-import { BLE_STATES, useBluetoothLE } from '../services/BluetoothLE';
+// import { BLE_STATES, useBluetoothLE } from '../services/BluetoothLE';
 import { GPS_STATES, useGeolocation } from '../services/Geolocation';
 import { useAsyncEffect } from '../utils';
 
@@ -9,15 +9,15 @@ const noop = () => {};
 
 export const SERVICES = {
   GPS:       0b01,
-  BLUETOOTH: 0b10,
+  // BLUETOOTH: 0b10,
 };
 
 const NativeGuard = ({
   children,
   onReady = noop,
   onError = noop,
-  onBluetoothActivated = noop,
-  onBluetoothDeactivated = noop,
+  // onBluetoothActivated = noop,
+  // onBluetoothDeactivated = noop,
   onGpsActivated = noop,
   onGpsDeactivated = noop,
   onRequireService = noop,
@@ -25,12 +25,12 @@ const NativeGuard = ({
   services,
 }) => {
   const [prevServices, setPrevServices] = useState(0);
-  const [bluetoothState, setBluetoothState] = useState(null);
+  // const [bluetoothState, setBluetoothState] = useState(null);
   const [gpsState, setGpsState] = useState(null);
   const [requiredService, setRequiredService] = useState(null);
   const [granted, setGranted] = useState(false);
   const [ready, setReady] = useState(false);
-  const ble = useBluetoothLE();
+  // const ble = useBluetoothLE();
   const gps = useGeolocation();
 
   useAsyncEffect(function* () {
@@ -65,7 +65,7 @@ const NativeGuard = ({
       }
 
       if (!result) {
-        setBluetoothState(false);
+        // setBluetoothState(false);
         setGpsState(false);
       }
 
@@ -82,11 +82,11 @@ const NativeGuard = ({
       }
     }
 
-    if (services & SERVICES.BLUETOOTH) {
-      if (Platform.OS === 'ios') {
-        if (!(yield* grant(PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL))) return;
-      }
-    }
+    // if (services & SERVICES.BLUETOOTH) {
+    //   if (Platform.OS === 'ios') {
+    //     if (!(yield* grant(PERMISSIONS.IOS.BLUETOOTH_PERIPHERAL))) return;
+    //   }
+    // }
 
     setGranted(true);
   }, [services]);
@@ -101,12 +101,12 @@ const NativeGuard = ({
       return;
     }
 
-    if ((services & SERVICES.BLUETOOTH) && bluetoothState === false) {
-      setRequiredService(SERVICES.BLUETOOTH);
-      onRequireService(SERVICES.BLUETOOTH);
+    // if ((services & SERVICES.BLUETOOTH) && bluetoothState === false) {
+    //   setRequiredService(SERVICES.BLUETOOTH);
+    //   onRequireService(SERVICES.BLUETOOTH);
 
-      return;
-    }
+    //   return;
+    // }
 
     if (requiredService != null) {
       setRequiredService(null);
@@ -114,7 +114,7 @@ const NativeGuard = ({
 
       return;
     }
-  }, [granted, services, gpsState, bluetoothState]);
+  }, [granted, services, gpsState, /* bluetoothState */]);
 
   useEffect(() => {
     if (!granted) return;
@@ -129,17 +129,17 @@ const NativeGuard = ({
       gettingStates.push(null);
     }
 
-    if (!(prevServices & SERVICES.BLUETOOTH) && (services & SERVICES.BLUETOOTH)) {
-      gettingStates.push(ble.state.getState());
-    }
-    else {
-      gettingStates.push(null);
-    }
+    // if (!(prevServices & SERVICES.BLUETOOTH) && (services & SERVICES.BLUETOOTH)) {
+    //   gettingStates.push(ble.state.getState());
+    // }
+    // else {
+    //   gettingStates.push(null);
+    // }
 
-    Promise.all(gettingStates).then(([gpsState, bluetoothState]) => {
+    Promise.all(gettingStates).then(([gpsState, /* bluetoothState */]) => {
       if (!mounted) return;
       if (gpsState != null) setGpsState(gpsState === GPS_STATES.AUTHORIZED);
-      if (bluetoothState != null) setBluetoothState(bluetoothState === BLE_STATES.POWRED_ON);
+      // if (bluetoothState != null) setBluetoothState(bluetoothState === BLE_STATES.POWRED_ON);
 
       setPrevServices(services);
     });
@@ -165,21 +165,21 @@ const NativeGuard = ({
     setRecentGpsState(gpsState);
   }, [granted, services, gpsState]);
 
-  const [recentBluetoothState, setRecentBluetoothState] = useState(bluetoothState);
-  useEffect(() => {
-    if (!granted) return;
-    if (recentBluetoothState === bluetoothState) return;
-    if (!(services & SERVICES.BLUETOOTH)) return;
+  // const [recentBluetoothState, setRecentBluetoothState] = useState(bluetoothState);
+  // useEffect(() => {
+  //   if (!granted) return;
+  //   if (recentBluetoothState === bluetoothState) return;
+  //   if (!(services & SERVICES.BLUETOOTH)) return;
 
-    if (bluetoothState) {
-      onBluetoothActivated();
-    }
-    else {
-      onBluetoothDeactivated();
-    }
+  //   if (bluetoothState) {
+  //     onBluetoothActivated();
+  //   }
+  //   else {
+  //     onBluetoothDeactivated();
+  //   }
 
-    setRecentBluetoothState(bluetoothState);
-  }, [granted, services, bluetoothState]);
+  //   setRecentBluetoothState(bluetoothState);
+  // }, [granted, services, bluetoothState]);
 
   useEffect(() => {
     if (!granted) return;
@@ -198,38 +198,38 @@ const NativeGuard = ({
       gps.state.addListener(gpsListener);
     }
 
-    let bluetoothListener;
-    if (services & SERVICES.BLUETOOTH) {
-      bluetoothListener = ble.state.onStateChange((state) => {
-        if (state === BLE_STATES.POWRED_ON) {
-          setBluetoothState(true);
-        }
-        else {
-          setBluetoothState(false);
-        }
-      });
-    }
+    // let bluetoothListener;
+    // if (services & SERVICES.BLUETOOTH) {
+    //   bluetoothListener = ble.state.onStateChange((state) => {
+    //     if (state === BLE_STATES.POWRED_ON) {
+    //       setBluetoothState(true);
+    //     }
+    //     else {
+    //       setBluetoothState(false);
+    //     }
+    //   });
+    // }
 
     return () => {
       if (gpsListener) {
         gps.state.removeListener(gpsListener);
       }
 
-      if (bluetoothListener) {
-        bluetoothListener.remove();
-      }
+      // if (bluetoothListener) {
+      //   bluetoothListener.remove();
+      // }
     };
-  }, [granted, services, setGpsState, setBluetoothState]);
+  }, [granted, services, setGpsState, /* setBluetoothState */]);
 
   useEffect(() => {
     if (ready) return;
     if (!granted) return;
     if ((services & SERVICES.GPS) && gpsState == null) return;
-    if ((services & SERVICES.BLUETOOTH) && bluetoothState == null) return;
+    // if ((services & SERVICES.BLUETOOTH) && bluetoothState == null) return;
 
     setReady(true);
     onReady(true);
-  }, [granted, gpsState, bluetoothState]);
+  }, [granted, gpsState, /* bluetoothState */]);
 
   return (
     <>

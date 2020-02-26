@@ -20,9 +20,9 @@ updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
     return superMutate({
       update: (cache, mutation) => {
         if (mutation.error) return;
-        if (!me) return;
 
-        fragments.user.write(cache, { ...me, location });
+        const recentMe = fragments.user.profile.read(cache, me.id);
+        fragments.user.profile.write(cache, { ...recentMe, location });
       },
       variables: { location },
     });

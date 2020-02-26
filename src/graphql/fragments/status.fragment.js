@@ -3,8 +3,6 @@ import gql from 'graphql-tag';
 const status = gql `
   fragment Status on Status {
     id
-    updatedAt
-    expired
     location
     text
   }

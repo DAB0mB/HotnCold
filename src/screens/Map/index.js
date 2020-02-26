@@ -1,8 +1,6 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
-import turfBboxPolygon from '@turf/bbox-polygon';
-import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import turfCircle from '@turf/circle';
-import turfDistance from '@turf/distance';
+import Flatbush from 'flatbush';
 import { useRobot } from 'hotncold-robot';
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { TouchableWithoutFeedback, Image, View, StyleSheet } from 'react-native';
@@ -16,6 +14,7 @@ import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
 import { useLoading } from '../../services/Loading';
+import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
 import { useRenderer, useMountedRef, useAsyncCallback } from '../../utils';
 
@@ -86,24 +85,28 @@ export const $Map = {};
 const Map = () => {
   const { me } = useMine();
   const { useTrap } = useRobot();
+  const discoveryNav = useNavigation(Discovery);
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
-  const locationUpdatedAtRef = useRef(Date.now());
+  const locationUpdatedAtRef = useRef(0);
   const alertError = useAlertError();
   const [updateMyLocation] = mutations.updateMyLocation.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
-  const [screenFeatures, setScreenFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
   const [loaded, setLoaded] = useRenderer();
   const isMountedRef = useMountedRef();
   const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.status?.location);
+  const [flatbush, setFlatbush] = useState(null);
+
   const [dropStatus] = mutations.dropStatus.use({
     onError: alertError,
   });
   const [pickupStatus] = mutations.pickupStatus.use({
     onError: alertError,
   });
+
+  discoveryNav.useBackListener();
 
   const onBigBubblePress = useCallback(() => {
     if (bigBubbleActivated) {
@@ -115,8 +118,8 @@ const Map = () => {
   }, [bigBubbleActivated, dropStatus, pickupStatus]);
 
   useEffect(() => {
-    setBigBubbleActivated(me.status && !me.status.expired);
-  }, [me.status && !me.status.expired]);
+    setBigBubbleActivated(!!me.status?.location);
+  }, [!!me.status?.location]);
 
   useScreenFrame({
     bigBubble: useMemo(() => ({
@@ -125,30 +128,6 @@ const Map = () => {
       activated: bigBubbleActivated,
     }), [bigBubbleActivated, onBigBubblePress]),
   });
-
-  const resetScreenFeatures = useAsyncCallback(function* (e) {
-    const map = mapRef.current;
-
-    if (!map) return;
-
-    const zoom = yield map.getZoom();
-
-    // Don't capture features at this resolution
-    if (zoom < DEFAULT_ZOOM - 3) {
-      return;
-    }
-
-    let bbox = e.properties.visibleBounds;
-    bbox = turfBboxPolygon([bbox[0][0], bbox[0][1], bbox[1][0], bbox[1][1]]);
-
-    setScreenFeatures({
-      type: 'FeatureCollection',
-      // TODO: Use a quad tree
-      features: areaFeatures.features.filter(feature =>
-        turfBooleanPointInPolygon(feature, bbox.geometry)
-      )
-    });
-  }, [setScreenFeatures, areaFeatures]);
 
   const showAttribution = useCallback(() => {
     mapRef.current.showAttribution();
@@ -168,22 +147,15 @@ const Map = () => {
 
     const selectionCoords = e.geometry.coordinates;
     const selectionFeatures = turfCircle(selectionCoords, SELECTION_RADIUS);
-
-    let selectionSize = 0;
-    // TODO: Use a quad tree
-    screenFeatures.features.forEach(({ geometry: { coordinates: coords } }) => {
-      if (turfDistance(selectionCoords, coords) <= SELECTION_RADIUS) {
-        selectionSize++;
-      }
-    });
+    const selectionSize = flatbush ? flatbush.neighbors(...selectionCoords, Infinity, SELECTION_RADIUS / 100).length : 0;
 
     setSelection({
       location: e,
-      features: selectionFeatures,
       size: selectionSize,
+      features: selectionFeatures,
       zoom,
     });
-  }, [mapRef, setSelection, screenFeatures]);
+  }, [mapRef, setSelection, flatbush]);
 
   useGeoBackgroundTelemetry({
     interval: LOCATION_UPDATE_INTERVAL,
@@ -209,7 +181,22 @@ const Map = () => {
       locationUpdatedAtRef.current = Date.now();
 
       updateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
-        // TODO: Return URL
+        let flatbush = null;
+
+        if (areaFeatures.features.length) {
+          flatbush = new Flatbush(areaFeatures.features.length);
+
+          areaFeatures.features.forEach((feature) => {
+            const [x, y] = feature.geometry.coordinates;
+
+            // Method accepts a rectangle
+            flatbush.add(x, y, x, y);
+          });
+
+          flatbush.finish();
+        }
+
+        setFlatbush(flatbush);
         setAreaFeatures(areaFeatures);
       }).catch(alertError);
     };
@@ -238,9 +225,6 @@ const Map = () => {
         style={styles.map}
         styleURL={CONFIG.MAPBOX_STYLE_URL}
         onPress={renderSelection}
-        onRegionWillChange={resetScreenFeatures}
-        onRegionIsChanging={resetScreenFeatures}
-        onRegionDidChange={resetScreenFeatures}
         onDidFinishLoadingMap={setLoaded}
         attributionEnabled={false}
         logoEnabled={false}

@@ -9,7 +9,6 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 import BaseContainer from './containers/Base';
 import graphqlClient from './graphql/client';
 import { AppStateProvider } from './services/AppState';
-import { BluetoothLEProvider } from './services/BluetoothLE';
 import { CookieProvider } from './services/Cookie';
 import { DateTimePickerProvider } from './services/DateTimePicker';
 import { DeviceInfoProvider } from './services/DeviceInfo';
@@ -50,13 +49,11 @@ const App = () => {
                 <DropdownAlertProvider>
                   <DateTimePickerProvider>
                     <ImagePickerProvider>
-                      <BluetoothLEProvider>
-                        <GeolocationProvider>
-                          <RobotRunner>
-                            <BaseContainer />
-                          </RobotRunner>
-                        </GeolocationProvider>
-                      </BluetoothLEProvider>
+                      <GeolocationProvider>
+                        <RobotRunner>
+                          <BaseContainer />
+                        </RobotRunner>
+                      </GeolocationProvider>
                     </ImagePickerProvider>
                   </DateTimePickerProvider>
                 </DropdownAlertProvider>

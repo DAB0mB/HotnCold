@@ -6,6 +6,10 @@ import {
   useState,
 } from 'react';
 
+export const useSelf = (init = {}) => {
+  return useRef(init).current;
+};
+
 export const useInterval = (callback, delay, asap) => {
   const savedCallback = useRef();
 

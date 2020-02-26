@@ -3,21 +3,18 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.art.ARTPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import com.marianhello.bgloc.react.BackgroundGeolocationPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
-import de.patwoz.rn.bluetoothstatemanager.RNBluetoothStateManagerPackage;
 import br.com.dopaminamob.gpsstate.GPSStatePackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import im.shimo.react.cookie.CookieManagerPackage;
 import com.imagepicker.ImagePickerPackage;
-import it.innove.BleManagerPackage;
-import com.himelbrand.ble.peripheral.RNBLEPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.facebook.react.ReactNativeHost;
@@ -42,21 +39,18 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ARTPackage(),
             new VectorIconsPackage(),
             new RNFirebasePackage(),
             new RNFirebaseNotificationsPackage(),
             new RNFirebaseMessagingPackage(),
             new BackgroundGeolocationPackage(),
             new RNPermissionsPackage(),
-            new RNBluetoothStateManagerPackage(),
             new GPSStatePackage(),
             new LinearGradientPackage(),
             new RNFusedLocationPackage(),
-            new AsyncStoragePackage(),
             new CookieManagerPackage(),
             new ImagePickerPackage(),
-            new BleManagerPackage(),
-            new RNBLEPackage(),
           new RCTMGLPackage(),
           new ReactNativeConfigPackage(),
           new ReanimatedPackage(),

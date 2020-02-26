@@ -40,10 +40,9 @@ dropStatus.use = (defaultOptions = {}) => {
       update: (cache, mutation) => {
         if (mutation.error) return;
 
-        const status = { ...me.status };
-        status.location = me.location;
-        status.updateAt = new Date().toISOString();
-
+        const recentMe = fragments.user.profile.read(cache, me.id);
+        const status = { ...recentMe.status };
+        status.location = recentMe.location;
         fragments.status.write(cache, status);
       },
       ...options,

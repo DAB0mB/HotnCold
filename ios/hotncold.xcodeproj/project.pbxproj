@@ -10,7 +10,6 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		5CC9C515400944699D2053F0 /* libRNBLEPeripheral.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F458F2AB0344A32B21CA296 /* libRNBLEPeripheral.a */; };
 		214FC90D70084150A279E7AA /* libRNCookieManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19D0502EBFB5474483C43DE4 /* libRNCookieManager.a */; };
 		238994A6133C4B76A3A0EF49 /* RNCookieManagerTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = F8EABE299BE64FC0BDDF6537 /* RNCookieManagerTests.xctest */; };
 		0FA700C104F242FC99334728 /* libRCTBackgroundGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 540BE752518B4B2498855D6A /* libRCTBackgroundGeolocation.a */; };
@@ -41,8 +40,6 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		D8121058B41D4DD6BB13291F /* RNBLEPeripheral.xcodeproj */ = {isa = PBXFileReference; name = "RNBLEPeripheral.xcodeproj"; path = "../node_modules/react-native-ble-peripheral/ios/RNBLEPeripheral.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		7F458F2AB0344A32B21CA296 /* libRNBLEPeripheral.a */ = {isa = PBXFileReference; name = "libRNBLEPeripheral.a"; path = "libRNBLEPeripheral.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		3B005D3463874E6F824091C8 /* RNCookieManager.xcodeproj */ = {isa = PBXFileReference; name = "RNCookieManager.xcodeproj"; path = "../node_modules/react-native-cookie/ios/RNCookieManager.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		19D0502EBFB5474483C43DE4 /* libRNCookieManager.a */ = {isa = PBXFileReference; name = "libRNCookieManager.a"; path = "libRNCookieManager.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		F8EABE299BE64FC0BDDF6537 /* RNCookieManagerTests.xctest */ = {isa = PBXFileReference; name = "RNCookieManagerTests.xctest"; path = "RNCookieManagerTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
@@ -66,7 +63,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CC9C515400944699D2053F0 /* libRNBLEPeripheral.a in Frameworks */,
 				214FC90D70084150A279E7AA /* libRNCookieManager.a in Frameworks */,
 				238994A6133C4B76A3A0EF49 /* RNCookieManagerTests.xctest in Resources */,
 				0FA700C104F242FC99334728 /* libRCTBackgroundGeolocation.a in Frameworks */,
@@ -113,7 +109,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				D8121058B41D4DD6BB13291F /* RNBLEPeripheral.xcodeproj */,
 				3B005D3463874E6F824091C8 /* RNCookieManager.xcodeproj */,
 				8766F0A0FAD84DABB8BBEF9C /* RCTBackgroundGeolocation.xcodeproj */,
 				77E2CB62BF4C4E34AE3F5C4A /* RNFirebase.xcodeproj */,
@@ -323,7 +318,6 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ble-peripheral/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookie/ios",
 					"$(SRCROOT)/../node_modules/@mauron85/react-native-background-geolocation/ios/RCTBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
@@ -359,7 +353,6 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ble-peripheral/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookie/ios",
 					"$(SRCROOT)/../node_modules/@mauron85/react-native-background-geolocation/ios/RCTBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
@@ -386,7 +379,6 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ble-peripheral/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookie/ios",
 					"$(SRCROOT)/../node_modules/@mauron85/react-native-background-geolocation/ios/RCTBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
@@ -412,7 +404,6 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ble-peripheral/ios",
 					"$(SRCROOT)/../node_modules/react-native-cookie/ios",
 					"$(SRCROOT)/../node_modules/@mauron85/react-native-background-geolocation/ios/RCTBackgroundGeolocation/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
