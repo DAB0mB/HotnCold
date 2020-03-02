@@ -87,7 +87,7 @@ Hot&Cold uses [Firebase Test Lab](https://firebase.google.com/docs/test-lab/) in
 
 RoboT scripts are located under the [`robot/scopes`](./src/robot/scopes) and have direct control over React elements. In addition to having Robot scripts, you need to record a [Robo script](https://firebase.google.com/docs/test-lab/android/robo-ux-test) with Android-Studio, so you can press native modals, such as alerts, date-time pickers, and permissions. *It's required* that the RoboT script will end end with any native modal, so it will be used as an anchor for Robo, otherwise the tests will be aborted mid-session.
 
-Robot `.apk` can be assembled with `yarn assemble robot` and it will override the `app-release.apk` file.
+Robot `.apk` can be assembled with `yarn assembleRobot` and it will override the `app-release.apk` file.
 
 ## Prod
 
