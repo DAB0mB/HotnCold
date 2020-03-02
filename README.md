@@ -28,8 +28,6 @@ Define environment variables in `.env.{ENV_NAME}` file (NEVER COMMIT):
     TEST_PHONE_SMS
     # If specified, pressed notifications will remain
     PERSIST_NOTIFICATIONS
-    # Use fake data for heatmap (long load time)
-    FAKE_HEATMAP
     # Run app with Robot. Robot files will not be bundled if this var is provided
     USE_ROBOT
     # *Optional: The auth token of the user you would like to log-in with

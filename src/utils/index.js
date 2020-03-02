@@ -67,3 +67,63 @@ export const validatePhone = (phone) => {
     new RegExp(CONFIG.TEST_PHONE_SMS).test(phone)
   );
 };
+
+// foo_barBaz -> ['foo', 'bar', 'Baz']
+export const splitWords = (str) => {
+  return str
+    .replace(/[A-Z]/, ' $&')
+    .split(/[^a-zA-Z0-9]+/)
+    .filter(word => word.trim());
+};
+
+// upper -> Upper
+export const upperFirst = (str) => {
+  return str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
+};
+
+export const camelCase = (str) => {
+  const words = splitWords(str);
+  const first = words.shift().toLowerCase();
+  const rest = words.map(upperFirst);
+
+  return [first, ...rest].join('');
+};
+
+export const snakeCase = (str) => {
+  const words = splitWords(str);
+
+  return words.map(w => w.toLowerCase()).join('-');
+};
+
+export const mapfn = new Proxy((scopeFn) => {
+  return scopeFn(mapfn);
+}, {
+  get(target, p) {
+    switch (p) {
+    case 'getDeep':
+      return (path) => path.split('.').reduce((children, prop) => ['get', prop, children].filter(Boolean), '');
+    case 'not': p = '!'; break;
+    case 'neq': p = '!='; break;
+    case 'eq': p = '=='; break;
+    case 'lt': p = '<'; break;
+    case 'lte': p = '<='; break;
+    case 'gt': p = '>'; break;
+    case 'gte': p = '>='; break;
+    case 'add': p = '+'; break;
+    case 'sub': p = '-'; break;
+    case 'mul': p = '*'; break;
+    case 'div': p = '/'; break;
+    case 'pow': p = '^'; break;
+    case 'mod': p = '%'; break;
+    default: p = snakeCase(p);
+    }
+
+    return (...args) => [p, ...args];
+  },
+});
+
+export const maparg = new Proxy({}, {
+  get(target, p) {
+    return [p];
+  },
+});

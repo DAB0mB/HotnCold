@@ -34,7 +34,6 @@ target 'hotncold' do
 
   pod 'react-native-config', :path => '../node_modules/react-native-config'
 
-  pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
 
 
 
@@ -53,5 +52,10 @@ target 'hotncold' do
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
 
   pod 'ReactNativeART', :path => '../node_modules/@react-native-community/art'
+
+
+
+
+  pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
 
 end

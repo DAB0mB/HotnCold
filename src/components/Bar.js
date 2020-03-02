@@ -3,11 +3,13 @@ import { View, StyleSheet } from 'react-native';
 
 import { colors } from '../theme';
 
+export const BAR_HEIGHT = 50;
+
 const styles = StyleSheet.create({
   container: {
     paddingLeft: 20,
     paddingRight: 20,
-    height: 50,
+    height: BAR_HEIGHT,
     borderWidth: 1,
     borderTopColor: colors.lightGray,
     borderBottomColor: colors.lightGray,

@@ -3,6 +3,7 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.mapbox.rctmgl.RCTMGLPackage;
 import com.reactnativecommunity.art.ARTPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
@@ -15,7 +16,6 @@ import com.BV.LinearGradient.LinearGradientPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import im.shimo.react.cookie.CookieManagerPackage;
 import com.imagepicker.ImagePickerPackage;
-import com.mapbox.rctmgl.RCTMGLPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -39,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RCTMGLPackage(),
             new ARTPackage(),
             new VectorIconsPackage(),
             new RNFirebasePackage(),
@@ -51,7 +52,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFusedLocationPackage(),
             new CookieManagerPackage(),
             new ImagePickerPackage(),
-          new RCTMGLPackage(),
           new ReactNativeConfigPackage(),
           new ReanimatedPackage(),
           new RNGestureHandlerPackage(),

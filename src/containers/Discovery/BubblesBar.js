@@ -175,7 +175,7 @@ class BubblesBar extends Component {
             <View style={[{ backgroundColor: this.state.bigBubble.inactiveBgColor }, styles.bigBubbleRipple]}>
               <View style={styles.bigBubbleReflection} />
               {this.props.bigBubble.icon}
-              <Animated.View style={[{ width: this.bigBubbleActiveSize, height: this.bigBubbleActiveSize, opacity: this.bigBubbleActiveOpacity, backgroundColor: this.state.bigBubble.activeBgColor }, styles.bigBubbleActiveLayer]}>
+              <Animated.View style={[{ height: 100, width: 100, opacity: this.bigBubbleActiveOpacity, backgroundColor: this.state.bigBubble.activeBgColor }, { transform: [{ scale: this.bigBubbleActiveSize }] }, styles.bigBubbleActiveLayer]}>
                 <View style={styles.bigBubbleReflection} />
                 {this.props.bigBubble.icon}
               </Animated.View>
@@ -243,7 +243,7 @@ class BubblesBar extends Component {
 
   activateBigBubble = (newRoute) => {
     if (newRoute) {
-      this.bigBubbleActiveSize.setValue(200);
+      this.bigBubbleActiveSize.setValue(1);
       this.bigBubbleActiveOpacity.setValue(1);
 
       return;
@@ -251,12 +251,14 @@ class BubblesBar extends Component {
 
     Animated.parallel([
       Animated.timing(this.bigBubbleActiveSize, {
-        toValue: 100,
+        toValue: 1,
         duration: 200,
+        useNativeDriver: true,
       }),
       Animated.timing(this.bigBubbleActiveOpacity, {
         toValue: 1,
         duration: 200,
+        useNativeDriver: true,
       }),
     ]).start();
   };
@@ -273,10 +275,12 @@ class BubblesBar extends Component {
       Animated.timing(this.bigBubbleActiveSize, {
         toValue: 0,
         duration: 200,
+        useNativeDriver: true
       }),
       Animated.timing(this.bigBubbleActiveOpacity, {
         toValue: 0,
         duration: 200,
+        useNativeDriver: true,
       }),
     ]).start();
   };

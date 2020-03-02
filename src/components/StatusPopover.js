@@ -15,13 +15,23 @@ const styles = StyleSheet.create({
     maxWidth: 200,
     padding: 5,
   },
-  timeView: {
-    marginRight: 5,
+  detailsContainer: {
+    flex: 1,
+    flexDirection: 'row',
     marginBottom: 5,
-    alignSelf: 'flex-end',
+    marginHorizontal: 5,
+  },
+  nameView: {
+    marginTop: -5,
+    marginLeft: -5,
+  },
+  timeView: {
+    width: 120,
+    flex: 1,
   },
   timeText: {
     fontSize: 12,
+    textAlign: 'right',
   },
   text: {
     margin: 5,
@@ -34,6 +44,7 @@ const styles = StyleSheet.create({
 });
 
 const StatusPopover = ({
+  showName,
   showTime,
   itsMe,
   state,
@@ -96,12 +107,22 @@ const StatusPopover = ({
       onRequestClose={hidePopover}
     >
       <TouchableWithoutFeedback onPress={handlePopoverPress}>
-        <View style={styles.container}>
+        <View style={[styles.container, showTime && showName && { minWidth: 200, maxWidth: 300 }].filter(Boolean)}>
           {status ? (
             <React.Fragment>
-              {showTime && (
-                <View style={styles.timeView}>
-                  <Text style={styles.timeText}>{moment(status.updatedAt).fromNow()}</Text>
+              {(showTime || showName) && (
+                <View style={styles.detailsContainer}>
+                  {showName && (
+                    <View style={styles.nameView}>
+                      <Text style={[styles.text, { fontWeight: '900' }]}>{user.name}</Text>
+                    </View>
+                  )}
+
+                  {showTime && (
+                    <View style={styles.timeView}>
+                      <Text style={styles.timeText}>{moment(status.updatedAt).format('HH:mm')}</Text>
+                    </View>
+                  )}
                 </View>
               )}
 

@@ -33,11 +33,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  userItemContainer: { alignItems: 'center', justifyContent: 'center', margin: 10 },
-  userAvatar: { width: USER_AVATAR_SIZE, height: USER_AVATAR_SIZE, borderRadius: 999 },
-  userName: { color: colors.ink, fontSize: 17 },
-  usersListContent: { marginVertical: 10 },
-  usersListCol: { justifyContent: 'space-between', overflow: 'visible' },
+  userItemContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+  },
+  userAvatar: {
+    width: USER_AVATAR_SIZE,
+    height: USER_AVATAR_SIZE,
+    borderRadius: 999,
+  },
+  userName: {
+    color: colors.ink,
+    fontSize: 17,
+  },
+  usersListContent: {
+    marginVertical: 10,
+  },
+  usersListCol: {
+    justifyContent: 'space-between',
+    overflow: 'visible',
+  },
 });
 
 const extractUserKey = u => u.id;
