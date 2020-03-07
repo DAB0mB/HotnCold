@@ -161,21 +161,7 @@ const Radar = () => {
     }), [bigBubbleActivated, onBigBubblePress]),
   });
 
-  const getUserItemStyle = useCallback((index) => {
-    if (index % 3 == 0) {
-      return { transform: [{ translateX: 10 }] };
-    }
-
-    if (index == nearbyUsers.length - 1 || index % 3 == 2) {
-      return { transform: [{ translateX: -10 }] };
-    }
-
-    if (index % 3 == 1) {
-      return { transform: [{ translateY: USERS_LIST_PADDING }] };
-    }
-  }, [nearbyUsers]);
-
-  const renderUserItem = useCallback(({ item: user, index }) => {
+  const renderUserItem = useCallback(({ item: user }) => {
     let fromView;
 
     const onPress = () => {
@@ -187,13 +173,13 @@ const Radar = () => {
 
     return (
       <TouchableWithoutFeedback onPress={onPress}>
-        <View style={[styles.userItemContainer, getUserItemStyle(index)]}>
+        <View style={[styles.userItemContainer]}>
           <Image style={styles.userAvatar} source={{ uri: user.avatar }} ref={r => fromView = r} />
           <Text style={styles.userName}>{user.name}</Text>
         </View>
       </TouchableWithoutFeedback>
     );
-  }, [getUserItemStyle]);
+  }, [true]);
 
   return (
     <View style={styles.container}>

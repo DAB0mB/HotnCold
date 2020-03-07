@@ -6,6 +6,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Bar from '../../components/Bar';
 import Hamburger from '../../components/Hamburger';
 import { useMine } from '../../services/Auth';
+import { HitboxProvider } from '../../services/Hitbox';
 import { useNavigation }  from '../../services/Navigation';
 import { colors } from '../../theme';
 import { useCallbackWhen } from '../../utils';
@@ -126,31 +127,33 @@ const Frame = ({
   return (
     <View style={{ flex: 1 }}>
       <SideMenu opened={sideMenuOpened} onClose={closeSideMenu}>
-        <Bar>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.headerTitle}>Map</Text>
-          </View>
+        <HitboxProvider>
+          <Bar>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.headerTitle}>Map</Text>
+            </View>
 
-          <View style={{ position: 'absolute', left: 0 }}>
-            <Hamburger color={colors.hot} type='cross' onPress={openSideMenu} active={sideMenuOpened} />
-          </View>
+            <View style={{ position: 'absolute', left: 0 }}>
+              <Hamburger color={colors.hot} type='cross' onPress={openSideMenu} active={sideMenuOpened} />
+            </View>
 
-          <View style={{ position: 'absolute', right: 0 }}>
-            <McIcon name='thought-bubble' size={30} color={colors.hot} onPress={navToStatusEditor} />
-          </View>
-        </Bar>
+            <View style={{ position: 'absolute', right: 0 }}>
+              <McIcon name='thought-bubble' size={30} color={colors.hot} onPress={navToStatusEditor} />
+            </View>
+          </Bar>
 
-        <View style={{ flex: 1 }}>{children}</View>
+          <View style={{ flex: 1 }}>{children}</View>
 
-        <BubblesBar
-          activeBubble={activeBubble}
-          tintColor={colors.hot}
-          bigBubble={bigBubble}
-          bubbles={[
-            { title: 'Map', iconSource: icons.map, onSelect: navToMap },
-            { title: 'Radar', iconSource: icons.radar, onSelect: navToRadar },
-          ]}
-        />
+          <BubblesBar
+            activeBubble={activeBubble}
+            tintColor={colors.hot}
+            bigBubble={bigBubble}
+            bubbles={[
+              { title: 'Map', iconSource: icons.map, onSelect: navToMap },
+              { title: 'Radar', iconSource: icons.radar, onSelect: navToRadar },
+            ]}
+          />
+        </HitboxProvider>
       </SideMenu>
     </View>
   );

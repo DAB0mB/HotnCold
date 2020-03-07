@@ -3,12 +3,12 @@
 import React, { Component } from 'react';
 import {
   View,
-  TouchableWithoutFeedback,
   Animated,
   Easing,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+import { Hitbox } from '../../services/Hitbox';
 import { colors } from '../../theme';
 
 class BubblesBar extends Component {
@@ -124,8 +124,9 @@ class BubblesBar extends Component {
       };
 
       return (
-        <TouchableWithoutFeedback
+        <Hitbox
           key={index}
+          transform={[{ translateX: 12 }, { translateY: -30 }]}
           onPress={() => {
             if (this.state.activeBubble !== index) {
               this.props.bubbles[index].onSelect();
@@ -161,7 +162,7 @@ class BubblesBar extends Component {
               </Animated.Text>
             </Animated.View>
           </View>
-        </TouchableWithoutFeedback>
+        </Hitbox>
       );
     });
   };
@@ -171,7 +172,7 @@ class BubblesBar extends Component {
       <View style={styles.bigBubbleContainer}>
         <View  style={styles.bigBubbleContent}>
           <View style={styles.bigBubbleBlocker} />
-          <TouchableWithoutFeedback onPress={this.state.bigBubble.onPress}>
+          <Hitbox onPress={this.state.bigBubble.onPress} viewStyle={{ flex: 1 }} transform={[{ translateY: -25 }]}>
             <View style={[{ backgroundColor: this.state.bigBubble.inactiveBgColor }, styles.bigBubbleRipple]}>
               <View style={styles.bigBubbleReflection} />
               {this.props.bigBubble.icon}
@@ -180,7 +181,7 @@ class BubblesBar extends Component {
                 {this.props.bigBubble.icon}
               </Animated.View>
             </View>
-          </TouchableWithoutFeedback>
+          </Hitbox>
         </View>
       </View>
     );
