@@ -124,14 +124,14 @@ export const useAsyncEffect = (fn, input) => {
     cbQueueRef.current = [];
     setIterator(null);
     setGenerator(() => fn(onCleanup));
+
+    return cleanup;
   }, input);
 
   useEffect(() => {
     if (!generator) return;
 
     next();
-
-    return cleanup;
   }, [generator]);
 
   useEffect(() => {

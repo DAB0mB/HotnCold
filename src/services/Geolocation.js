@@ -39,11 +39,13 @@ export const useGeolocation = () => {
   , [fgService, stateManager]);
 };
 
-export const useGeoBackgroundTelemetry = (config = {}) => {
+export const useGeoBackgroundTelemetry = ({ enabled, config = {} } = {}) => {
   const { bgService } = useContext(GeolocationContext);
   const cookie = useCookie();
 
   useAsyncEffect(function* (onCleanup) {
+    if (!enabled) return;
+
     const authToken = yield cookie.get('authToken');
 
     yield new Promise((resolve, reject) => {
@@ -62,5 +64,5 @@ export const useGeoBackgroundTelemetry = (config = {}) => {
       bgEvent.remove();
       fgEvent.remove();
     });
-  }, [bgService, cookie]);
+  }, [enabled, bgService, cookie]);
 };

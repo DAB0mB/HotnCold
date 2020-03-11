@@ -267,6 +267,7 @@ const Map = () => {
   }, [mapRef, setSelection, flatbush]);
 
   useGeoBackgroundTelemetry({
+    enabled: me.discoverable,
     interval: LOCATION_UPDATE_INTERVAL,
     fastestInterval: LOCATION_UPDATE_INTERVAL * 2,
   });
