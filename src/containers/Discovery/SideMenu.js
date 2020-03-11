@@ -1,12 +1,11 @@
 import { useRobot } from 'hotncold-robot';
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Alert, ScrollView, View, Text, ImageBackground, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ripple from 'react-native-material-ripple';
 import SuperSideMenu from 'react-native-side-menu';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import StatusPopover from '../../components/StatusPopover';
 import { useSignOut, useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation }  from '../../services/Navigation';
@@ -75,21 +74,15 @@ const SideMenu = ({
   onOpen = noop,
   opened,
   children,
+  showStatus
 }) => {
   const { useTrap } = useRobot();
-  const avatarRef = useRef(null);
-  const statusState = useState(false);
-  const [, setStatusVisiblity] = statusState;
   const [initialOpened, setInitialOpened] = useState(opened);
   const [bgStyle, setBgStyle] = useState({ width: 0 });
   const { me, myContract } = useMine();
   const baseNav = useNavigation(Base);
   const signOut = useSignOut();
   const alertError = useAlertError();
-
-  const showStatus = useCallback(() => {
-    setStatusVisiblity(true);
-  }, [true]);
 
   const navToInbox = useCallback(() => {
     baseNav.push('Social', {
@@ -147,7 +140,7 @@ const SideMenu = ({
         <LinearGradient colors={['rgba(0, 0, 0, .4)', 'rgba(0, 0, 0, .65)']}>
           <View style={styles.headerContent}>
             <TouchableWithoutFeedback onPress={showStatus}>
-              <Image source={{ uri: me.avatar }} style={styles.avatar} ref={avatarRef} />
+              <Image source={{ uri: me.avatar }} style={styles.avatar} />
             </TouchableWithoutFeedback>
             <Text style={styles.myName}>{me.name}</Text>
           </View>
@@ -223,13 +216,6 @@ const SideMenu = ({
   return (
     <SuperSideMenu disableGestures menu={initialOpened && menu} isOpen={opened} onChange={onChange}>
       {children}
-      <StatusPopover
-        itsMe
-        state={statusState}
-        user={me}
-        baseNav={baseNav}
-        fromView={avatarRef.current}
-      />
     </SuperSideMenu>
   );
 };

@@ -13,6 +13,7 @@ import { useCallbackWhen } from '../../utils';
 import Base from '../Base';
 import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
+import Status from './Status';
 
 const loadingIcons = Promise.all([
   McIcon.getImageSource('map', 30, colors.hot),
@@ -69,6 +70,7 @@ const Frame = ({
   const [activeBubble, setActiveBubble] = useState(Bubble.Map);
   const [icons, setIcons] = useState(empty);
   const [sideMenuOpened, setSideMenuOpened] = useState(false);
+  const [activeStatus, setActiveStatus] = useState();
   const [bigBubble, setBigBubble] = useState({
     activeBgColor: colors.hot,
     inactiveBgColor: colors.cold,
@@ -109,9 +111,22 @@ const Frame = ({
     setSideMenuOpened(true);
   }, [true]);
 
-  const closeSideMenu = useCallback(() => {
-    setSideMenuOpened(false);
+  const showActiveStatus = useCallback(() => {
+    setActiveStatus({
+      user: mine.me,
+      status: mine.me.status,
+    });
   }, [true]);
+
+  const hideActiveStatus = useCallback(() => {
+    setActiveStatus(null);
+  }, [true]);
+
+  const closeSideMenu = useCallback(() => {
+    hideActiveStatus();
+
+    setSideMenuOpened(false);
+  }, [hideActiveStatus]);
 
   const navToStatusEditor = useCallback(() => {
     baseNav.push('StatusEditor', { mine });
@@ -126,7 +141,7 @@ const Frame = ({
 
   return (
     <View style={{ flex: 1 }}>
-      <SideMenu opened={sideMenuOpened} onClose={closeSideMenu}>
+      <SideMenu opened={sideMenuOpened} onClose={closeSideMenu} showStatus={showActiveStatus}>
         <HitboxProvider>
           <Bar>
             <View style={{ flex: 1 }}>
@@ -154,7 +169,11 @@ const Frame = ({
             ]}
           />
         </HitboxProvider>
+
+        <Status />
       </SideMenu>
+
+      <Status activeStatus={activeStatus} hideActiveStatus={hideActiveStatus} />
     </View>
   );
 };

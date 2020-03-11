@@ -127,12 +127,11 @@ const StatusEditor = () => {
         <View style={styles.bodyRight}>
           <ScrollView>
             <TextInput
-              multiline
               value={text}
               textAlignVertical='top'
               placeholder="What's on your mind?"
               style={styles.textScroll}
-              maxLength={100}
+              maxLength={150}
               onChangeText={setText}
             />
           </ScrollView>

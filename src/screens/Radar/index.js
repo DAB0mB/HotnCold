@@ -2,12 +2,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Dimensions, Image, StyleSheet, View, Text, FlatList, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import StatusPopover from '../../components/StatusPopover';
-import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMine } from '../../services/Auth';
+import { useAppState } from '../../services/AppState';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useNavigation } from '../../services/Navigation';
@@ -62,15 +61,12 @@ let expectedScanTime = 0;
 const Radar = () => {
   const self = useSelf();
   const { me } = useMine();
-  const baseNav = useNavigation(Base);
   const discoveryNav = useNavigation(Discovery);
   const alertError = useAlertError();
+  const [, , reduceAppState] = useAppState();
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [fetchingUsers, setFetchingUsers] = useState(false);
   const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.discoverable);
-  const statusState = useState(false);
-  const [, setStatusVisiblity] = statusState;
-  const [userPopover, setUserPopover] = useState({});
 
   const [queryNearbyUsers, nearbyUsersQuery] = queries.nearbyUsers.use.lazy({
     onCompleted: useAsyncCallback(function* (data = {}) {
@@ -162,19 +158,22 @@ const Radar = () => {
   });
 
   const renderUserItem = useCallback(({ item: user }) => {
-    let fromView;
-
     const onPress = () => {
-      if (!fromView) return;
-
-      setUserPopover({ user, fromView });
-      setStatusVisiblity(true);
+      reduceAppState(appState => ({
+        ...appState,
+        activeStatus: {
+          user: user,
+          status: user.status,
+          isPartial: true,
+          isNow: true,
+        },
+      }));
     };
 
     return (
       <TouchableWithoutFeedback onPress={onPress}>
         <View style={[styles.userItemContainer]}>
-          <Image style={styles.userAvatar} source={{ uri: user.avatar }} ref={r => fromView = r} />
+          <Image style={styles.userAvatar} source={{ uri: user.avatar }} />
           <Text style={styles.userName}>{user.name}</Text>
         </View>
       </TouchableWithoutFeedback>
@@ -208,13 +207,6 @@ const Radar = () => {
             data={nearbyUsers}
             keyExtractor={extractUserKey}
             renderItem={renderUserItem}
-          />
-
-          <StatusPopover
-            isPartial
-            state={statusState}
-            baseNav={baseNav}
-            {...userPopover}
           />
         </React.Fragment>
       )}

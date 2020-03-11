@@ -15,7 +15,7 @@ const AppStateContext = createContext(null);
 
 export const AppStateProvider = ({ children, init = {} }) => {
   const [baseState, setBaseState] = useState(init);
-  const [appState, superSetAppState] = useStatePromise();
+  const [appState, superSetAppState] = useStatePromise(baseState);
 
   const setAppState = useCallback((appState) => {
     return superSetAppState({
@@ -45,7 +45,7 @@ export const AppStateProvider = ({ children, init = {} }) => {
     };
   }, [true]);
 
-  const value = useMemo(() => [appState, setAppState], [appState, setAppState]);
+  const value = useMemo(() => [appState, setAppState, superSetAppState], [appState, setAppState, superSetAppState]);
 
   return (
     <AppStateContext.Provider value={value}>

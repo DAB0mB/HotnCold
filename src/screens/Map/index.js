@@ -7,12 +7,10 @@ import { TouchableWithoutFeedback, Image, View, StyleSheet } from 'react-native'
 import CONFIG from 'react-native-config';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
-import { BAR_HEIGHT } from '../../components/Bar';
-import StatusPopover from '../../components/StatusPopover';
-import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import { useMine } from '../../services/Auth';
+import { useAppState } from '../../services/AppState';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
@@ -131,12 +129,12 @@ export const $Map = {};
 const Map = () => {
   const { me } = useMine();
   const { useTrap } = useRobot();
-  const baseNav = useNavigation(Base);
   const discoveryNav = useNavigation(Discovery);
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
   const locationUpdatedAtRef = useRef(0);
   const alertError = useAlertError();
+  const [, , reduceAppState] = useAppState();
   const [updateMyLocation] = mutations.updateMyLocation.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
@@ -145,9 +143,6 @@ const Map = () => {
   const isMountedRef = useMountedRef();
   const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.status?.location);
   const [flatbush, setFlatbush] = useState(null);
-  const statusState = useState(false);
-  const [, setStatusVisiblity] = statusState;
-  const [userPopover, setUserPopover] = useState({});
 
   const myFeature = useMemo(() => me.status?.location && {
     type: 'Feature',
@@ -228,25 +223,19 @@ const Map = () => {
     return result;
   }, [true]);
 
-  const onFeaturePress = useAsyncCallback(function* (e) {
+  const onFeaturePress = useCallback((e) => {
     const feature = e.nativeEvent.payload;
 
     if (!feature.properties.user) return;
 
-    const viewCoords = yield mapRef.current.getPointInView(feature.geometry.coordinates);
-    const size = yield zoomInterpolator(50);
-
-    setUserPopover({
-      user: feature.properties.user,
-      status: feature.properties.status,
-      fromRect: {
-        x: (viewCoords[0] / 2) - (size / 2),
-        y: (viewCoords[1] / 2) - size - (yield zoomInterpolator(28)) + BAR_HEIGHT,
-        width: size,
-        height: size,
+    reduceAppState(appState => ({
+      ...appState,
+      activeStatus: {
+        user: feature.properties.user,
+        status: feature.properties.status,
+        isPartial: true,
       },
-    });
-    setStatusVisiblity(true);
+    }));
   }, [zoomInterpolator]);
 
   const showAttribution = useCallback(() => {
@@ -462,13 +451,6 @@ const Map = () => {
           <Image source={require('./mapbox.png')} resizeMode='contain' style={styles.watermarkImage} />
         </TouchableWithoutFeedback>
       </View>
-
-      <StatusPopover
-        isPartial
-        state={statusState}
-        baseNav={baseNav}
-        {...userPopover}
-      />
     </View>
   );
 };
