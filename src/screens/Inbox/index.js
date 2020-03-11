@@ -142,7 +142,7 @@ const Inbox = () => {
     <View style={styles.container}>
       {chats.length ? (
         <FlatList data={chats} keyExtractor={getChatId} renderItem={renderChatItem} />
-      ) : chatsQuery.called && !chatsQuery.loading (
+      ) : chatsQuery.called && !chatsQuery.loading && (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 50 }}>
           <Text style={{ textAlign: 'center' }}>Well, you might wanna strike a conversation with someone..</Text>
         </View>
