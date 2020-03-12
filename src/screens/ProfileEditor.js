@@ -1,8 +1,7 @@
 import { ReactNativeFile } from 'apollo-upload-client';
 import { useRobot } from 'hotncold-robot';
 import moment from 'moment';
-import React, { useCallback, useMemo, useState, useRef } from 'react';
-import DatePicker from '../components/DatePicker';
+import React, { useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -10,6 +9,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
 import SortableGrid from 'react-native-sortable-grid';
@@ -19,6 +19,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../components/Bar';
 import Base from '../containers/Base';
+import DatePicker from '../components/DatePicker';
 import * as mutations from '../graphql/mutations';
 import { useSignUp } from '../services/Auth';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
@@ -165,6 +166,7 @@ const ProfileEditor = () => {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const picturesGridRef = useRef();
+  const submittingRef = useRef(false);
 
   // Form state
   const nameRef = useRef();
@@ -177,6 +179,19 @@ const ProfileEditor = () => {
   const [birthDate, setBirthDate] = useState(me.birthDate);
   const [occupation, setOccupation] = useState(me.occupation);
   const [bio, setBio] = useState(me.bio);
+
+  const handleNameSubmit = useCallback(() => {
+    submittingRef.current = true; dateProps.visibleState[1](true);
+  }, [true]);
+  const handleDateSubmit = useCallback(() => {
+    submittingRef.current = true; occupationRef.current.focus();
+  }, [true]);
+  const handleOccupationSubmit = useCallback(() => {
+    submittingRef.current = true; bioRef.current.focus();
+  }, [true]);
+  const handleBioSubmit = useCallback(() => {
+    submittingRef.current = true; bioRef.current.blur();
+  }, [true]);
 
   const [picturesBuffer, setPicturesBuffer] = useState(() => {
     return me.pictures.reduce((pictures, uri) => {
@@ -352,6 +367,25 @@ const ProfileEditor = () => {
     setErrors({});
   }, [true]);
 
+  useEffect(() => {
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      if (submittingRef.current) {
+        submittingRef.current = false;
+
+        return;
+      }
+
+      nameRef.current.blur();
+      birthDateRef.current.blur();
+      occupationRef.current.blur();
+      bioRef.current.blur();
+    });
+
+    return () => {
+      keyboardDidHideListener.remove();
+    };
+  }, [true]);
+
   useTrap($ProfileEditor, {
     save,
     name,
@@ -460,7 +494,7 @@ const ProfileEditor = () => {
               ref={nameRef}
               value={name}
               error={errors.name}
-              onSubmitEditing={() => dateProps.visibleState[1](true)}
+              onSubmitEditing={handleNameSubmit}
               tintColor={colors.ink}
               autoCorrect={false}
               enablesReturnKeyAutomatically
@@ -478,7 +512,7 @@ const ProfileEditor = () => {
                 error={errors.birthDate}
                 key={birthDate}
                 value={birthDate && moment(birthDate).format('MMMM Do YYYY')}
-                onSubmitEditing={() => occupationRef.current.focus()}
+                onSubmitEditing={handleDateSubmit}
                 tintColor={colors.ink}
                 editable={false}
                 autoCorrect={false}
@@ -498,7 +532,7 @@ const ProfileEditor = () => {
             ref={occupationRef}
             error={errors.occupation}
             value={occupation}
-            onSubmitEditing={() => bioRef.current.focus()}
+            onSubmitEditing={handleOccupationSubmit}
             tintColor={colors.ink}
             autoCorrect={false}
             enablesReturnKeyAutomatically
@@ -514,7 +548,7 @@ const ProfileEditor = () => {
             onFocus={onFocus}
             ref={bioRef}
             error={errors.bio}
-            onSubmitEditing={() => bioRef.current.blur()}
+            onSubmitEditing={handleBioSubmit}
             multiline
             enablesReturnKeyAutomatically
             value={bio}
