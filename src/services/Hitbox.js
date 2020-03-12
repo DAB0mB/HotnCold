@@ -7,7 +7,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import { Animated, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { findNodeHandle, Animated, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import uuid from 'uuid/v4';
 
 import { useSelf } from '../utils';
@@ -38,6 +38,7 @@ export const HitboxProvider = ({ children }) => {
 
   const context = useMemo(() => ({
     ...layout,
+    ref: containerRef,
     setHitboxes,
   }), [layout]);
 
@@ -120,12 +121,16 @@ export const Hitbox = ({ viewStyle, transform, onPress, children }) => {
   }), [true]);
 
   const onLayout = useCallback(() => {
-    hitboxRef.current.measure(Animated.event([null, null, layout.width, layout.height, layout.x, layout.y]));
+    hitboxRef.current.measure(Animated.event([null, null, layout.width, layout.height]));
   }, [true]);
 
   useLayoutEffect(() => {
-    layout.x.setOffset(-container.x);
-    layout.y.setOffset(-container.y);
+    if (!container.ref.current) return;
+
+    hitboxRef.current.measureLayout(
+      findNodeHandle(container.ref.current),
+      Animated.event([layout.x, layout.y])
+    );
   }, [container.x, container.y, container.width, container.height]);
 
   useHitbox({ ...layout, transform, onPress });

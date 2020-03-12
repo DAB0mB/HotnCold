@@ -126,7 +126,6 @@ class BubblesBar extends Component {
       return (
         <Hitbox
           key={index}
-          transform={[{ translateX: 12 }, { translateY: -30 }]}
           onPress={() => {
             if (this.state.activeBubble !== index) {
               this.props.bubbles[index].onSelect();
@@ -172,7 +171,7 @@ class BubblesBar extends Component {
       <View style={styles.bigBubbleContainer}>
         <View  style={styles.bigBubbleContent}>
           <View style={styles.bigBubbleBlocker} />
-          <Hitbox onPress={this.state.bigBubble.onPress} viewStyle={{ flex: 1 }} transform={[{ translateY: -25 }]}>
+          <Hitbox onPress={this.state.bigBubble.onPress} viewStyle={{ flex: 1 }}>
             <View style={[{ backgroundColor: this.state.bigBubble.inactiveBgColor }, styles.bigBubbleRipple]}>
               <View style={styles.bigBubbleReflection} />
               {this.props.bigBubble.icon}
