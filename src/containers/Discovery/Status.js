@@ -34,14 +34,14 @@ const Status = (props) => {
   const { me } = useMine();
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
-  const [appState, , reduceAppState] = useAppState();
+  const [appState, setAppState] = useAppState();
   const [displayedStatus, setStatus] = useState();
   const [statusBottom] = useState(() => new Animated.Value(200));
   const activeStatus = 'activeStatus' in props ? props.activeStatus : appState.activeStatus;
 
   // Must preserve hooks
   let hideActiveStatus = useCallback(() => {
-    reduceAppState((appState) => {
+    setAppState((appState) => {
       appState = { ...appState };
       delete appState.activeStatus;
 

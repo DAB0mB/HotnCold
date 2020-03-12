@@ -26,6 +26,7 @@ const Chat = () => {
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
   const [markChatAsRead] = mutations.markChatAsRead.use(chat.id);
+  const [, setAppState] = useAppState();
   const messagesQuery = queries.messages.use(chat.id, 20, {
     onCompleted: useCallback((data) => {
       if (!data) {
@@ -83,9 +84,21 @@ const Chat = () => {
     }, [true]),
   }),
 
-  useAppState.scope({
-    activeChat: useMemo(() => chat, [chat.id]),
-  });
+  useEffect(() => {
+    setAppState(appState => ({
+      ...appState,
+      activeChat: chat,
+    }));
+
+    return () => {
+      setAppState((appState) => {
+        appState = { ...appState };
+        delete appState.activeChat;
+
+        return appState;
+      });
+    };
+  }, [chat.id]);
 
   return (
     <View style={styles.container}>

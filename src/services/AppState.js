@@ -2,39 +2,22 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useState,
   useMemo,
-  useCallback,
 } from 'react';
 import { AppState } from 'react-native';
 
 import { useStatePromise } from '../utils';
 
-const separator = Date.now();
 const AppStateContext = createContext(null);
 
 export const AppStateProvider = ({ children, init = {} }) => {
-  const [baseState, setBaseState] = useState(init);
-  const [appState, superSetAppState] = useStatePromise(baseState);
-
-  const setAppState = useCallback((appState) => {
-    return superSetAppState({
-      ...appState,
-      ...baseState,
-    });
-  }, [baseState]);
+  const [appState, setAppState] = useStatePromise(init);
 
   useEffect(() => {
-    const changeListener = ({ appState: activityStatus }) => {
-      const baseState = {
-        activityStatus,
-      };
-
-      setBaseState(baseState);
-
-      setAppState((appState = {}) => ({
+    const changeListener = (activityStatus) => {
+      setAppState(appState => ({
         ...appState,
-        ...baseState,
+        activityStatus,
       }));
     };
 
@@ -45,7 +28,7 @@ export const AppStateProvider = ({ children, init = {} }) => {
     };
   }, [true]);
 
-  const value = useMemo(() => [appState, setAppState, superSetAppState], [appState, setAppState, superSetAppState]);
+  const value = useMemo(() => [appState, setAppState], [appState, setAppState]);
 
   return (
     <AppStateContext.Provider value={value}>
@@ -56,21 +39,4 @@ export const AppStateProvider = ({ children, init = {} }) => {
 
 export const useAppState = () => {
   return useContext(AppStateContext);
-};
-
-useAppState.scope = (scope) => {
-  const [appState, setAppState] = useAppState();
-  const scopeKeys = Object.keys(scope);
-  const scopeValues = Object.values(scope);
-
-  useEffect(() => {
-    setAppState({
-      ...appState,
-      ...scope,
-    });
-
-    return () => {
-      setAppState({ ...appState });
-    };
-  }, [...scopeKeys, separator, ...scopeValues]);
 };

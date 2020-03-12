@@ -134,7 +134,7 @@ const Map = () => {
   const cameraRef = useRef(null);
   const locationUpdatedAtRef = useRef(0);
   const alertError = useAlertError();
-  const [, , reduceAppState] = useAppState();
+  const [, setAppState] = useAppState();
   const [updateMyLocation] = mutations.updateMyLocation.use();
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
@@ -228,7 +228,7 @@ const Map = () => {
 
     if (!feature.properties.user) return;
 
-    reduceAppState(appState => ({
+    setAppState(appState => ({
       ...appState,
       activeStatus: {
         user: feature.properties.user,

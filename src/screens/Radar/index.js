@@ -63,7 +63,7 @@ const Radar = () => {
   const { me } = useMine();
   const discoveryNav = useNavigation(Discovery);
   const alertError = useAlertError();
-  const [, , reduceAppState] = useAppState();
+  const [, setAppState] = useAppState();
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [fetchingUsers, setFetchingUsers] = useState(false);
   const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.discoverable);
@@ -165,7 +165,7 @@ const Radar = () => {
 
   const renderUserItem = useCallback(({ item: user }) => {
     const onPress = () => {
-      reduceAppState(appState => ({
+      setAppState(appState => ({
         ...appState,
         activeStatus: {
           user: user,
