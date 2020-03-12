@@ -22,7 +22,7 @@ const mine = gql `
 mine.use = ({ onCompleted = () => {}, ...options } = {}) => {
   return useQuery(mine, {
     onCompleted: (data) => {
-      const { me } = data;
+      const { me } = data || {};
 
       if (me) {
         Image.prefetch(me.avatar);

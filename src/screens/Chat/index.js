@@ -27,7 +27,15 @@ const Chat = () => {
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
   const [markChatAsRead] = mutations.markChatAsRead.use(chat.id);
   const messagesQuery = queries.messages.use(chat.id, 20, {
-    onCompleted: useCallback(({ messages }) => {
+    onCompleted: useCallback((data) => {
+      if (!data) {
+        alertError('Network Error: Network request failed');
+
+        return;
+      }
+
+      const messages = data.messages;
+
       if (!messages.length) return;
 
       const recentMessage = messages[0];
@@ -47,7 +55,7 @@ const Chat = () => {
       }
 
       setIsLoadingEarlier(false);
-    }, []),
+    }, [alertError]),
     onError: alertError,
   });
   const [sendMessage] = mutations.sendMessage.use(chat.id, {

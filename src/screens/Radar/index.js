@@ -69,7 +69,13 @@ const Radar = () => {
   const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.discoverable);
 
   const [queryNearbyUsers, nearbyUsersQuery] = queries.nearbyUsers.use.lazy({
-    onCompleted: useAsyncCallback(function* (data = {}) {
+    onCompleted: useAsyncCallback(function* (data) {
+      if (!data) {
+        alertError('Network Error: Network request failed');
+
+        return;
+      }
+
       const { nearbyUsers } = data;
 
       if (!nearbyUsers) return;
@@ -80,7 +86,7 @@ const Radar = () => {
 
       setFetchingUsers(false);
       setNearbyUsers(nearbyUsers);
-    }, [true]),
+    }, [alertError]),
     onError: alertError,
   });
 

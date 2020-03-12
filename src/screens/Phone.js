@@ -109,6 +109,12 @@ const Phone = () => {
   const [countryPickerOpened, setCountryPickerOpened] = useState(false);
   const superRequestSignIn = useRequestSignIn(phone, {
     onCompleted: useCallback((contract) => {
+      if (!contract) {
+        alertError('Network Error: Network request failed');
+
+        return;
+      }
+
       setLoading(false);
 
       const didBlurListener = authNav.addListener('didBlur', () => {
@@ -122,7 +128,7 @@ const Phone = () => {
         phone: `+${phone.slice(1)}`,
         contract,
       });
-    }, [authNav, phone]),
+    }, [authNav, phone, alertError]),
     onError: useCallback((error) => {
       setLoading(false);
 

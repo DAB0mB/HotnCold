@@ -27,13 +27,13 @@ export const useRequestSignIn = (phone, { onCompleted = noop, ...options } = {})
   const [findOrCreateContract] = mutations.findOrCreateContract.use(phone, {
     ...options,
     onCompleted: useCallback((data) => {
-      onCompleted(data.findOrCreateContract);
+      onCompleted(data?.findOrCreateContract);
     }, [onCompleted])
   });
 
   return useCallback((...args) => {
     return findOrCreateContract(...args).then((data) => {
-      return data.findOrCreateContract;
+      return data?.findOrCreateContract;
     });
   }, [findOrCreateContract]);
 };
@@ -45,13 +45,13 @@ export const useVerifySignIn = (contract, passcode, {
   const [verifyContract] = mutations.verifyContract.use(contract.id, passcode, {
     ...options,
     onCompleted: useCallback((data) => {
-      onCompleted(data.verifyContract);
+      onCompleted(data?.verifyContract);
     }, [onCompleted]),
   });
 
   return useCallback((...args) => {
     return verifyContract(...args).then((data) => {
-      return data.verifyContract;
+      return data?.verifyContract;
     });
   }, [verifyContract]);
 };
@@ -66,7 +66,7 @@ export const useSignUp = (args, {
     onCompleted: useCallback((data) => {
       const removeListener = client.subscription.onConnected(() => {
         removeListener();
-        onCompleted(data.createUser);
+        onCompleted(data?.createUser);
       });
 
       client.subscription.connect();
@@ -75,7 +75,7 @@ export const useSignUp = (args, {
 
   return useCallback((...args) => {
     return createUser(...args).then((data) => {
-      return data.createUser;
+      return data?.createUser;
     });
   }, [createUser]);
 };

@@ -77,9 +77,15 @@ const StatusEditor = () => {
   const [text, setText] = useState('');
   const alertError = useAlertError();
   const [createStatus] = mutations.createStatus.use(text, {
-    onCompleted: useCallback(() => {
+    onCompleted: useCallback((data) => {
+      if (!data) {
+        alertError('Network Error: Network request failed');
+
+        return;
+      }
+
       baseNav.goBackOnceFocused();
-    }, [baseNav]),
+    }, [baseNav, alertError]),
     onError: alertError,
   });
 

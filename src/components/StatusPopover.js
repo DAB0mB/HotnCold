@@ -70,9 +70,15 @@ const StatusPopover = ({
 
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onCompleted: useCallback((data) => {
+      if (!data) {
+        alertError('Network Error: Network request failed');
+
+        return;
+      }
+
       self.fullUser = data.userProfile;
       tryNavToUserProfile();
-    }, [baseNav, itsMe]),
+    }, [baseNav, itsMe, alertError]),
     onError: alertError,
   });
 

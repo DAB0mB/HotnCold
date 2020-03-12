@@ -21,7 +21,7 @@ chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
   const query = useQuery(chats, {
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
-      if (data.chats) {
+      if (data?.chats) {
         data.chats.forEach(c => Image.prefetch(c.picture));
       }
 
@@ -57,7 +57,7 @@ chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
 chats.use.lazy = ({ onCompleted = () => {}, ...options } = {}) => {
   const [runQuery, query] = useLazyQuery(chats, {
     onCompleted: (data) => {
-      if (data && data.chats) {
+      if (data?.chats) {
         data.chats.forEach(c => Image.prefetch(c.picture));
       }
 
