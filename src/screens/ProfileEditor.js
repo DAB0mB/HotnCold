@@ -2,6 +2,7 @@ import { ReactNativeFile } from 'apollo-upload-client';
 import { useRobot } from 'hotncold-robot';
 import moment from 'moment';
 import React, { useCallback, useMemo, useState, useRef } from 'react';
+import DatePicker from '../components/DatePicker';
 import {
   View,
   ScrollView,
@@ -20,7 +21,6 @@ import Bar from '../components/Bar';
 import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
 import { useSignUp } from '../services/Auth';
-import { useDateTimePicker } from '../services/DateTimePicker';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
 import { useImagePicker } from '../services/ImagePicker';
 import { useNavigation } from '../services/Navigation';
@@ -34,7 +34,7 @@ const MINE_DEFAULT = {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  scroller: {
     flex: 1,
     backgroundColor: colors.lightGray,
   },
@@ -161,7 +161,7 @@ const ProfileEditor = () => {
   }
 
   // Component state
-  const [scrollEnabled, setScrollEnabled] = useState(false);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const picturesGridRef = useRef();
@@ -188,15 +188,17 @@ const ProfileEditor = () => {
 
   const prepics = useMemo(() => Object.keys(picturesBuffer), [picturesBuffer]);
 
-  const dateTimePicker = useDateTimePicker({
+  const dateProps = {
+    visibleState: useState(false),
     mode: 'date',
     maximumDate: useMemo(() => moment().subtract(18, 'year').toDate(), [true]),
     minimumDate: useMemo(() => moment().subtract(100, 'year').toDate(), [true]),
     date: useMemo(() => new Date(birthDate ? birthDate : '1/1/2000'), [birthDate]),
     onConfirm: useCallback((birthDate) => {
       setBirthDate(birthDate);
+      occupationRef.current.focus();
     }, [true]),
-  });
+  };
 
   const useProfileMutation = myContract.signed ? mutations.updateMyProfile.use : useSignUp;
   const [updateProfile, updatingProfile] = [].concat(useProfileMutation({
@@ -385,154 +387,159 @@ const ProfileEditor = () => {
   });
 
   return (
-    <ScrollView style={styles.container} scrollEnabled={scrollEnabled} nestedScrollEnabled={scrollEnabled}>
-      <Bar style={styles.header}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.headerTitle}>My Profile</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.scroller} scrollEnabled={scrollEnabled} nestedScrollEnabled={scrollEnabled}>
+        <Bar style={styles.header}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.headerTitle}>My Profile</Text>
+          </View>
+          {myContract.signed && (
+            <TouchableWithoutFeedback onPress={baseNav.goBackOnceFocused}>
+              <View style={{ position: 'absolute', right: 0 }}>
+                <Text style={styles.headerDone}>Done</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          )}
+        </Bar>
+
+        <View style={styles.picturesBack}>
+          <View style={styles.picturesBackItem}>
+            {Array.apply(null, { length: 6 }).map((_, i) => (
+              <View key={i} style={styles.picturePlaceholder}>
+                <McIcon size={Dimensions.get('window').width / 6 - 10} name='image-plus' color={colors.ink} style={{ textAlign: 'center' }} />
+              </View>
+            ))}
+          </View>
+
+          <SortableGrid
+            ref={picturesGridRef}
+            style={styles.picturesGrid}
+            blockTransitionDuration={400}
+            activeBlockCenteringDuration={200}
+            dragActivationTreshold={200}
+            itemsPerRow={3}
+            onDragStart={onDragStart}
+            onDragRelease={onDragRelease}
+          >
+            {prepics.map((uri, i) => (
+              <View key={i} style={{ flex: 1 }} onTap={() => addPicture(i)}>
+                <Image style={styles.picturesGridItem} source={{ uri }} />
+                <View style={styles.pictureActionContainer}>
+                  <TouchableWithoutFeedback onPress={() => deletePicture(i)}>
+                    <McIcon name='close-circle' size={30} color={colors.hot} style={styles.pictureAction} />
+                  </TouchableWithoutFeedback>
+                </View>
+              </View>
+            ))}
+          </SortableGrid>
+
+          <View pointerEvents='box-none' style={styles.picturesFront}>
+            {Array.apply(null, { length: 6 }).map((_, i) => {
+              const Container = i < prepics.length ? React.Fragment : (props) => (
+                <TouchableWithoutFeedback {...props} onPress={() => addPicture(prepics.length)} />
+              );
+
+              return (
+                <Container key={i}>
+                  <View key={i} style={styles.picturesFrontItem}>
+                    <View style={styles.pictureIndexContainer}>
+                      <Text style={styles.pictureIndex}>{i + 1}</Text>
+                    </View>
+                  </View>
+                </Container>
+              );
+            })}
+          </View>
         </View>
-        {myContract.signed && (
-          <TouchableWithoutFeedback onPress={baseNav.goBackOnceFocused}>
-            <View style={{ position: 'absolute', right: 0 }}>
-              <Text style={styles.headerDone}>Done</Text>
+
+        <View style={[styles.input, { flexDirection: 'row' }]}>
+          <View style={{ flex: 1, marginRight: 10 }}>
+            <TextField
+              key={inputsKey}
+              onFocus={onFocus}
+              ref={nameRef}
+              value={name}
+              error={errors.name}
+              onSubmitEditing={() => dateProps.visibleState[1](true)}
+              tintColor={colors.ink}
+              autoCorrect={false}
+              enablesReturnKeyAutomatically
+              onChangeText={setName}
+              returnKeyType='next'
+              label='Name'
+            />
+          </View>
+
+          <TouchableWithoutFeedback onPress={() => dateProps.visibleState[1](true)}>
+            <View style={{ flex: 1, marginLeft: 10 }}>
+              <TextField
+                onFocus={onFocus}
+                ref={birthDateRef}
+                error={errors.birthDate}
+                key={birthDate}
+                value={birthDate && moment(birthDate).format('MMMM Do YYYY')}
+                onSubmitEditing={() => occupationRef.current.focus()}
+                tintColor={colors.ink}
+                editable={false}
+                autoCorrect={false}
+                enablesReturnKeyAutomatically
+                onChangeText={setBirthDate}
+                returnKeyType='next'
+                label='Birth Date'
+              />
             </View>
           </TouchableWithoutFeedback>
-        )}
-      </Bar>
-
-      <View style={styles.picturesBack}>
-        <View style={styles.picturesBackItem}>
-          {Array.apply(null, { length: 6 }).map((_, i) => (
-            <View key={i} style={styles.picturePlaceholder}>
-              <McIcon size={Dimensions.get('window').width / 6 - 10} name='image-plus' color={colors.ink} style={{ textAlign: 'center' }} />
-            </View>
-          ))}
         </View>
 
-        <SortableGrid
-          ref={picturesGridRef}
-          style={styles.picturesGrid}
-          blockTransitionDuration={400}
-          activeBlockCenteringDuration={200}
-          dragActivationTreshold={200}
-          itemsPerRow={3}
-          onDragStart={onDragStart}
-          onDragRelease={onDragRelease}
-        >
-          {prepics.map((uri, i) => (
-            <View key={i} style={{ flex: 1 }} onTap={() => addPicture(i)}>
-              <Image style={styles.picturesGridItem} source={{ uri }} />
-              <View style={styles.pictureActionContainer}>
-                <TouchableWithoutFeedback onPress={() => deletePicture(i)}>
-                  <McIcon name='close-circle' size={30} color={colors.hot} style={styles.pictureAction} />
-                </TouchableWithoutFeedback>
-              </View>
-            </View>
-          ))}
-        </SortableGrid>
-
-        <View pointerEvents='box-none' style={styles.picturesFront}>
-          {Array.apply(null, { length: 6 }).map((_, i) => {
-            const Container = i < prepics.length ? React.Fragment : (props) => (
-              <TouchableWithoutFeedback {...props} onPress={() => addPicture(prepics.length)} />
-            );
-
-            return (
-              <Container key={i}>
-                <View key={i} style={styles.picturesFrontItem}>
-                  <View style={styles.pictureIndexContainer}>
-                    <Text style={styles.pictureIndex}>{i + 1}</Text>
-                  </View>
-                </View>
-              </Container>
-            );
-          })}
-        </View>
-      </View>
-
-      <View style={[styles.input, { flexDirection: 'row' }]}>
-        <View style={{ flex: 1, marginRight: 10 }}>
+        <View style={styles.input}>
           <TextField
             key={inputsKey}
             onFocus={onFocus}
-            ref={nameRef}
-            value={name}
-            error={errors.name}
-            onSubmitEditing={() => dateTimePicker.show()}
+            ref={occupationRef}
+            error={errors.occupation}
+            value={occupation}
+            onSubmitEditing={() => bioRef.current.focus()}
             tintColor={colors.ink}
             autoCorrect={false}
             enablesReturnKeyAutomatically
-            onChangeText={setName}
+            onChangeText={setOccupation}
             returnKeyType='next'
-            label='Name'
+            label='Occupation'
           />
         </View>
 
-        <TouchableWithoutFeedback onPress={() => dateTimePicker.show()}>
-          <View style={{ flex: 1, marginLeft: 10 }}>
-            <TextField
-              onFocus={onFocus}
-              ref={birthDateRef}
-              error={errors.birthDate}
-              key={birthDate}
-              value={birthDate && moment(birthDate).format('MMMM Do YYYY')}
-              onSubmitEditing={() => occupationRef.current.focus()}
-              tintColor={colors.ink}
-              editable={false}
-              autoCorrect={false}
-              enablesReturnKeyAutomatically
-              onChangeText={setBirthDate}
-              returnKeyType='next'
-              label='Birth Date'
-            />
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
+        <View style={styles.input}>
+          <TextField
+            key={inputsKey}
+            onFocus={onFocus}
+            ref={bioRef}
+            error={errors.bio}
+            onSubmitEditing={() => bioRef.current.blur()}
+            multiline
+            enablesReturnKeyAutomatically
+            value={bio}
+            tintColor={colors.ink}
+            autoCorrect={false}
+            characterRestriction={500}
+            onChangeText={setBio}
+            returnKeyType='next'
+            label='About'
+          />
+        </View>
 
-      <View style={styles.input}>
-        <TextField
-          key={inputsKey}
-          onFocus={onFocus}
-          ref={occupationRef}
-          error={errors.occupation}
-          value={occupation}
-          onSubmitEditing={() => bioRef.current.focus()}
-          tintColor={colors.ink}
-          autoCorrect={false}
-          enablesReturnKeyAutomatically
-          onChangeText={setOccupation}
-          returnKeyType='next'
-          label='Occupation'
-        />
-      </View>
 
-      <View style={styles.input}>
-        <TextField
-          key={inputsKey}
-          onFocus={onFocus}
-          ref={bioRef}
-          error={errors.bio}
-          onSubmitEditing={() => bioRef.current.blur()}
-          multiline
-          enablesReturnKeyAutomatically
-          value={bio}
-          tintColor={colors.ink}
-          autoCorrect={false}
-          characterRestriction={500}
-          onChangeText={setBio}
-          returnKeyType='next'
-          label='About'
-        />
-      </View>
+        <View style={{ padding: 20 }}>
+          <RaisedTextButton
+            onPress={save}
+            color={colors.hot}
+            title={myContract.signed ? 'save' : 'save & continue'}
+            titleColor='white'
+          />
+        </View>
+      </ScrollView>
 
-      <View style={{ padding: 20 }}>
-        <RaisedTextButton
-          onPress={save}
-          color={colors.hot}
-          title={myContract.signed ? 'save' : 'save & continue'}
-          titleColor='white'
-        />
-      </View>
-    </ScrollView>
+      <DatePicker {...dateProps} />
+    </View>
   );
 };
 
