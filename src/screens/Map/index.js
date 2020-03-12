@@ -57,9 +57,16 @@ const styles = StyleSheet.create({
 
 const mapStyles = {
   heatmap: {
+    heatmapIntensity: mapfn.interpolate(
+      mapfn.linear(),
+      maparg.zoom,
+      8, 0,
+      14, .5,
+      16, .8,
+    ),
     heatmapColor: mapfn.interpolate(
       mapfn.linear(),
-      mapfn.heatmapDensity(),
+      maparg.heatmapDensity,
       0, 'rgba(0, 0, 0, 0)',
       0.1, 'rgba(0, 0, 0, 0)',
       0.101, hexToRgba(colors.cold, 0.5),

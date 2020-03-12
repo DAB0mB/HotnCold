@@ -124,6 +124,6 @@ export const mapfn = new Proxy((scopeFn) => {
 
 export const maparg = new Proxy({}, {
   get(target, p) {
-    return [p];
+    return [snakeCase(p)];
   },
 });
