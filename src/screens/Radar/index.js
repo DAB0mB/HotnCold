@@ -53,10 +53,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     overflow: 'visible',
   },
+  tapHereDiv: {
+    position: 'absolute',
+    right: 15,
+    bottom: 55,
+  },
+  tapHereImage: {
+    height: 100,
+    resizeMode: 'contain',
+  },
 });
 
 const extractUserKey = u => u.id;
 let expectedScanTime = 0;
+let showTapHere = true;
 
 const Radar = () => {
   const self = useSelf();
@@ -67,6 +77,10 @@ const Radar = () => {
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [fetchingUsers, setFetchingUsers] = useState(false);
   const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.discoverable);
+
+  if (showTapHere) {
+    showTapHere = !me.discoverable;
+  }
 
   const [queryNearbyUsers, nearbyUsersQuery] = queries.nearbyUsers.use.lazy({
     onCompleted: useAsyncCallback(function* (data) {
@@ -101,6 +115,8 @@ const Radar = () => {
   discoveryNav.useBackListener();
 
   const onBigBubblePress = useAsyncCallback(function* () {
+    showTapHere = false;
+
     if (bigBubbleActivated) {
       yield makeIncognito();
 
@@ -192,9 +208,15 @@ const Radar = () => {
         <PulseLoader playing={bigBubbleActivated} />
       </View>
 
+      {showTapHere && (
+        <View style={styles.tapHereDiv}>
+          <Image source={require('./tap_here.png')} style={styles.tapHereImage} />
+        </View>
+      )}
+
       {!bigBubbleActivated && (
         <View style={[styles.absoluteLayer, { padding: 50 }]}>
-          <Text style={{ textAlign: 'center' }}>Please turn <Text style={{ fontWeight: '900' }}>ON</Text> your radar to start scanning for people.</Text>
+          <Text style={{ textAlign: 'center' }}>Tap the <Text style={{ fontWeight: '900', fontSize: 20 }}>BIG</Text> button to discover nearby people who are currently active.</Text>
         </View>
       )}
 
