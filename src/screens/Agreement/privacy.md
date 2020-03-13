@@ -137,5 +137,5 @@ You are responsible for ensuring we have an up-to-date active and deliverable em
 
 To ask questions or comment about this privacy policy and our privacy practices, contact us at:
 
-\- [emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan)
+\- [emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan), or
 \- [sksoliman@gmail.com](mailto:sksoliman@gmail.com) (Sherry)

@@ -2,45 +2,61 @@
 
 ### How can I find someone using the heatmap?
 
-Use the map to check out people who are nearby.  Those closest will always pop up as you navigate the map.  Move towards the hotspots to find and meet more people.  You can also zoom out by tapping the map circle in the upper right hand corner to see who is around you on a larger scale.
+Use the map to check out nearby people who have dropped statuses within the last 4 hours. Move towards the hotspots and tap to see how many people are in a given area. You’ll see their profile icons and status updates right on the map.
 
-### Does the heatmap indicate my exact position in real time?
+### Does the heatmap or radar indicate my exact position in real time?
 
-No, your exact location is never revealed nor does the heatmap reveal the exact locations of other users.  The heatmap only indicates your general vicinity and will not provide specific distances.
+No, your exact location is never revealed nor does the heatmap or radar reveal the exact locations of other users. The heatmap and radar only indicate your general vicinity and will not provide specific distances.
 
 ### How do I interact with other profiles?
 
-You can wave “Hello” to someone that you’re interested in. You can hide any profile that you don’t like. The person won’t find out and you will no longer see them on the heatmap.
+If you find someone you’re interested in, simply tap their profile icon and send them a message.
 
-### How can I start a conversation with someone?
+### How does the “radar” feature work?
 
-You can’t talk to another user immediately.  To start a conversation, you can wave “Hello” along with a brief message or the icebreaker game, “Two truths, 1 lie”.  Once you wave “Hello”, you can specify how long the other person has to respond to you.  If they respond within the given time frame, you can then start chatting.
+Radar is a unique feature that allows you to see real-time status updates from people who are nearby. When the radar is on, you'll be able to discover new people, as well as be discovered. Press the big button and anyone who is currently active will appear on the screen.
 
-So, if someone has caught your attention, feel free to make the first move and wave “Hello”.  No double-opt in is required before reaching out to another user.
+### How do I post a status?
 
-### When I receive a “Hello” wave, how can I respond to it?
+Use the status icon located in the top right corner. Once you've created a status, you can either drop it on the map, or use it with the radar feature.
 
-When someone waves “Hello”, it shows up in your “Notifications”. If you'd like to accept this “Hello”, you only need to tap on the notification and respond to the message. However, if you do not want to speak with that person, you can tap on the X button and they will be removed.
+### How do I see the status that I posted?
 
-### What kind of notifications do I receive?
+To see your status, just tap the menu bar in the top left corner and then tap your profile picture. The status you posted will pop up. You will also have access to your status via the map, if you dropped it.
 
-Each time you receive a “Hello”, a new message, or meetup invite, a push notification will alert you and you’ll never miss another opportunity.  All notifications are accessible on the “Notifications” page. By tapping on a notification, you can directly access someone’s profile or message.
-How does the radar feature work?
+### What kind of notifications will I receive?
 
-Radar is a unique feature that allows you to find people who are located at the same venue/event as you are.  When you are in a specific location, just tap the radar to scan the venue and get a list of people who are also there and match your preferences.  You can then message them, and, if approved, meet up right away.  To use this feature, you must have Bluetooth enabled.
+Each time you receive a new message, a push notification will alert you and you’ll never miss another opportunity. By tapping on a notification, you can directly access someone’s profile or message.
 
-### What are “Featured Venues” on the heatmap?
+### Where are my messages located?
 
-These are locations that have sponsored events/meetups going on.  You can tap the venue to see a list of people who are currently there.  This can help you decide if you want to go check things out in person.
+Tap the menu bar in the top left corner and you’ll see your inbox.
 
-### What is “Meet Now”?
+### Can I block someone?
 
-“Meet Now” offers a quick and safe way to meet up with someone.  You simply pick a venue, the date/time, and send your invite.  The other person has 4 hours to respond to the invitation.  Once confirmed, you can chat about any additional details.  All meetups are 30 minutes, but you can always stay longer.
+We’re working on adding this option, but it is not available yet. There is zero tolerance for harassment of any kind, so if you experience a problem with another user, feel free to reach out and contact us directly. Please indicate the reason for your concern to allow us to take action (emails are listed in the Terms & Conditions section).
 
-### What happens after I meet up with someone?
+### What features are planned for future versions?
 
-After meeting up, you’ll be asked to rate your experience and decide if it was “Hot” or “Cold”.  The other person won’t be notified for 24 hours, so be honest.  If the answer is “Cold”, that person will be removed from your heatmap and you won’t have to interact again.  If the answer for both sides is “Hot”, one person will get a prompt to initiate further contact.  No more awkwardness about who should text first.
+We have several exciting features in the works. Here’s a preview of what we’re doing to enhance your experience:
 
-### How can I report someone?
 
-At any time, you can click “Report User” on the person’s profile.  In order for us to better evaluate the situation and take the necessary measures, it’s important that you indicate the reason for the report and what the concern is about.
+**Meetups, featured Events, etc.**
+Soon, you’ll be able to post meetups, events, or other gatherings on the heatmap. Additionally, we’ll have sponsored venues and events listed on the heatmap to keep you aware of things that are going on in your city. You can check out these spots to see who’s there and what’s happening to help you decide if you want to attend.
+
+**Synced notifications**
+Met someone you want to keep in touch with or explore a potential relationship?  You’ll be able to hit “Interested” on their profile and, if it’s mutual, you’ll be notified 24 hours later.
+
+**Meet Now**
+“Meet Now” offers a quick and safe way to meet up with someone. You simply pick a venue, the date/time, and send your invite. The other person has 4 hours to respond to the invitation. Once confirmed, you can chat about any additional details.
+
+**Mutual approvals before messaging**
+You can approve which users are allowed to message you. If you turn this feature on, a user will have to wave “Hello” first and wait for your approval before messaging you. Remember not to wait too long to respond if you’re interested in chatting because “Hello” waves expire within 4 hours.
+
+
+Want to see other features added? Let us know! You can send us an email at:
+
+\- [emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan), or
+\- [sksoliman@gmail.com](mailto:sksoliman@gmail.com) (Sherry)
+
+As always, we welcome your suggestions and feedback.
