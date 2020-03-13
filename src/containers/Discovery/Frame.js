@@ -74,8 +74,7 @@ const Frame = ({
   const [bigBubble, setBigBubble] = useState({
     activeBgColor: colors.hot,
     inactiveBgColor: colors.cold,
-    inactiveIconName: 'mailbox',
-    activeIconName: 'mailbox-open',
+    icon: require('../../screens/Map').mapBubbleIcon,
     onPress: noop,
   });
   const { useTrap } = useRobot();

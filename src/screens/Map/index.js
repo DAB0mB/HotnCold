@@ -133,6 +133,10 @@ const emptyShape = {
 
 export const $Map = {};
 
+export const mapBubbleIcon = (
+  <MIcon name='person-pin-circle' size={50} color='white' />
+);
+
 const Map = () => {
   const { me } = useMine();
   const { useTrap } = useRobot();
@@ -212,7 +216,7 @@ const Map = () => {
 
   useScreenFrame({
     bigBubble: useMemo(() => ({
-      icon: <MIcon name='person-pin-circle' size={50} color='white' />,
+      icon: mapBubbleIcon,
       onPress: onBigBubblePress,
       activated: bigBubbleActivated,
     }), [bigBubbleActivated, onBigBubblePress]),
