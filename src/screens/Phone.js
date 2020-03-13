@@ -125,7 +125,8 @@ const Phone = () => {
       });
 
       authNav.push('Verify', {
-        phone: `+${phone.slice(1)}`,
+        // Correctly formatted
+        phone: `${callingCode} ${localPhone}`,
         contract,
       });
     }, [authNav, phone, alertError]),

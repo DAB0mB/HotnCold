@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     bottom: 0,
-    fontSize: 20,
-    color: 'black',
+    fontSize: 16,
+    color: 'rgba(0, 0, 0, .7)',
   },
 });
 
@@ -113,8 +113,15 @@ const Verify = () => {
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text style={styles.instructions}>A verification code has just been sent to {phone}. Please enter it.</Text>
+      <View style={{ flexDirection: 'row', alignSelf: 'stretch', marginHorizontal: 15, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <Text style={styles.instructions}>A verification code has just been sent to </Text>
+
+        {/*Will keep phone without any line breaks*/}
+        <View>
+          <Text style={styles.instructions}>{phone}. </Text>
+        </View>
+
+        <Text style={styles.instructions}>Please enter it.</Text>
       </View>
       <View>
         <View style={styles.otpContainer}>
@@ -142,7 +149,7 @@ const Verify = () => {
       />
       <TouchableWithoutFeedback onPress={authNav.goBackOnceFocused}>
         <Text style={styles.resend}>
-          <McIcon name='cellphone-message' size={20} color='black' /> <Text>Resend</Text>
+          <McIcon name='cellphone-message' size={styles.resend.fontSize} color={styles.resend.color} /> <Text>Try again?</Text>
         </Text>
       </TouchableWithoutFeedback>
     </View>
