@@ -5,6 +5,7 @@ const status = gql `
     id
     location
     text
+    updatedAt
   }
 `;
 

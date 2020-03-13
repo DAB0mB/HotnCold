@@ -3,6 +3,7 @@ import React, { useMemo, useState, useEffect, useCallback, useLayoutEffect } fro
 import { StyleSheet, Animated, View, Text, Image, TouchableWithoutFeedback, Easing, BackHandler } from 'react-native';
 import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { useMine } from '../../services/Auth';
 import { useAppState } from '../../services/AppState';
@@ -163,12 +164,20 @@ const Status = (props) => {
 
             <View style={styles.titles}>
               <Text style={styles.nameTitle}>{user.name}</Text>
-              <Text style={styles.timeTitle}>{activeStatus?.isNow ? 'Active now' : moment(status.updatedAt).fromNow()}</Text>
+              {!props.hideTime && !!(status?.updatedAt || activeStatus?.isNow) && (
+                <Text style={styles.timeTitle}>{activeStatus?.isNow ? 'Active now' : moment(status.updatedAt).fromNow()}</Text>
+              )}
             </View>
           </View>
 
           <View style={styles.contents}>
-            <Text style={styles.contentsText}>{status.text}</Text>
+            {status.text ? (
+              <Text style={styles.contentsText}>{status.text}</Text>
+            ) : (
+              <Text style={[styles.contentsText, { color: 'red' }]}>
+                <MIcon name='not-interested' color={colors.red} /> <Text>No status</Text>
+              </Text>
+            )}
           </View>
         </View>
       </TouchableWithoutFeedback>

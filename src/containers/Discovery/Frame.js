@@ -172,7 +172,7 @@ const Frame = ({
         <Status />
       </SideMenu>
 
-      <Status activeStatus={activeStatus} hideActiveStatus={hideActiveStatus} />
+      <Status hideTime activeStatus={activeStatus} hideActiveStatus={hideActiveStatus} />
     </View>
   );
 };
