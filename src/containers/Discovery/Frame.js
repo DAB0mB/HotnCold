@@ -113,7 +113,7 @@ const Frame = ({
   const showActiveStatus = useCallback(() => {
     setActiveStatus({
       user: mine.me,
-      status: mine.me.status,
+      status: mine.me.status || { id: '' },
     });
   }, [mine]);
 

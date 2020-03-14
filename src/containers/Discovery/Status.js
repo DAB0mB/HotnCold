@@ -106,7 +106,7 @@ const Status = (props) => {
     }
 
     setStatusDisplayed(!activeStatus ? 0 : key => ++key);
-  }, [activeStatus?.status.id]);
+  }, [activeStatus?.status?.id]);
 
   useLayoutEffect(() => {
     if (!statusDisplayed) return;
@@ -157,14 +157,14 @@ const Status = (props) => {
 
             <View style={styles.titles}>
               <Text style={styles.nameTitle}>{user.name}</Text>
-              {!props.hideTime && !!(status?.updatedAt || isNow) && (
+              {!props.hideTime && !!(status.updatedAt || isNow) && (
                 <Text style={styles.timeTitle}>{isNow ? 'Active now' : moment(status.updatedAt).fromNow()}</Text>
               )}
             </View>
           </View>
 
           <View style={styles.contents}>
-            {status?.text ? (
+            {status.text ? (
               <Text style={styles.contentsText}>{status.text}</Text>
             ) : (
               <Text style={[styles.contentsText, { color: 'red' }]}>
