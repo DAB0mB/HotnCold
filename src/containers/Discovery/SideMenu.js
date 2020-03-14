@@ -94,7 +94,7 @@ const SideMenu = ({
 
   const navToProfileEditor = useCallback(() => {
     baseNav.push('ProfileEditor', { mine: { me, myContract } });
-  }, [baseNav]);
+  }, [baseNav, me, myContract]);
 
   const ensureSignOut = useCallback(() => {
     Alert.alert('Sign Out', 'Are you sure you would like to proceed?', [

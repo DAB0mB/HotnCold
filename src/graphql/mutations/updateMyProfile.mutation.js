@@ -44,8 +44,9 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
         if (mutation.error) return;
         if (!me) return;
 
+        const recentMe = fragments.user.profile.read(cache, me.id);
         fragments.user.profile.write(cache, {
-          ...me, name, birthDate, occupation, bio, pictures
+          ...recentMe, name, birthDate, occupation, bio, pictures
         });
       },
       variables: { name, birthDate, occupation, bio, pictures },

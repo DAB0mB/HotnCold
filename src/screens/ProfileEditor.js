@@ -318,7 +318,7 @@ const ProfileEditor = () => {
     }
 
     updateProfile({ pictures });
-  }, [saving, updateProfile, alertError, picturesBuffer]);
+  }, [saving]);
 
   const deletePicture = useCallback((i) => {
     // DANGEROUS!
