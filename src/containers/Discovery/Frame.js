@@ -115,7 +115,7 @@ const Frame = ({
       user: mine.me,
       status: mine.me.status,
     });
-  }, [true]);
+  }, [mine]);
 
   const hideActiveStatus = useCallback(() => {
     setActiveStatus(null);

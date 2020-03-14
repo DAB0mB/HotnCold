@@ -10,7 +10,7 @@ import { useAppState } from '../../services/AppState';
 import { useAlertError }  from '../../services/DropdownAlert';
 import { useNavigation }  from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
-import { useSelf, useMountedRef } from '../../utils';
+import { useSelf, useAsyncLayoutEffect } from '../../utils';
 import Base from '../Base';
 import * as queries from '../../graphql/queries';
 
@@ -31,12 +31,11 @@ const styles = StyleSheet.create({
 
 const Status = (props) => {
   const self = useSelf();
-  const mountedRef = useMountedRef();
   const { me } = useMine();
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
   const [appState, setAppState] = useAppState();
-  const [displayedStatus, setStatus] = useState();
+  const [statusDisplayed, setStatusDisplayed] = useState(false);
   const [statusBottom] = useState(() => new Animated.Value(200));
   const activeStatus = 'activeStatus' in props ? props.activeStatus : appState.activeStatus;
 
@@ -51,9 +50,9 @@ const Status = (props) => {
   }, [true]);
   hideActiveStatus = 'hideActiveStatus' in props ? props.hideActiveStatus : hideActiveStatus;
 
-  const { user, status } = useMemo(() => {
+  const { user, status, isNow } = useMemo(() => {
     return activeStatus || {};
-  }, [displayedStatus]);
+  }, [statusDisplayed]);
 
   const tryNavToUserProfile = useCallback(() => {
     if (self.shouldNav && self.fullUser) {
@@ -95,28 +94,22 @@ const Status = (props) => {
     }
   }, [queryUserProfile, activeStatus?.isPartial, activeStatus?.user]);
 
-  useLayoutEffect(() => {
-    if (displayedStatus) {
-      Animated.timing(statusBottom, {
+  useAsyncLayoutEffect(function* () {
+    if (statusDisplayed) {
+      yield new Promise(resolve => Animated.timing(statusBottom, {
         toValue: 200,
         duration: 150,
         delay: 0,
         easing: Easing.linear,
         useNativeDriver: true,
-      }).start(() => {
-        if (mountedRef.current) {
-          setStatus(activeStatus?.status);
-        }
-      });
-
-      return;
+      }).start(resolve));
     }
 
-    setStatus(activeStatus?.status);
-  }, [!!activeStatus]);
+    setStatusDisplayed(!activeStatus ? 0 : key => ++key);
+  }, [activeStatus?.status.id]);
 
   useLayoutEffect(() => {
-    if (!displayedStatus) return;
+    if (!statusDisplayed) return;
 
     Animated.timing(statusBottom, {
       toValue: 0,
@@ -125,7 +118,7 @@ const Status = (props) => {
       easing: Easing.linear,
       useNativeDriver: true,
     }).start();
-  }, [!!displayedStatus]);
+  }, [statusDisplayed]);
 
   const handleStatusPress = useCallback(() => {
     self.shouldNav = true;
@@ -135,12 +128,12 @@ const Status = (props) => {
   const onBackPress = useCallback(() => {
     if (CONFIG.USE_ROBOT) return;
 
-    if (displayedStatus) {
+    if (statusDisplayed) {
       hideActiveStatus();
 
       return true;
     }
-  }, [displayedStatus]);
+  }, [statusDisplayed]);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', onBackPress);
@@ -148,9 +141,9 @@ const Status = (props) => {
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackPress);
     };
-  }, [displayedStatus]);
+  }, [statusDisplayed]);
 
-  if (!displayedStatus) return null;
+  if (!statusDisplayed) return null;
 
   return (
     <Animated.View style={[styles.container, { transform: [{ translateY: statusBottom }] }]}>
@@ -164,14 +157,14 @@ const Status = (props) => {
 
             <View style={styles.titles}>
               <Text style={styles.nameTitle}>{user.name}</Text>
-              {!props.hideTime && !!(status?.updatedAt || activeStatus?.isNow) && (
-                <Text style={styles.timeTitle}>{activeStatus?.isNow ? 'Active now' : moment(status.updatedAt).fromNow()}</Text>
+              {!props.hideTime && !!(status?.updatedAt || isNow) && (
+                <Text style={styles.timeTitle}>{isNow ? 'Active now' : moment(status.updatedAt).fromNow()}</Text>
               )}
             </View>
           </View>
 
           <View style={styles.contents}>
-            {status.text ? (
+            {status?.text ? (
               <Text style={styles.contentsText}>{status.text}</Text>
             ) : (
               <Text style={[styles.contentsText, { color: 'red' }]}>

@@ -25,10 +25,11 @@ createStatus.use = (text, defaultOptions = {}) => {
     update: useCallback((cache, mutation) => {
       if (mutation.error) return;
 
+      const recentMe = fragments.user.profile.read(cache, me.id);
       const status = mutation.data.createStatus;
       fragments.status.write(cache, status);
       fragments.user.result.write(cache, {
-        ...me,
+        ...recentMe,
         status,
       });
     }, [me]),

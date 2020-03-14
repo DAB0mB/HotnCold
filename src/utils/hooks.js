@@ -161,6 +161,78 @@ export const useAsyncEffect = (fn, input) => {
   }, [iterator]);
 };
 
+export const useAsyncLayoutEffect = (fn, input) => {
+  const cbQueueRef = useRef([]);
+  const [iterator, setIterator] = useState(null);
+  const [generator, setGenerator] = useState(null);
+
+  const cleanup = useCallback(() => {
+    for (let callback of cbQueueRef.current) {
+      callback();
+    }
+  }, [generator]);
+
+  const onCleanup = useCallback((fn) => {
+    cbQueueRef.current.push(fn);
+  }, [true]);
+
+  const next = useCallback((value) => {
+    if (iterator && iterator.done) {
+      return;
+    }
+
+    setIterator(generator.next(value));
+  }, [iterator, generator]);
+
+  const genThrow = useCallback((error) => {
+    if (iterator && iterator.done) {
+      return;
+    }
+
+    setIterator(generator.throw(error));
+  }, [iterator]);
+
+  useLayoutEffect(() => {
+    cbQueueRef.current = [];
+    setIterator(null);
+    setGenerator(() => fn(onCleanup));
+
+    return cleanup;
+  }, input);
+
+  useLayoutEffect(() => {
+    if (!generator) return;
+
+    next();
+  }, [generator]);
+
+  useLayoutEffect(() => {
+    if (!iterator) return;
+
+    let mounted = true;
+
+    if (iterator.value instanceof Promise) {
+      iterator.value.then((value) => {
+        if (mounted) {
+          next(value);
+        }
+      }).catch((error) => {
+        if (mounted) {
+          genThrow(error);
+        }
+      });
+
+      return;
+    }
+
+    next(iterator.value);
+
+    return () => {
+      mounted = false;
+    };
+  }, [iterator]);
+};
+
 export const useAsyncCallback = (fn, input) => {
   const isMountedRef = useMountedRef();
 
