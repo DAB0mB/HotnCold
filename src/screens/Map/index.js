@@ -57,21 +57,32 @@ const styles = StyleSheet.create({
 
 const mapStyles = {
   heatmap: {
+    heatmapRadius: 15,
     heatmapIntensity: mapfn.interpolate(
       mapfn.linear(),
       maparg.zoom,
-      8, 0,
-      14, .5,
-      16, .8,
+      7, 0,
+      15, .5,
     ),
     heatmapColor: mapfn.interpolate(
       mapfn.linear(),
       maparg.heatmapDensity,
       0, 'rgba(0, 0, 0, 0)',
       0.1, 'rgba(0, 0, 0, 0)',
-      0.101, hexToRgba(colors.cold, 0.5),
-      0.5, hexToRgba(colors.warm, 0.7),
-      1, hexToRgba(colors.hot, 0.9),
+
+      0.101, hexToRgba('#2150fa', .5),
+      0.28, hexToRgba('#2150fa', .5),
+
+      0.281, hexToRgba('#52ec3d', .6),
+      0.46, hexToRgba('#52ec3d', .6),
+
+      0.461, hexToRgba('#f7fa3b', .7),
+      0.64, hexToRgba('#f7fa3b', .7),
+
+      0.641, hexToRgba('#ee7628', .8),
+      0.82, hexToRgba('#ee7628', .8),
+
+      0.821, hexToRgba('#fa2121', .9),
     ),
   },
   marker: {
@@ -392,8 +403,12 @@ const Map = () => {
 
         <MapboxGL.ShapeSource
           id='featuresInArea'
-          shape={areaFeatures}
           onPress={onFeaturePress}
+          {...({
+            // Used for dev
+            // url: 'https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson',
+            shape: areaFeatures,
+          })}
         >
           <MapboxGL.HeatmapLayer
             id='featuresInAreaHeatmap'
