@@ -11,7 +11,7 @@ import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
-import { useAsyncCallback, useSelf } from '../../utils';
+import { useAsyncCallback, useConst } from '../../utils';
 import PulseLoader from './PulseLoader';
 
 const USER_AVATAR_SIZE = Dimensions.get('window').width / 3 - Dimensions.get('window').width / 16;
@@ -69,7 +69,7 @@ let expectedScanTime = 0;
 let showTapHere = true;
 
 const Radar = () => {
-  const self = useSelf();
+  const self = useConst();
   const { me } = useMine();
   const discoveryNav = useNavigation(Discovery);
   const alertError = useAlertError();

@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-export const useSelf = (init = {}) => {
+export const useConst = (init = {}) => {
   return useRef(init).current;
 };
 

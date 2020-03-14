@@ -10,7 +10,7 @@ import React, {
 import { findNodeHandle, Animated, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import uuid from 'uuid/v4';
 
-import { useSelf } from '../utils';
+import { useConst } from '../utils';
 
 // Use this for debugging purposes, but always remember to turn it off
 const DISPLAY_HITBOXES = false;
@@ -65,7 +65,7 @@ export const HitboxProvider = ({ children }) => {
 };
 
 const useHitbox = ({ x, y, width, height, transform, onPress }) => {
-  const self = useSelf();
+  const self = useConst();
   const context = useContext(HitboxContext);
   const [key] = useState(uuid);
 

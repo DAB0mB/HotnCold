@@ -10,7 +10,7 @@ import { useAppState } from '../../services/AppState';
 import { useAlertError }  from '../../services/DropdownAlert';
 import { useNavigation }  from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
-import { useSelf, useAsyncLayoutEffect } from '../../utils';
+import { useConst, useAsyncLayoutEffect } from '../../utils';
 import Base from '../Base';
 import * as queries from '../../graphql/queries';
 
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 });
 
 const Status = (props) => {
-  const self = useSelf();
+  const self = useConst();
   const { me } = useMine();
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);

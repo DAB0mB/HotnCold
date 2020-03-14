@@ -7,7 +7,7 @@ import MIcon from 'react-native-vector-icons/MaterialIcons';
 import * as queries from '../graphql/queries';
 import { useAlertError } from '../services/DropdownAlert';
 import { colors } from '../theme';
-import { useSelf } from '../utils';
+import { useConst } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -54,7 +54,7 @@ const StatusPopover = ({
   status = user?.status,
   ...props,
 }) => {
-  const self = useSelf();
+  const self = useConst();
   const alertError = useAlertError();
   const [isVisible, setVisibility] = state;
 

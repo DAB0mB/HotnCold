@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import { PulseLoader as SuperPulseLoader } from 'react-native-indicator';
 
 import { colors, hexToRgba } from '../../theme';
-import { useSelf } from '../../utils';
+import { useConst } from '../../utils';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -17,7 +17,7 @@ class PulseLoader extends SuperPulseLoader {
 }
 
 const RadarPulseLoader = ({ playing, delay = 2000, length = 3000 }) => {
-  const self = useSelf({
+  const self = useConst({
     expectedScanTime: 0,
   });
   self.delay = delay;
