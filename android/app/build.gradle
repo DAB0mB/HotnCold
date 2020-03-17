@@ -115,6 +115,13 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+
+        // Temporary fix for issue: https://github.com/react-native-mapbox-gl/maps/issues/613
+        // Prevents the app from running on arm devices
+        // TODO: Upgrade to v8.0.0 once released
+        ndk {
+            abiFilters "x86"
+        }
     }
     splits {
         abi {
