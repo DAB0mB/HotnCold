@@ -392,6 +392,7 @@ const ProfileEditor = () => {
     birthDate,
     bio,
     occupation,
+    pictures: useMemo(() => Object.keys(picturesBuffer), [picturesBuffer]),
     setName(name) {
       setName(name);
       renderInputs();

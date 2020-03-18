@@ -108,8 +108,12 @@ export const useNavigation = (navKey) => {
   nav.useBackListener = useCallback((_goBack = nav.goBack.bind(nav)) => {
     goBack.current = _goBack;
 
-    const goBackOnceFocused = nav.goBackOnceFocused = useCallback(() => {
-      if (!CONFIG.USE_ROBOT) {
+    const goBackOnceFocusedListener = useCallback(() => {
+      return nav.goBackOnceFocused(true);
+    });
+
+    nav.goBackOnceFocused = useCallback((isListener) => {
+      if (!CONFIG.USE_ROBOT || !isListener) {
         if (focused.current) {
           _goBack();
         }
@@ -118,18 +122,18 @@ export const useNavigation = (navKey) => {
         }
       }
 
-      BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocused);
+      BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocusedListener);
 
       return true;
     }, [true]);
 
     // Timing is important. Register immediately
     useLayoutEffect(() => {
-      BackHandler.addEventListener('hardwareBackPress', goBackOnceFocused);
+      BackHandler.addEventListener('hardwareBackPress', goBackOnceFocusedListener);
       const didFocusListener = nav.addListener('didFocus', utilizeFocus);
 
       return () => {
-        BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocused);
+        BackHandler.removeEventListener('hardwareBackPress', goBackOnceFocusedListener);
         didFocusListener.remove();
       };
     }, [true]);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
 import { $Discovery } from '../../../containers/Discovery';
@@ -7,7 +7,7 @@ import { $Map } from '../../../screens/Map';
 import { $Phone } from '../../../screens/Phone';
 import { $ProfileEditor } from '../../../screens/ProfileEditor';
 import { $Verify } from '../../../screens/Verify';
-import { useDelayedEffect } from '../../../utils';
+import { useRenderer, useDelayedEffect } from '../../../utils';
 import { useRobot } from '../../context';
 
 export default () => {
@@ -19,20 +19,25 @@ export default () => {
 
       let agreed;
       let setAgreed;
+      let updateAgreement = () => {};
 
       trap($Agreement, ({ agree }) => {
+        [, updateAgreement] = useRenderer();
+
         useDelayedEffect(() => {
-          if (agreed) return;
+          if (!setAgreed) return;
 
           return () => {
             agree();
             setAgreed(true);
           };
-        }, 3000, [agree, agreed]);
+        }, 2000, [setAgreed]);
       });
 
       trap($Phone, ({ setTestState, setCountry, setLocalPhone, phone, requestSignIn }) => {
         [agreed, setAgreed] = useState(false);
+
+        useEffect(updateAgreement, [true]);
 
         useDelayedEffect(() => {
           if (!agreed) return;
@@ -40,7 +45,7 @@ export default () => {
           return () => {
             setTestState(true);
             setCountry({ callingCode: ['0'] });
-            setLocalPhone('000000000');
+            setLocalPhone('(00) 0000-000');
           };
         }, 1000, [agreed]);
 
@@ -50,7 +55,7 @@ export default () => {
           return () => {
             requestSignIn();
           };
-        }, 1000, [phone, requestSignIn]);
+        }, 1000, [phone]);
       });
 
       trap($Verify, ({ passcodeHint, setPasscode, verifySignIn, passcode }) => {
@@ -64,10 +69,22 @@ export default () => {
           return () => {
             verifySignIn();
           };
-        }, 1000, [passcode, verifySignIn]);
+        }, 1000, [passcode]);
       });
 
-      trap($ProfileEditor, ({ name, setName, setBirthDate, setBio, setOccupation, setPictures, save }) => {
+      trap($ProfileEditor, ({
+        name,
+        birthDate,
+        bio,
+        occupation,
+        pictures,
+        setName,
+        setBirthDate,
+        setBio,
+        setOccupation,
+        setPictures,
+        save,
+      }) => {
         useDelayedEffect(() => () => {
           setName('C3P-O');
           setBirthDate(new Date('1/1/2000'));
@@ -78,11 +95,15 @@ export default () => {
 
         useDelayedEffect(() => {
           if (!name) return;
+          if (!birthDate) return;
+          if (!bio) return;
+          if (!occupation) return;
+          if (!pictures.length) return;
 
           return () => {
             save();
           };
-        }, 1000, [name, save]);
+        }, 1000, [name, birthDate, bio, occupation, pictures]);
       });
 
       trap($Map, ({ loaded }) => {
@@ -104,10 +125,29 @@ export default () => {
     flow('Profile editing', () => {
       flow.timeout(1 * 60 * 1000);
 
+      let mapLoaded;
+      let setMapLoaded;
+
+      trap($Map, ({ loaded }) => {
+        useDelayedEffect(() => {
+          if (!loaded) return;
+
+          return () => {
+            setMapLoaded(true);
+          };
+        }, 1000, [loaded]);
+      });
+
       trap($Discovery.Frame, ({ openSideMenu }) => {
-        useDelayedEffect(() => () => {
-          openSideMenu();
-        }, 2500, [true]);
+        [mapLoaded, setMapLoaded] = useState(false);
+
+        useDelayedEffect(() => {
+          if (!mapLoaded) return;
+
+          return () => {
+            openSideMenu();
+          };
+        }, 1000, [mapLoaded]);
       });
 
       trap($Discovery.SideMenu, ({ opened, navToProfileEditor }) => {
@@ -133,7 +173,7 @@ export default () => {
           return () => {
             save();
           };
-        }, 1000, [name, save]);
+        }, 1000, [name]);
 
         useDelayedEffect(() => {
           if (!saveResponse) return;
