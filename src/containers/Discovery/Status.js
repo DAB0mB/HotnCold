@@ -69,15 +69,11 @@ const Status = (props) => {
 
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onCompleted: useCallback((data) => {
-      if (!data) {
-        alertError('Network Error: Network request failed');
-
-        return;
-      }
+      if (!data) return;
 
       self.fullUser = data.userProfile;
       tryNavToUserProfile();
-    }, [tryNavToUserProfile, alertError]),
+    }, [tryNavToUserProfile]),
     onError: alertError,
   });
 

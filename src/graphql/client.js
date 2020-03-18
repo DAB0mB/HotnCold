@@ -5,10 +5,13 @@ import { onError } from 'apollo-link-error';
 import { WebSocketLink } from 'apollo-link-ws';
 import { createUploadLink } from 'apollo-upload-client';
 import { getMainDefinition } from 'apollo-utilities';
+import EventEmitter from 'events';
 import CONFIG from 'react-native-config';
 import CookieManager from 'react-native-cookie';
 
 import introspectionQueryResultData from './fragmentTypes.json';
+
+const events = new EventEmitter();
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData
@@ -28,6 +31,8 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (networkError) {
     console.warn(`[Network error]: ${networkError}`);
   }
+
+  events.emit('error', { graphQLErrors, networkError });
 });
 
 const httpLink = createUploadLink({
@@ -111,5 +116,6 @@ const client = new ApolloClient({
 });
 
 client.subscription = wsLink.subscriptionClient;
+client.events = events;
 
 export default client;

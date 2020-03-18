@@ -229,11 +229,7 @@ const ProfileEditor = () => {
     }, [alertError]),
 
     onCompleted: useCallback((data) => {
-      if (!data) {
-        alertError('Network Error: Network request failed');
-
-        return;
-      }
+      if (!data) return;
 
       setSaving(false);
 
@@ -243,7 +239,7 @@ const ProfileEditor = () => {
       else {
         baseNav.terminalPush('Discovery');
       }
-    }, [alertSuccess, baseNav, alertError]),
+    }, [alertSuccess, baseNav]),
   }));
 
   const [uploadPicture] = mutations.uploadPicture.use({

@@ -72,11 +72,7 @@ const Verify = () => {
   const alertError = useAlertError();
   const superVerifySignIn = useVerifySignIn(contract, passcode, {
     onCompleted: useCallback((contract) => {
-      if (!contract) {
-        alertError('Network Error: Network request failed');
-
-        return;
-      }
+      if (!contract) return;
 
       setLoading(false);
 
@@ -86,7 +82,7 @@ const Verify = () => {
       else {
         baseNav.terminalPush('ProfileEditor');
       }
-    }, [baseNav, alertError]),
+    }, [baseNav]),
     onError(error) {
       setLoading(false);
 

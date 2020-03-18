@@ -29,11 +29,7 @@ const Chat = () => {
   const [, setAppState] = useAppState();
   const messagesQuery = queries.messages.use(chat.id, 20, {
     onCompleted: useCallback((data) => {
-      if (!data) {
-        alertError('Network Error: Network request failed');
-
-        return;
-      }
+      if (!data) return;
 
       const messages = data.messages;
 
@@ -56,7 +52,7 @@ const Chat = () => {
       }
 
       setIsLoadingEarlier(false);
-    }, [alertError]),
+    }, [true]),
     onError: alertError,
   });
   const [sendMessage] = mutations.sendMessage.use(chat.id, {

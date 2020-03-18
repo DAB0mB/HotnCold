@@ -84,11 +84,7 @@ const Radar = () => {
 
   const [queryNearbyUsers, nearbyUsersQuery] = queries.nearbyUsers.use.lazy({
     onCompleted: useAsyncCallback(function* (data) {
-      if (!data) {
-        alertError('Network Error: Network request failed');
-
-        return;
-      }
+      if (!data) return;
 
       const { nearbyUsers } = data;
 
@@ -100,7 +96,7 @@ const Radar = () => {
 
       setFetchingUsers(false);
       setNearbyUsers(nearbyUsers);
-    }, [alertError]),
+    }, [true]),
     onError: alertError,
   });
 

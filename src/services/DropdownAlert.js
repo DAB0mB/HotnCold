@@ -2,6 +2,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useImperativeHandle,
   useState,
   useMemo,
   useRef,
@@ -10,7 +11,7 @@ import DropdownAlert from 'react-native-dropdownalert';
 
 const DropdownAlertContext = createContext(null);
 
-export const DropdownAlertProvider = ({ children }) => {
+export const DropdownAlertProvider = React.forwardRef(({ children }, ref) => {
   const dropdownAlertRef = useRef(null);
   const inactiveStatusBarState = useState({});
   const [inactiveStatusBar] = inactiveStatusBarState;
@@ -24,6 +25,8 @@ export const DropdownAlertProvider = ({ children }) => {
     }
   }), [true]);
 
+  useImperativeHandle(ref, () => dropdownAlertContext);
+
   return (
     <DropdownAlertContext.Provider value={dropdownAlertContext}>
       {children}
@@ -35,7 +38,7 @@ export const DropdownAlertProvider = ({ children }) => {
       />
     </DropdownAlertContext.Provider>
   );
-};
+});
 
 export const useDropdownAlert = () => {
   return useContext(DropdownAlertContext);
@@ -45,7 +48,9 @@ export const useAlertError = () => {
   const dropdownAlert = useDropdownAlert();
 
   return useCallback((error) => {
-    dropdownAlert.alertWithType('error', 'Error', error.message || error);
+    const message = (error.message || error)?.match(/^(\w*Error:?)?(.+)/)?.[2].split();
+
+    dropdownAlert.alertWithType('error', 'Error', message);
   }, [dropdownAlert]);
 };
 

@@ -123,11 +123,7 @@ const Radar = () => {
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onError: alertError,
     onCompleted: useCallback((data) => {
-      if (!data) {
-        alertError('Network Error: Network request failed');
-
-        return;
-      }
+      if (!data) return;
 
       const userProfile = data.userProfile;
 
@@ -145,7 +141,7 @@ const Radar = () => {
           stopScan();
         }
       }
-    }, [discoveredUsers, alertError]),
+    }, [discoveredUsers]),
   });
 
   const onBigBubblePress = useCallback(() => {

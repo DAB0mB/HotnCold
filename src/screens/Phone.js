@@ -109,11 +109,7 @@ const Phone = () => {
   const [countryPickerOpened, setCountryPickerOpened] = useState(false);
   const superRequestSignIn = useRequestSignIn(phone, {
     onCompleted: useCallback((contract) => {
-      if (!contract) {
-        alertError('Network Error: Network request failed');
-
-        return;
-      }
+      if (!contract) return;
 
       setLoading(false);
 

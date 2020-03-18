@@ -2,7 +2,7 @@ import bootstrap from './bootstrap';
 
 import { ApolloProvider } from '@apollo/react-hooks';
 import { RobotRunner } from 'hotncold-robot';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
@@ -28,11 +28,28 @@ const styles = StyleSheet.create({
 
 const App = () => {
   const [bootstrapped, setBootstrapped] = useState(null);
+  const dropdownAlertRef = useRef(null);
 
   useEffect(() => {
     bootstrapping.then((bootstrapped) => {
       setBootstrapped(bootstrapped);
     });
+  }, [true]);
+
+  useEffect(() => {
+    const onGraphQLError = ({ networkError }) => {
+      const dropdownAlert = dropdownAlertRef.current;
+
+      if (networkError) {
+        dropdownAlert.alertWithType('error', 'Error', networkError.message);
+      }
+    };
+
+    graphqlClient.events.on('error', onGraphQLError);
+
+    return () => {
+      graphqlClient.events.off('error', onGraphQLError);
+    };
   }, [true]);
 
   if (!bootstrapped) {
@@ -46,7 +63,7 @@ const App = () => {
           <ApolloProvider client={graphqlClient}>
             <NotificationsProvider trigger={bootstrapped.initialNotification}>
               <CookieProvider>
-                <DropdownAlertProvider>
+                <DropdownAlertProvider ref={dropdownAlertRef}>
                   <DateTimePickerProvider>
                     <ImagePickerProvider>
                       <GeolocationProvider>
