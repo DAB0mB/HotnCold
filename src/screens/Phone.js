@@ -63,15 +63,19 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'black',
+    height: 30,
+    minWidth: 50,
   },
   ccodeText: {
     color: 'black',
     fontSize: 15,
     padding: 0,
     minWidth: 50,
+    lineHeight: 30,
   },
   localPhone: {
     padding: 0,
+    height: 30,
     borderBottomWidth: 1,
     borderBottomColor: 'black',
   },
@@ -80,6 +84,7 @@ const styles = StyleSheet.create({
     minWidth: 150,
     padding: 0,
     color: 'black',
+    lineHeight: 30,
   },
   smsNote: {
     color: 'black',
@@ -215,15 +220,17 @@ const Phone = () => {
         <View style={styles.phoneContainer}>
           <TouchableWithoutFeedback onPress={updateCcodeTapCount}>
             <View style={styles.ccode}>
-              <TextInput
-                editable={false}
-                textAlign='right'
-                placeholder={ccodePrefix}
-                style={styles.ccodeText}
-                placeholderTextColor={hexToRgba('#000', .5)}
-              >
-                {callingCode}
-              </TextInput>
+              <View pointerEvents='none'>
+                <TextInput
+                  editable={false}
+                  textAlign='right'
+                  placeholder={ccodePrefix}
+                  style={styles.ccodeText}
+                  placeholderTextColor={hexToRgba('#000', .5)}
+                >
+                  {callingCode}
+                </TextInput>
+              </View>
             </View>
           </TouchableWithoutFeedback>
           <View style={styles.localPhone}>

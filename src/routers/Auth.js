@@ -12,6 +12,7 @@ const Auth = Router.create({
     screen: VerifyScreen,
   },
 }, {
+  transparentCard: true,
   initialRouteName: 'Phone',
   headerMode: 'none',
   transitionConfig: () => {

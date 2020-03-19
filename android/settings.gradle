@@ -1,4 +1,6 @@
 include ':react-native-vector-icons'
+include ':react-native-splash-screen'
+project(':react-native-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-screen/android')
 include ':react-native-wheel-datepicker'
 project(':react-native-wheel-datepicker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wheel-datepicker/android')
 include ':@react-native-mapbox-gl_maps'

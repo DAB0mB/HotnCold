@@ -10,7 +10,14 @@ Configure the following services:
 - [Firebase](firebase.google.com).
 - [Hot&Cold Server](https://github.com/DAB0mB/HotnCold-server).
 
-Define environment variables in `.env.{ENV_NAME}` file (NEVER COMMIT):
+If you're developing for iOS, from XCode, go to `product > schema > edit schema > build (hotncold) > pre-actions' and add the following script:
+
+```sh
+ENVFILE=.env.development
+echo $ENVFILE > /tmp/envfile
+```
+
+Define environment variables in `.env.$ENVNAME` file (NEVER COMMIT):
 
     # A public access token to MapBox's API
     MAPBOX_ACCESS_TOKEN
@@ -33,7 +40,7 @@ Define environment variables in `.env.{ENV_NAME}` file (NEVER COMMIT):
     # *Optional: The auth token of the user you would like to log-in with
     INITIAL_USER_TOKEN
 
-To enable push notifications, download `google-services.json` file from Firebase console to `android/app` directory. Later on when there's official iOS support, you would also need to download a file called `GoogleService-Info.plist`. See [further instructions](https://support.google.com/firebase/answer/7015592?hl=en).
+To enable push notifications, download `google-services.json` and `GoogleService-Info.plist` from Firebase console to `android/app` and `ios/hotncold` directories respectively. See [further instructions](https://support.google.com/firebase/answer/7015592?hl=en).
 
 Run the following commands in series:
 

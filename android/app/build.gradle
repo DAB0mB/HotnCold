@@ -161,6 +161,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-splash-screen')
     implementation project(':react-native-wheel-datepicker')
     implementation project(':@react-native-mapbox-gl_maps')
     implementation project(':@react-native-community_art')

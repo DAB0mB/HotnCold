@@ -1,0 +1,57 @@
+diff --git a/node_modules/react-native-cookie/ios/RNCookieManager.xcodeproj/project.pbxproj b/node_modules/react-native-cookie/ios/RNCookieManager.xcodeproj/project.pbxproj
+old mode 100755
+new mode 100644
+index 998d127..86a0f2c
+--- a/node_modules/react-native-cookie/ios/RNCookieManager.xcodeproj/project.pbxproj
++++ b/node_modules/react-native-cookie/ios/RNCookieManager.xcodeproj/project.pbxproj
+@@ -221,9 +221,9 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				HEADER_SEARCH_PATHS = (
+-					"$(SRCROOT)/../node_modules/react-native/React/**",
+ 					"$(inherited)",
+ 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
++					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
+ 				);
+ 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+ 				MTL_ENABLE_DEBUG_INFO = YES;
+@@ -260,9 +260,9 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				HEADER_SEARCH_PATHS = (
+-					"$(SRCROOT)/../node_modules/react-native/React/**",
+ 					"$(inherited)",
+ 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
++					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
+ 				);
+ 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+@@ -275,10 +275,9 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				HEADER_SEARCH_PATHS = (
+-					"$(SRCROOT)/../../node_modules/react-native/React/**",
+ 					"$(inherited)",
+ 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+-					"$(SRCROOT)/../../react-native/React/**",
++					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
+ 				);
+ 				OTHER_LDFLAGS = "-ObjC";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+@@ -290,10 +289,9 @@
+ 			isa = XCBuildConfiguration;
+ 			buildSettings = {
+ 				HEADER_SEARCH_PATHS = (
+-					"$(SRCROOT)/../../node_modules/react-native/React/**",
+ 					"$(inherited)",
+ 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+-					"$(SRCROOT)/../../react-native/React/**",
++					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
+ 				);
+ 				OTHER_LDFLAGS = "-ObjC";
+ 				PRODUCT_NAME = "$(TARGET_NAME)";
+@@ -365,3 +363,4 @@
+ 	};
+ 	rootObject = 101789281B283EE1006C41B8 /* Project object */;
+ }
++

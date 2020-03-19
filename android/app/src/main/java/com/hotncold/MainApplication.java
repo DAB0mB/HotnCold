@@ -3,6 +3,7 @@ package com.hotncold;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.hotncold.patches.ReactNativeWheelPickerPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
 import com.reactnativecommunity.art.ARTPackage;
@@ -40,20 +41,21 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ReactNativeWheelPickerPackage(),
-            new RCTMGLPackage(),
-            new ARTPackage(),
-            new VectorIconsPackage(),
-            new RNFirebasePackage(),
-            new RNFirebaseNotificationsPackage(),
-            new RNFirebaseMessagingPackage(),
-            new BackgroundGeolocationPackage(),
-            new RNPermissionsPackage(),
-            new GPSStatePackage(),
-            new LinearGradientPackage(),
-            new RNFusedLocationPackage(),
-            new CookieManagerPackage(),
-            new ImagePickerPackage(),
+          new SplashScreenReactPackage(),
+          new ReactNativeWheelPickerPackage(),
+          new RCTMGLPackage(),
+          new ARTPackage(),
+          new VectorIconsPackage(),
+          new RNFirebasePackage(),
+          new RNFirebaseNotificationsPackage(),
+          new RNFirebaseMessagingPackage(),
+          new BackgroundGeolocationPackage(),
+          new RNPermissionsPackage(),
+          new GPSStatePackage(),
+          new LinearGradientPackage(),
+          new RNFusedLocationPackage(),
+          new CookieManagerPackage(),
+          new ImagePickerPackage(),
           new ReactNativeConfigPackage(),
           new ReanimatedPackage(),
           new RNGestureHandlerPackage(),

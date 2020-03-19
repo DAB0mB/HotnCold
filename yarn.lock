@@ -1035,10 +1035,12 @@
   resolved "https://registry.yarnpkg.com/@mapbox/sphericalmercator/-/sphericalmercator-1.1.0.tgz#f3b1af042620716a1289fc41e1e97f610823aefe"
   integrity sha512-pEsfZyG4OMThlfFQbCte4gegvHUjxXCjz0KZ4Xk8NdOYTQBLflj6U8PL05RPAiuRAMAQNUUKJuL6qYZ5Y4kAWA==
 
-"@mauron85/react-native-background-geolocation@^0.5.0":
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/@mauron85/react-native-background-geolocation/-/react-native-background-geolocation-0.5.6.tgz#85d72175d22b1f4d73276fa618c15cd5f92f2d19"
-  integrity sha512-KK3Q4QIQ1LyacqiqYFGpJZaKYM92raK3QZz5Nrf7rJwnclEIvweJ7hhd1rwRhEsGbr3ym5jtL8LKcuu/cOdUsQ==
+"@mauron85/react-native-background-geolocation@^0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@mauron85/react-native-background-geolocation/-/react-native-background-geolocation-0.6.3.tgz#9d0133e42021fbfa0ff7b6283d9561a18f127a2f"
+  integrity sha512-Q4o6OcCooYC4WrddrXS73pqAzowbxwuI3xOjOo2eYYWhNZCs+mioR2T5tij/pqUoJEfzt1h52Yn1a3rhRflKLQ==
+  dependencies:
+    plist "^3.0.1"
 
 "@nodelib/fs.scandir@2.1.3":
   version "2.1.3"
@@ -1379,6 +1381,11 @@
   integrity sha512-mB6ceGjpMGz1ZTza8HYnrPGos2mC6So4NhS1PtZ8s4Qt0K7fBiIGhpSxUbQmhwcSWE3no+bYxmI2OL6KuXYmoQ==
   dependencies:
     tslib "^1.9.3"
+
+"@yarnpkg/lockfile@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
+  integrity sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==
 
 abbrev@1:
   version "1.1.1"
@@ -3401,6 +3408,14 @@ find-up@^4.0.0:
     locate-path "^5.0.0"
     path-exists "^4.0.0"
 
+find-yarn-workspace-root@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/find-yarn-workspace-root/-/find-yarn-workspace-root-1.2.1.tgz#40eb8e6e7c2502ddfaa2577c176f221422f860db"
+  integrity sha512-dVtfb0WuQG+8Ag2uWkbG79hOUzEsRrhBzgfn86g2sJPkzmcpGdghbNTfUKGTxymFrY/tLIodDzLoW9nOJ4FY8Q==
+  dependencies:
+    fs-extra "^4.0.3"
+    micromatch "^3.1.4"
+
 flat-cache@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/flat-cache/-/flat-cache-2.0.1.tgz#5d296d6f04bda44a4630a301413bdbc2ec085ec0"
@@ -3426,13 +3441,6 @@ flatted@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-2.0.1.tgz#69e57caa8f0eacbc281d2e2cb458d46fdb449e08"
   integrity sha512-a1hQMktqW9Nmqr5aktAux3JMNqaucxGcjtjWnZLHX7yyPCmlSV3M54nGYbqT8K+0GhF3NBgmJCc3ma+WOgX8Jg==
-
-fluidbottomnavigation-rn@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/fluidbottomnavigation-rn/-/fluidbottomnavigation-rn-0.1.1.tgz#4cc76b86bdd69ca174bf365d5b8741fca378db49"
-  integrity sha512-77LJBnRerNIg2AYS9RqGvfrEJjnSSYG3USGqGv7kzzkGQWt+gEN2okLEtAzSmc2ZNUTUx73hso4qGGOFc+13zw==
-  dependencies:
-    react-native-view-overflow "^0.0.3"
 
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
@@ -3480,6 +3488,15 @@ fs-extra@^1.0.0:
     graceful-fs "^4.1.2"
     jsonfile "^2.1.0"
     klaw "^1.0.0"
+
+fs-extra@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-4.0.3.tgz#0d852122e5bc5beb453fb028e9c0c9bf36340c94"
+  integrity sha512-q6rbdDd1o2mAnQreO7YADIxf/Whx4AHBiRf6d+/cVT8h44ss+lHgxf1FemcqDnQt9X3ct4McHr+JMGlYSsK7Cg==
+  dependencies:
+    graceful-fs "^4.1.2"
+    jsonfile "^4.0.0"
+    universalify "^0.1.0"
 
 fs-extra@^7.0.1:
   version "7.0.1"
@@ -4113,6 +4130,13 @@ is-callable@^1.1.4:
   resolved "https://registry.yarnpkg.com/is-callable/-/is-callable-1.1.4.tgz#1e1adf219e1eeb684d691f9d6a05ff0d30a24d75"
   integrity sha512-r5p9sxJjYnArLjObpjA4xu5EKI3CuKHkJXMhT7kwbpUyIFD1n5PMAsoPvWnvtZiNz7LjkYDRZhd7FlI0eMijEA==
 
+is-ci@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/is-ci/-/is-ci-2.0.0.tgz#6bc6334181810e04b5c22b3d589fdca55026404c"
+  integrity sha512-YfJT7rkpQB0updsdHLGWrvhBJfcfzNNawYDNIyQXJz0IViGf75O8EBPKSdvw2rF+LGCsX4FZ8tcr3b19LcZq4w==
+  dependencies:
+    ci-info "^2.0.0"
+
 is-data-descriptor@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/is-data-descriptor/-/is-data-descriptor-0.1.4.tgz#0b5ee648388e2c860282e793f1856fec3f301b56"
@@ -4593,6 +4617,13 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
   integrity sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA==
+
+klaw-sync@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/klaw-sync/-/klaw-sync-6.0.0.tgz#1fd2cfd56ebb6250181114f0a581167099c2b28c"
+  integrity sha512-nIeuVSzdCCs6TDPTqI8w1Yre34sSq7AkZ4B3sfOBbI2CgVSB4Du4aLQijFU2+lhAFCwt9+42Hel6lQNIv6AntQ==
+  dependencies:
+    graceful-fs "^4.1.11"
 
 klaw@^1.0.0:
   version "1.3.1"
@@ -6002,6 +6033,24 @@ pascalcase@^0.1.1:
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
 
+patch-package@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-6.2.1.tgz#e3c55cf09dffd3984dd300e30d842672b604307f"
+  integrity sha512-dfCtQor63PPij6DDYtCzBRoO5nNAcMSg7Cmh+DLhR+s3t0OLQBdvFxJksZHBe1J2MjsSWDjTF4+oQKFbdkssIg==
+  dependencies:
+    "@yarnpkg/lockfile" "^1.1.0"
+    chalk "^2.4.2"
+    cross-spawn "^6.0.5"
+    find-yarn-workspace-root "^1.2.1"
+    fs-extra "^7.0.1"
+    is-ci "^2.0.0"
+    klaw-sync "^6.0.0"
+    minimist "^1.2.0"
+    rimraf "^2.6.3"
+    semver "^5.6.0"
+    slash "^2.0.0"
+    tmp "^0.0.33"
+
 path-browserify@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/path-browserify/-/path-browserify-1.0.0.tgz#40702a97af46ae00b0ea6fa8998c0b03c0af160d"
@@ -6367,11 +6416,6 @@ react-native-dropdownalert@^4.2.0:
   dependencies:
     prop-types "15.5.10"
 
-react-native-firebase-test-lab@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-firebase-test-lab/-/react-native-firebase-test-lab-0.0.2.tgz#3c6f85901429bc847471a008ffac51242935d4d3"
-  integrity sha512-PWluJEiPs0Pjm6VKB/xWXoy63QLeQ5i2CV0Rzm6QCZLwSKuUBG7XFKxHy/FFlva4ya5Gt4FZNbSP6Suw0Aw9bA==
-
 react-native-firebase@5.5:
   version "5.5.7"
   resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.5.7.tgz#d03d69c774af280c80c63bede59f65c5f7e8f26c"
@@ -6577,6 +6621,11 @@ react-native-sortable-grid@^2.0.0:
   resolved "https://registry.yarnpkg.com/react-native-sortable-grid/-/react-native-sortable-grid-2.0.0.tgz#61129a4614a93b6d3ed1693a7485a036f986ce53"
   integrity sha1-YRKaRhSpO20+0Wk6dIWgNvmGzlM=
 
+react-native-splash-screen@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-splash-screen/-/react-native-splash-screen-3.2.0.tgz#d47ec8557b1ba988ee3ea98d01463081b60fff45"
+  integrity sha512-Ls9qiNZzW/OLFoI25wfjjAcrf2DZ975hn2vr6U9gyuxi2nooVbzQeFoQS5vQcbCt9QX5NY8ASEEAtlLdIa6KVg==
+
 react-native-status-bar-height@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/react-native-status-bar-height/-/react-native-status-bar-height-2.4.0.tgz#de8cee4bb733a196167210d2d0bc1fa10acba3e3"
@@ -6621,11 +6670,6 @@ react-native-vector-icons@^6.6.0:
     lodash "^4.0.0"
     prop-types "^15.6.2"
     yargs "^13.2.2"
-
-react-native-view-overflow@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/react-native-view-overflow/-/react-native-view-overflow-0.0.3.tgz#d7b08e8c1e5047a2cf07f3ece82025899f930674"
-  integrity sha512-CcX61kqFyO41WAmqARr/1A7YgTkd1GoQGJl0LYrzl+4CL5uw2CAu68T+1DPapt7RdgvSMLZIPlNvj4TzdJY/hw==
 
 react-native-web@^0.11.4:
   version "0.11.7"
@@ -7032,7 +7076,7 @@ rimraf@2.6.3:
   dependencies:
     glob "^7.1.3"
 
-rimraf@^2.5.4, rimraf@^2.6.1:
+rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.3:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.7.1.tgz#35797f13a7fdadc566142c29d4f07ccad483e3ec"
   integrity sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==

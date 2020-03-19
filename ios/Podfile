@@ -3,6 +3,10 @@ platform :ios, '10.0'
 require_relative '../node_modules/react-native-unimodules/cocoapods'
 
 target 'hotncold' do
+  # Required by RNFirebase
+  pod 'Firebase/Core', '~> 6.13.0'
+  pod 'Firebase/Messaging', '~> 6.13.0'
+
   # Pods for hotncold
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'Core',
@@ -22,40 +26,65 @@ target 'hotncold' do
   ]
 
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
-
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
   pod 'RNGestureHandler', :podspec => '../node_modules/react-native-gesture-handler/RNGestureHandler.podspec'
   pod 'RNReanimated', :podspec => '../node_modules/react-native-reanimated/RNReanimated.podspec'
   pod 'RNScreens', :path => '../node_modules/react-native-screens'
-
-  use_unimodules!
-
-  pod 'react-native-config', :path => '../node_modules/react-native-config'
-
-
-
-
-
-
-
-
-  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
-
-
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
-
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
+  pod '@mauron85_react-native-background-geolocation', :path => '../node_modules/@mauron85/react-native-background-geolocation'
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
   pod 'react-native-gps-state', :path => '../node_modules/react-native-gps-state'
 
-
-  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
-
+  # Additional node_modules
+  pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
   pod 'ReactNativeART', :path => '../node_modules/@react-native-community/art'
 
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+  pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways.podspec"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse.podspec"
 
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      # Example of how to exclude libReact.a from Podfile
+      # if target.name == 'React'
+      #   target.remove_from_project
+      # end
 
+      # If a library doesn't have a podspec, we should use patch-package instead
+      if target.name == 'RNFirebase'
+        target.build_configurations.each do |config|
+          config.build_settings['HEADER_SEARCH_PATHS'] = '$(inherited)'\
+            '$(SRCROOT)/../../../ios/Pods/Headers/Public/**'
+        end
+      end
 
-  pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
+      if target.name == 'react-native-splash-screen'
+        target.build_configurations.each do |config|
+          config.build_settings['HEADER_SEARCH_PATHS'] = '$(inherited)'\
+            '$(SRCROOT)/../../react-native-splash-screen/ios'
+        end
+      end
+
+      if target.name == 'react-native-config'
+        phase = target.project.new(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+        phase.shell_script = "cd ../../"\
+                             " && RNC_ROOT=./node_modules/react-native-config/"\
+                             " && export SYMROOT=$RNC_ROOT/ios/ReactNativeConfig"\
+                             " && export BUILD_DIR=$RNC_ROOT/ios/ReactNativeConfig"\
+                             " && ruby $RNC_ROOT/ios/ReactNativeConfig/BuildDotenvConfig.ruby"
+
+        target.build_phases << phase
+        target.build_phases.move(phase,0)
+      end
+    end
+  end
+
+  use_unimodules!
 
 end

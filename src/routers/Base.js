@@ -36,6 +36,7 @@ const Base = Router.create({
     screen: SocialContainer,
   },
 }, {
+  transparentCard: true,
   initialRouteName: 'Discovery',
   headerMode: 'none',
   transitionConfig: () => fromBottom(),

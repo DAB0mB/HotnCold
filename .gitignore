@@ -11,6 +11,7 @@ web-build/
 web-report/
 .env*
 yarn-error.log
+.DS_Store
 
 # Android
 android/.gradle
@@ -22,5 +23,14 @@ android/app/build
 android/gradle.properties
 android/app/my-key.keystore
 
+# iOS
+ios/build
+ios/pods/**/*
+ios/hotncold.xcodeproj/xcuserdata/**/*
+ios/hotncold.xcodeproj/xcshareddata/**/*
+ios/hotncold.xcworkspace/xcuserdata/**/*
+ios/hotncold.xcworkspace/xcshareddata/**/*
+
 # Config
 google-services.json
+GoogleService-info.plist

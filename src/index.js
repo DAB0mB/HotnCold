@@ -4,6 +4,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { RobotRunner } from 'hotncold-robot';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 import BaseContainer from './containers/Base';
@@ -32,8 +33,15 @@ const App = () => {
 
   useEffect(() => {
     bootstrapping.then((bootstrapped) => {
+      SplashScreen.hide();
+
       setBootstrapped(bootstrapped);
-    });
+    })
+      .catch((e) => {
+        SplashScreen.hide();
+
+        console.error(e);
+      });
   }, [true]);
 
   useEffect(() => {
