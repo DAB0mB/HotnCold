@@ -100,5 +100,8 @@
       <string>MaterialIcons.ttf</string>
       <string>MaterialCommunityIcons.ttf</string>
     </array>
+
+    <key>MGLMapboxMetricsEnabledSettingShownInApp</key>
+    <string>YES</string>
   </dict>
 </plist>
