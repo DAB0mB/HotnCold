@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, { useEffect, useLayoutEffect, useState, useCallback } from 'react';
-import { BackHandler, Animated, Text, View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { BackHandler, Animated, Text, View, TouchableWithoutFeedback, StyleSheet, Platform } from 'react-native';
 import { DatePicker as SuperDatePicker } from 'react-native-wheel-datepicker';
 import { RaisedTextButton } from 'react-native-material-buttons';
 import CONFIG from 'react-native-config';
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   cancelButton: { color: colors.hot, fontSize: 14, paddingHorizontal: 16 },
 });
 
-class PatchedDatePicker extends SuperDatePicker {
+class DatePickerAndroid extends SuperDatePicker {
   constructor(props) {
     super(props);
 
@@ -44,6 +44,10 @@ class PatchedDatePicker extends SuperDatePicker {
     return days;
   }
 }
+
+const DatePickerIOS = SuperDatePicker;
+
+const DatePickerPlatform = Platform.OS == 'android' ? DatePickerAndroid : DatePickerIOS;
 
 const DatePicker = ({
   visibleState: [visibleState, setVisibleState],
@@ -119,7 +123,7 @@ const DatePicker = ({
     <Animated.View style={[{ opacity }, styles.container]}>
       <View style={styles.modal}>
         <View style={styles.datePickerDiv}>
-          <PatchedDatePicker {...props} date={date} onDateChange={onDateChange} style={styles.datePicker} />
+          <DatePickerPlatform {...props} date={date} onDateChange={onDateChange} style={styles.datePicker} />
 
           {/*<View style={styles.separatorDiv} pointerEvents='box-none'>
             <View style={styles.separator} pointerEvents='box-none' />
