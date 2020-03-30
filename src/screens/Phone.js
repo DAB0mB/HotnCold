@@ -65,26 +65,26 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
     height: 30,
     minWidth: 50,
+    paddingTop: 5,
   },
   ccodeText: {
     color: 'black',
     fontSize: 15,
     padding: 0,
     minWidth: 50,
-    lineHeight: 30,
   },
   localPhone: {
     padding: 0,
     height: 30,
     borderBottomWidth: 1,
     borderBottomColor: 'black',
+    paddingTop: 5,
   },
   localPhoneText: {
     fontSize: 15,
     minWidth: 150,
     padding: 0,
     color: 'black',
-    lineHeight: 30,
   },
   smsNote: {
     color: 'black',

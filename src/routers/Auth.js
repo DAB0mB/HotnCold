@@ -35,6 +35,9 @@ const Auth = Router.create({
           opacity,
         };
       },
+      containerStyleLight: {
+        backgroundColor: 'transparent',
+      },
     };
   },
 });
