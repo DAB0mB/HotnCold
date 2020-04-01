@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import * as fragments from '../fragments';
 
@@ -18,6 +18,7 @@ createStatus.use = (text, defaultOptions = {}) => {
   const queries = require('../queries');
 
   const { data: { me } = {} } = queries.mine.use();
+  text = useMemo(() => text.replace(/\n+/g, ' '), [text]);
 
   return useMutation(createStatus, {
     ...defaultOptions,
