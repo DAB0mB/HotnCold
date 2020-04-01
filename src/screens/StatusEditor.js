@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
     height: 50,
     marginLeft: 15,
     marginRight: 10,
-    borderRadius: 999,
   },
   bodyRight: {
     flex: 1,

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   titles: { marginTop: 8, flex: 1 },
   nameTitle: { color: colors.ink, fontSize: 17 },
   timeTitle: { fontSize: 11 },
-  avatar: { position: 'absolute', borderRadius: 999, width: 75, height: 75 },
+  avatar: { position: 'absolute', width: 75, height: 75 },
   avatarBackground: { position: 'absolute', backgroundColor: 'white', borderColor: colors.lightGray, borderWidth: 1, borderRadius: 999, width: 80, height: 80 },
   avatarView: { position: 'relative', width: 100, height: 80, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: -25 }] },
   background: { backgroundColor: 'white', minHeight: 120, borderTopWidth: 1, borderTopColor: colors.lightGray },
