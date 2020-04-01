@@ -1,12 +1,10 @@
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import CONFIG from 'react-native-config';
-import Cookie from 'react-native-cookie';
 import firebase from 'react-native-firebase';
 
 const bootstrap = () => Promise.all([
   MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
-  __DEV__ && CONFIG.INITIAL_USER_TOKEN && Cookie.set(CONFIG.SERVER_URI, 'authToken', CONFIG.INITIAL_USER_TOKEN),
 
   new Promise((resolve, reject) => {
     BackgroundGeolocation.configure({

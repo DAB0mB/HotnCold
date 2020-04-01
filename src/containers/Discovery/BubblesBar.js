@@ -322,7 +322,8 @@ BubblesBar.propTypes = {
 const styles = {
   border: {
     borderWidth: 1,
-    borderColor: colors.lightGray,
+    borderTopColor: colors.lightGray,
+    borderBottomColor: colors.lightGray,
     borderLeftColor: 'white',
     borderRightColor: 'white',
     position: 'relative',

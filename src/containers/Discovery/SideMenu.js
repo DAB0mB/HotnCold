@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   headerContent: {
     padding: 40,
     width: SuperSideMenu.defaultProps.openMenuOffset,
-    height: SuperSideMenu.defaultProps.openMenuOffset,
+    height: 200,
     alignItems: 'center',
     justifyContent: 'center',
   },

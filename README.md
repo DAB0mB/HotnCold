@@ -37,8 +37,6 @@ Define environment variables in `.env.$ENVNAME` file (NEVER COMMIT):
     PERSIST_NOTIFICATIONS
     # Run app with Robot. Robot files will not be bundled if this var is provided
     USE_ROBOT
-    # *Optional: The auth token of the user you would like to log-in with
-    INITIAL_USER_TOKEN
 
 To enable push notifications, download `google-services.json` and `GoogleService-Info.plist` from Firebase console to `android/app` and `ios/hotncold` directories respectively. See [further instructions](https://support.google.com/firebase/answer/7015592?hl=en).
 
