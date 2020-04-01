@@ -30,7 +30,6 @@ const MIN_ZOOM = DEFAULT_ZOOM - 3;
 const AVATAR_MARGIN = 28 / AVATAR_SIZE;
 
 const defaultImages = {
-  'assets': ['pin'],
   'cold-marker': require('./cold-marker.png'),
   'hot-marker': require('./hot-marker.png'),
 };
