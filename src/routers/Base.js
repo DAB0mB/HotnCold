@@ -39,7 +39,12 @@ const Base = Router.create({
   transparentCard: true,
   initialRouteName: 'Discovery',
   headerMode: 'none',
-  transitionConfig: () => fromBottom(),
+  transitionConfig: () => ({
+    ...fromBottom(),
+    containerStyleLight: {
+      backgroundColor: 'white',
+    },
+  }),
 });
 
 export default Base;

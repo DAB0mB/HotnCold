@@ -321,14 +321,15 @@ BubblesBar.propTypes = {
 
 const styles = {
   border: {
-    borderTopWidth: 1,
+    borderWidth: 1,
     borderColor: colors.lightGray,
+    borderBottomWidth: 1,
     position: 'relative',
     height: 60,
   },
   container: {
     flexDirection: 'row',
-    height: 60,
+    height: 58,
     width: '100%',
     alignItems: 'center',
     backgroundColor: 'white'
