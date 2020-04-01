@@ -323,7 +323,8 @@ const styles = {
   border: {
     borderWidth: 1,
     borderColor: colors.lightGray,
-    borderBottomWidth: 1,
+    borderLeftColor: 'white',
+    borderRightColor: 'white',
     position: 'relative',
     height: 60,
   },

@@ -1,6 +1,6 @@
 import { useRobot } from 'hotncold-robot';
 import React, { useCallback, useState } from 'react';
-import { Alert, ScrollView, View, Text, ImageBackground, Image, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Alert, ScrollView, View, Text, ImageBackground, Image, Platform, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ripple from 'react-native-material-ripple';
 import SuperSideMenu from 'react-native-side-menu';
@@ -36,6 +36,8 @@ const styles = StyleSheet.create({
   },
   headerContent: {
     padding: 40,
+    width: SuperSideMenu.defaultProps.openMenuOffset,
+    height: SuperSideMenu.defaultProps.openMenuOffset,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -43,7 +45,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: 90,
     height: 90,
-    borderRadius: 999,
   },
   myName: {
     color: 'white',
@@ -78,7 +79,7 @@ const SideMenu = ({
 }) => {
   const { useTrap } = useRobot();
   const [initialOpened, setInitialOpened] = useState(opened);
-  const [bgStyle, setBgStyle] = useState({ width: 0 });
+  const [bgStyle, setBgStyle] = useState(Platform.OS == 'android' ? { width: 0 } : {});
   const { me, myContract } = useMine();
   const baseNav = useNavigation(Base);
   const signOut = useSignOut();
