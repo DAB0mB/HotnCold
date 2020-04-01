@@ -8,9 +8,7 @@ import { getMainDefinition } from 'apollo-utilities';
 import EventEmitter from 'events';
 import CONFIG from 'react-native-config';
 import CookieManager from 'react-native-cookie';
-import Observable from 'zen-observable';
 
-import { parseRawCookie } from '../utils';
 import introspectionQueryResultData from './fragmentTypes.json';
 
 const events = new EventEmitter();
@@ -65,53 +63,60 @@ const terminatingLink = split(
   httpLink
 );
 
-// Handle cookies
-const authLink = new ApolloLink((operation, forward) => new Observable(async (observable) => {
-  const cookie = await CookieManager.get(CONFIG.SERVER_URI);
+// Cookies should be managed automatically by the device. I left the code snippet below
+// as an example of how to write a link middleware
 
-  operation.setContext({
-    headers: {
-      cookie,
-    },
-  });
+// import { serialize as serializeCookie } from 'cookie';
+// import Observable from 'zen-observable';
 
-  let pendingJobs = 0;
-  let completed = false;
+// import { parseRawCookie } from '../utils';
 
-  forward(operation).subscribe({
-    async next(response) {
-      pendingJobs++;
-      const { response: { headers } } = operation.getContext();
+// const authLink = new ApolloLink((operation, forward) => new Observable(async (observable) => {
+//   const cookie = await CookieManager.get(CONFIG.SERVER_URI);
 
-      if (headers) {
-        const cookie = headers.get('Set-Cookie');
+//   operation.setContext({
+//     headers: {
+//       cookie: serializeCookie('authToken', cookie.authToken),
+//     },
+//   });
 
-        if (cookie) {
-          await CookieManager.set(CONFIG.SERVER_URI, ...parseRawCookie(cookie));
-        }
-      }
+//   let pendingJobs = 0;
+//   let completed = false;
 
-      observable.next(response);
+//   forward(operation).subscribe({
+//     async next(response) {
+//       pendingJobs++;
+//       const { response: { headers } } = operation.getContext();
 
-      if (!--pendingJobs && completed) {
-        await Promise.resolve();
-        observable.complete();
-      }
-    },
-    complete() {
-      completed = true;
+//       if (headers) {
+//         const cookie = headers.get('Set-Cookie');
 
-      if (!pendingJobs) {
-        observable.complete();
-      }
-    },
-    error(error) {
-      observable.error(error);
-    },
-  });
-}));
+//         if (cookie) {
+//           await CookieManager.set(CONFIG.SERVER_URI, ...parseRawCookie(cookie));
+//         }
+//       }
 
-const link = ApolloLink.from([errorLink, authLink, terminatingLink]);
+//       observable.next(response);
+
+//       if (!--pendingJobs && completed) {
+//         await Promise.resolve();
+//         observable.complete();
+//       }
+//     },
+//     complete() {
+//       completed = true;
+
+//       if (!pendingJobs) {
+//         observable.complete();
+//       }
+//     },
+//     error(error) {
+//       observable.error(error);
+//     },
+//   });
+// }));
+
+const link = ApolloLink.from([errorLink, terminatingLink]);
 
 const client = new ApolloClient({
   cache,
