@@ -8,7 +8,9 @@ import { getMainDefinition } from 'apollo-utilities';
 import EventEmitter from 'events';
 import CONFIG from 'react-native-config';
 import CookieManager from 'react-native-cookie';
+import Observable from 'zen-observable';
 
+import { parseRawCookie } from '../utils';
 import introspectionQueryResultData from './fragmentTypes.json';
 
 const events = new EventEmitter();
@@ -63,52 +65,53 @@ const terminatingLink = split(
   httpLink
 );
 
-/* Custom asyn middleware example */
+// Handle cookies
+const authLink = new ApolloLink((operation, forward) => new Observable(async (observable) => {
+  const cookie = await CookieManager.get(CONFIG.SERVER_URI);
 
-// const authLink = new ApolloLink((operation, forward) => new Observable(async (observable) => {
-//   const cookie = await CookieManager.get(CONFIG.STORAGE_KEY);
+  operation.setContext({
+    headers: {
+      cookie,
+    },
+  });
 
-//   operation.setContext({
-//     headers: {
-//       cookie,
-//     },
-//   });
+  let pendingJobs = 0;
+  let completed = false;
 
-//   let pendingJobs = 0;
-//   let completed = false;
+  forward(operation).subscribe({
+    async next(response) {
+      pendingJobs++;
+      const { response: { headers } } = operation.getContext();
 
-//   forward(operation).subscribe({
-//     async next(response) {
-//       pendingJobs++;
-//       const { response: { headers } } = operation.getContext();
+      if (headers) {
+        const cookie = headers.get('Set-Cookie');
 
-//       if (headers) {
-//         const cookie = headers.get('Set-Cookie');
+        if (cookie) {
+          await CookieManager.set(CONFIG.SERVER_URI, ...parseRawCookie(cookie));
+        }
+      }
 
-//         if (cookie) {
-//           await CookieManager.setFromResponse(CONFIG.STORAGE_KEY, cookie)
-//         }
-//       }
+      observable.next(response);
 
-//       observable.next(response);
+      if (!--pendingJobs && completed) {
+        await Promise.resolve();
+        observable.complete();
+      }
+    },
+    complete() {
+      completed = true;
 
-//       if (!--pendingJobs && completed) {
-//         await Promise.resolve();
-//         observable.complete();
-//       }
-//     },
-//     complete() {
-//       completed = true;
+      if (!pendingJobs) {
+        observable.complete();
+      }
+    },
+    error(error) {
+      observable.error(error);
+    },
+  });
+}));
 
-//       if (!pendingJobs) {
-//         observable.complete();
-//       }
-//     },
-//     error(error) { observable.error(error) },
-//   });
-// }));
-
-const link = ApolloLink.from([errorLink, terminatingLink]);
+const link = ApolloLink.from([errorLink, authLink, terminatingLink]);
 
 const client = new ApolloClient({
   cache,
