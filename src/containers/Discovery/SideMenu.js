@@ -10,6 +10,7 @@ import { useSignOut, useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation }  from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
+import { noop } from '../../utils';
 import Base from '../Base';
 
 const styles = StyleSheet.create({
@@ -65,8 +66,6 @@ const Separator = () => {
     />
   );
 };
-
-const noop = () => {};
 
 export const $SideMenu = {};
 

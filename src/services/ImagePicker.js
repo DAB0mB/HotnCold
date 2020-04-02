@@ -2,6 +2,7 @@ import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import ImagePicker from 'react-native-image-picker';
 
 import { useAlertError } from './DropdownAlert';
+import { empty, noop } from '../utils';
 
 const ImagePickerContext = createContext(null);
 
@@ -12,9 +13,6 @@ export const ImagePickerProvider = ({ imagePicker = ImagePicker, children }) => 
     </ImagePickerContext.Provider>
   );
 };
-
-const empty = {};
-const noop = () => {};
 
 export const useImagePicker = (defaultOptions, defaultCallback) => {
   if (typeof defaultOptions == 'function') {

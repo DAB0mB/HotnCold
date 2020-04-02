@@ -4,7 +4,12 @@ import CONFIG from 'react-native-config';
 export { default as __ } from './_';
 export * from './cookie';
 export * from './hooks';
+export * from './mapbox';
 export { default as once } from './once';
+
+export const noop = () => {};
+export const noopGen = function* () {};
+export const empty = {};
 
 export const pick = (obj, keys) => {
   const clone = {};
@@ -77,11 +82,19 @@ export const splitWords = (str) => {
     .filter(word => word.trim());
 };
 
-// upper -> Upper
-export const upperFirst = (str) => {
-  return str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
+// fooBarBaz -> foo-bar-baz
+export const snakeCase = (str) => {
+  const words = splitWords(str);
+
+  return words.map(w => w.toLowerCase()).join('-');
 };
 
+// upper -> Upper
+export const upperFirst = (str) => {
+  return str.substr(0, 1).toUpperCase() + str.substr(1);
+};
+
+// camel_case -> camelCase
 export const camelCase = (str) => {
   const words = splitWords(str);
   const first = words.shift().toLowerCase();
@@ -90,41 +103,15 @@ export const camelCase = (str) => {
   return [first, ...rest].join('');
 };
 
-export const snakeCase = (str) => {
-  const words = splitWords(str);
+export const promiseObj = (obj) => {
+  const keys = Object.keys(obj);
+  const values = Object.keys(obj);
 
-  return words.map(w => w.toLowerCase()).join('-');
+  return Promise.all(values).then((results) => {
+    return keys.reduce((res, k, i) => {
+      res[k] = results[i];
+
+      return res;
+    }, {});
+  });
 };
-
-export const mapfn = new Proxy((scopeFn) => {
-  return scopeFn(mapfn);
-}, {
-  get(target, p) {
-    switch (p) {
-    case 'getDeep':
-      return (path) => path.split('.').reduce((children, prop) => ['get', prop, children].filter(Boolean), '');
-    case 'not': p = '!'; break;
-    case 'neq': p = '!='; break;
-    case 'eq': p = '=='; break;
-    case 'lt': p = '<'; break;
-    case 'lte': p = '<='; break;
-    case 'gt': p = '>'; break;
-    case 'gte': p = '>='; break;
-    case 'add': p = '+'; break;
-    case 'sub': p = '-'; break;
-    case 'mul': p = '*'; break;
-    case 'div': p = '/'; break;
-    case 'pow': p = '^'; break;
-    case 'mod': p = '%'; break;
-    default: p = snakeCase(p);
-    }
-
-    return (...args) => [p, ...args];
-  },
-});
-
-export const maparg = new Proxy({}, {
-  get(target, p) {
-    return [snakeCase(p)];
-  },
-});

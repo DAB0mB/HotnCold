@@ -2,8 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Animated, StyleSheet, View, Image, TouchableWithoutFeedback } from 'react-native';
 
 import { colors } from '../../theme';
-
-const noop = () => {};
+import { noop } from '../../utils';
 
 const styles = StyleSheet.create({
   userAvatar: {

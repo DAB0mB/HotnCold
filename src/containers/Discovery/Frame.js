@@ -9,7 +9,7 @@ import { useMine } from '../../services/Auth';
 import { HitboxProvider } from '../../services/Hitbox';
 import { useNavigation }  from '../../services/Navigation';
 import { colors } from '../../theme';
-import { useCallbackWhen } from '../../utils';
+import { empty, noop, useCallbackWhen } from '../../utils';
 import Base from '../Base';
 import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
@@ -49,9 +49,6 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
 });
-
-const empty = {};
-const noop = () => {};
 
 const Bubble = {
   Map: 0,

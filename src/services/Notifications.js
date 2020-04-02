@@ -74,7 +74,7 @@ export const handleMessage = async (message) => {
     .setBody(message.payload.body)
     .setData(message.payload.data)
     .setNotificationId(message.notificationId);
-  
+
   if (Platform.OS == 'android') {
     notification
       .android.setChannelId(message.channelId)

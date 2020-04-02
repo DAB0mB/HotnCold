@@ -7,7 +7,7 @@ import Social from '../../containers/Social';
 import * as queries from '../../graphql/queries';
 import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
-import { useMountedRef } from '../../utils';
+import { useMountState } from '../../utils';
 import Header, { $Header } from './Header';
 
 const styles = StyleSheet.create({
@@ -90,11 +90,11 @@ const Inbox = () => {
   const chatsQuery = queries.chats.use();
   const { chats = [] } = chatsQuery.data || {};
   const socialNav = useNavigation(Social);
-  const isMountedRef = useMountedRef();
+  const mountState = useMountState();
 
   const navToChat = useCallback((chat) => {
     setTimeout(() => {
-      if (isMountedRef.current) {
+      if (mountState.current) {
         socialNav.push('Chat', { chat });
       }
     }, 200);

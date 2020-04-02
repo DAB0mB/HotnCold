@@ -6,7 +6,7 @@ import { RaisedTextButton } from 'react-native-material-buttons';
 import CONFIG from 'react-native-config';
 
 import { colors } from '../theme';
-import { useMountedRef } from '../utils';
+import { useMountState } from '../utils';
 
 const styles = StyleSheet.create({
   container: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, .5)', alignItems: 'center', justifyContent: 'center' },
@@ -54,7 +54,7 @@ const DatePicker = ({
   onConfirm,
   ...props,
 }) => {
-  const isMountedRef = useMountedRef();
+  const mountState = useMountState();
   const [date, setDate] = useState(props.date);
   const [isViewVisible, setViewVisible] = useState(visibleState);
   const [opacity] = useState(() => new Animated.Value(visibleState ? 1 : 0));
@@ -92,7 +92,7 @@ const DatePicker = ({
         duration: 300,
         useNativeDriver: true,
       }).start(() => {
-        if (isMountedRef.current) {
+        if (mountState.current) {
           setViewVisible(false);
         }
       });

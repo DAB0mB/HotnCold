@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
 
-const noop = function () {};
-const noopGen = function* () {};
+import { noop, noopGen } from '../utils';
 
 const RobotContext = createContext();
 

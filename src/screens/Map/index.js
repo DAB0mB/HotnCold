@@ -17,7 +17,7 @@ import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
 import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
-import { maparg, mapfn, useRenderer, useMountedRef, useAsyncCallback } from '../../utils';
+import { maparg, mapfn, useRenderer, useMountState, useAsyncCallback } from '../../utils';
 
 const AVATAR_SIZE = .19;
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
@@ -161,7 +161,7 @@ const Map = () => {
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
   const [loaded, setLoaded] = useRenderer();
-  const isMountedRef = useMountedRef();
+  const mountState = useMountState();
   const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.status?.location);
   const [flatbush, setFlatbush] = useState(null);
 
@@ -295,7 +295,7 @@ const Map = () => {
 
   useEffect(() => {
     const onLocationUpdate = (location) => {
-      if (!isMountedRef.current) return;
+      if (!mountState.current) return;
 
       location = [
         location.coords.longitude,

@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/react-hooks';
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 
 import * as mutations from '../graphql/mutations';
+import { noop } from '../utils';
 import { useAppState } from './AppState';
 import { useCookie } from './Cookie';
 
@@ -16,8 +17,6 @@ export const MyProvider = ({ myContract, me, children }) => {
     </MyContext.Provider>
   );
 };
-
-const noop = () => {};
 
 export const useMine = () => {
   return useContext(MyContext);

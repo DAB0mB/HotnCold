@@ -14,10 +14,8 @@ import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
-import { pick, pickRandom, useAsyncEffect } from '../../utils';
+import { noop, pick, pickRandom, useAsyncEffect } from '../../utils';
 import UserAvatar from './UserAvatar';
-
-const noop = () => {};
 
 const MY_AVATAR_SIZE = Dimensions.get('window').width / 3;
 const USER_AVATAR_SIZE = MY_AVATAR_SIZE / 3;

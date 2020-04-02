@@ -7,8 +7,7 @@ import SuperMarkdown, {
 } from 'react-native-markdown-renderer';
 
 import { colors } from '../theme';
-
-const noop = () => {};
+import { noop } from '../utils';
 
 export const hncMdStyles = StyleSheet.create({
   heading1: {

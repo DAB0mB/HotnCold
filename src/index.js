@@ -11,8 +11,6 @@ import BaseContainer from './containers/Base';
 import graphqlClient from './graphql/client';
 import { AppStateProvider } from './services/AppState';
 import { CookieProvider } from './services/Cookie';
-import { DateTimePickerProvider } from './services/DateTimePicker';
-import { DeviceInfoProvider } from './services/DeviceInfo';
 import { DropdownAlertProvider } from './services/DropdownAlert';
 import { GeolocationProvider } from './services/Geolocation';
 import { ImagePickerProvider } from './services/ImagePicker';
@@ -67,25 +65,21 @@ const App = () => {
   return (
     <View style={styles.container}>
       <AppStateProvider>
-        <DeviceInfoProvider info={bootstrapped.deviceInfo}>
-          <ApolloProvider client={graphqlClient}>
-            <NotificationsProvider trigger={bootstrapped.initialNotification}>
-              <CookieProvider>
-                <DropdownAlertProvider ref={dropdownAlertRef}>
-                  <DateTimePickerProvider>
-                    <ImagePickerProvider>
-                      <GeolocationProvider>
-                        <RobotRunner>
-                          <BaseContainer />
-                        </RobotRunner>
-                      </GeolocationProvider>
-                    </ImagePickerProvider>
-                  </DateTimePickerProvider>
-                </DropdownAlertProvider>
-              </CookieProvider>
-            </NotificationsProvider>
-          </ApolloProvider>
-        </DeviceInfoProvider>
+        <ApolloProvider client={graphqlClient}>
+          <NotificationsProvider>
+            <CookieProvider>
+              <DropdownAlertProvider ref={dropdownAlertRef}>
+                <ImagePickerProvider>
+                  <GeolocationProvider>
+                    <RobotRunner>
+                      <BaseContainer />
+                    </RobotRunner>
+                  </GeolocationProvider>
+                </ImagePickerProvider>
+              </DropdownAlertProvider>
+            </CookieProvider>
+          </NotificationsProvider>
+        </ApolloProvider>
       </AppStateProvider>
     </View>
   );

@@ -3,10 +3,12 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import CONFIG from 'react-native-config';
 import firebase from 'react-native-firebase';
 
-const bootstrap = () => Promise.all([
-  MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
+import { promiseObj } from './utils';
 
-  new Promise((resolve, reject) => {
+const bootstrap = () => promiseObj({
+  mapboxAccessToken: MapboxGL.setAccessToken(CONFIG.MAPBOX_ACCESS_TOKEN),
+
+  backgroundGeolocation: promiseObj((resolve, reject) => {
     BackgroundGeolocation.configure({
       desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
       stationaryRadius: 50,
@@ -25,7 +27,7 @@ const bootstrap = () => Promise.all([
     }, resolve, reject);
   }),
 
-  new Promise((resolve, reject) => {
+  notifications: new Promise((resolve, reject) => {
     // Build a channel
     const channel = new firebase.notifications.Android.Channel('chat-messages', 'Chat Messages', firebase.notifications.Android.Importance.High)
       .setDescription('Triggered from messages sent by users via the chat');
@@ -33,9 +35,9 @@ const bootstrap = () => Promise.all([
     // Create the channel
     firebase.notifications().android.createChannel(channel).then(resolve, reject);
   }),
-]).then((/* results */) => {
+}).then((/* results */) => {
   return {
-    deviceInfo: {},
+    // Here we can define bootstrap payload
   };
 });
 

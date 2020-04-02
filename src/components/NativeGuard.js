@@ -3,9 +3,7 @@ import { Platform } from 'react-native';
 
 // import { BLE_STATES, useBluetoothLE } from '../services/BluetoothLE';
 import { GPS_STATES, useGeolocation } from '../services/Geolocation';
-import { useAsyncEffect } from '../utils';
-
-const noop = () => {};
+import { noop, useAsyncEffect } from '../utils';
 
 export const SERVICES = {
   GPS:       0b01,
