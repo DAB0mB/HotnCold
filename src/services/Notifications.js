@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useMemo } from 'react';
+import { Platform } from 'react-native';
 import firebase from 'react-native-firebase';
 
 const NotificationsContext = createContext(null);
@@ -72,9 +73,19 @@ export const handleMessage = async (message) => {
     .setTitle(message.payload.title)
     .setBody(message.payload.body)
     .setData(message.payload.data)
-    .setNotificationId(message.notificationId)
-    .android.setChannelId(message.channelId)
-    .android.setLargeIcon(message.payload.largeIcon);
+    .setNotificationId(message.notificationId);
+  
+  if (Platform.OS == 'android') {
+    notification
+      .android.setChannelId(message.channelId)
+      .android.setLargeIcon(message.payload.largeIcon);
+  }
+
+  if (Platform.OS == 'ios') {
+    notification
+      .ios.setThreadIdentifier(message.channelId)
+      .ios.setLaunchImage(message.payload.largeIcon);
+  }
 
   return notifications.displayNotification(notification);
 };

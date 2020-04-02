@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
   userAvatar: {
     width: USER_AVATAR_SIZE,
     height: USER_AVATAR_SIZE,
-    borderRadius: 999,
   },
   userName: {
     color: colors.ink,
