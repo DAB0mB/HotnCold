@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import { colors } from '../../theme';
+import Bar from '../../components/Bar';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,17 +10,14 @@ const styles = StyleSheet.create({
     right: 0,
     height: 50,
     position: 'absolute',
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    backgroundColor: colors.ink
   }
 });
 
 const Header = ({ children }) => {
   return (
-    <View style={styles.container}>
+    <Bar.Ink style={styles.container}>
       {children}
-    </View>
+    </Bar.Ink>
   );
 };
 

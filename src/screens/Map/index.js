@@ -3,10 +3,11 @@ import turfCircle from '@turf/circle';
 import Flatbush from 'flatbush';
 import { useRobot } from 'hotncold-robot';
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
-import { TouchableWithoutFeedback, Image, View, StyleSheet } from 'react-native';
+import { TouchableWithoutFeedback, Image, Text, View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
+import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
 import { useMine } from '../../services/Auth';
@@ -30,8 +31,8 @@ const MIN_ZOOM = DEFAULT_ZOOM - 3;
 const AVATAR_MARGIN = 28 / AVATAR_SIZE;
 
 const defaultImages = {
-  'cold-marker': require('./cold-marker.png'),
-  'hot-marker': require('./hot-marker.png'),
+  'cold-marker': require('../../assets/cold-marker.png'),
+  'hot-marker': require('../../assets/hot-marker.png'),
 };
 
 const styles = StyleSheet.create({
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
   },
   watermarkContainer: {
     position: 'absolute',
-    left: 8,
+    right: 8,
     top: 8,
   },
   watermarkImage: {
@@ -52,19 +53,29 @@ const styles = StyleSheet.create({
     height: 20,
     opacity: 1 / 3,
   },
+  selectionIndex: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: 'rgba(255, 255, 255, .5)',
+  },
+  selectionIndexText: {
+    color: colors.ink,
+  },
 });
 
 const mapStyles = {
   heatmap: {
     heatmapRadius: 15,
+    heatmapWeight: mapfn.get('weight'),
     heatmapIntensity: mapfn.interpolate(
-      mapfn.linear(),
+      maparg.linear,
       maparg.zoom,
       7, 0,
       15, .5,
     ),
     heatmapColor: mapfn.interpolate(
-      mapfn.linear(),
+      maparg.linear,
       maparg.heatmapDensity,
       0, 'rgba(0, 0, 0, 0)',
       0.1, 'rgba(0, 0, 0, 0)',
@@ -86,7 +97,7 @@ const mapStyles = {
   },
   marker: {
     iconSize: mapfn.interpolate(
-      mapfn.linear(),
+      maparg.linear,
       maparg.zoom,
       MIN_INTER_ZOOM, .5 / MIN_ICON_DIV,
       MAX_INTER_ZOOM, .5,
@@ -97,7 +108,7 @@ const mapStyles = {
   },
   avatar: {
     iconSize: mapfn.interpolate(
-      mapfn.linear(),
+      maparg.linear,
       maparg.zoom,
       MIN_INTER_ZOOM, AVATAR_SIZE / MIN_ICON_DIV,
       MAX_INTER_ZOOM, AVATAR_SIZE,
@@ -122,12 +133,6 @@ const mapStyles = {
       lineWidth: 2,
       lineDasharray: [0, 2],
     },
-    text: {
-      textSize: 20,
-      textColor: 'white',
-      textHaloColor: colors.ink,
-      textHaloWidth: .5,
-    },
   },
 };
 
@@ -150,6 +155,7 @@ export const mapBubbleIcon = (
 const Map = () => {
   const { me } = useMine();
   const { useTrap } = useRobot();
+  const baseNav = useNavigation(Base);
   const discoveryNav = useNavigation(Discovery);
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
@@ -190,7 +196,7 @@ const Map = () => {
     const images = { ...defaultImages };
 
     for (const feature of areaFeatures.features) {
-      if (!feature.properties.user) break;
+      if (!feature.properties.user) continue;
 
       images[feature.properties.user.id] = { uri: feature.properties.user.avatar };
     }
@@ -263,6 +269,10 @@ const Map = () => {
     mapRef.current.showAttribution();
   }, [true]);
 
+  const navToSelection = useCallback(() => {
+    baseNav.push('Selection', { selection });
+  }, [baseNav, selection]);
+
   const renderSelection = useAsyncCallback(function* (e) {
     const map = mapRef.current;
 
@@ -276,16 +286,22 @@ const Map = () => {
     }
 
     const selectionCoords = e.geometry.coordinates;
-    const selectionFeatures = turfCircle(selectionCoords, SELECTION_RADIUS);
-    const selectionSize = flatbush ? flatbush.neighbors(...selectionCoords, Infinity, SELECTION_RADIUS / 100).length : 0;
+    const selectionBorder = turfCircle(selectionCoords, SELECTION_RADIUS);
+    const selectionIndexes = flatbush ? flatbush.neighbors(...selectionCoords, Infinity, SELECTION_RADIUS / 100) : [];
+    const selectionFeatures = selectionIndexes.map(i => areaFeatures.features[i]);
+    const eventsFeatures = selectionFeatures.filter(f => f.properties.type == 'event');
+    const attendanceCount = eventsFeatures.reduce((count, f) => count + f.properties.event.attendanceCount, 0);
 
     setSelection({
       location: e,
-      size: selectionSize,
+      size: selectionIndexes.length,
+      border: selectionBorder,
       features: selectionFeatures,
+      eventsCount: eventsFeatures.length,
+      attendanceCount,
       zoom,
     });
-  }, [mapRef, setSelection, flatbush]);
+  }, [flatbush, areaFeatures]);
 
   useGeoBackgroundTelemetry({
     enabled: me.discoverable,
@@ -323,8 +339,14 @@ const Map = () => {
             // Method accepts a rectangle
             flatbush.add(x, y, x, y);
 
-            if (feature.properties.user && feature.properties.user.id != me.id) {
-              feature.properties.marker = 'cold-marker';
+            switch (feature.properties.type) {
+            case 'user':
+              feature.properties.weight = 1;
+              if (feature.properties.user.id != me.id) feature.properties.marker = 'cold-marker';
+              break;
+            case 'event':
+              feature.properties.weight = 1 + feature.properties.event.attendanceCount;
+              break;
             }
           });
 
@@ -376,25 +398,13 @@ const Map = () => {
           <React.Fragment>
             <MapboxGL.ShapeSource
               id='selection'
-              shape={selection.features}
+              shape={selection.border}
             >
               <MapboxGL.LineLayer
                 id='selectionOutline'
                 sourceLayerID='selection'
                 style={mapStyles.selection.outline}
                 minZoomLevel={MIN_ZOOM}
-              />
-            </MapboxGL.ShapeSource>
-
-            <MapboxGL.ShapeSource
-              id='selectionLocation'
-              shape={selection.location}
-            >
-              <MapboxGL.SymbolLayer
-                id='selectionText'
-                sourceLayerID='selection'
-                minZoomLevel={MIN_ZOOM}
-                style={{ ...mapStyles.selection.text, textField: selection.size.toString() }}
               />
             </MapboxGL.ShapeSource>
           </React.Fragment>
@@ -472,11 +482,20 @@ const Map = () => {
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
 
-      <View style={styles.watermarkContainer}>
-        <TouchableWithoutFeedback onPress={showAttribution}>
+      <TouchableWithoutFeedback onPress={showAttribution}>
+        <View style={styles.watermarkContainer}>
           <Image source={require('./mapbox.png')} resizeMode='contain' style={styles.watermarkImage} />
+        </View>
+      </TouchableWithoutFeedback>
+
+      {selection && (
+        <TouchableWithoutFeedback onPress={navToSelection}>
+          <View style={styles.selectionIndex}>
+            <Text style={styles.selectionIndexText}>Events: {selection.eventsCount}</Text>
+            <Text style={styles.selectionIndexText}>Attendance: {selection.attendanceCount}</Text>
+          </View>
         </TouchableWithoutFeedback>
-      </View>
+      )}
     </View>
   );
 };

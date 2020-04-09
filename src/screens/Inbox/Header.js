@@ -11,8 +11,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 20,
-    paddingRight: 20,
   },
   backIcon: {
     paddingRight: 10

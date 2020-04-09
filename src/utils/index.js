@@ -115,3 +115,26 @@ export const promiseObj = (obj) => {
     }, {});
   });
 };
+
+export const createRange = (length) => {
+  return Array.apply(null, { length }).map((nil, index) => index);
+};
+
+export const compactOptions = (length, args) => {
+  args = args.slice();
+  let options = undefined;
+  let index = length;
+
+  while (!options && index) {
+    --index;
+
+    if (typeof args[index] == 'object') {
+      options = args[index];
+      args[index] = undefined;
+    }
+  }
+
+  args[length - 1] = options || {};
+
+  return createRange(length).map(index => args[index]);
+};
