@@ -1,6 +1,6 @@
 import moment from 'moment';
 import pluralize from 'pluralize';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Text, View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -46,15 +46,7 @@ const getEventPicture = e => e.featuredPhoto ? ({ uri: e.featuredPhoto }) : requ
 const Selection = () => {
   const baseNav = useNavigation(Base);
   const selection = baseNav.getParam('selection');
-  const [queryEvent] = queries.event.use({
-    onCompleted: useCallback((data) => {
-      if (!data) return;
-
-      baseNav.push('Event', {
-        event: data.event,
-      });
-    }, [baseNav]),
-  });
+  const [queryEvent, eventQuery] = queries.event.use();
 
   const events = useMemo(() => selection.features
     .map(f => f.properties.event)
@@ -63,6 +55,14 @@ const Selection = () => {
   , [selection]);
 
   baseNav.useBackListener();
+
+  useEffect(() => {
+    if (eventQuery.data?.event) {
+      baseNav.push('Event', {
+        event: eventQuery.data.event
+      });
+    }
+  }, [eventQuery.data?.event?.id]);
 
   const renderItemBody = useCallback(({ item: event }) => {
     return (

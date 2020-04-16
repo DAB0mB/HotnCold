@@ -15,14 +15,10 @@ const event = gql `
   ${fragments.event}
 `;
 
-event.use = (...args) => {
-  const [eventId, options] = compactOptions(2, args);
-  const variables = { eventId };
-
+event.use = (options) => {
   const [runQuery, query] = useLazyQuery(event, {
     fetchPolicy: 'no-cache',
     ...options,
-    variables,
   });
 
   const runEventQuery = useCallback((...args) => {
@@ -30,9 +26,9 @@ event.use = (...args) => {
 
     return runQuery({
       ...options,
-      variables: { ...variables, eventId },
+      variables: { eventId },
     });
-  }, [runQuery, eventId]);
+  }, [runQuery]);
 
   return [runEventQuery, query];
 };
