@@ -1,16 +1,17 @@
 import { useRobot } from 'hotncold-robot';
-import React, { useCallback, useState, useLayoutEffect } from 'react';
+import moment from 'moment';
+import React, { useCallback, useMemo, useState, useLayoutEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../../components/Bar';
+import DatePicker from '../../components/DatePicker';
 import Hamburger from '../../components/Hamburger';
+import { useAppState } from '../../services/AppState';
 import { useMine } from '../../services/Auth';
 import { HitboxProvider } from '../../services/Hitbox';
-import { useNavigation }  from '../../services/Navigation';
 import { colors } from '../../theme';
 import { empty, noop, useCallbackWhen } from '../../utils';
-import Base from '../Base';
 import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
 import Status from './Status';
@@ -63,7 +64,6 @@ const Frame = ({
   children,
 }) => {
   const mine = useMine();
-  const baseNav = useNavigation(Base);
   const [activeBubble, setActiveBubble] = useState(Bubble.Map);
   const [icons, setIcons] = useState(empty);
   const [sideMenuOpened, setSideMenuOpened] = useState(false);
@@ -75,6 +75,21 @@ const Frame = ({
     onPress: noop,
   });
   const { useTrap } = useRobot();
+  const [appState, setAppState] = useAppState();
+
+  const dateProps = {
+    visibleState: useState(false),
+    mode: 'date',
+    minimumDate: useMemo(() => moment().toDate(), [true]),
+    maximumDate: useMemo(() => moment().add(3, 'months').toDate(), [true]),
+    date: appState.mapTime,
+    onConfirm: useCallback((mapTime) => {
+      setAppState(appState => ({
+        ...appState,
+        mapTime,
+      }));
+    }, [true]),
+  };
 
   useLayoutEffect(() => {
     setBigBubble(bigBubble => ({
@@ -124,10 +139,6 @@ const Frame = ({
     setSideMenuOpened(false);
   }, [hideActiveStatus]);
 
-  const navToStatusEditor = useCallback(() => {
-    baseNav.push('StatusEditor', { mine });
-  }, [baseNav]);
-
   useTrap($Frame, {
     navToRadar,
     navToMap,
@@ -149,7 +160,7 @@ const Frame = ({
             </View>
 
             <View style={{ position: 'absolute', right: 0 }}>
-              <McIcon name='thought-bubble' size={30} color={colors.hot} onPress={navToStatusEditor} />
+              <McIcon name='calendar' size={30} color={colors.hot} onPress={() => dateProps.visibleState[1](true)} />
             </View>
           </Bar>
 
@@ -170,6 +181,8 @@ const Frame = ({
       </SideMenu>
 
       <Status hideTime activeStatus={activeStatus} hideActiveStatus={hideActiveStatus} />
+
+      <DatePicker {...dateProps} />
     </View>
   );
 };

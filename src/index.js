@@ -25,6 +25,10 @@ const styles = StyleSheet.create({
   },
 });
 
+const initialAppState = {
+  mapTime: new Date(),
+};
+
 const App = () => {
   const [bootstrapped, setBootstrapped] = useState(null);
   const dropdownAlertRef = useRef(null);
@@ -64,7 +68,7 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <AppStateProvider>
+      <AppStateProvider init={initialAppState}>
         <ApolloProvider client={graphqlClient}>
           <NotificationsProvider>
             <CookieProvider>

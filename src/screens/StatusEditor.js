@@ -75,12 +75,20 @@ const StatusEditor = () => {
   const { me } = baseNav.getParam('mine');
   const [text, setText] = useState('');
   const alertError = useAlertError();
-  const [createStatus] = mutations.createStatus.use(text, {
+  const [dropStatus] = mutations.dropStatus.use({
     onCompleted: useCallback((data) => {
       if (!data) return;
 
       baseNav.goBackOnceFocused();
     }, [baseNav]),
+    onError: alertError,
+  });
+  const [createStatus] = mutations.createStatus.use(text, {
+    onCompleted: useCallback((data) => {
+      if (!data) return;
+
+      dropStatus();
+    }, [dropStatus]),
     onError: alertError,
   });
 
@@ -89,6 +97,8 @@ const StatusEditor = () => {
   const clear = useCallback(() => {
     setText('');
   }, [true]);
+
+
 
   return (
     <View style={styles.container}>

@@ -153,7 +153,8 @@ export const mapBubbleIcon = (
 );
 
 const Map = () => {
-  const { me } = useMine();
+  const mine = useMine();
+  const { me } = mine;
   const { useTrap } = useRobot();
   const baseNav = useNavigation(Base);
   const discoveryNav = useNavigation(Discovery);
@@ -161,8 +162,8 @@ const Map = () => {
   const cameraRef = useRef(null);
   const locationUpdatedAtRef = useRef(0);
   const alertError = useAlertError();
-  const [, setAppState] = useAppState();
-  const [updateMyLocation] = mutations.updateMyLocation.use();
+  const [appState, setAppState] = useAppState();
+  const [updateMyLocation] = mutations.updateMyLocation.use(appState.mapTime);
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
@@ -208,9 +209,6 @@ const Map = () => {
     return images;
   }, [myFeature, areaFeatures]);
 
-  const [dropStatus] = mutations.dropStatus.use({
-    onError: alertError,
-  });
   const [pickupStatus] = mutations.pickupStatus.use({
     onError: alertError,
   });
@@ -222,13 +220,18 @@ const Map = () => {
       pickupStatus();
     }
     else {
-      dropStatus();
+      baseNav.push('StatusEditor', { mine });
     }
-  }, [bigBubbleActivated, dropStatus, pickupStatus]);
+  }, [mine, bigBubbleActivated, pickupStatus]);
 
   useEffect(() => {
     setBigBubbleActivated(!!me.status?.location);
   }, [!!me.status?.location]);
+
+  useEffect(() => {
+    // This will trigger location update
+    locationUpdatedAtRef.current = 0;
+  }, [appState.mapTime]);
 
   useScreenFrame({
     bigBubble: useMemo(() => ({
@@ -363,7 +366,7 @@ const Map = () => {
     return () => {
       MapboxGL.locationManager.removeListener(onLocationUpdate);
     };
-  }, [initialLocation, me]);
+  }, [updateMyLocation, initialLocation, me]);
 
   useTrap($Map, {
     loaded,
