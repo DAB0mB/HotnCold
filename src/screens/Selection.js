@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   eventContainer: {
     padding: 10,
-    backgroundColor: hexToRgba(colors.ink, .8),
+    backgroundColor: hexToRgba(colors.hot, .8),
   },
   eventName: {
     color: 'white',
