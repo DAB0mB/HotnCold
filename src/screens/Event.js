@@ -1,13 +1,24 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import React, { useMemo } from 'react';
-import { View, ScrollView, TouchableWithoutFeedback, Image, Text, StyleSheet, Dimensions } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
 import CONFIG from 'react-native-config';
 import { RaisedTextButton } from 'react-native-material-buttons';
 import HTML from 'react-native-render-html';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
+
+import {
+  Dimensions,
+  Image,
+  Linking,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 import Bar from '../components/Bar';
 import Base from '../containers/Base';
@@ -111,7 +122,7 @@ const Event = () => {
 
   const eventTimeLiteral = useMemo(() => [
     event.localTime,
-    moment(event.localTime, 'hh:mm').add(event.duration, 'milliseconds').format('hh:mm'),
+    moment(event.localTime, 'HH:mm').add(event.duration, 'milliseconds').format('HH:mm'),
   ].join(' - '), [event]);
 
   const eventFeature = useMemo(() => ({
@@ -122,6 +133,26 @@ const Event = () => {
       coordinates: event.location,
     },
   }), [event]);
+
+  const handleLinkPress = useCallback((e, url) => {
+    Linking.openURL(url);
+  }, [true]);
+
+  const showEventOnMaps = useCallback(() => {
+    const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
+    const latLng = event.location.slice().reverse().join(',');
+    const label = event.name;
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`
+    });
+
+    Linking.openURL(url);
+  }, [event]);
+
+  const showEventPage = useCallback(() => {
+    Linking.openURL(event.sourceLink);
+  }, [event]);
 
   baseNav.useBackListener();
 
@@ -164,37 +195,47 @@ const Event = () => {
         )}
 
         <View style={styles.description}>
-          <HTML html={event.description} imagesMaxWidth={Dimensions.get('window').width - 40} baseFontStyle={{ fontSize: 18 }} />
+          <HTML
+            html={event.description}
+            imagesMaxWidth={Dimensions.get('window').width - 40}
+            baseFontStyle={{ fontSize: 18 }}
+            onLinkPress={handleLinkPress}
+          />
         </View>
 
-        <View style={styles.map} pointerEvents='none'>
-          <MapboxGL.MapView
-            style={{ flex: 1 }}
-            styleURL={CONFIG.MAPBOX_STYLE_URL}
-            attributionEnabled={false}
-          >
-            <MapboxGL.Images images={images} />
+        <TouchableWithoutFeedback onPress={showEventOnMaps}>
+          <View style={styles.map}>
+            <View pointerEvents='none' style={styles.map}>
+              <MapboxGL.MapView
+                style={{ flex: 1 }}
+                styleURL={CONFIG.MAPBOX_STYLE_URL}
+                attributionEnabled={false}
+              >
+                <MapboxGL.Images images={images} />
 
-            <MapboxGL.Camera
-              zoomLevel={12}
-              centerCoordinate={event.location}
-            />
+                <MapboxGL.Camera
+                  zoomLevel={12}
+                  centerCoordinate={event.location}
+                />
 
-            <MapboxGL.ShapeSource
-              id='eventFeature'
-              shape={eventFeature}
-            >
-              <MapboxGL.SymbolLayer
-                id='eventFeatureMarker'
-                sourceID='eventFeature'
-                style={mapStyles.marker}
-              />
-            </MapboxGL.ShapeSource>
-          </MapboxGL.MapView>
-        </View>
+                <MapboxGL.ShapeSource
+                  id='eventFeature'
+                  shape={eventFeature}
+                >
+                  <MapboxGL.SymbolLayer
+                    id='eventFeatureMarker'
+                    sourceID='eventFeature'
+                    style={mapStyles.marker}
+                  />
+                </MapboxGL.ShapeSource>
+              </MapboxGL.MapView>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
 
         <View style={{ padding: 20 }}>
           <RaisedTextButton
+            onPress={showEventPage}
             color={colors.hot}
             title='Attend'
             titleColor='white'

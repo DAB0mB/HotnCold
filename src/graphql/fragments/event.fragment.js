@@ -6,6 +6,7 @@ const event = gql `
   fragment Event on Event {
     id
     source
+    sourceLink
     name
     localDate
     localTime
@@ -19,7 +20,6 @@ const event = gql `
     maxPeople
     address
     featuredPhoto
-    link
     area {
       ...Area
     }
