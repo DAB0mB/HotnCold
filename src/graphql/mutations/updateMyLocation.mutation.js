@@ -5,18 +5,18 @@ import { useCallback } from 'react';
 import * as fragments from '../fragments';
 
 const updateMyLocation = gql `
-  mutation UpdateMyLocation($location: Vector2D!) {
-    updateMyLocation(location: $location)
+  mutation UpdateMyLocation($location: Vector2D!, $featuredAt: DateTime) {
+    updateMyLocation(location: $location, featuredAt: $featuredAt)
   }
 `;
 
-updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
+updateMyLocation.use = (featuredAt) => {
   const queries = require('../queries');
 
   const { data: { me } = {} } = queries.mine.use();
-  const [superMutate, mutation] = useMutation(updateMyLocation, defaultOptions);
+  const [superMutate, mutation] = useMutation(updateMyLocation);
 
-  const mutate = useCallback((location = defaultLocation) => {
+  const mutate = useCallback((location) => {
     return superMutate({
       update: (cache, mutation) => {
         if (mutation.error) return;
@@ -24,9 +24,9 @@ updateMyLocation.use = (defaultLocation, defaultOptions = {}) => {
         const recentMe = fragments.user.profile.read(cache, me.id);
         fragments.user.profile.write(cache, { ...recentMe, location });
       },
-      variables: { location },
+      variables: { location, featuredAt },
     });
-  }, [me, superMutate, defaultLocation]);
+  }, [me, superMutate, featuredAt]);
 
   return [mutate, mutation];
 };

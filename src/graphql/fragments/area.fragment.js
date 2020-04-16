@@ -4,6 +4,7 @@ const area = gql `
   fragment Area on Area {
     id
     name
+    shortName
   }
 `;
 

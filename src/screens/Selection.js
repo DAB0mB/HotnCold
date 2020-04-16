@@ -1,6 +1,6 @@
 import moment from 'moment';
 import pluralize from 'pluralize';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Text, View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -46,13 +46,14 @@ const getEventPicture = e => e.featuredPhoto ? ({ uri: e.featuredPhoto }) : requ
 const Selection = () => {
   const baseNav = useNavigation(Base);
   const selection = baseNav.getParam('selection');
-  const [navToEvent, setNavToEvent] = useState();
-  const [queryEventDescription] = queries.eventDescription.use({
+  const [queryEvent] = queries.event.use({
     onCompleted: useCallback((data) => {
       if (!data) return;
 
-      navToEvent(data.eventDescription);
-    }, [navToEvent]),
+      baseNav.push('Event', {
+        event: data.event,
+      });
+    }, [baseNav]),
   });
 
   const events = useMemo(() => selection.features
@@ -72,19 +73,9 @@ const Selection = () => {
     );
   }, [true]);
 
-  const onEventItemPress = useCallback(({ item: event, index }) => {
-    setNavToEvent(() => (description) => {
-      baseNav.push('Event', {
-        event: {
-          ...event,
-          location: selection.features[index].geometry.coordinates,
-          description,
-        },
-      });
-    });
-
-    queryEventDescription(event.source, event.id, event.urlname);
-  }, [baseNav, queryEventDescription, selection]);
+  const onEventItemPress = useCallback(({ item: event }) => {
+    queryEvent(event.id);
+  }, [queryEvent]);
 
   const renderHeader = useCallback(() => {
     return (

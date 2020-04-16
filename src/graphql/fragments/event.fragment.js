@@ -1,23 +1,31 @@
 import gql from 'graphql-tag';
 
+import area from './area.fragment';
+
 const event = gql `
   fragment Event on Event {
     id
     source
     name
-    city
     localDate
     localTime
-    duration
+    startsAt
+    endsAt
     description
-    maxPeople
     attendanceCount
     location
-    address
     venueName
+    duration
+    maxPeople
+    address
     featuredPhoto
     link
+    area {
+      ...Area
+    }
   }
+
+  ${area}
 `;
 
 event.read = (cache, id) => {
