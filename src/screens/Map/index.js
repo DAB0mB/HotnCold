@@ -5,6 +5,7 @@ import { useRobot } from 'hotncold-robot';
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { TouchableWithoutFeedback, Image, Text, View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
+import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Base from '../../containers/Base';
@@ -59,8 +60,18 @@ const styles = StyleSheet.create({
     left: 8,
     backgroundColor: 'rgba(255, 255, 255, .5)',
   },
+  selectionIndexRelative: {
+    flex: 1,
+    width: '100%',
+    position: 'relative',
+  },
   selectionIndexText: {
     color: colors.ink,
+  },
+  selectionOutdatedIcon: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
   },
 });
 
@@ -260,6 +271,10 @@ const Map = () => {
 
       setFlatbush(flatbush);
       setAreaFeatures(areaFeatures);
+      setSelection(selection => selection && ({
+        ...selection,
+        isOutdated: true,
+      }));
     }).catch(alertError);
   }, [alertError, initialLocation, superUpdateMyLocation]);
 
@@ -497,8 +512,14 @@ const Map = () => {
       {selection && (
         <TouchableWithoutFeedback onPress={navToSelection}>
           <View style={styles.selectionIndex}>
-            <Text style={styles.selectionIndexText}>Events: {selection.eventsCount}</Text>
-            <Text style={styles.selectionIndexText}>Attendance: {selection.attendanceCount}</Text>
+            <View style={styles.selectionIndexRelative}>
+              <Text style={styles.selectionIndexText}>Events: {selection.eventsCount}</Text>
+              <Text style={styles.selectionIndexText}>Attendance: {selection.attendanceCount}</Text>
+
+              {selection.isOutdated && (
+                <McIcon style={styles.selectionOutdatedIcon} name='sync-alert' color={colors.ink} size={18} />
+              )}
+            </View>
           </View>
         </TouchableWithoutFeedback>
       )}
