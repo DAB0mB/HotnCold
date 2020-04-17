@@ -18,7 +18,7 @@ import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
 import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
-import { maparg, mapfn, useRenderer, useMountState, useAsyncCallback } from '../../utils';
+import { maparg, mapfn, useRenderer, useMountState, useAsyncCallback, useAsyncEffect } from '../../utils';
 
 const AVATAR_SIZE = .19;
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
@@ -163,7 +163,7 @@ const Map = () => {
   const locationUpdatedAtRef = useRef(0);
   const alertError = useAlertError();
   const [appState, setAppState] = useAppState();
-  const [updateMyLocation] = mutations.updateMyLocation.use(appState.discoveryTime);
+  const [superUpdateMyLocation] = mutations.updateMyLocation.use(appState.discoveryTime);
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
@@ -215,6 +215,54 @@ const Map = () => {
 
   discoveryNav.useBackListener();
 
+  const updateMyLocation = useCallback((location, force) => {
+    if (!mountState.current) return;
+
+    location = [
+      location.coords.longitude,
+      location.coords.latitude,
+    ];
+
+    if (!initialLocation) {
+      setInitialLocation(location);
+    }
+
+    // Update location once every {LOCATION_UPDATE_INTERVAL}ms
+    if (!force && Date.now() - LOCATION_UPDATE_INTERVAL < locationUpdatedAtRef.current) return;
+
+    locationUpdatedAtRef.current = Date.now();
+
+    superUpdateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
+      let flatbush = null;
+
+      if (areaFeatures.features.length) {
+        flatbush = new Flatbush(areaFeatures.features.length);
+
+        areaFeatures.features.forEach((feature) => {
+          const [x, y] = feature.geometry.coordinates;
+
+          // Method accepts a rectangle
+          flatbush.add(x, y, x, y);
+
+          switch (feature.properties.type) {
+          case 'user':
+            feature.properties.weight = 1;
+            if (feature.properties.user.id != me.id) feature.properties.marker = 'cold-marker';
+            break;
+          case 'event':
+            feature.properties.weight = 1 + feature.properties.event.attendanceCount;
+            break;
+          }
+        });
+
+        flatbush.finish();
+      }
+
+      setFlatbush(flatbush);
+      setAreaFeatures(areaFeatures);
+    }).catch(alertError);
+  }, [alertError, initialLocation, superUpdateMyLocation]);
+
   const onBigBubblePress = useCallback(() => {
     if (bigBubbleActivated) {
       pickupStatus();
@@ -228,9 +276,12 @@ const Map = () => {
     setBigBubbleActivated(!!me.status?.location);
   }, [!!me.status?.location]);
 
-  useEffect(() => {
-    // This will trigger location update
-    locationUpdatedAtRef.current = 0;
+  useAsyncEffect(function* () {
+    const location = yield MapboxGL.locationManager.getLastKnownLocation();
+
+    if (location) {
+      updateMyLocation(location, true);
+    }
   }, [appState.discoveryTime]);
 
   useScreenFrame({
@@ -313,58 +364,10 @@ const Map = () => {
   });
 
   useEffect(() => {
-    const onLocationUpdate = (location) => {
-      if (!mountState.current) return;
-
-      location = [
-        location.coords.longitude,
-        location.coords.latitude,
-      ];
-
-      if (!initialLocation) {
-        setInitialLocation(location);
-      }
-
-      // Update location once every {LOCATION_UPDATE_INTERVAL}ms
-      if (Date.now() - LOCATION_UPDATE_INTERVAL < locationUpdatedAtRef.current) return;
-
-      locationUpdatedAtRef.current = Date.now();
-
-      updateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
-        let flatbush = null;
-
-        if (areaFeatures.features.length) {
-          flatbush = new Flatbush(areaFeatures.features.length);
-
-          areaFeatures.features.forEach((feature) => {
-            const [x, y] = feature.geometry.coordinates;
-
-            // Method accepts a rectangle
-            flatbush.add(x, y, x, y);
-
-            switch (feature.properties.type) {
-            case 'user':
-              feature.properties.weight = 1;
-              if (feature.properties.user.id != me.id) feature.properties.marker = 'cold-marker';
-              break;
-            case 'event':
-              feature.properties.weight = 1 + feature.properties.event.attendanceCount;
-              break;
-            }
-          });
-
-          flatbush.finish();
-        }
-
-        setFlatbush(flatbush);
-        setAreaFeatures(areaFeatures);
-      }).catch(alertError);
-    };
-
-    MapboxGL.locationManager.addListener(onLocationUpdate);
+    MapboxGL.locationManager.addListener(updateMyLocation);
 
     return () => {
-      MapboxGL.locationManager.removeListener(onLocationUpdate);
+      MapboxGL.locationManager.removeListener(updateMyLocation);
     };
   }, [updateMyLocation, initialLocation, me]);
 
