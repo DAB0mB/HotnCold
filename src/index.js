@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 });
 
 const initialAppState = {
-  mapTime: new Date(),
+  discoveryTime: new Date(),
 };
 
 const App = () => {

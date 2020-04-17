@@ -5,7 +5,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../../components/Bar';
-import DatePicker from '../../components/DatePicker';
+import Calendar from '../../components/Calendar';
 import Hamburger from '../../components/Hamburger';
 import { useAppState } from '../../services/AppState';
 import { useMine } from '../../services/Auth';
@@ -77,16 +77,15 @@ const Frame = ({
   const { useTrap } = useRobot();
   const [appState, setAppState] = useAppState();
 
-  const dateProps = {
+  const calendarProps = {
+    minDate: useMemo(() => moment().toDate(), [true]),
+    maxDate: useMemo(() => moment().add(3, 'months').toDate(), [true]),
+    current: appState.discoveryTime,
     visibleState: useState(false),
-    mode: 'date',
-    minimumDate: useMemo(() => moment().toDate(), [true]),
-    maximumDate: useMemo(() => moment().add(3, 'months').toDate(), [true]),
-    date: appState.mapTime,
-    onConfirm: useCallback((mapTime) => {
+    onConfirm: useCallback((discoveryTime) => {
       setAppState(appState => ({
         ...appState,
-        mapTime,
+        discoveryTime,
       }));
     }, [true]),
   };
@@ -147,7 +146,7 @@ const Frame = ({
   });
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, position: 'relative' }}>
       <SideMenu opened={sideMenuOpened} onClose={closeSideMenu} showStatus={showActiveStatus}>
         <HitboxProvider>
           <Bar>
@@ -160,7 +159,7 @@ const Frame = ({
             </View>
 
             <View style={{ position: 'absolute', right: 0 }}>
-              <McIcon name='calendar' size={30} color={colors.hot} onPress={() => dateProps.visibleState[1](true)} />
+              <McIcon name='calendar' size={30} color={colors.hot} onPress={() => calendarProps.visibleState[1](true)} />
             </View>
           </Bar>
 
@@ -181,8 +180,7 @@ const Frame = ({
       </SideMenu>
 
       <Status hideTime activeStatus={activeStatus} hideActiveStatus={hideActiveStatus} />
-
-      <DatePicker {...dateProps} />
+      <Calendar style={{ position: 'absolute', top: 10, right: 10 }} {...calendarProps} />
     </View>
   );
 };

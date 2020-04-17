@@ -163,7 +163,7 @@ const Map = () => {
   const locationUpdatedAtRef = useRef(0);
   const alertError = useAlertError();
   const [appState, setAppState] = useAppState();
-  const [updateMyLocation] = mutations.updateMyLocation.use(appState.mapTime);
+  const [updateMyLocation] = mutations.updateMyLocation.use(appState.discoveryTime);
   const [areaFeatures, setAreaFeatures] = useState(emptyShape);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
@@ -231,7 +231,7 @@ const Map = () => {
   useEffect(() => {
     // This will trigger location update
     locationUpdatedAtRef.current = 0;
-  }, [appState.mapTime]);
+  }, [appState.discoveryTime]);
 
   useScreenFrame({
     bigBubble: useMemo(() => ({
