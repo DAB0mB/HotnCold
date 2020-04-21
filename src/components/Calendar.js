@@ -76,6 +76,7 @@ const Calendar = ({ visibleState, style, onConfirm, onCancel, ...calendarProps }
       <SuperCalendar
         {...calendarProps}
         theme={calendarTheme}
+        current={selectedDate}
         onDayPress={handleDayChange}
         markedDates={markedDates}
       />

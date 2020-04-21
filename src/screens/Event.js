@@ -29,6 +29,8 @@ const images = {
   'marker': require('../assets/hot-marker.png'),
 };
 
+const imagesMaxWidth = Dimensions.get('window').width - 80;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -52,16 +54,27 @@ const styles = StyleSheet.create({
   featuredPhoto: {
     width: '100%',
     height: 200,
+    marginBottom: 20,
   },
   description: {
     paddingVertical: 20,
     paddingHorizontal: 20,
+    margin: 20,
+    marginBottom: 40,
+    backgroundColor: 'white',
   },
   eventName: {
     fontSize: 24,
     padding: 20,
     fontWeight: '900',
     color: colors.hot,
+  },
+  attendView: {
+    marginTop: 40,
+    padding: 20,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
   },
 });
 
@@ -197,8 +210,8 @@ const Event = () => {
         <View style={styles.description}>
           <HTML
             html={event.description}
-            imagesMaxWidth={Dimensions.get('window').width - 40}
-            baseFontStyle={{ fontSize: 18 }}
+            imagesMaxWidth={imagesMaxWidth}
+            baseFontStyle={{ fontSize: 16 }}
             onLinkPress={handleLinkPress}
           />
         </View>
@@ -233,7 +246,7 @@ const Event = () => {
           </View>
         </TouchableWithoutFeedback>
 
-        <View style={{ padding: 20 }}>
+        <View style={styles.attendView}>
           <RaisedTextButton
             onPress={showEventPage}
             color={colors.hot}

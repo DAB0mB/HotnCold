@@ -106,9 +106,11 @@ export const useNavigation = (navKey) => {
   }, [true]);
 
   useMemo(() => {
-    nav.goBackOnceFocused = () => {
-      throw Error('Please call nav.useBackListener() before calling nav.goBackOnceFocused()');
-    };
+    if (!nav.goBackOnceFocused) {
+      nav.goBackOnceFocused = () => {
+        throw Error('Please call nav.useBackListener() before calling nav.goBackOnceFocused()');
+      };
+    }
   }, [true]);
 
   nav.useBackListener = useCallback((_goBack = nav.goBack.bind(nav)) => {
@@ -116,7 +118,7 @@ export const useNavigation = (navKey) => {
 
     const goBackOnceFocusedListener = useCallback(() => {
       return nav.goBackOnceFocused(true);
-    });
+    }, [true]);
 
     nav.goBackOnceFocused = useCallback((isListener) => {
       if (!CONFIG.USE_ROBOT || !isListener) {

@@ -1,15 +1,24 @@
 // Source: https://github.com/10clouds/FluidBottomNavigation-rn/blob/master/index.js
 
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import Ripple from 'react-native-material-ripple';
 import {
   View,
   Animated,
   Easing,
 } from 'react-native';
-import PropTypes from 'prop-types';
 
 import { Hitbox } from '../../services/Hitbox';
 import { colors } from '../../theme';
+
+const BigBubbleTouchable = (props) => (
+  <Ripple
+    {...props}
+    style={[props.style, { transform: [{ scale: .8 }] }]}
+    rippleContainerBorderRadius={999}
+  />
+);
 
 class BubblesBar extends Component {
   constructor(props) {
@@ -20,8 +29,6 @@ class BubblesBar extends Component {
       bigBubble: props.bigBubble,
     };
 
-    this.bigBubbleActiveSize = new Animated.Value(0);
-    this.bigBubbleActiveOpacity = new Animated.Value(0);
     this.animatedItemValues = [];
     this.animatedBubbleValues = [];
     this.animatedMiniBubbleValues = [];
@@ -40,7 +47,6 @@ class BubblesBar extends Component {
         this.animatedImageValues[index] = new Animated.Value(0);
         this.animatedMiniBubbleValues[index] = new Animated.Value(0);
       }
-
     });
   }
 
@@ -58,13 +64,6 @@ class BubblesBar extends Component {
     }
 
     if ('bigBubble' in props && props.bigBubble !== this.state.bigBubble) {
-      if (props.bigBubble.activated && !this.state.bigBubble.activated) {
-        this.activateBigBubble('activeBubble' in state);
-      }
-      else if (!props.bigBubble.activated && this.state.bigBubble.activated) {
-        this.deactivateBigBubble('activeBubble' in state);
-      }
-
       state.bigBubble = props.bigBubble;
     }
 
@@ -171,14 +170,10 @@ class BubblesBar extends Component {
       <View style={styles.bigBubbleContainer}>
         <View  style={styles.bigBubbleContent}>
           <View style={styles.bigBubbleBlocker} />
-          <Hitbox onPress={this.state.bigBubble.onPress} viewStyle={{ flex: 1 }}>
-            <View style={[{ backgroundColor: this.state.bigBubble.inactiveBgColor }, styles.bigBubbleRipple]}>
+          <Hitbox onPress={this.state.bigBubble.onPress} viewStyle={{ flex: 1 }} Touchable={BigBubbleTouchable}>
+            <View style={[{ backgroundColor: this.state.bigBubble.backgroundColor }, styles.bigBubbleRipple]}>
               <View style={styles.bigBubbleReflection} />
               {this.props.bigBubble.icon}
-              <Animated.View style={[{ height: 100, width: 100, opacity: this.bigBubbleActiveOpacity, backgroundColor: this.state.bigBubble.activeBgColor }, { transform: [{ scale: this.bigBubbleActiveSize }] }, styles.bigBubbleActiveLayer]}>
-                <View style={styles.bigBubbleReflection} />
-                {this.props.bigBubble.icon}
-              </Animated.View>
             </View>
           </Hitbox>
         </View>
@@ -241,50 +236,6 @@ class BubblesBar extends Component {
     ]).start();
   };
 
-  activateBigBubble = (newRoute) => {
-    if (newRoute) {
-      this.bigBubbleActiveSize.setValue(1);
-      this.bigBubbleActiveOpacity.setValue(1);
-
-      return;
-    }
-
-    Animated.parallel([
-      Animated.timing(this.bigBubbleActiveSize, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(this.bigBubbleActiveOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  deactivateBigBubble = (newRoute) => {
-    if (newRoute) {
-      this.bigBubbleActiveSize.setValue(0);
-      this.bigBubbleActiveOpacity.setValue(0);
-
-      return;
-    }
-
-    Animated.parallel([
-      Animated.timing(this.bigBubbleActiveSize, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true
-      }),
-      Animated.timing(this.bigBubbleActiveOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
   render() {
     return (
       <View style={styles.border}>
@@ -314,8 +265,7 @@ BubblesBar.propTypes = {
   bigBubble: PropTypes.shape({
     onPress: PropTypes.func,
     icon: PropTypes.element,
-    activeBgColor: PropTypes.string,
-    inactiveBgColor: PropTypes.string,
+    backgroundColor: PropTypes.string,
   }),
 };
 
@@ -406,12 +356,6 @@ const styles = {
     right: -1,
     top: '50%',
     backgroundColor: 'white',
-  },
-  bigBubbleActiveLayer: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 999,
   },
   bigBubbleRipple: {
     margin: 5,

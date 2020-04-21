@@ -74,7 +74,6 @@ const SideMenu = ({
   onOpen = noop,
   opened,
   children,
-  showStatus
 }) => {
   const { useTrap } = useRobot();
   const [initialOpened, setInitialOpened] = useState(opened);
@@ -91,6 +90,13 @@ const SideMenu = ({
       },
     });
   }, [baseNav]);
+
+  const navToProfile = useCallback(() => {
+    baseNav.push('Profile', {
+      user: me,
+      itsMe: true,
+    });
+  }, [baseNav, me]);
 
   const navToProfileEditor = useCallback(() => {
     baseNav.push('ProfileEditor', { mine: { me, myContract } });
@@ -139,7 +145,7 @@ const SideMenu = ({
       <ImageBackground style={[styles.header, bgStyle]} source={require('./sidemenu-background-blur.png')} onLoad={() => setBgStyle({})}>
         <LinearGradient colors={['rgba(0, 0, 0, .4)', 'rgba(0, 0, 0, .65)']}>
           <View style={styles.headerContent}>
-            <TouchableWithoutFeedback onPress={showStatus}>
+            <TouchableWithoutFeedback onPress={navToProfile}>
               <Image source={{ uri: me.avatar }} style={styles.avatar} />
             </TouchableWithoutFeedback>
             <Text style={styles.myName}>{me.name}</Text>

@@ -86,7 +86,7 @@ const Selection = () => {
           </View>
         </TouchableWithoutFeedback>
 
-        <Text style={styles.title}>{pluralize('Event', selection.features.length, true)}</Text>
+        <Text style={styles.title}>{pluralize('Event', events.length, true)}</Text>
       </Bar>
     );
   }, [baseNav]);

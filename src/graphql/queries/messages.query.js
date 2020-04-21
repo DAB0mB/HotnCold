@@ -49,7 +49,6 @@ messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) =>
           messages: [messageSent, ...data.messages]
         });
       },
-      fetchPolicy: 'no-cache',
     });
   }, [query.subscribeToMore, data, chatId]);
 
@@ -70,7 +69,6 @@ messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) =>
             messages: [...data.messages, ...fetchMoreResult.messages]
           });
         },
-        fetchPolicy: 'no-cache',
         ...options,
       });
     }, [query.fetchMore, data, chatId, limit]),

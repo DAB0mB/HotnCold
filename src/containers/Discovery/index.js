@@ -47,9 +47,18 @@ const Discovery = Base.create(({ navigation }) => {
   const [associateNotificationsToken] = mutations.associateNotificationsToken.use();
   const [requiredService, setRequiredService] = useState(null);
   const [nativeServicesReady, setNativeServicesReady] = useState(false);
-  const [queryChats, chatsQuery] = queries.chats.use.lazy();
   const { me, myContract } = myQuery.data || {};
   const [appState] = useAppState();
+
+  // Prepare cache
+
+  const chatsQuery = queries.chats.use({
+    subscribeToChanges: true,
+  });
+
+  queries.statuses.use.mine({
+    subscribeToChanges: true,
+  });
 
   const onMessage = useCallback((message) => {
     switch (message.channelId) {
@@ -106,9 +115,6 @@ const Discovery = Base.create(({ navigation }) => {
 
       return;
     }
-
-    // Start fetching and update cache
-    queryChats();
 
     yield notifications.requestPermission();
     // Lastly, fetch token. Only associate it if component is still mounted

@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import * as fragments from '../fragments';
 
 const updateMyLocation = gql `
-  mutation UpdateMyLocation($location: Vector2D!, $featuredAt: DateTime) {
+  mutation UpdateMyLocation($location: Vector2D!, $featuredAt: DateTime!) {
     updateMyLocation(location: $location, featuredAt: $featuredAt)
   }
 `;

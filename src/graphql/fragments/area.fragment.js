@@ -5,6 +5,7 @@ const area = gql `
     id
     name
     shortName
+    timezone
   }
 `;
 

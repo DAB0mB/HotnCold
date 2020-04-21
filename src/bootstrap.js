@@ -1,3 +1,5 @@
+import 'moment-timezone';
+
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import CONFIG from 'react-native-config';

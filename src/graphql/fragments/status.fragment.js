@@ -4,8 +4,8 @@ const status = gql `
   fragment Status on Status {
     id
     location
+    publishedAt
     text
-    updatedAt
   }
 `;
 

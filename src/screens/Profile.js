@@ -140,6 +140,8 @@ const Profile = () => {
   const [bio, setBio] = useState(() => user ? user.bio : '');
   const [pictures, setPictures] = useState(() => user ? user.pictures : []);
 
+  baseNav.useBackListener();
+
   if (typeof userParam == 'function') {
     const user = userParam();
 
@@ -164,10 +166,6 @@ const Profile = () => {
 
     user.pictures.forEach(p => Image.prefetch(p));
   }, [true]);
-
-  if (baseNav.getParam('user')) {
-    baseNav.useBackListener();
-  }
 
   const navToChat = useCallback(async () => {
     if (isRecipient) {

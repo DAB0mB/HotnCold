@@ -2,17 +2,18 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import turfCircle from '@turf/circle';
 import Flatbush from 'flatbush';
 import { useRobot } from 'hotncold-robot';
-import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useMemo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { TouchableWithoutFeedback, Image, Text, View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
+import Ripple from 'react-native-material-ripple';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
-import { useMine } from '../../services/Auth';
+import * as subscriptions from '../../graphql/subscriptions';
 import { useAppState } from '../../services/AppState';
+import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useScreenFrame } from '../../services/Frame';
 import { useGeoBackgroundTelemetry } from '../../services/Geolocation';
@@ -30,6 +31,8 @@ const MAX_INTER_ZOOM = DEFAULT_ZOOM - 1;
 const MIN_INTER_ZOOM = DEFAULT_ZOOM - 3;
 const MIN_ZOOM = DEFAULT_ZOOM - 3;
 const AVATAR_MARGIN = 28 / AVATAR_SIZE;
+
+// TODO: 1 events if only 1 status was captured in selection
 
 const defaultImages = {
   'cold-marker': require('../../assets/cold-marker.png'),
@@ -72,6 +75,34 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
+  },
+  plusIcon: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectionIconView: {
+    position: 'absolute',
+    width: 60,
+    height: 60,
+    right: 10,
+    bottom: 70,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    backgroundColor: 'white',
+    padding: 3.5,
+  },
+  selectionIconRipple: {
+    flex: 1,
+    borderRadius: 999,
+    backgroundColor: colors.cold,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
@@ -152,16 +183,7 @@ const isUserFeature = mapfn.all(
   mapfn.has('status'),
 );
 
-const emptyShape = {
-  type: 'FeatureCollection',
-  features: [],
-};
-
 export const $Map = {};
-
-export const mapBubbleIcon = (
-  <MIcon name='person-pin-circle' size={50} color='white' />
-);
 
 const Map = () => {
   const mine = useMine();
@@ -175,56 +197,90 @@ const Map = () => {
   const alertError = useAlertError();
   const [appState, setAppState] = useAppState();
   const [superUpdateMyLocation] = mutations.updateMyLocation.use(appState.discoveryTime);
-  const [areaFeatures, setAreaFeatures] = useState(emptyShape);
+  const [otherFeatures, setOtherFeatures] = useState([]);
+  const [myFeatures, setMyFeatures] = useState([]);
+  const mapFeatureCollection = useMemo(() => ({
+    type: 'FeatureCollection', features: [...myFeatures, ...otherFeatures]
+  }), [myFeatures, otherFeatures]);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
   const [loaded, setLoaded] = useRenderer();
   const mountState = useMountState();
-  const [bigBubbleActivated, setBigBubbleActivated] = useState(() => !!me.status?.location);
+  // TODO: Use additional rbush + rbush-knn for dynamic status features
+  // Package: https://github.com/mourner/rbush
   const [flatbush, setFlatbush] = useState(null);
 
-  const myFeature = useMemo(() => me.status?.location && {
-    type: 'Feature',
-    properties: {
-      marker: 'hot-marker',
-      user: {
-        id: me.id,
-        name: me.name,
-        avatar: me.avatar,
-      },
-      status: {
-        id: me.status.id,
-        text: me.status.text,
-        updatedAt: me.status.updatedAt,
-      },
-    },
-    geometry: {
-      type: 'Point',
-      coordinates: me.location,
-    },
-  }, [me]);
+  subscriptions.statusCreated.use(me.id, {
+    onSubscriptionData: useCallback(({ subscriptionData }) => {
+      if (!subscriptionData.data) return;
 
-  const images = useMemo(() => {
-    const images = { ...defaultImages };
+      const status = subscriptionData.data.statusCreated;
 
-    for (const feature of areaFeatures.features) {
+      setMyFeatures(myFeatures => [
+        ...myFeatures,
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: status.location,
+          },
+          properties: {
+            type: 'status',
+            user: {
+              id: status.userId,
+              name: me.name,
+              avatar: me.avatar,
+            },
+            status: {
+              id: status.id,
+              text: status.text,
+            },
+          },
+        },
+      ]);
+    }, [me]),
+  });
+
+  subscriptions.statusDeleted.use(me.id, {
+    onSubscriptionData: useCallback(({ subscriptionData }) => {
+      if (!subscriptionData.data) return;
+
+      const statusId = subscriptionData.data.statusDeleted;
+
+      setMyFeatures(myFeatures => {
+        const statusIndex = myFeatures.findIndex(f => f.properties.status.id === statusId);
+        myFeatures = myFeatures.slice();
+        myFeatures.splice(statusIndex, 1);
+
+        return myFeatures;
+      });
+    }, [me]),
+  });
+
+  useScreenFrame();
+  discoveryNav.useBackListener();
+
+  const myImages = useMemo(() => {
+    const images = {};
+
+    images[me.id] = { uri: me.avatar };
+
+    return images;
+  }, [me.avatar]);
+
+  const otherImages = useMemo(() => {
+    const images = {};
+
+    for (const feature of otherFeatures) {
       if (!feature.properties.user) continue;
 
       images[feature.properties.user.id] = { uri: feature.properties.user.avatar };
     }
 
-    if (myFeature) {
-      images[myFeature.properties.user.id] = { uri: myFeature.properties.user.avatar };
-    }
-
     return images;
-  }, [myFeature, areaFeatures]);
+  }, [otherFeatures]);
 
-  const [pickupStatus] = mutations.pickupStatus.use({
-    onError: alertError,
-  });
-
-  discoveryNav.useBackListener();
+  const images = useMemo(() => ({ ...defaultImages, ...myImages, ...otherImages }), [myImages, otherImages]);
 
   const updateMyLocation = useCallback((location, force) => {
     if (!mountState.current) return;
@@ -243,34 +299,51 @@ const Map = () => {
 
     locationUpdatedAtRef.current = Date.now();
 
-    superUpdateMyLocation(location).then(({ data: { updateMyLocation: areaFeatures } }) => {
+    superUpdateMyLocation(location).then(({ data: { updateMyLocation: { features } } }) => {
       let flatbush = null;
+      const otherFeatures = [];
+      const myFeatures = [];
 
-      if (areaFeatures.features.length) {
-        flatbush = new Flatbush(areaFeatures.features.length);
+      if (features.length) {
+        flatbush = new Flatbush(features.length);
 
-        areaFeatures.features.forEach((feature) => {
-          const [x, y] = feature.geometry.coordinates;
-
-          // Method accepts a rectangle
-          flatbush.add(x, y, x, y);
-
+        features.forEach((feature) => {
           switch (feature.properties.type) {
-          case 'user':
+          case 'status':
             feature.properties.weight = 1;
-            if (feature.properties.user.id != me.id) feature.properties.marker = 'cold-marker';
+
+            if (feature.properties.user.id == me.id) {
+              feature.properties.marker = 'hot-marker';
+              myFeatures.push(feature);
+            }
+            else {
+              feature.properties.marker = 'cold-marker';
+              otherFeatures.push(feature);
+            }
             break;
           case 'event':
             feature.properties.weight = 1 + feature.properties.event.attendanceCount;
+            otherFeatures.push(feature);
             break;
           }
+        });
+      }
+
+      if (otherFeatures.length) {
+        flatbush = new Flatbush(otherFeatures.length);
+
+        otherFeatures.forEach((feature) => {
+          const [x, y] = feature.geometry.coordinates;
+
+          flatbush.add(x, y, x, y);
         });
 
         flatbush.finish();
       }
 
       setFlatbush(flatbush);
-      setAreaFeatures(areaFeatures);
+      setOtherFeatures(otherFeatures);
+      setMyFeatures(myFeatures);
       setSelection(selection => selection && ({
         ...selection,
         isOutdated: true,
@@ -278,18 +351,22 @@ const Map = () => {
     }).catch(alertError);
   }, [alertError, initialLocation, superUpdateMyLocation]);
 
-  const onBigBubblePress = useCallback(() => {
-    if (bigBubbleActivated) {
-      pickupStatus();
-    }
-    else {
-      baseNav.push('StatusEditor', { mine });
-    }
-  }, [mine, bigBubbleActivated, pickupStatus]);
+  useLayoutEffect(() => {
+    setAppState(appState => ({
+      ...appState,
+      discoveryMap: mapRef,
+      discoveryCamera: cameraRef,
+    }));
 
-  useEffect(() => {
-    setBigBubbleActivated(!!me.status?.location);
-  }, [!!me.status?.location]);
+    return () => {
+      setAppState(appState => {
+        appState = { ...appState };
+        delete appState.discoveryMap;
+
+        return appState;
+      });
+    };
+  }, [true]);
 
   useAsyncEffect(function* () {
     const location = yield MapboxGL.locationManager.getLastKnownLocation();
@@ -298,14 +375,6 @@ const Map = () => {
       updateMyLocation(location, true);
     }
   }, [appState.discoveryTime]);
-
-  useScreenFrame({
-    bigBubble: useMemo(() => ({
-      icon: mapBubbleIcon,
-      onPress: onBigBubblePress,
-      activated: bigBubbleActivated,
-    }), [bigBubbleActivated, onBigBubblePress]),
-  });
 
   const zoomInterpolator = useAsyncCallback(function* (v) {
     const zoom = yield mapRef.current.getZoom();
@@ -342,7 +411,7 @@ const Map = () => {
     baseNav.push('Selection', { selection });
   }, [baseNav, selection]);
 
-  const renderSelection = useAsyncCallback(function* (e) {
+  const renderSelection = useAsyncCallback(function* (feature) {
     const map = mapRef.current;
 
     if (!map) return;
@@ -354,15 +423,22 @@ const Map = () => {
       return;
     }
 
-    const selectionCoords = e.geometry.coordinates;
+    const selectionCoords = feature?.geometry.coordinates || (yield mapRef.current.getCenter());
     const selectionBorder = turfCircle(selectionCoords, SELECTION_RADIUS);
     const selectionIndexes = flatbush ? flatbush.neighbors(...selectionCoords, Infinity, SELECTION_RADIUS / 100) : [];
-    const selectionFeatures = selectionIndexes.map(i => areaFeatures.features[i]);
+    const selectionFeatures = selectionIndexes.map(i => otherFeatures[i]);
     const eventsFeatures = selectionFeatures.filter(f => f.properties.type == 'event');
     const attendanceCount = eventsFeatures.reduce((count, f) => count + f.properties.event.attendanceCount, 0);
 
     setSelection({
-      location: e,
+      location: {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Point',
+          coordinates: selectionCoords,
+        },
+      },
       size: selectionIndexes.length,
       border: selectionBorder,
       features: selectionFeatures,
@@ -370,7 +446,7 @@ const Map = () => {
       attendanceCount,
       zoom,
     });
-  }, [flatbush, areaFeatures]);
+  }, [flatbush, otherFeatures]);
 
   useGeoBackgroundTelemetry({
     enabled: me.discoverable,
@@ -432,82 +508,59 @@ const Map = () => {
         )}
 
         <MapboxGL.ShapeSource
-          id='featuresInArea'
+          id='mapFeatures'
           onPress={onFeaturePress}
-          {...({
-            // Used for dev
-            // url: 'https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson',
-            shape: areaFeatures,
-          })}
+          shape={mapFeatureCollection}
         >
           <MapboxGL.HeatmapLayer
-            id='featuresInAreaHeatmap'
-            sourceID='featuresInArea'
+            id='mapFeaturesHeatmap'
+            sourceID='mapFeatures'
             style={mapStyles.heatmap}
           />
 
           <MapboxGL.SymbolLayer
-            id='featuresInAreaMarkers'
-            sourceID='featuresInArea'
+            id='mapFeaturesMarkers'
+            sourceID='mapFeatures'
             minZoomLevel={MIN_ZOOM}
             filter={isUserFeature}
             style={mapStyles.marker}
           />
 
           <MapboxGL.SymbolLayer
-            id='featuresInAreaAvatars'
-            sourceID='featuresInArea'
+            id='mapFeaturesAvatars'
+            sourceID='mapFeatures'
             minZoomLevel={MIN_ZOOM}
             filter={isUserFeature}
             style={mapStyles.avatar}
           />
 
           <MapboxGL.SymbolLayer
-            id='featuresInAreaNames'
-            sourceID='featuresInArea'
+            id='mapFeaturesNames'
+            sourceID='mapFeatures'
             minZoomLevel={MAX_INTER_ZOOM}
             filter={isUserFeature}
             style={mapStyles.name}
           />
         </MapboxGL.ShapeSource>
 
-        {myFeature && (
-          <MapboxGL.ShapeSource
-            id='myFeature'
-            shape={myFeature}
-            onPress={onFeaturePress}
-          >
-            <MapboxGL.SymbolLayer
-              id='myFeatureMarker'
-              sourceID='myFeature'
-              minZoomLevel={MIN_ZOOM}
-              style={mapStyles.marker}
-            />
-
-            <MapboxGL.SymbolLayer
-              id='myFeatureAvatar'
-              sourceID='myFeature'
-              minZoomLevel={MIN_ZOOM}
-              style={mapStyles.avatar}
-            />
-
-            <MapboxGL.SymbolLayer
-              id='myFeatureName'
-              sourceID='myFeature'
-              minZoomLevel={MAX_INTER_ZOOM}
-              style={mapStyles.name}
-            />
-          </MapboxGL.ShapeSource>
-        )}
-
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
+
+      <View style={styles.plusIcon}>
+        <McIcon name='plus' color={colors.ink} size={12} />
+      </View>
 
       <TouchableWithoutFeedback onPress={showAttribution}>
         <View style={styles.watermarkContainer}>
           <Image source={require('./mapbox.png')} resizeMode='contain' style={styles.watermarkImage} />
         </View>
       </TouchableWithoutFeedback>
+
+      <View style={styles.selectionIconView}>
+        <Ripple onPress={() => renderSelection()} rippleContainerBorderRadius={999} style={styles.selectionIconRipple}>
+          <McIcon name='selection-ellipse' color='white' size={30} />
+        </Ripple>
+      </View>
 
       {selection && (
         <TouchableWithoutFeedback onPress={navToSelection}>

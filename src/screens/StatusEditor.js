@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { useState, useCallback } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, View, ScrollView, Text, TextInput, Image } from 'react-native';
 import { RaisedTextButton } from 'react-native-material-buttons';
@@ -5,9 +6,11 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
+import { useAppState } from '../services/AppState';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
+import { useAsyncCallback } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -75,7 +78,8 @@ const StatusEditor = () => {
   const { me } = baseNav.getParam('mine');
   const [text, setText] = useState('');
   const alertError = useAlertError();
-  const [dropStatus] = mutations.dropStatus.use({
+  const [appState] = useAppState();
+  const [superCreateStatus] = mutations.createStatus.use(text, {
     onCompleted: useCallback((data) => {
       if (!data) return;
 
@@ -83,22 +87,20 @@ const StatusEditor = () => {
     }, [baseNav]),
     onError: alertError,
   });
-  const [createStatus] = mutations.createStatus.use(text, {
-    onCompleted: useCallback((data) => {
-      if (!data) return;
-
-      dropStatus();
-    }, [dropStatus]),
-    onError: alertError,
-  });
 
   baseNav.useBackListener();
+
+  const createStatus = useAsyncCallback(function* () {
+    const location = yield appState.discoveryMap.current.getCenter();
+
+    // TODO: Create status at a specific time of the day
+    // For now the status will be published exactly at the end of the day
+    superCreateStatus(location, moment(appState.discoveryTime).add(1, 'day').subtract(1, 's').toDate());
+  }, [superCreateStatus, appState]);
 
   const clear = useCallback(() => {
     setText('');
   }, [true]);
-
-
 
   return (
     <View style={styles.container}>

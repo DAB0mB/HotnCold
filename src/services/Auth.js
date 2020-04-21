@@ -80,14 +80,13 @@ export const useSignUp = (args, {
 };
 
 export const useSignOut = ({ onCompleted = noop, onError = noop } = {}) => {
-  const [, setAppState] = useAppState();
+  const [appState] = useAppState();
   const cookie = useCookie();
   const client = useApolloClient();
   const [dissociateNotificationsToken] = mutations.dissociateNotificationsToken.use();
 
   return useCallback(() => {
     return dissociateNotificationsToken().then(() => Promise.all([
-      setAppState({}),
       cookie.clear(),
       client.clearStore(),
       new Promise((resolve) => {
@@ -99,6 +98,12 @@ export const useSignOut = ({ onCompleted = noop, onError = noop } = {}) => {
         client.subscription.close();
       }),
     ]))
+      .then(() => {
+      // Silently clear without triggering effects
+        for (const key in appState) {
+          delete appState[key];
+        }
+      })
       .then(onCompleted, onError);
   }, [client, cookie, onCompleted, onError]);
 };

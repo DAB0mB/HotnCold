@@ -3,22 +3,25 @@ import moment from 'moment';
 import React, { useCallback, useMemo, useState, useLayoutEffect } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Bar from '../../components/Bar';
 import Calendar from '../../components/Calendar';
 import Hamburger from '../../components/Hamburger';
+import Base from '../../containers/Base';
 import { useAppState } from '../../services/AppState';
 import { useMine } from '../../services/Auth';
 import { HitboxProvider } from '../../services/Hitbox';
 import { colors } from '../../theme';
-import { empty, noop, useCallbackWhen } from '../../utils';
+import { empty, useCallbackWhen } from '../../utils';
+import { useNavigation } from '../../services/Navigation';
 import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
 import Status from './Status';
 
 const loadingIcons = Promise.all([
   McIcon.getImageSource('map', 30, colors.hot),
-  McIcon.getImageSource('radar', 30, colors.hot),
+  McIcon.getImageSource('thought-bubble', 30, colors.hot),
 ]);
 
 const styles = StyleSheet.create({
@@ -53,49 +56,46 @@ const styles = StyleSheet.create({
 
 const Bubble = {
   Map: 0,
-  Radar: 1,
+  StatusBoard: 1,
 };
 
 export const $Frame = {};
 
 const Frame = ({
   nav: discoveryNav,
-  bigBubble: bigBubbleProp = empty,
   children,
 }) => {
   const mine = useMine();
+  const { me } = mine;
+  const baseNav = useNavigation(Base);
   const [activeBubble, setActiveBubble] = useState(Bubble.Map);
   const [icons, setIcons] = useState(empty);
   const [sideMenuOpened, setSideMenuOpened] = useState(false);
-  const [activeStatus, setActiveStatus] = useState();
-  const [bigBubble, setBigBubble] = useState({
-    activeBgColor: colors.hot,
-    inactiveBgColor: colors.cold,
-    icon: require('../../screens/Map').mapBubbleIcon,
-    onPress: noop,
-  });
+  const [title, setTitle] = useState('Map');
   const { useTrap } = useRobot();
   const [appState, setAppState] = useAppState();
+  const minDate = useMemo(() => moment().tz(me.area.timezone).startOf('day').toDate(), [true]);
+  const maxDate = useMemo(() => moment().tz(me.area.timezone).startOf('day').add(3, 'months').toDate(), [true]);
+
+  // Don't trigger effects.
+  // Will be used by child screens
+  useMemo(() => {
+    appState.discoveryTime = minDate;
+  }, [true]);
 
   const calendarProps = {
-    minDate: useMemo(() => moment().toDate(), [true]),
-    maxDate: useMemo(() => moment().add(3, 'months').toDate(), [true]),
+    minDate,
+    maxDate,
     current: appState.discoveryTime,
     visibleState: useState(false),
     onConfirm: useCallback((discoveryTime) => {
+      // Given time at the beginning of UTC day
       setAppState(appState => ({
         ...appState,
-        discoveryTime,
+        discoveryTime: moment(discoveryTime).tz(me.area.timezone).startOf('day').add(1, 'day').toDate(),
       }));
-    }, [true]),
+    }, [me.area.timezone]),
   };
-
-  useLayoutEffect(() => {
-    setBigBubble(bigBubble => ({
-      ...bigBubble,
-      ...bigBubbleProp,
-    }));
-  }, [bigBubbleProp]);
 
   useLayoutEffect(() => {
     loadingIcons.then(([map, radar]) => {
@@ -109,37 +109,41 @@ const Frame = ({
     setActiveBubble(Bubble[discoveryNav.state.routeName]);
   }, [discoveryNav]);
 
-  const navToRadar = useCallbackWhen(() => {
-    discoveryNav.push('Radar');
-  }, activeBubble != Bubble.Radar && discoveryNav?.state.routeName === 'Map' && icons !== empty);
+  const navToStatusBoard = useCallbackWhen(() => {
+    discoveryNav.push('StatusBoard');
+    setTitle('Statuses');
+  }, activeBubble != Bubble.StatusBoard && discoveryNav?.state.routeName === 'Map' && icons !== empty);
 
   const navToMap = useCallbackWhen(() => {
     discoveryNav.goBackOnceFocused();
-  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Radar' && icons !== empty);
+    setTitle('Map');
+  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'StatusBoard' && icons !== empty);
 
   const openSideMenu = useCallback(() => {
     setSideMenuOpened(true);
   }, [true]);
 
-  const showActiveStatus = useCallback(() => {
-    setActiveStatus({
-      user: mine.me,
-      status: mine.me.status || { id: '' },
-    });
-  }, [mine]);
-
-  const hideActiveStatus = useCallback(() => {
-    setActiveStatus(null);
+  const closeSideMenu = useCallback(() => {
+    setSideMenuOpened(false);
   }, [true]);
 
-  const closeSideMenu = useCallback(() => {
-    hideActiveStatus();
+  const bigBubble = {
+    backgroundColor: colors.cold,
+    icon: (
+      <MIcon name='person-pin-circle' size={50} color='white' />
+    ),
+    onPress: useCallback(() => {
+      baseNav.push('StatusEditor', { mine });
+    }, [mine, baseNav]),
+  };
 
-    setSideMenuOpened(false);
-  }, [hideActiveStatus]);
+  const bubbles = [
+    { title: 'Map', iconSource: icons.map, onSelect: navToMap },
+    { title: 'Statuses', iconSource: icons.radar, onSelect: navToStatusBoard },
+  ];
 
   useTrap($Frame, {
-    navToRadar,
+    navToStatusBoard,
     navToMap,
     openSideMenu,
     closeSideMenu,
@@ -147,11 +151,11 @@ const Frame = ({
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
-      <SideMenu opened={sideMenuOpened} onClose={closeSideMenu} showStatus={showActiveStatus}>
+      <SideMenu opened={sideMenuOpened} onClose={closeSideMenu}>
         <HitboxProvider>
           <Bar>
             <View style={{ flex: 1 }}>
-              <Text style={styles.headerTitle}>Map</Text>
+              <Text style={styles.headerTitle}>{title}</Text>
             </View>
 
             <View style={{ position: 'absolute', left: 0 }}>
@@ -169,17 +173,13 @@ const Frame = ({
             activeBubble={activeBubble}
             tintColor={colors.hot}
             bigBubble={bigBubble}
-            bubbles={[
-              { title: 'Map', iconSource: icons.map, onSelect: navToMap },
-              { title: 'Radar', iconSource: icons.radar, onSelect: navToRadar },
-            ]}
+            bubbles={bubbles}
           />
         </HitboxProvider>
 
         <Status />
       </SideMenu>
 
-      <Status hideTime activeStatus={activeStatus} hideActiveStatus={hideActiveStatus} />
       <Calendar style={{ position: 'absolute', top: 10, right: 10 }} {...calendarProps} />
     </View>
   );

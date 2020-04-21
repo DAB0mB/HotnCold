@@ -1,9 +1,11 @@
-import { useQuery, useLazyQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { useEffect } from 'react';
 import { Image } from 'react-native';
 import gql from 'graphql-tag';
 
+import { omit } from '../../utils';
 import * as fragments from '../fragments';
+import mine from './mine.query';
 
 const chats = gql `
   query Chats {
@@ -18,7 +20,10 @@ const chats = gql `
 chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
   const subscriptions = require('../subscriptions');
 
+  const { data: { me } = {} } = mine.use();
+
   const query = useQuery(chats, {
+    skip: !me,
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       if (data?.chats) {
@@ -27,46 +32,33 @@ chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
 
       onCompleted(data);
     },
-    ...options,
+    ...omit(options, ['subscribeToChanges']),
   });
 
-  useEffect(() => {
-    return query.subscribeToMore({
-      document: subscriptions.chatBumped,
-      updateQuery(prev, { subscriptionData }) {
-        if (!subscriptionData.data) return;
+  if (options.subscribeToChanges) {
+    useEffect(() => {
+      return query.subscribeToMore({
+        document: subscriptions.chatBumped,
+        updateQuery(prev, { subscriptionData }) {
+          if (!subscriptionData.data) return;
 
-        const { chatBumped } = subscriptionData.data;
-        const chats = prev.chats.slice();
-        const chatIndex = chats.findIndex(c => c.id === chatBumped.id);
+          const { chatBumped } = subscriptionData.data;
+          const chats = prev.chats.slice();
+          const chatIndex = chats.findIndex(c => c.id === chatBumped.id);
 
-        if (~chatIndex) {
-          chats.splice(chatIndex, 1);
-        }
+          if (~chatIndex) {
+            chats.splice(chatIndex, 1);
+          }
 
-        chats.push(chatBumped);
+          chats.push(chatBumped);
 
-        return { chats };
-      },
-    });
-  }, [query.subscribeToMore]);
+          return { chats };
+        },
+      });
+    }, [query.subscribeToMore]);
+  }
 
   return query;
-};
-
-chats.use.lazy = ({ onCompleted = () => {}, ...options } = {}) => {
-  const [runQuery, query] = useLazyQuery(chats, {
-    onCompleted: (data) => {
-      if (data?.chats) {
-        data.chats.forEach(c => Image.prefetch(c.picture));
-      }
-
-      onCompleted(data);
-    },
-    ...options,
-  });
-
-  return [runQuery, query];
 };
 
 export default chats;

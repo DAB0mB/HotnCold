@@ -64,7 +64,7 @@ export const HitboxProvider = ({ children }) => {
   );
 };
 
-const useHitbox = ({ x, y, width, height, transform, onPress }) => {
+const useHitbox = ({ x, y, width, height, transform, onPress, Touchable }) => {
   const self = useConst();
   const context = useContext(HitboxContext);
   const [key] = useState(uuid);
@@ -88,9 +88,9 @@ const useHitbox = ({ x, y, width, height, transform, onPress }) => {
 
     const hitbox = () => (
       <React.Fragment key={key}>
-        <TouchableWithoutFeedback onPress={onPress}>
+        <Touchable style={style} onPress={onPress}>
           <Animated.View style={style} />
-        </TouchableWithoutFeedback>
+        </Touchable>
         {DISPLAY_HITBOXES && (
           <Animated.View style={[style, styles.border, { borderColor: 'blue' }]} pointerEvents='box-none' />
         )}
@@ -109,7 +109,7 @@ const useHitbox = ({ x, y, width, height, transform, onPress }) => {
   }, [true]);
 };
 
-export const Hitbox = ({ viewStyle, transform, onPress, children }) => {
+export const Hitbox = ({ viewStyle, transform, onPress, children, Touchable = TouchableWithoutFeedback }) => {
   const container = useContext(HitboxContext);
   const hitboxRef = useRef(null);
 
@@ -133,7 +133,7 @@ export const Hitbox = ({ viewStyle, transform, onPress, children }) => {
     );
   }, [container.x, container.y, container.width, container.height]);
 
-  useHitbox({ ...layout, transform, onPress });
+  useHitbox({ ...layout, transform, onPress, Touchable });
 
   return (
     <View style={viewStyle} ref={hitboxRef} onLayout={onLayout}>
