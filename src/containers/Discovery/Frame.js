@@ -108,7 +108,11 @@ const Frame = ({
       // Given time at the beginning of UTC day
       setAppState(appState => ({
         ...appState,
-        discoveryTime: momentTz(discoveryTime).startOf('day').add(1, 'day').toDate(),
+        discoveryTime: momentTz()
+          .startOf('day')
+          .set('date', discoveryTime.getDate())
+          .set('month', discoveryTime.getMonth())
+          .toDate(),
       }));
     }, [appState, momentTz]),
   };
@@ -196,7 +200,7 @@ const Frame = ({
         <Status />
       </SideMenu>
 
-      <Calendar style={{ position: 'absolute', top: 10, right: 10 }} {...calendarProps} />
+      <Calendar style={{ position: 'absolute', top: 10, right: 10 }} timezone={timezone} {...calendarProps} />
     </View>
   );
 };

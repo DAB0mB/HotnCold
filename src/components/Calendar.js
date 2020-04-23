@@ -2,10 +2,12 @@ import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BackHandler, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Calendar as SuperCalendar } from 'react-native-calendars';
+import SuperDay from 'react-native-calendars/src/calendar/day/basic';
 import CONFIG from 'react-native-config';
 import { RaisedTextButton } from 'react-native-material-buttons';
 
 import { colors } from '../theme';
+import { useConst } from '../utils';
 
 const styles = StyleSheet.create({
   container: { backgroundColor: 'white', borderWidth: 1, borderColor: colors.lightGray },
@@ -19,9 +21,45 @@ const calendarTheme = {
   arrowColor: colors.hot,
 };
 
-const Calendar = ({ visibleState, style, onConfirm, onCancel, ...calendarProps }) => {
+const Calendar = ({ visibleState, style, onConfirm, onCancel, timezone, ...calendarProps }) => {
   const [isVisible, setVisible] = visibleState;
   const [selectedDate, setSelectedDate] = useState(calendarProps.current);
+
+  const momentTz = useCallback((date) => {
+    let m = moment(date);
+
+    if (timezone) {
+      m = m.tz(timezone);
+    }
+
+    return m;
+  }, [timezone]);
+
+  // Day component is not reactive
+  const dayVars = useConst({});
+  dayVars.minDate = calendarProps.minDate;
+  dayVars.momentTz = momentTz;
+
+  const Day = useCallback(({ state, ...props }) => {
+    const { momentTz, minDate } = dayVars;
+
+    const targetDate = momentTz()
+      .startOf('day')
+      .set('date', props.date.day)
+      .set('month', props.date.month - 1)
+      .toDate();
+
+    if (targetDate.getTime() == minDate.getTime()) {
+      state = 'today';
+    }
+    else if (state == 'today') {
+      state = props.date.timestamp < minDate.getTime() ? 'disabled' : '';
+    }
+
+    return (
+      <SuperDay {...props} state={state} />
+    );
+  }, [true]);
 
   const markedDates = useMemo(() => ({
     [moment(selectedDate).format('YYYY-MM-DD')]: { selected: true, disableTouchEvent: true },
@@ -75,6 +113,7 @@ const Calendar = ({ visibleState, style, onConfirm, onCancel, ...calendarProps }
     <View style={[styles.container, style]}>
       <SuperCalendar
         {...calendarProps}
+        dayComponent={Day}
         theme={calendarTheme}
         current={selectedDate}
         onDayPress={handleDayChange}
