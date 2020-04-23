@@ -22,7 +22,14 @@ updateMyLocation.use = (featuredAt) => {
         if (mutation.error) return;
 
         const recentMe = fragments.user.profile.read(cache, me.id);
-        fragments.user.profile.write(cache, { ...recentMe, location });
+        fragments.user.profile.write(cache, {
+          ...recentMe,
+          location,
+          area: {
+            ...(recentMe.area || {}),
+            timezone: mutation.data.updateMyLocation.properties.timezone,
+          },
+        });
       },
       variables: { location, featuredAt },
     });

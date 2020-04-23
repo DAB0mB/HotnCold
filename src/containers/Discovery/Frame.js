@@ -101,12 +101,16 @@ const Frame = ({
     current: appState.discoveryTime,
     visibleState: useState(false),
     onConfirm: useCallback((discoveryTime) => {
+      if (discoveryTime === appState.discoveryTime) {
+        return;
+      }
+
       // Given time at the beginning of UTC day
       setAppState(appState => ({
         ...appState,
         discoveryTime: momentTz(discoveryTime).startOf('day').add(1, 'day').toDate(),
       }));
-    }, [momentTz]),
+    }, [appState, momentTz]),
   };
 
   useLayoutEffect(() => {
