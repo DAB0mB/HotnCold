@@ -74,8 +74,20 @@ const Frame = ({
   const [title, setTitle] = useState('Map');
   const { useTrap } = useRobot();
   const [appState, setAppState] = useAppState();
-  const minDate = useMemo(() => moment().tz(me.area.timezone).startOf('day').toDate(), [true]);
-  const maxDate = useMemo(() => moment().tz(me.area.timezone).startOf('day').add(3, 'months').toDate(), [true]);
+  const timezone = me?.area?.timezone;
+
+  const momentTz = useCallback((date) => {
+    let m = moment(date);
+
+    if (timezone) {
+      m = m.tz(timezone);
+    }
+
+    return m;
+  }, [timezone]);
+
+  const minDate = useMemo(() => momentTz().startOf('day').toDate(), [momentTz]);
+  const maxDate = useMemo(() => momentTz().startOf('day').add(3, 'months').toDate(), [momentTz]);
 
   // Don't trigger effects.
   // Will be used by child screens
@@ -92,9 +104,9 @@ const Frame = ({
       // Given time at the beginning of UTC day
       setAppState(appState => ({
         ...appState,
-        discoveryTime: moment(discoveryTime).tz(me.area.timezone).startOf('day').add(1, 'day').toDate(),
+        discoveryTime: momentTz(discoveryTime).startOf('day').add(1, 'day').toDate(),
       }));
-    }, [me.area.timezone]),
+    }, [momentTz]),
   };
 
   useLayoutEffect(() => {

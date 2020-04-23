@@ -86,20 +86,31 @@ const StatusBoard = () => {
   const [deleteStatus] = mutations.deleteStatus.use();
   const statusesQuery = queries.statuses.use.mine();
   const statuses = useMemo(() => statusesQuery.data?.statuses || [], [statusesQuery.data]);
+  const timezone = me?.area?.timezone;
   const alertError = useAlertError();
 
   discoveryNav.useBackListener();
   useScreenFrame();
 
+  const momentTz = useCallback((date) => {
+    let m = moment(date);
+
+    if (timezone) {
+      m = m.tz(timezone);
+    }
+
+    return m;
+  }, [timezone]);
+
   const getCalendarDay = useCallback((date) => {
     // Today, Tomorrow, Upcoming Tuesday, 01/01/2020
-    return moment(date).tz(me.area.timezone).calendar(null, {
+    return momentTz(date).calendar(null, {
       sameDay: '[Today]',
       nextDay: '[Tomorrow]',
       nextWeek: '[Upcoming] dddd',
       sameElse: 'DD/MM/YYYY'
     }).split(' at ')[0];
-  }, [me.area.timezone]);
+  }, [momentTz]);
 
   const fetchMoreStatuses = useCallback(() => {
     statusesQuery.fetchMore();
@@ -111,7 +122,7 @@ const StatusBoard = () => {
 
       return {
         ...appState,
-        discoveryTime: moment(status.publishedAt).tz(me.area.timezone).startOf('day').toDate(),
+        discoveryTime: momentTz(status.publishedAt).startOf('day').toDate(),
         activeStatus: {
           user: me,
           status: status,
@@ -120,7 +131,7 @@ const StatusBoard = () => {
     });
 
     discoveryNav.goBackOnceFocused();
-  }, [me, discoveryNav]);
+  }, [momentTz, discoveryNav]);
 
   const handleDeleteStatus = useCallback((status) => {
     Alert.alert('Delete', 'Are you sure you would like to delete this status?', [
