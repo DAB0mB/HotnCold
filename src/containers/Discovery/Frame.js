@@ -108,13 +108,9 @@ const Frame = ({
       // Given time at the beginning of UTC day
       setAppState(appState => ({
         ...appState,
-        discoveryTime: momentTz()
-          .startOf('day')
-          .set('date', discoveryTime.getDate())
-          .set('month', discoveryTime.getMonth())
-          .toDate(),
+        discoveryTime,
       }));
-    }, [appState, momentTz]),
+    }, [appState]),
   };
 
   useLayoutEffect(() => {

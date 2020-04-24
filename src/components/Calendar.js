@@ -21,9 +21,19 @@ const calendarTheme = {
   arrowColor: colors.hot,
 };
 
-const Calendar = ({ visibleState, style, onConfirm, onCancel, timezone, ...calendarProps }) => {
+const Calendar = ({
+  visibleState,
+  style,
+  onConfirm,
+  onCancel,
+  timezone,
+  current,
+  minDate,
+  maxDate,
+  ...calendarProps
+}) => {
   const [isVisible, setVisible] = visibleState;
-  const [selectedDate, setSelectedDate] = useState(calendarProps.current);
+  const [selectedDate, setSelectedDate] = useState(current);
 
   const momentTz = useCallback((date) => {
     let m = moment(date);
@@ -35,18 +45,22 @@ const Calendar = ({ visibleState, style, onConfirm, onCancel, timezone, ...calen
     return m;
   }, [timezone]);
 
+  const formattedMinDate = useMemo(() => momentTz(minDate).format('YYYY-MM-DD'), [momentTz, minDate]);
+  const formattedMaxDate = useMemo(() => momentTz(maxDate).format('YYYY-MM-DD'), [momentTz, maxDate]);
+  const formattedSelectedDate = useMemo(() => momentTz(selectedDate).format('YYYY-MM-DD'), [momentTz, selectedDate]);
+
   // Day component is not reactive
   const dayVars = useConst({});
-  dayVars.minDate = calendarProps.minDate;
+  dayVars.minDate = minDate;
   dayVars.momentTz = momentTz;
 
   const Day = useCallback(({ state, ...props }) => {
     const { momentTz, minDate } = dayVars;
 
     const targetDate = momentTz()
-      .startOf('day')
       .set('date', props.date.day)
       .set('month', props.date.month - 1)
+      .startOf('day')
       .toDate();
 
     if (targetDate.getTime() == minDate.getTime()) {
@@ -62,8 +76,8 @@ const Calendar = ({ visibleState, style, onConfirm, onCancel, timezone, ...calen
   }, [true]);
 
   const markedDates = useMemo(() => ({
-    [moment(selectedDate).format('YYYY-MM-DD')]: { selected: true, disableTouchEvent: true },
-  }), [selectedDate]);
+    [momentTz(selectedDate).format('YYYY-MM-DD')]: { selected: true, disableTouchEvent: true },
+  }), [momentTz, selectedDate]);
 
   const handleBackPress = useCallback(() => {
     if (CONFIG.USE_ROBOT) return;
@@ -75,8 +89,14 @@ const Calendar = ({ visibleState, style, onConfirm, onCancel, timezone, ...calen
     }
   }, [isVisible]);
 
-  const handleDayChange = useCallback(({ timestamp }) => {
-    setSelectedDate(new Date(timestamp));
+  const handleDayChange = useCallback((date) => {
+    setSelectedDate(
+      momentTz()
+        .set('date', date.day)
+        .set('month', date.month - 1)
+        .startOf('day')
+        .toDate()
+    );
   }, [selectedDate]);
 
   const handleConfirm = useCallback(() => {
@@ -98,8 +118,8 @@ const Calendar = ({ visibleState, style, onConfirm, onCancel, timezone, ...calen
   useEffect(() => {
     if (!isVisible) return;
 
-    if (selectedDate !== calendarProps.current) {
-      setSelectedDate(calendarProps.current);
+    if (selectedDate !== current) {
+      setSelectedDate(current);
     }
 
     BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -107,15 +127,17 @@ const Calendar = ({ visibleState, style, onConfirm, onCancel, timezone, ...calen
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
     };
-  }, [isVisible, calendarProps.current]);
+  }, [isVisible, current]);
 
   return isVisible && (
     <View style={[styles.container, style]}>
       <SuperCalendar
         {...calendarProps}
+        minDate={formattedMinDate}
+        maxDate={formattedMaxDate}
+        current={formattedSelectedDate}
         dayComponent={Day}
         theme={calendarTheme}
-        current={selectedDate}
         onDayPress={handleDayChange}
         markedDates={markedDates}
       />
