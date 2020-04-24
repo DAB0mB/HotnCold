@@ -27,6 +27,7 @@ updateMyLocation.use = (featuredAt) => {
           location,
           area: {
             ...(recentMe.area || {}),
+            __typename: 'Area',
             timezone: mutation.data.updateMyLocation.properties.timezone,
           },
         });
