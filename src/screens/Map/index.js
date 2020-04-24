@@ -431,6 +431,14 @@ const Map = () => {
     const eventsFeatures = selectionFeatures.filter(f => f.properties.type == 'event');
     const attendanceCount = eventsFeatures.reduce((count, f) => count + f.properties.event.attendanceCount, 0);
 
+    eventsFeatures.forEach((feature) => {
+      const featuredPhoto = feature.properties.event.featuredPhoto;
+
+      if (featuredPhoto) {
+        Image.prefetch(featuredPhoto);
+      }
+    });
+
     setSelection({
       location: {
         type: 'Feature',
