@@ -19,7 +19,7 @@ const CountryPickerTheme = {
   primaryColorVariant: colors.gray,
 };
 
-const COUNTRIES = ['US', 'IL', 'KR'];
+const COUNTRIES = ['US', 'IL', 'TW', 'DE'];
 
 const styles = StyleSheet.create({
   container: {
