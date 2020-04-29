@@ -4,6 +4,7 @@ import pluralize from 'pluralize';
 import React, { useCallback, useMemo } from 'react';
 import CONFIG from 'react-native-config';
 import { RaisedTextButton } from 'react-native-material-buttons';
+import Ripple from 'react-native-material-ripple';
 import HTML from 'react-native-render-html';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
@@ -110,9 +111,11 @@ const mapStyles = {
   },
 };
 
-const EventDetail = ({ IconComponent = McIcon, iconName, mainText, subText }) => {
+const EventDetail = ({ IconComponent = McIcon, iconName, mainText, subText, onPress }) => {
+  const Container = onPress ? Ripple : View;
+
   return (
-    <View style={eventDetailStyles.container}>
+    <Container style={eventDetailStyles.container} onPress={onPress}>
       <IconComponent style={eventDetailStyles.icon} name={iconName} color={colors.gray} size={30} />
 
       <View style={eventDetailStyles.fields}>
@@ -121,7 +124,11 @@ const EventDetail = ({ IconComponent = McIcon, iconName, mainText, subText }) =>
           <Text style={eventDetailStyles.sub}>{subText}</Text>
         )}
       </View>
-    </View>
+
+      {onPress && (
+        <McIcon name='chevron-right' size={25} color={colors.ink} />
+      )}
+    </Container>
   );
 };
 
@@ -184,15 +191,15 @@ const Event = () => {
       <View style={styles.body}>
         <View>
           <EventDetail
-            iconName='account-group'
-            mainText={pluralize('attendee', event.attendanceCount, true)}
-            subText={event.maxPeople && `${event.maxPeople} people max`}
-          />
-
-          <EventDetail
             iconName='clock-outline'
             mainText={eventDateLiteral}
             subText={eventTimeLiteral}
+          />
+
+          <EventDetail
+            iconName='account-group'
+            mainText={pluralize('attendee', event.attendanceCount, true)}
+            subText={event.maxPeople && `${event.maxPeople} people max`}
           />
 
           <EventDetail
@@ -200,6 +207,7 @@ const Event = () => {
             iconName='pin-drop'
             mainText={event.venueName}
             subText={event.address}
+            onPress={showEventOnMaps}
           />
         </View>
 
