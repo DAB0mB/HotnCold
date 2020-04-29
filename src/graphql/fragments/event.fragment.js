@@ -15,6 +15,7 @@ const event = gql `
     description
     attendanceCount
     location
+    checkedIn
     venueName
     duration
     maxPeople

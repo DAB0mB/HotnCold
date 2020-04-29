@@ -1,7 +1,7 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import AutoHeightImage from 'react-native-auto-height-image';
 import CONFIG from 'react-native-config';
 import { RaisedTextButton } from 'react-native-material-buttons';
@@ -24,9 +24,12 @@ import {
 
 import Bar from '../components/Bar';
 import Base from '../containers/Base';
+import * as mutations from '../graphql/mutations';
+import * as queries from '../graphql/queries';
+import { useMine } from '../services/Auth';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
-import { upperFirst } from '../utils';
+import { useAsyncCallback, upperFirst } from '../utils';
 
 const images = {
   'marker': require('../assets/hot-marker.png'),
@@ -141,9 +144,15 @@ const EventDetail = ({ IconComponent = McIcon, iconName, mainText, subText, onPr
 };
 
 const Event = () => {
+  const { me } = useMine();
   const baseNav = useNavigation(Base);
   const event = baseNav.getParam('event');
   const sourceName = useMemo(() => upperFirst(event.source), [event.source]);
+  const [attendanceCount, setAttendanceCount] = useState(event.attendanceCount);
+  const [checkedIn, setCheckedIn] = useState(event.checkedIn);
+  const [superToggleCheckIn] = mutations.toggleCheckIn.use(event);
+  // Prepare cache
+  const attendeesQuery = queries.attendees.use(event.id);
 
   const eventDateLiteral = useMemo(() =>
     moment(event.localDate, 'YYYY-MM-DD').calendar().split(' at')[0]
@@ -183,6 +192,52 @@ const Event = () => {
     Linking.openURL(event.sourceLink);
   }, [event]);
 
+  const navToAttendeesScreen = useCallback(() => {
+    baseNav.push('Attendees', { event });
+  }, [baseNav, event]);
+
+  const toggleCheckIn = useAsyncCallback(function* () {
+    const mutation = yield superToggleCheckIn();
+    const checkedIn = mutation.data.toggleCheckIn;
+
+    setCheckedIn(mutation.data.toggleCheckIn);
+
+    if (checkedIn) {
+      setAttendanceCount(attendanceCount => attendanceCount + 1);
+    }
+    else {
+      setAttendanceCount(attendanceCount => attendanceCount - 1);
+    }
+
+    attendeesQuery.updateQuery((prev) => {
+      const attendees = prev.attendees?.slice();
+
+      if (!attendees) return prev;
+
+      const attendeeIndex = attendees.findIndex(u => u.id == me.id);
+
+      if (checkedIn && !~attendeeIndex) {
+        attendees.unshift(me);
+
+        return {
+          attendees,
+          veryFirstAttendee: attendees[0] || null,
+        };
+      }
+
+      if (!checkedIn && ~attendeeIndex) {
+        attendees.splice(attendeeIndex, 1);
+
+        return {
+          attendees,
+          veryFirstAttendee: me,
+        };
+      }
+    });
+  }, [superToggleCheckIn, baseNav, me]);
+
+  useEffect(() => attendeesQuery.clear, [true]);
+
   baseNav.useBackListener();
 
   return (
@@ -207,8 +262,9 @@ const Event = () => {
 
           <EventDetail
             iconName='account-group'
-            mainText={pluralize('attendee', event.attendanceCount, true)}
+            mainText={pluralize('attendee', attendanceCount, true)}
             subText={event.maxPeople && `${event.maxPeople} people max`}
+            onPress={navToAttendeesScreen}
           />
 
           <EventDetail
@@ -274,9 +330,9 @@ const Event = () => {
 
         <View style={styles.attendView}>
           <RaisedTextButton
-            onPress={showEventPage}
-            color={colors.hot}
-            title='Attend'
+            onPress={toggleCheckIn}
+            color={checkedIn ? colors.cold : colors.hot}
+            title={checkedIn ? 'Check Out' : 'Check In'}
             titleColor='white'
           />
         </View>

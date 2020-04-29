@@ -4,6 +4,7 @@ import AuthContainer from '../containers/Auth';
 import DiscoveryContainer from '../containers/Discovery';
 import SocialContainer from '../containers/Social';
 import AgreementScreen from '../screens/Agreement';
+import AttendeesScreen from '../screens/Attendees';
 import EventScreen from '../screens/Event';
 import FAQScreen from '../screens/FAQ';
 import ProfileScreen from '../screens/Profile';
@@ -24,6 +25,9 @@ const Base = Router.create({
   },
   Selection: {
     screen: SelectionScreen,
+  },
+  Attendees: {
+    screen: AttendeesScreen,
   },
   Event: {
     screen: EventScreen,
