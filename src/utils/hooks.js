@@ -123,16 +123,14 @@ const createAsyncEffectHook = (useEffect) => (fn, input) => {
   useEffect(() => {
     cbQueueRef.current = [];
     setResult(null);
-    setIterator(() => fn(onCleanup));
+
+    const iterator = fn(onCleanup);
+
+    setIterator(iterator);
+    setResult(iterator.next());
 
     return cleanup;
   }, input);
-
-  useEffect(() => {
-    if (!iterator) return;
-
-    next();
-  }, [iterator]);
 
   useEffect(() => {
     if (!result) return;

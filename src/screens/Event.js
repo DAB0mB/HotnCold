@@ -2,6 +2,7 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import moment from 'moment';
 import pluralize from 'pluralize';
 import React, { useCallback, useMemo } from 'react';
+import AutoHeightImage from 'react-native-auto-height-image';
 import CONFIG from 'react-native-config';
 import { RaisedTextButton } from 'react-native-material-buttons';
 import Ripple from 'react-native-material-ripple';
@@ -25,6 +26,7 @@ import Bar from '../components/Bar';
 import Base from '../containers/Base';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
+import { upperFirst } from '../utils';
 
 const images = {
   'marker': require('../assets/hot-marker.png'),
@@ -65,9 +67,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   eventName: {
-    fontSize: 24,
+    fontSize: 22,
     padding: 20,
-    fontWeight: '900',
+    fontWeight: '800',
     color: colors.hot,
   },
   attendView: {
@@ -111,6 +113,12 @@ const mapStyles = {
   },
 };
 
+const getSourceImage = (source) => {
+  switch (source) {
+  case 'meetup': return require('../assets/meetup_icon.png');
+  }
+};
+
 const EventDetail = ({ IconComponent = McIcon, iconName, mainText, subText, onPress }) => {
   const Container = onPress ? Ripple : View;
 
@@ -135,6 +143,7 @@ const EventDetail = ({ IconComponent = McIcon, iconName, mainText, subText, onPr
 const Event = () => {
   const baseNav = useNavigation(Base);
   const event = baseNav.getParam('event');
+  const sourceName = useMemo(() => upperFirst(event.source), [event.source]);
 
   const eventDateLiteral = useMemo(() =>
     moment(event.localDate, 'YYYY-MM-DD').calendar().split(' at')[0]
@@ -222,6 +231,15 @@ const Event = () => {
             baseFontStyle={{ fontSize: 16 }}
             onLinkPress={handleLinkPress}
           />
+
+          {event.source && (
+            <TouchableWithoutFeedback onPress={showEventPage}>
+              <View style={{ marginBottom: 20, marginTop: 10, alignSelf: 'stretch', alignItems: 'center' }}>
+                <AutoHeightImage source={getSourceImage(event.source)} width={100} style={{ marginVertical: 20 }} />
+                <Text>View on {sourceName}</Text>
+              </View>
+            </TouchableWithoutFeedback>
+          )}
         </View>
 
         <TouchableWithoutFeedback onPress={showEventOnMaps}>

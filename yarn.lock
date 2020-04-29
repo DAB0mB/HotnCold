@@ -6470,6 +6470,13 @@ react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.6:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
 
+react-native-auto-height-image@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-auto-height-image/-/react-native-auto-height-image-3.1.2.tgz#101355eecb5a32cb670fedac43821b427ea7766e"
+  integrity sha512-RQQr9CGYu9moZqozXrfXqWWDBOfnqh4NF9yYAYEUCu09nlsbi4d0Zg8aOdutKjLNNpjrwpZ+C13C4r7QiUw55w==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-calendars@^1.265.0:
   version "1.265.0"
   resolved "https://registry.yarnpkg.com/react-native-calendars/-/react-native-calendars-1.265.0.tgz#4144408254afaebc97213708e3c7d911dc73a335"
