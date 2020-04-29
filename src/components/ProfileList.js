@@ -12,24 +12,26 @@ const styles = StyleSheet.create({
   },
   avatar: {
     width: 60,
-    height: '100%',
+    alignSelf: 'stretch',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   avatarImage: {
     resizeMode: 'contain',
     height: 50,
+    width: 50,
     marginRight: 10,
     borderRadius: 999,
   },
   body: {
     flex: 1,
     flexDirection: 'column',
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 20,
+    paddingBottom: 15,
   },
   bodyBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: hexToRgba(colors.gray, .5),
+    borderTopWidth: 1,
+    borderTopColor: hexToRgba(colors.gray, .5),
   },
 });
 

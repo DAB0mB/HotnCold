@@ -25,8 +25,8 @@ updateMyLocation.use = (featuredAt) => {
         fragments.user.profile.write(cache, {
           ...recentMe,
           location,
-          area: {
-            ...(recentMe.area || {}),
+          area: recentMe.area && {
+            ...recentMe.area,
             __typename: 'Area',
             timezone: mutation.data.updateMyLocation.properties.timezone,
           },
