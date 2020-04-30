@@ -1,6 +1,6 @@
 import pluralize from 'pluralize';
 import React, { useCallback, useMemo } from 'react';
-import { Text, View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, Linking, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../components/Bar';
@@ -12,7 +12,7 @@ import { useAlertError } from '../services/DropdownAlert';
 import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
-import { useConst } from '../utils';
+import { useConst, upperFirst } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -37,6 +37,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.gray,
   },
+  footerView: {
+    flex: 1,
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+  },
 });
 
 const getUserId = u => u.id;
@@ -50,6 +58,7 @@ const Attendees = () => {
   const attendeesQuery = queries.attendees.use(event.id);
   const alertError = useAlertError();
   const attendees = useMemo(() => attendeesQuery.data?.attendees || [], [attendeesQuery.data]);
+  const veryFirstAttendee = attendeesQuery.data?.veryFirstAttendee;
 
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onCompleted: useCallback((data) => {
@@ -105,6 +114,22 @@ const Attendees = () => {
     );
   }, [baseNav]);
 
+  const handleLinkPress = useCallback(() => {
+    Linking.openURL(event.sourceLink);
+  }, [true]);
+
+  const Footer = useCallback(() => {
+    const attendanceCount = event.attendanceCount - attendees.length;
+
+    return (
+      <TouchableWithoutFeedback onPress={handleLinkPress}>
+        <View style={styles.footerView}>
+          <Text>See {attendanceCount} more {pluralize('attendee', true)} on {upperFirst(event.source)} {'>'}</Text>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }, [attendees.length]);
+
   return useLoading(!attendeesQuery.called && attendeesQuery.loading && !attendees.length,
     <View style={styles.container}>
       <View style={styles.listContainer}>
@@ -116,6 +141,7 @@ const Attendees = () => {
           onItemPress={onUserItemPress}
           onEndReached={fetchMoreAttendees}
           ListHeaderComponent={renderHeader}
+          ListFooterComponent={attendeesQuery.called && !attendeesQuery.loading && veryFirstAttendee?.id === attendees[0]?.id && Footer}
         />
       </View>
     </View>

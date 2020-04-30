@@ -43,6 +43,7 @@ const RippleList = ({
   pictureExtractor,
   renderItemBody,
   ListHeaderComponent,
+  ListFooterComponent,
 }) => {
   const renderItem = useCallback(({ item, index }) => {
     return (
@@ -66,6 +67,7 @@ const RippleList = ({
       keyExtractor={keyExtractor}
       renderItem={renderItem}
       ListHeaderComponent={ListHeaderComponent}
+      ListFooterComponent={ListFooterComponent}
     />
   );
 };

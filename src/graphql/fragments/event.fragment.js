@@ -21,6 +21,7 @@ const event = gql `
     maxPeople
     address
     featuredPhoto
+    checkedInAt
     area {
       ...Area
     }
