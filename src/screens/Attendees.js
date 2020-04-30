@@ -12,6 +12,7 @@ import { useAlertError } from '../services/DropdownAlert';
 import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
+import { useConst } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -32,6 +33,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '900',
   },
+  attendeeBio: {
+    fontSize: 13,
+    color: colors.gray,
+  },
 });
 
 const getUserId = u => u.id;
@@ -39,6 +44,7 @@ const getUserPicture = u => ({ uri: u.avatar });
 
 const Attendees = () => {
   const { me } = useMine();
+  const self = useConst({});
   const baseNav = useNavigation(Base);
   const event = baseNav.getParam('event');
   const attendeesQuery = queries.attendees.use(event.id);
@@ -49,12 +55,15 @@ const Attendees = () => {
     onCompleted: useCallback((data) => {
       if (!data) return;
 
-      const user = data.userProfile;
+      if (self.shouldNav) {
+        delete self.shouldNav;
+        const user = data.userProfile;
 
-      baseNav.push('Profile', {
-        user,
-        itsMe: user.id === me.id,
-      });
+        baseNav.push('Profile', {
+          user,
+          itsMe: user.id === me.id,
+        });
+      }
     }, [baseNav, me]),
     onError: alertError,
   });
@@ -67,11 +76,16 @@ const Attendees = () => {
 
   const renderItemBody = useCallback(({ item: user }) => {
     return (
-      <Text style={styles.attendeeName}>{user.id == me.id ? 'Me' : user.name}</Text>
+      <React.Fragment>
+        <Text style={styles.attendeeName}>{user.id == me.id ? 'Me' : user.name}</Text>
+        <Text style={styles.attendeeBio}>{user.bio.replace(/\n/g, ' ')}</Text>
+      </React.Fragment>
     );
   }, [me]);
 
   const onUserItemPress = useCallback(({ item: user }) => {
+    self.shouldNav = true;
+
     queryUserProfile({
       variables: { userId: user.id },
     });

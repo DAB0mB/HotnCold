@@ -8,15 +8,15 @@ import { compactOptions, useConst } from '../../utils';
 const attendees = gql `
   query Attendees($eventId: ID!, $limit: Int!, $anchor: ID) {
     attendees(eventId: $eventId, limit: $limit, anchor: $anchor) {
-      ...User
+      ...Attendee
     }
 
     veryFirstAttendee(eventId: $eventId) {
-      ...User
+      ...Attendee
     }
   }
 
-  ${fragments.user}
+  ${fragments.attendee}
 `;
 
 attendees.use = (...args) => {

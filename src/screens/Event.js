@@ -193,8 +193,13 @@ const Event = () => {
   }, [event]);
 
   const navToAttendeesScreen = useCallback(() => {
-    baseNav.push('Attendees', { event });
-  }, [baseNav, event]);
+    baseNav.push('Attendees', {
+      event: {
+        ...event,
+        attendanceCount,
+      },
+    });
+  }, [baseNav, event, attendanceCount]);
 
   const toggleCheckIn = useAsyncCallback(function* () {
     const mutation = yield superToggleCheckIn();

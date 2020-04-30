@@ -1,4 +1,5 @@
 export { default as area } from './area.fragment';
+export { default as attendee } from './attendee.fragment';
 export { default as chat } from './chat.fragment';
 export { default as contract } from './contract.fragment';
 export { default as event } from './event.fragment';
