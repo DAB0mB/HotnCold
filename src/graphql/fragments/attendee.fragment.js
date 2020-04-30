@@ -1,14 +1,13 @@
 import gql from 'graphql-tag';
 
-import user from './user.fragment';
-
 const attendee = gql `
-  fragment Attendee on User {
-    ...User
+  fragment Attendee on Attendee {
+    id
+    name
     bio
+    avatar
+    checkedInAt
   }
-
-  ${user}
 `;
 
 attendee.read = (cache, id) => {

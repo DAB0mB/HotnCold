@@ -221,23 +221,25 @@ const Event = () => {
 
       const attendeeIndex = attendees.findIndex(u => u.id == me.id);
 
-      if (checkedIn && !~attendeeIndex) {
-        attendees.unshift(me);
-
-        return {
-          attendees,
-          veryFirstAttendee: attendees[0] || null,
-        };
+      if (checkedIn) {
+        if (!~attendeeIndex) {
+          attendees.unshift({
+            ...me,
+            checkedInAt: new Date(),
+            __typename: 'Attendee',
+          });
+        }
+      }
+      else {
+        if (~attendeeIndex) {
+          attendees.splice(attendeeIndex, 1);
+        }
       }
 
-      if (!checkedIn && ~attendeeIndex) {
-        attendees.splice(attendeeIndex, 1);
-
-        return {
-          attendees,
-          veryFirstAttendee: me,
-        };
-      }
+      return {
+        attendees,
+        veryFirstAttendee: attendees.length == 1 ? attendees[0] : prev.veryFirstAttendee,
+      };
     });
   }, [superToggleCheckIn, baseNav, me]);
 

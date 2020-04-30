@@ -18,7 +18,7 @@ toggleCheckIn.use = (event, options = {}) => {
 
   const mutate = useCallback((options = {}) => {
     const eventId = event.id;
-    const attending = event.attending;
+    const attending = !event.attending;
 
     return superMutate({
       optimisticResponse: {
@@ -32,7 +32,7 @@ toggleCheckIn.use = (event, options = {}) => {
 
         if (!event) return;
 
-        event = { ...event, attending: !attending };
+        event = { ...event, attending };
         fragments.event.write(cache, event);
       },
       ...options,
