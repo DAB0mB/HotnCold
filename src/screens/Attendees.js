@@ -1,10 +1,9 @@
 import pluralize from 'pluralize';
 import React, { useCallback, useMemo } from 'react';
-import { Text, View, Linking, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { FlatList, Image, Dimensions, Text, View, Linking, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../components/Bar';
-import ProfileList from '../components/ProfileList';
 import Base from '../containers/Base';
 import * as queries from '../graphql/queries';
 import { useMine } from '../services/Auth';
@@ -13,6 +12,10 @@ import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
 import { useConst, upperFirst } from '../utils';
+
+const USER_AVATAR_SIZE = Dimensions.get('window').width / 3 - Dimensions.get('window').width / 16;
+const USERS_LIST_PADDING = Dimensions.get('window').width / 3 / 1.7;
+const PSEUDO = '__pseudo__';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,14 +31,11 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
   },
-  attendeeName: {
-    color: colors.ink,
-    fontSize: 16,
-    fontWeight: '900',
+  attendeesListContent: {
+    marginVertical: 10,
   },
-  attendeeBio: {
-    fontSize: 13,
-    color: colors.gray,
+  attendeesListCol: {
+    overflow: 'visible',
   },
   footerView: {
     flex: 1,
@@ -45,10 +45,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
   },
+  attendeeItemContainer: {
+    margin: 10,
+  },
+  attendeeAvatar: {
+    width: USER_AVATAR_SIZE,
+    height: USER_AVATAR_SIZE,
+    borderRadius: 999,
+    backgroundColor: colors.lightGray,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  attendeeName: {
+    color: colors.ink,
+    fontSize: 17,
+    textAlign: 'center',
+  },
+  pseudoAttendee: {
+    color: colors.ink,
+    textAlign: 'center',
+  },
 });
 
-const getUserId = u => u.id;
-const getUserPicture = u => ({ uri: u.avatar });
+const extractAttendeeId = u => u.id;
 
 const Attendees = () => {
   const { me } = useMine();
@@ -59,6 +79,26 @@ const Attendees = () => {
   const alertError = useAlertError();
   const attendees = useMemo(() => attendeesQuery.data?.attendees || [], [attendeesQuery.data]);
   const veryFirstAttendee = attendeesQuery.data?.veryFirstAttendee;
+
+  const pseudoAttendee = useMemo(() => {
+    if (
+      attendeesQuery.called &&
+      !attendeesQuery.loading &&
+      veryFirstAttendee?.id === attendees[attendees.length - 1]?.id
+    ) {
+      return {
+        id: PSEUDO,
+      };
+    }
+  }, [veryFirstAttendee, attendeesQuery, attendees]);
+
+  const attendeesItems = useMemo(() => {
+    if (pseudoAttendee) {
+      return attendees.concat(pseudoAttendee);
+    }
+
+    return attendees;
+  }, [attendees, pseudoAttendee]);
 
   const [queryUserProfile] = queries.userProfile.use.lazy({
     onCompleted: useCallback((data) => {
@@ -83,20 +123,11 @@ const Attendees = () => {
 
   baseNav.useBackListener();
 
-  const renderItemBody = useCallback(({ item: user }) => {
-    return (
-      <React.Fragment>
-        <Text style={styles.attendeeName}>{user.id == me.id ? 'Me' : user.name}</Text>
-        <Text style={styles.attendeeBio}>{user.bio.replace(/\n/g, ' ')}</Text>
-      </React.Fragment>
-    );
-  }, [me]);
-
-  const onUserItemPress = useCallback(({ item: user }) => {
+  const onAttendeeItemPress = useCallback((attendee) => {
     self.shouldNav = true;
 
     queryUserProfile({
-      variables: { userId: user.id },
+      variables: { userId: attendee.id },
     });
   }, [queryUserProfile]);
 
@@ -118,30 +149,44 @@ const Attendees = () => {
     Linking.openURL(event.sourceLink);
   }, [true]);
 
-  const Footer = useCallback(() => {
-    const attendanceCount = event.attendanceCount - attendees.length;
+  const renderAttendeeItem = useCallback(({ item: attendee, index }) => {
+    if (attendee.id == PSEUDO) {
+      return (
+        <TouchableWithoutFeedback onPress={handleLinkPress}>
+          <View style={[styles.attendeeItemContainer, styles.pseudoAttendee]}>
+            <View style={styles.attendeeAvatar}>
+              <Text style={styles.pseudoAttendee}>
+                See {event.sourceAttendanceCount} more {pluralize('attendee', true)} on {upperFirst(event.source)}
+              </Text>
+            </View>
+            <Text style={styles.attendeeName}>{' '}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      );
+    }
 
     return (
-      <TouchableWithoutFeedback onPress={handleLinkPress}>
-        <View style={styles.footerView}>
-          <Text>See {attendanceCount} more {pluralize('attendee', true)} on {upperFirst(event.source)} {'>'}</Text>
+      <TouchableWithoutFeedback onPress={() => onAttendeeItemPress(attendee, index)}>
+        <View style={[styles.attendeeItemContainer]}>
+          <Image style={styles.attendeeAvatar} source={{ uri: attendee.avatar }} />
+          <Text style={styles.attendeeName}>{attendee.name}</Text>
         </View>
       </TouchableWithoutFeedback>
     );
-  }, [attendees.length]);
+  }, [onAttendeeItemPress, handleLinkPress]);
 
   return useLoading(!attendeesQuery.called && attendeesQuery.loading && !attendees.length,
     <View style={styles.container}>
       <View style={styles.listContainer}>
-        <ProfileList
-          data={attendees}
-          keyExtractor={getUserId}
-          pictureExtractor={getUserPicture}
-          renderItemBody={renderItemBody}
-          onItemPress={onUserItemPress}
+        <FlatList
+          numColumns={3}
+          contentContainerStyle={[styles.attendeesListContent, attendees.length % 3 == 0 && { paddingBottom: USERS_LIST_PADDING }].filter(Boolean)}
+          columnWrapperStyle={styles.attendeesListCol}
+          data={attendeesItems}
+          keyExtractor={extractAttendeeId}
+          renderItem={renderAttendeeItem}
           onEndReached={fetchMoreAttendees}
           ListHeaderComponent={renderHeader}
-          ListFooterComponent={attendeesQuery.called && !attendeesQuery.loading && veryFirstAttendee?.id === attendees[0]?.id && Footer}
         />
       </View>
     </View>

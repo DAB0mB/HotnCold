@@ -63,8 +63,7 @@ attendees.use = (...args) => {
       const [extraLimit = limit, options = {}] = compactOptions(2, args);
 
       if (
-        query.data.veryFirstAttendee &&
-        query.data.veryFirstAttendee.id === query.data.attendees.slice(-1)[0].id
+        query.data.veryFirstAttendee?.id === query.data.attendees.slice(-1)[0]?.id
       ) {
         return;
       }
@@ -73,7 +72,7 @@ attendees.use = (...args) => {
         variables: {
           eventId,
           limit: extraLimit,
-          anchor: query.data.attendees[query.data.attendees.length - 1].id,
+          anchor: query.data.attendees[query.data.attendees.length - 1]?.id,
         },
         updateQuery(prev, { fetchMoreResult }) {
           if (!fetchMoreResult) return;

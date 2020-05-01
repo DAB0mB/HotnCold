@@ -13,6 +13,7 @@ const event = gql `
     startsAt
     endsAt
     description
+    sourceAttendanceCount
     attendanceCount
     location
     checkedIn
