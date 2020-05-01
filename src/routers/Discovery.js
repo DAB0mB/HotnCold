@@ -1,12 +1,12 @@
 import { fromRight } from 'react-navigation-transitions';
 
+import CardsScreen from '../screens/Cards';
 import MapScreen from '../screens/Map';
-import StatusBoardScreen from '../screens/StatusBoard';
 import Router from './Router';
 
 const Discovery = Router.create({
-  StatusBoard: {
-    screen: StatusBoardScreen,
+  Cards: {
+    screen: CardsScreen,
   },
   Map: {
     screen: MapScreen,

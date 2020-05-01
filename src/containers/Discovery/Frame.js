@@ -21,7 +21,7 @@ import Status from './Status';
 
 const loadingIcons = Promise.all([
   McIcon.getImageSource('map', 30, colors.hot),
-  McIcon.getImageSource('thought-bubble', 30, colors.hot),
+  McIcon.getImageSource('cards-variant', 30, colors.hot),
 ]);
 
 const styles = StyleSheet.create({
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 
 const Bubble = {
   Map: 0,
-  StatusBoard: 1,
+  Cards: 1,
 };
 
 export const $Frame = {};
@@ -114,8 +114,8 @@ const Frame = ({
   };
 
   useLayoutEffect(() => {
-    loadingIcons.then(([map, radar]) => {
-      setIcons({ map, radar });
+    loadingIcons.then(([map, activity]) => {
+      setIcons({ map, activity });
     });
   }, [true]);
 
@@ -125,15 +125,15 @@ const Frame = ({
     setActiveBubble(Bubble[discoveryNav.state.routeName]);
   }, [discoveryNav]);
 
-  const navToStatusBoard = useCallbackWhen(() => {
-    discoveryNav.push('StatusBoard');
+  const navToCards = useCallbackWhen(() => {
+    discoveryNav.push('Cards');
     setTitle('Statuses');
-  }, activeBubble != Bubble.StatusBoard && discoveryNav?.state.routeName === 'Map' && icons !== empty);
+  }, activeBubble != Bubble.Cards && discoveryNav?.state.routeName === 'Map' && icons !== empty);
 
   const navToMap = useCallbackWhen(() => {
     discoveryNav.goBackOnceFocused();
     setTitle('Map');
-  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'StatusBoard' && icons !== empty);
+  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Cards' && icons !== empty);
 
   const openSideMenu = useCallback(() => {
     setSideMenuOpened(true);
@@ -155,11 +155,11 @@ const Frame = ({
 
   const bubbles = [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
-    { title: 'Statuses', iconSource: icons.radar, onSelect: navToStatusBoard },
+    { title: 'Cards', iconSource: icons.activity, onSelect: navToCards },
   ];
 
   useTrap($Frame, {
-    navToStatusBoard,
+    navToCards,
     navToMap,
     openSideMenu,
     closeSideMenu,

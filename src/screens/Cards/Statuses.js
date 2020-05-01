@@ -79,7 +79,7 @@ const ListFooterComponent = () => (
   <View style={styles.listFooter} />
 );
 
-const StatusBoard = () => {
+const Statuses = () => {
   const { me } = useMine();
   const discoveryNav = useNavigation(Discovery);
   const [, setAppState] = useAppState();
@@ -89,7 +89,6 @@ const StatusBoard = () => {
   const timezone = me?.area?.timezone;
   const alertError = useAlertError();
 
-  discoveryNav.useBackListener();
   useScreenFrame();
 
   const momentTz = useCallback((date) => {
@@ -199,4 +198,4 @@ const StatusBoard = () => {
   );
 };
 
-export default Discovery.create(StatusBoard);
+export default Statuses;

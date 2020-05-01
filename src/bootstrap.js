@@ -1,4 +1,5 @@
 import 'moment-timezone';
+import 'react-native-gesture-handler';
 
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 import MapboxGL from '@react-native-mapbox-gl/maps';
