@@ -54,10 +54,17 @@ const Discovery = Base.create(({ navigation }) => {
 
   const chatsQuery = queries.chats.use({
     subscribeToChanges: true,
+    onError: alertError,
   });
 
   queries.statuses.use.mine({
     subscribeToChanges: true,
+    onError: alertError,
+  });
+
+  queries.scheduledEvents.use({
+    subscribeToChanges: true,
+    onError: alertError,
   });
 
   const onMessage = useCallback((message) => {

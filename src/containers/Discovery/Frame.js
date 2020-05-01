@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 
 const Bubble = {
   Map: 0,
-  Cards: 1,
+  Activity: 1,
 };
 
 export const $Frame = {};
@@ -125,15 +125,15 @@ const Frame = ({
     setActiveBubble(Bubble[discoveryNav.state.routeName]);
   }, [discoveryNav]);
 
-  const navToCards = useCallbackWhen(() => {
-    discoveryNav.push('Cards');
+  const Activity = useCallbackWhen(() => {
+    discoveryNav.push('Activity');
     setTitle('Statuses');
-  }, activeBubble != Bubble.Cards && discoveryNav?.state.routeName === 'Map' && icons !== empty);
+  }, activeBubble != Bubble.Activity && discoveryNav?.state.routeName === 'Map' && icons !== empty);
 
   const navToMap = useCallbackWhen(() => {
     discoveryNav.goBackOnceFocused();
     setTitle('Map');
-  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Cards' && icons !== empty);
+  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Activity' && icons !== empty);
 
   const openSideMenu = useCallback(() => {
     setSideMenuOpened(true);
@@ -155,11 +155,11 @@ const Frame = ({
 
   const bubbles = [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
-    { title: 'Cards', iconSource: icons.activity, onSelect: navToCards },
+    { title: 'Activity', iconSource: icons.activity, onSelect: Activity },
   ];
 
   useTrap($Frame, {
-    navToCards,
+    Activity,
     navToMap,
     openSideMenu,
     closeSideMenu,

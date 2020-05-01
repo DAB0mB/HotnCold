@@ -11,7 +11,6 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as mutations from '../../graphql/mutations';
-import * as subscriptions from '../../graphql/subscriptions';
 import { useAppState } from '../../services/AppState';
 import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
@@ -196,7 +195,7 @@ const Map = () => {
   const locationUpdatedAtRef = useRef(0);
   const alertError = useAlertError();
   const [appState, setAppState] = useAppState();
-  const [superUpdateMyLocation] = mutations.updateMyLocation.use(appState.discoveryTime);
+  const [superUpdateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use(appState.discoveryTime);
   const [otherFeatures, setOtherFeatures] = useState([]);
   const [myFeatures, setMyFeatures] = useState([]);
   const mapFeatureCollection = useMemo(() => ({
@@ -210,11 +209,11 @@ const Map = () => {
   // Package: https://github.com/mourner/rbush
   const [flatbush, setFlatbush] = useState(null);
 
-  subscriptions.statusCreated.use(me.id, {
-    onSubscriptionData: useCallback(({ subscriptionData }) => {
-      if (!subscriptionData.data) return;
+  useEffect(() => {
+    const onStatusCreate = ({ operationName, data }) => {
+      if (operationName != 'CreateStatus') return;
 
-      const status = subscriptionData.data.statusCreated;
+      const status = data.createStatus;
 
       setMyFeatures(myFeatures => [
         ...myFeatures,
@@ -239,14 +238,12 @@ const Map = () => {
           },
         },
       ]);
-    }, [me]),
-  });
+    };
 
-  subscriptions.statusDeleted.use(me.id, {
-    onSubscriptionData: useCallback(({ subscriptionData }) => {
-      if (!subscriptionData.data) return;
+    const onStatusDelete = ({ operationName, variables }) => {
+      if (operationName != 'DeleteStatus') return;
 
-      const statusId = subscriptionData.data.statusDeleted;
+      const { statusId } = variables;
 
       setMyFeatures(myFeatures => {
         const statusIndex = myFeatures.findIndex(f => f.properties.status.id === statusId);
@@ -255,8 +252,16 @@ const Map = () => {
 
         return myFeatures;
       });
-    }, [me]),
-  });
+    };
+
+    updateMyLocationMutation.client.events.on('response', onStatusCreate);
+    updateMyLocationMutation.client.events.on('response', onStatusDelete);
+
+    return () => {
+      updateMyLocationMutation.client.events.off('response', onStatusCreate);
+      updateMyLocationMutation.client.events.off('response', onStatusDelete);
+    };
+  }, [me]);
 
   useScreenFrame();
   discoveryNav.useBackListener();

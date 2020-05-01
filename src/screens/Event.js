@@ -27,6 +27,7 @@ import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
 import * as queries from '../graphql/queries';
 import { useMine } from '../services/Auth';
+import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
 import { useAsyncCallback, upperFirst } from '../utils';
@@ -146,13 +147,24 @@ const EventDetail = ({ IconComponent = McIcon, iconName, mainText, subText, onPr
 const Event = () => {
   const { me } = useMine();
   const baseNav = useNavigation(Base);
-  const event = baseNav.getParam('event');
+  const eventParam = baseNav.getParam('event');
+  const [checkedIn, setCheckedIn] = useState(eventParam.checkedIn);
+  const event = useMemo(() => {
+    return {
+      ...eventParam,
+      checkedIn,
+    };
+  }, [checkedIn]);
   const sourceName = useMemo(() => upperFirst(event.source), [event.source]);
   const [attendanceCount, setAttendanceCount] = useState(event.attendanceCount);
-  const [checkedIn, setCheckedIn] = useState(event.checkedIn);
-  const [superToggleCheckIn] = mutations.toggleCheckIn.use(event);
+  const alertError = useAlertError();
+  const [superToggleCheckIn] = mutations.toggleCheckIn.use(event, {
+    onError: alertError
+  });
   // Prepare cache
-  const attendeesQuery = queries.attendees.use(event.id);
+  const attendeesQuery = queries.attendees.use(event.id, {
+    onError: alertError
+  });
 
   const eventDateLiteral = useMemo(() =>
     moment(event.localDate, 'YYYY-MM-DD').calendar().split(' at')[0]
@@ -203,9 +215,9 @@ const Event = () => {
 
   const toggleCheckIn = useAsyncCallback(function* () {
     const mutation = yield superToggleCheckIn();
-    const checkedIn = mutation.data.toggleCheckIn;
+    const checkedIn = mutation.data.toggleCheckIn.checkedIn;
 
-    setCheckedIn(mutation.data.toggleCheckIn);
+    setCheckedIn(checkedIn);
 
     if (checkedIn) {
       setAttendanceCount(attendanceCount => attendanceCount + 1);

@@ -32,8 +32,6 @@ statuses.use = (...args) => {
 };
 
 statuses.use.mine = (...args) => {
-  const subscriptions = require('../subscriptions');
-
   const [limit = 12, options = {}] = compactOptions(2, args);
   const { data: { me } = {} } = mine.use();
   const myId = me?.id;
@@ -76,64 +74,92 @@ statuses.use.mine = (...args) => {
     useEffect(() => {
       if (!myId) return;
 
-      return query.subscribeToMore({
-        document: subscriptions.statusCreated,
-        variables: { userId: myId },
-        updateQuery(prev, { subscriptionData }) {
-          if (!subscriptionData.data) return;
+      const statusesAst = statuses;
 
-          const { statusCreated } = subscriptionData.data;
-          const publishedAt = new Date(statusCreated.publishedAt);
+      const onResponse = ({ operationName, data }) => {
+        if (operationName !== 'CreateStatus') return;
 
-          let insertIndex = query.data.statuses.findIndex(s => new Date(s.publishedAt) > publishedAt);
-          if (insertIndex == -1) {
-            insertIndex = query.data.statuses.length;
-          }
+        let statuses = query.data.statuses?.slice();
 
-          let statuses = query.data.statuses.slice();
-          statuses.splice(insertIndex, 0, statusCreated);
-          statuses = statuses.slice(0, limit);
+        if (!statuses) return;
 
-          const veryFirstStatus = statuses.length == 1 ? statuses[0] : query.data.veryFirstStatus;
+        let statusCreated = data.createStatus;
 
-          return {
+        if (!statusCreated) return;
+
+        statusCreated = { ...statusCreated };
+        const publishedAt = new Date(statusCreated.publishedAt);
+        let veryFirstStatus = query.data.veryFirstStatus;
+
+        let insertIndex = statuses.findIndex(s => new Date(s.publishedAt) > publishedAt);
+        if (insertIndex == -1) {
+          insertIndex = statuses.length;
+        }
+
+        statuses.splice(insertIndex, 0, statusCreated);
+        statuses = statuses.slice(0, limit);
+
+        veryFirstStatus = (statuses.length == 1 ? statuses[0] : veryFirstStatus) || null;
+
+        query.client.writeQuery({
+          query: statusesAst,
+          variables: { limit, userId: myId },
+          data: {
             statuses,
-            veryFirstStatus: veryFirstStatus || null,
-          };
-        },
-      });
-    }, [query.subscribeToMore, query.data, myId, limit]);
+            veryFirstStatus,
+          },
+        });
+      };
+
+      query.client.events.on('response', onResponse);
+
+      return () => {
+        query.client.events.off('response', onResponse);
+      };
+    }, [myId, limit, query.data]);
+
 
     useEffect(() => {
       if (!myId) return;
 
-      return query.subscribeToMore({
-        document: subscriptions.statusDeleted,
-        variables: { userId: myId },
-        updateQuery(prev, { subscriptionData }) {
-          if (!subscriptionData.data) return;
+      const statusesAst = statuses;
 
-          const { statusDeleted } = subscriptionData.data;
+      const onResponse = ({ operationName, data, variables }) => {
+        if (operationName !== 'DeleteStatus') return;
 
-          const statuses = query.data.statuses.slice();
-          const deletedIndex = statuses.findIndex(s => s.id === statusDeleted);
+        const { statusId: statusDeletedId } = variables;
+        let statuses = query.data.statuses?.slice();
 
-          if (!~deletedIndex) {
-            return prev;
-          }
+        if (!statuses) return;
 
-          statuses.splice(deletedIndex, 1);
+        const statusDeleted = data.deleteStatus;
 
-          let veryFirstStatus = query.data.veryFirstStatus;
-          veryFirstStatus = statusDeleted === veryFirstStatus?.id ? statuses.slice(-1)[0] : veryFirstStatus;
+        if (!statusDeleted) return;
 
-          return {
+        let veryFirstStatus = query.data.veryFirstStatus;
+        const deletedIndex = statuses.findIndex(s => s.id === statusDeletedId);
+
+        if (!~deletedIndex) return;
+
+        statuses.splice(deletedIndex, 1);
+        veryFirstStatus = (statusDeletedId === veryFirstStatus?.id ? statuses.slice(-1)[0] : veryFirstStatus) || null;
+
+        query.client.writeQuery({
+          query: statusesAst,
+          variables: { limit, userId: myId },
+          data: {
             statuses,
-            veryFirstStatus: veryFirstStatus || null,
-          };
-        },
-      });
-    }, [query.subscribeToMore, query.data, myId]);
+            veryFirstStatus,
+          },
+        });
+      };
+
+      query.client.events.on('response', onResponse);
+
+      return () => {
+        query.client.events.off('response', onResponse);
+      };
+    }, [myId, limit, query.data]);
   }
 
   return {

@@ -2,42 +2,42 @@ import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { useCallback } from 'react';
 
+import { compactOptions } from '../../utils';
 import * as fragments from '../fragments';
 
 const toggleCheckIn = gql `
-  mutation ToggleCheckIn($eventId: ID!) {
-    toggleCheckIn(eventId: $eventId)
+  mutation ToggleCheckIn($eventId: ID!, $checkedIn: Boolean) {
+    toggleCheckIn(eventId: $eventId, checkedIn: $checkedIn) {
+      ...Event
+    }
   }
+
+  ${fragments.event}
 `;
 
-toggleCheckIn.use = (event, options = {}) => {
+toggleCheckIn.use = (...args) => {
+  const [defaultEvent, defaultCheckedIn, options = {}] = compactOptions(3, args);
+
   const [superMutate, mutation] = useMutation(toggleCheckIn, {
-    variables: { eventId: event.id },
     ...options,
   });
 
-  const mutate = useCallback((options = {}) => {
-    const eventId = event.id;
-    const attending = !event.attending;
+  const mutate = useCallback((...args) => {
+    const [event = defaultEvent, checkedIn = defaultCheckedIn || !event.checkedIn, options = {}] = compactOptions(3, args);
 
     return superMutate({
+      variables: { eventId: event.id, checkedIn },
       optimisticResponse: {
         __typename: 'Mutation',
-        toggleCheckIn: !event.checkedIn,
-      },
-      update(cache, mutation) {
-        if (mutation.error) return;
-
-        let event = fragments.event.read(cache, eventId);
-
-        if (!event) return;
-
-        event = { ...event, attending };
-        fragments.event.write(cache, event);
+        toggleCheckIn: {
+          ...event,
+          __typename: 'Event',
+          toggleCheckIn: checkedIn,
+        },
       },
       ...options,
     });
-  }, [superMutate, event]);
+  }, [superMutate, defaultEvent, defaultCheckedIn]);
 
   return [mutate, mutation];
 };

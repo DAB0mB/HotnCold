@@ -116,7 +116,31 @@ const terminatingLink = split(
 //   });
 // }));
 
-const link = ApolloLink.from([errorLink, terminatingLink]);
+import Observable from 'zen-observable';
+
+const emitLink = new ApolloLink((operation, forward) => new Observable((observable) => {
+  forward(operation).subscribe({
+    next(response) {
+      events.emit('response', {
+        operationName: operation.operationName,
+        variables: operation.variables,
+        data: response.data,
+      });
+
+      observable.next(response);
+    },
+
+    complete() {
+      observable.complete();
+    },
+
+    error(error) {
+      observable.error(error);
+    }
+  });
+}));
+
+const link = ApolloLink.from([errorLink, emitLink, terminatingLink]);
 
 const client = new ApolloClient({
   cache,

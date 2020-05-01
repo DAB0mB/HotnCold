@@ -90,7 +90,7 @@ const Attendees = () => {
         id: PSEUDO,
       };
     }
-  }, [veryFirstAttendee, attendeesQuery, attendees]);
+  }, [veryFirstAttendee, attendeesQuery.loading, attendeesQuery.called, attendees]);
 
   const attendeesItems = useMemo(() => {
     if (pseudoAttendee) {
