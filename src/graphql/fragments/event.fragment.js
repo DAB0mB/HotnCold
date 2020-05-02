@@ -12,7 +12,6 @@ const event = gql `
     localTime
     startsAt
     endsAt
-    description
     sourceAttendanceCount
     attendanceCount
     location
@@ -29,6 +28,15 @@ const event = gql `
   }
 
   ${area}
+`;
+
+event.full = gql `
+  fragment FullEvent on Event {
+    ...Event
+    description
+  }
+
+  ${event}
 `;
 
 event.read = (cache, id) => {
@@ -48,6 +56,27 @@ event.write = (cache, data) => {
     id,
     fragment: event,
     fragmentName: 'Event',
+    data,
+  });
+};
+
+event.full.read = (cache, id) => {
+  id = `FullEvent:${id.split(':').pop()}`;
+
+  return cache.readFragment({
+    id,
+    fragment: event,
+    fragmentName: 'FullEvent',
+  });
+};
+
+event.full.write = (cache, data) => {
+  const id = `FullEvent:${data.id}`;
+
+  return cache.writeFragment({
+    id,
+    fragment: event,
+    fragmentName: 'FullEvent',
     data,
   });
 };

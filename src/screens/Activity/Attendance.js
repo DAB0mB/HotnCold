@@ -1,8 +1,7 @@
-import moment from 'moment';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Alert, View, Text, StyleSheet } from 'react-native';
 
-import Discovery from '../../containers/Discovery';
+import Base from '../../containers/Base';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import { useMine } from '../../services/Auth';
@@ -43,30 +42,29 @@ const ListFooterComponent = () => (
 
 const Attendance = () => {
   const { me } = useMine();
-  const discoveryNav = useNavigation(Discovery);
+  const baseNav = useNavigation(Base);
   const [toggleCheckIn] = mutations.toggleCheckIn.use();
+  const [queryEvent, eventQuery] = queries.event.use();
   const eventsQuery = queries.scheduledEvents.use();
   const events = useMemo(() => eventsQuery.data?.scheduledEvents || [], [eventsQuery.data]);
   const timezone = me?.area?.timezone;
   const alertError = useAlertError();
 
-  const momentTz = useCallback((date) => {
-    let m = moment(date);
-
-    if (timezone) {
-      m = m.tz(timezone);
+  useEffect(() => {
+    if (eventQuery.data?.event) {
+      baseNav.push('Event', {
+        event: eventQuery.data.event
+      });
     }
-
-    return m;
-  }, [timezone]);
+  }, [eventQuery.data?.event?.id]);
 
   const fetchMoreScheduledEvents = useCallback(() => {
     eventsQuery.fetchMore();
   }, [eventsQuery.fetchMore]);
 
   const handleEventPress = useCallback((event) => {
-    console.log(event);
-  }, [momentTz, discoveryNav]);
+    queryEvent(event.id);
+  }, [queryEvent]);
 
   const handleDeleteEvent = useCallback((event) => {
     Alert.alert('Delete', 'Are you sure you would like to check-out from this event?', [

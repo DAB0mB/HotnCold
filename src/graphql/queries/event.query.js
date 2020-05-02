@@ -8,11 +8,11 @@ import { compactOptions } from '../../utils';
 const event = gql `
   query Event($eventId: ID!) {
     event(eventId: $eventId) {
-      ...Event
+      ...FullEvent
     }
   }
 
-  ${fragments.event}
+  ${fragments.event.full}
 `;
 
 event.use = (options) => {
