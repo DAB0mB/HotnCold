@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet, Image } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { getUserAvatarSource } from '../../assets';
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
 import { useMine } from '../../services/Auth';
@@ -93,7 +94,7 @@ const Header = () => {
 
         <Thumb>
           <View style={pick(styles.header, ['flexDirection', 'alignItems'])}>
-            <Image style={styles.avatar} source={{ uri: recipient.avatar }} />
+            <Image style={styles.avatar} source={getUserAvatarSource(recipient)} />
             <Text style={styles.name}>{recipient.name}</Text>
           </View>
         </Thumb>

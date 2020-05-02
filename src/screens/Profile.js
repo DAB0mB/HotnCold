@@ -200,9 +200,11 @@ const Profile = () => {
           activeDotColor='white'
           dotColor='rgba(255, 255, 255, .3)'
         >
-          {pictures.map((picture) => (
+          {pictures.length ? pictures.map((picture) => (
             <Image style={styles.profilePicture} key={picture} source={{ uri: picture }} />
-          ))}
+          )) : (
+            <Image style={styles.profilePicture} key='__default__' source={require('../assets/profile.png')} />
+          )}
         </Swiper>
       </View>
       <View style={styles.name}>
@@ -210,22 +212,22 @@ const Profile = () => {
       </View>
       <View style={styles.bioField}>
         <View style={styles.bioFieldIcon}>
-          <McIcon name='account' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
+          <McIcon name='cake' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
         </View>
-        <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={`${age} years old`} />
+        <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={age ? `${age} years old` : 'Unspecified'} />
       </View>
       <View style={styles.bioField}>
         <View style={styles.bioFieldIcon}>
           <McIcon name='briefcase' size={styles.bioField.fontSize} color={styles.bioField.color} style={{ marginRight: styles.bioField.marginLeft / 2 }} />
         </View>
-        <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={occupation} />
+        <MyText style={{ color: styles.bioField.color, fontSize: styles.bioField.fontSize }} value={occupation ? occupation : 'Unspecified'} />
       </View>
       <View style={styles.bio}>
         <View style={{ position: 'absolute', top: -15, right: 20 }}>
           <McIcon name='format-quote-open' color={colors.ink} size={30} />
         </View>
         <View>
-          <MyText style={{ color: styles.bio.color, fontSize: styles.bio.fontSize, textAlignVertical: styles.bio.textAlignVertical }} multiline value={bio} />
+          <MyText style={{ color: styles.bio.color, fontSize: styles.bio.fontSize, textAlignVertical: styles.bio.textAlignVertical }} multiline value={bio || 'Unspecified'} />
         </View>
       </View>
 

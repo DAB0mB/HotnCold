@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { FlatList, Image, Dimensions, Text, View, Linking, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { getUserAvatarSource } from '../assets';
 import Bar from '../components/Bar';
 import Base from '../containers/Base';
 import * as queries from '../graphql/queries';
@@ -168,7 +169,7 @@ const Attendees = () => {
     return (
       <TouchableWithoutFeedback onPress={() => onAttendeeItemPress(attendee, index)}>
         <View style={[styles.attendeeItemContainer]}>
-          <Image style={styles.attendeeAvatar} source={{ uri: attendee.avatar }} />
+          <Image style={styles.attendeeAvatar} source={getUserAvatarSource(attendee)} />
           <Text style={styles.attendeeName}>{attendee.name}</Text>
         </View>
       </TouchableWithoutFeedback>

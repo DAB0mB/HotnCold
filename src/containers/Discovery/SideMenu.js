@@ -6,6 +6,7 @@ import Ripple from 'react-native-material-ripple';
 import SuperSideMenu from 'react-native-side-menu';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { getUserAvatarSource } from '../../assets';
 import { useSignOut, useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation }  from '../../services/Navigation';
@@ -146,7 +147,7 @@ const SideMenu = ({
         <LinearGradient colors={['rgba(0, 0, 0, .4)', 'rgba(0, 0, 0, .65)']}>
           <View style={styles.headerContent}>
             <TouchableWithoutFeedback onPress={navToProfile}>
-              <Image source={{ uri: me.avatar }} style={styles.avatar} />
+              <Image source={getUserAvatarSource(me)} style={styles.avatar} />
             </TouchableWithoutFeedback>
             <Text style={styles.myName}>{me.name}</Text>
           </View>

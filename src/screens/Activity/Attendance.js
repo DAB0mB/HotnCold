@@ -102,7 +102,7 @@ const Attendance = () => {
       ) : (
         <React.Fragment>
           <View style={[styles.absoluteLayer, { padding: 50 }]}>
-            <Text style={{ textAlign: 'center' }}>Doesn{'\''}t look like you checked-in to any upcoming event</Text>
+            <Text style={{ textAlign: 'center' }}>Doesn{'\''}t look like you{'\''}ve checked-in to any upcoming event</Text>
           </View>
         </React.Fragment>
       )}

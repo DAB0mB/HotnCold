@@ -27,7 +27,11 @@ chats.use = ({ onCompleted = () => {}, ...options } = {}) => {
     fetchPolicy: 'cache-and-network',
     onCompleted: (data) => {
       if (data?.chats) {
-        data.chats.forEach(c => Image.prefetch(c.picture));
+        data.chats.forEach(c => {
+          if (c.picture) {
+            Image.prefetch(c.picture);
+          }
+        });
       }
 
       onCompleted(data);

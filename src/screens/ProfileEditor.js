@@ -25,7 +25,7 @@ import { useSignUp } from '../services/Auth';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
 import { useImagePicker } from '../services/ImagePicker';
 import { useNavigation } from '../services/Navigation';
-import { colors } from '../theme';
+import { colors, hexToRgba } from '../theme';
 import { useAsyncEffect, useRenderer } from '../utils';
 
 const NO_EMPTY = 'Field cannot be empty';
@@ -208,7 +208,7 @@ const ProfileEditor = () => {
     mode: 'date',
     maximumDate: useMemo(() => moment().subtract(18, 'year').toDate(), [true]),
     minimumDate: useMemo(() => moment().subtract(100, 'year').toDate(), [true]),
-    date: useMemo(() => new Date(birthDate ? birthDate : '1/1/2000'), [birthDate]),
+    date: useMemo(() => birthDate ? new Date(birthDate) : new Date('2000 / 01 / 01'), [birthDate]),
     onConfirm: useCallback((birthDate) => {
       setBirthDate(birthDate);
       occupationRef.current.focus();
@@ -221,7 +221,7 @@ const ProfileEditor = () => {
     bio,
     occupation,
     pictures: prepics,
-    birthDate: useMemo(() => new Date(birthDate), [birthDate]),
+    birthDate: useMemo(() => birthDate && new Date(birthDate), [birthDate]),
   }, {
     onError: useCallback((e) => {
       setSaving(false);
@@ -259,18 +259,6 @@ const ProfileEditor = () => {
       errors.name = NO_EMPTY;
     }
 
-    if (!birthDate) {
-      errors.birthDate = NO_EMPTY;
-    }
-
-    if (!occupation) {
-      errors.occupation = NO_EMPTY;
-    }
-
-    if (!bio) {
-      errors.bio = NO_EMPTY;
-    }
-
     if (Object.keys(errors).length) {
       setErrors(errors);
 
@@ -278,7 +266,7 @@ const ProfileEditor = () => {
     }
 
     setSaving(true);
-  }, [name, birthDate, occupation, bio]);
+  }, [name]);
 
   const reorderPictures = useCallback(({ itemOrder }) => {
     const orderedPictures = itemOrder.reduce((orderedPictures, { key }) => {
@@ -393,8 +381,8 @@ const ProfileEditor = () => {
       setName(name);
       renderInputs();
     },
-    setBirthDate(birthdate) {
-      setBirthDate(birthdate);
+    setBirthDate(birthDate) {
+      setBirthDate(birthDate);
       renderInputs();
     },
     setBio(bio) {
@@ -501,25 +489,33 @@ const ProfileEditor = () => {
             />
           </View>
 
-          <TouchableWithoutFeedback onPress={() => dateProps.visibleState[1](true)}>
-            <View style={{ flex: 1, marginLeft: 10 }}>
-              <TextField
-                onFocus={onFocus}
-                ref={birthDateRef}
-                error={errors.birthDate}
-                key={birthDate}
-                value={birthDate && moment(birthDate).format('MMMM Do YYYY')}
-                onSubmitEditing={handleDateSubmit}
-                tintColor={colors.ink}
-                editable={false}
-                autoCorrect={false}
-                enablesReturnKeyAutomatically
-                onChangeText={setBirthDate}
-                returnKeyType='next'
-                label='Birth Date'
-              />
-            </View>
-          </TouchableWithoutFeedback>
+          <View style={{ position: 'relative', flex: 1, marginLeft: 10 }}>
+            <TouchableWithoutFeedback onPress={() => dateProps.visibleState[1](true)}>
+              <View style={{ flex: 1 }}>
+                <TextField
+                  onFocus={onFocus}
+                  ref={birthDateRef}
+                  error={errors.birthDate}
+                  key={birthDate}
+                  value={birthDate && moment(birthDate).format('MMMM Do YYYY')}
+                  onSubmitEditing={handleDateSubmit}
+                  tintColor={colors.ink}
+                  editable={false}
+                  autoCorrect={false}
+                  enablesReturnKeyAutomatically
+                  onChangeText={setBirthDate}
+                  returnKeyType='next'
+                  label='Birth Date'
+                />
+              </View>
+            </TouchableWithoutFeedback>
+
+            {birthDate && (
+              <TouchableWithoutFeedback onPress={() => setBirthDate(null)}>
+                <McIcon style={{ position: 'absolute', right: 5, bottom: 17 }} color={hexToRgba(colors.gray, .5)} name='close-circle' size={20} />
+              </TouchableWithoutFeedback>
+            )}
+          </View>
         </View>
 
         <View style={styles.input}>

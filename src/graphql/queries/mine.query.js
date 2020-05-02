@@ -25,7 +25,9 @@ mine.use = ({ onCompleted = () => {}, ...options } = {}) => {
       const { me } = data || {};
 
       if (me) {
-        Image.prefetch(me.avatar);
+        if (me.avatar) {
+          Image.prefetch(me.avatar);
+        }
 
         me.pictures.forEach(p => Image.prefetch(p));
       }

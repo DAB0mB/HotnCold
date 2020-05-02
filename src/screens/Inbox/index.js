@@ -2,6 +2,7 @@ import moment from 'moment';
 import React, { useCallback } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
+import { getUserAvatarSource } from '../../assets';
 import ProfileList from '../../components/ProfileList';
 import Social from '../../containers/Social';
 import * as queries from '../../graphql/queries';
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
 });
 
 const getChatId = c => c.id;
-const getChatPicture = c => ({ uri: c.picture });
+const getChatPicture = c => getUserAvatarSource(c, 'picture');
 
 export const $Inbox = {
   Header: $Header,

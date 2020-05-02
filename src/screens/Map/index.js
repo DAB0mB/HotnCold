@@ -36,6 +36,7 @@ const AVATAR_MARGIN = 28 / AVATAR_SIZE;
 const defaultImages = {
   'cold-marker': require('../../assets/cold-marker.png'),
   'hot-marker': require('../../assets/hot-marker.png'),
+  'avatar': require('../../assets/avatar.png'),
 };
 
 const styles = StyleSheet.create({
@@ -154,7 +155,7 @@ const mapStyles = {
       MIN_INTER_ZOOM, AVATAR_SIZE / MIN_ICON_DIV,
       MAX_INTER_ZOOM, AVATAR_SIZE,
     ),
-    iconImage: mapfn.getDeep('user.id'),
+    iconImage: mapfn.get('image'),
     iconAnchor: 'bottom',
     iconOffset: [0, -AVATAR_MARGIN],
     iconAllowOverlap: true,
@@ -269,7 +270,9 @@ const Map = () => {
   const myImages = useMemo(() => {
     const images = {};
 
-    images[me.id] = { uri: me.avatar };
+    if (me.avatar) {
+      images[me.id] = { uri: me.avatar };
+    }
 
     return images;
   }, [me.avatar]);
@@ -280,7 +283,9 @@ const Map = () => {
     for (const feature of otherFeatures) {
       if (!feature.properties.user) continue;
 
-      images[feature.properties.user.id] = { uri: feature.properties.user.avatar };
+      if (feature.properties.user.avatar) {
+        images[feature.properties.user.id] = { uri: feature.properties.user.avatar };
+      }
     }
 
     return images;
@@ -319,10 +324,12 @@ const Map = () => {
             feature.properties.weight = 1;
 
             if (feature.properties.user.id == me.id) {
+              feature.properties.image = me.avatar ? me.id : 'avatar';
               feature.properties.marker = 'hot-marker';
               myFeatures.push(feature);
             }
             else {
+              feature.properties.image = feature.properties.user.avatar ? feature.properties.user.id : 'avatar';
               feature.properties.marker = 'cold-marker';
               otherFeatures.push(feature);
             }

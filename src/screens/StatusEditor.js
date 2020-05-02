@@ -4,6 +4,7 @@ import { StyleSheet, TouchableWithoutFeedback, View, ScrollView, Text, TextInput
 import { RaisedTextButton } from 'react-native-material-buttons';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { getUserAvatarSource } from '../assets';
 import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
 import { useAppState } from '../services/AppState';
@@ -134,7 +135,7 @@ const StatusEditor = () => {
 
       <View style={styles.body}>
         <View>
-          <Image source={{ uri: me.avatar }} style={styles.avatar} />
+          <Image source={getUserAvatarSource(me)} style={styles.avatar} />
         </View>
 
         <View style={styles.bodyRight}>

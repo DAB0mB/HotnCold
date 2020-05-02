@@ -127,7 +127,7 @@ const Frame = ({
 
   const Activity = useCallbackWhen(() => {
     discoveryNav.push('Activity');
-    setTitle('Statuses');
+    setTitle('Activity');
   }, activeBubble != Bubble.Activity && discoveryNav?.state.routeName === 'Map' && icons !== empty);
 
   const navToMap = useCallbackWhen(() => {

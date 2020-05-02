@@ -5,10 +5,10 @@ import { useCallback } from 'react';
 const createUser = gql `
   mutation CreateUser(
     $name: String!
-    $occupation: String!
-    $birthDate: DateTime!
-    $bio: String!
-    $pictures: [String!]!
+    $occupation: String
+    $birthDate: DateTime
+    $bio: String
+    $pictures: [String]!
   ) {
     createUser(
       name: $name

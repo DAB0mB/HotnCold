@@ -7,10 +7,10 @@ import * as fragments from '../fragments';
 const updateMyProfile = gql `
   mutation UpdateMyProfile(
     $name: String!
-    $occupation: String!
-    $birthDate: DateTime!
-    $bio: String!
-    $pictures: [String!]!
+    $occupation: String
+    $birthDate: DateTime
+    $bio: String
+    $pictures: [String]!
   ) {
     updateMyProfile(
       name: $name
