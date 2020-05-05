@@ -43,7 +43,7 @@ scheduledEvents.use = (...args) => {
       if (!data) return;
 
       const scheduledEventsData = data.scheduledEvents.slice(0, limit);
-      const veryFirstScheduledEvent = scheduledEventsData.length == 1 ? scheduledEventsData[0] : data.veryFirstScheduledEvent;
+      const veryFirstScheduledEvent = (scheduledEventsData.length == 1 ? scheduledEventsData[0] : data.veryFirstScheduledEvent) || null;
 
       // Reset fetchMore()
       query.client.writeQuery({
@@ -51,32 +51,30 @@ scheduledEvents.use = (...args) => {
         variables: { limit },
         data: {
           scheduledEvents: scheduledEventsData,
-          veryFirstScheduledEvent: veryFirstScheduledEvent || null,
+          veryFirstScheduledEvent,
         },
       });
     };
   }, [true]);
 
-  // TODO: Update locally, move the following listeners to generic hook
   if (options.subscribeToChanges) {
     useEffect(() => {
       if (!myId) return;
+      if (!query.data) return;
 
       const scheduledEventsAst = scheduledEvents;
 
       const onResponse = ({ operationName, data }) => {
         if (operationName !== 'ToggleCheckIn') return;
 
-        let scheduledEvents = query.data.scheduledEvents?.slice();
-
-        if (!scheduledEvents) return;
-
         const event = { ...data.toggleCheckIn };
         const checkedInAt = new Date(event.checkedInAt);
+        let scheduledEvents = query.data.scheduledEvents.slice();
         let veryFirstScheduledEvent = query.data.veryFirstScheduledEvent;
 
         if (event.checkedIn) {
           let insertIndex = scheduledEvents.findIndex(e => new Date(e.checkedInAt) > checkedInAt);
+
           if (insertIndex == -1) {
             insertIndex = scheduledEvents.length;
           }
@@ -115,29 +113,25 @@ scheduledEvents.use = (...args) => {
   return {
     ...query,
     fetchMore: useCallback((...args) => {
-      const [extraLimit = limit, options = {}] = compactOptions(2, args);
+      if (!query.data) return;
+      if (query.data.veryFirstScheduledEvent.id === query.data.scheduledEvents.slice(-1)[0].id) return;
 
-      if (
-        query.data.veryFirstScheduledEvent &&
-        query.data.veryFirstScheduledEvent.id === query.data.scheduledEvents.slice(-1)[0].id
-      ) {
-        return;
-      }
+      const [lazyLimit = limit, options = {}] = compactOptions(2, args);
 
       return query.fetchMore({
+        ...options,
         variables: {
-          limit: extraLimit,
-          anchor: query.data.scheduledEvents[query.data.scheduledEvents.length - 1].id,
+          limit: lazyLimit,
+          anchor: query.data.scheduledEvents[query.data.scheduledEvents.length - 1]?.id,
         },
         updateQuery(prev, { fetchMoreResult }) {
-          if (!fetchMoreResult) return;
+          if (!fetchMoreResult) return prev;
 
           return {
-            ...prev,
+            ...fetchMoreResult,
             scheduledEvents: [...prev.scheduledEvents, ...fetchMoreResult.scheduledEvents]
           };
         },
-        ...options,
       });
     }, [query.fetchMore, query.data, limit]),
   };

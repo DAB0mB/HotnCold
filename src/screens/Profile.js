@@ -13,6 +13,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../containers/Base';
 import * as mutations from '../graphql/mutations';
+import { useMine } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
 import { useBuffer } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
@@ -129,7 +130,8 @@ const Profile = () => {
   const baseNav = useNavigation(Base);
   const isRecipient = baseNav.getParam('isRecipient');
   const userParam = baseNav.getParam('user');
-  const itsMe = baseNav.getParam('itsMe');
+  const { me = {} } = useMine();
+  const itsMe = userParam.id === me.id;
   const alertError = useAlertError();
 
   // User state

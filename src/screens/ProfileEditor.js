@@ -208,7 +208,7 @@ const ProfileEditor = () => {
     mode: 'date',
     maximumDate: useMemo(() => moment().subtract(18, 'year').toDate(), [true]),
     minimumDate: useMemo(() => moment().subtract(100, 'year').toDate(), [true]),
-    date: useMemo(() => birthDate ? new Date(birthDate) : new Date('2000 / 01 / 01'), [birthDate]),
+    date: useMemo(() => birthDate ? new Date(birthDate) : moment('2000/01/01', 'YYYY/MM/DD').toDate(), [birthDate]),
     onConfirm: useCallback((birthDate) => {
       setBirthDate(birthDate);
       occupationRef.current.focus();
@@ -559,7 +559,7 @@ const ProfileEditor = () => {
           <RaisedTextButton
             onPress={save}
             color={colors.hot}
-            title={myContract.signed ? 'save' : 'save & continue'}
+            title={saving ? 'saving...' : myContract.signed ? 'save' : 'save & continue'}
             titleColor='white'
           />
         </View>

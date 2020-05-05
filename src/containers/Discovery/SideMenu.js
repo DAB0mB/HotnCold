@@ -93,10 +93,7 @@ const SideMenu = ({
   }, [baseNav]);
 
   const navToProfile = useCallback(() => {
-    baseNav.push('Profile', {
-      user: me,
-      itsMe: true,
-    });
+    baseNav.push('Profile', { user: me });
   }, [baseNav, me]);
 
   const navToProfileEditor = useCallback(() => {

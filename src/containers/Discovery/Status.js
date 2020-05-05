@@ -61,10 +61,7 @@ const Status = (props) => {
       delete self.shouldNav;
       delete self.fullUser;
 
-      baseNav.push('Profile', {
-        user: user,
-        itsMe: me.id === user.id,
-      });
+      baseNav.push('Profile', { user });
     }
   }, [true]);
 

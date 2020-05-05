@@ -7,12 +7,11 @@ import { getUserAvatarSource } from '../assets';
 import Bar from '../components/Bar';
 import Base from '../containers/Base';
 import * as queries from '../graphql/queries';
-import { useMine } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
 import { useLoading } from '../services/Loading';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
-import { useConst, upperFirst } from '../utils';
+import { emptyArr, useConst, upperFirst } from '../utils';
 
 const USER_AVATAR_SIZE = Dimensions.get('window').width / 3 - Dimensions.get('window').width / 16;
 const USERS_LIST_PADDING = Dimensions.get('window').width / 3 / 1.7;
@@ -72,13 +71,12 @@ const styles = StyleSheet.create({
 const extractAttendeeId = u => u.id;
 
 const Attendees = () => {
-  const { me } = useMine();
   const self = useConst({});
   const baseNav = useNavigation(Base);
   const event = baseNav.getParam('event');
   const attendeesQuery = queries.attendees.use(event.id);
   const alertError = useAlertError();
-  const attendees = useMemo(() => attendeesQuery.data?.attendees || [], [attendeesQuery.data]);
+  const attendees = attendeesQuery.data?.attendees || emptyArr;
   const veryFirstAttendee = attendeesQuery.data?.veryFirstAttendee;
 
   const pseudoAttendee = useMemo(() => {
@@ -91,7 +89,7 @@ const Attendees = () => {
         id: PSEUDO,
       };
     }
-  }, [veryFirstAttendee, attendeesQuery.loading, attendeesQuery.called, attendees]);
+  }, [veryFirstAttendee, attendees, attendeesQuery.loading, attendeesQuery.called]);
 
   const attendeesItems = useMemo(() => {
     if (pseudoAttendee) {
@@ -109,12 +107,9 @@ const Attendees = () => {
         delete self.shouldNav;
         const user = data.userProfile;
 
-        baseNav.push('Profile', {
-          user,
-          itsMe: user.id === me.id,
-        });
+        baseNav.push('Profile', { user });
       }
-    }, [baseNav, me]),
+    }, [baseNav]),
     onError: alertError,
   });
 

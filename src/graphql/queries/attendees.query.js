@@ -40,7 +40,7 @@ attendees.use = (...args) => {
       if (!data) return;
 
       const attendeesData = data.attendees.slice(0, limit);
-      const veryFirstAttendee = attendeesData.length == 1 ? attendeesData[0] : data.veryFirstAttendee;
+      const veryFirstAttendee = (attendeesData.length == 1 ? attendeesData[0] : data.veryFirstAttendee) || null;
 
       // Reset fetchMore()
       query.client.writeQuery({
@@ -48,7 +48,7 @@ attendees.use = (...args) => {
         variables: { limit, eventId },
         data: {
           attendees: attendeesData,
-          veryFirstAttendee: veryFirstAttendee || null,
+          veryFirstAttendee: veryFirstAttendee,
         },
       });
     };
@@ -60,29 +60,26 @@ attendees.use = (...args) => {
       delete query.client.cache.data.data['ROOT_QUERY'][`attendees({"eventId":"${eventId}","limit":${limit}})`];
     }, [true]),
     fetchMore: useCallback((...args) => {
-      const [extraLimit = limit, options = {}] = compactOptions(2, args);
+      if (!query.data) return;
+      if (query.data.veryFirstAttendee?.id === query.data.attendees.slice(-1)[0]?.id) return;
 
-      if (
-        query.data.veryFirstAttendee?.id === query.data.attendees.slice(-1)[0]?.id
-      ) {
-        return;
-      }
+      const [lazyLimit = limit, options = {}] = compactOptions(2, args);
 
       return query.fetchMore({
+        ...options,
         variables: {
           eventId,
-          limit: extraLimit,
+          limit: lazyLimit,
           anchor: query.data.attendees[query.data.attendees.length - 1]?.id,
         },
         updateQuery(prev, { fetchMoreResult }) {
-          if (!fetchMoreResult) return;
+          if (!fetchMoreResult) return prev;
 
           return {
-            ...prev,
+            ...fetchMoreResult,
             attendees: [...prev.attendees, ...fetchMoreResult.attendees]
           };
         },
-        ...options,
       });
     }, [query.fetchMore, query.data, eventId, limit]),
   };

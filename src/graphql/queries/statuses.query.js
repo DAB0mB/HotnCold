@@ -20,10 +20,10 @@ const statuses = gql `
   ${fragments.status}
 `;
 
+// TODO: Implement
 statuses.use = (...args) => {
   const [userId, limit = 12, options = {}] = compactOptions(3, args);
 
-  // TODO: Implement according to needs + subscriptions
   return useQuery(statuses, {
     fetchPolicy: 'no-cache',
     ...options,
@@ -55,7 +55,7 @@ statuses.use.mine = (...args) => {
       if (!data) return;
 
       const statusesData = data.statuses.slice(0, limit);
-      const veryFirstStatus = statusesData.length == 1 ? statusesData[0] : data.veryFirstStatus;
+      const veryFirstStatus = (statusesData.length == 1 ? statusesData[0] : data.veryFirstStatus) || null;
 
       // Reset fetchMore()
       query.client.writeQuery({
@@ -63,25 +63,21 @@ statuses.use.mine = (...args) => {
         variables: { limit, userId },
         data: {
           statuses: statusesData,
-          veryFirstStatus: veryFirstStatus || null,
+          veryFirstStatus: veryFirstStatus,
         },
       });
     };
   }, [true]);
 
-  // TODO: Update locally, move the following listeners to generic hook
   if (options.subscribeToChanges) {
     useEffect(() => {
       if (!myId) return;
+      if (!query.data) return;
 
       const statusesAst = statuses;
 
       const onResponse = ({ operationName, data }) => {
         if (operationName !== 'CreateStatus') return;
-
-        let statuses = query.data.statuses?.slice();
-
-        if (!statuses) return;
 
         let statusCreated = data.createStatus;
 
@@ -89,16 +85,16 @@ statuses.use.mine = (...args) => {
 
         statusCreated = { ...statusCreated };
         const publishedAt = new Date(statusCreated.publishedAt);
+        let statuses = query.data.statuses.slice();
         let veryFirstStatus = query.data.veryFirstStatus;
-
         let insertIndex = statuses.findIndex(s => new Date(s.publishedAt) > publishedAt);
+
         if (insertIndex == -1) {
           insertIndex = statuses.length;
         }
 
         statuses.splice(insertIndex, 0, statusCreated);
         statuses = statuses.slice(0, limit);
-
         veryFirstStatus = (statuses.length == 1 ? statuses[0] : veryFirstStatus) || null;
 
         query.client.writeQuery({
@@ -121,22 +117,20 @@ statuses.use.mine = (...args) => {
 
     useEffect(() => {
       if (!myId) return;
+      if (!query.data) return;
 
       const statusesAst = statuses;
 
       const onResponse = ({ operationName, data, variables }) => {
         if (operationName !== 'DeleteStatus') return;
 
-        const { statusId: statusDeletedId } = variables;
-        let statuses = query.data.statuses?.slice();
-
-        if (!statuses) return;
-
         const statusDeleted = data.deleteStatus;
 
         if (!statusDeleted) return;
 
+        let statuses = query.data.statuses.slice();
         let veryFirstStatus = query.data.veryFirstStatus;
+        const { statusId: statusDeletedId } = variables;
         const deletedIndex = statuses.findIndex(s => s.id === statusDeletedId);
 
         if (!~deletedIndex) return;
@@ -165,30 +159,26 @@ statuses.use.mine = (...args) => {
   return {
     ...query,
     fetchMore: useCallback((...args) => {
-      const [extraLimit = limit, options = {}] = compactOptions(2, args);
+      if (!query.data) return;
+      if (query.data.veryFirstStatus?.id === query.data.statuses[query.data.statuses.length - 1]?.id) return;
 
-      if (
-        query.data.veryFirstStatus &&
-        query.data.veryFirstStatus.id === query.data.statuses.slice(-1)[0].id
-      ) {
-        return;
-      }
+      const [lazyLimit = limit, options = {}] = compactOptions(2, args);
 
       return query.fetchMore({
+        ...options,
         variables: {
           userId: myId,
-          limit: extraLimit,
-          anchor: query.data.statuses[query.data.statuses.length - 1].id,
+          limit: lazyLimit,
+          anchor: query.data.statuses[query.data.statuses.length - 1]?.id,
         },
         updateQuery(prev, { fetchMoreResult }) {
-          if (!fetchMoreResult) return;
+          if (!fetchMoreResult) return prev;
 
           return {
-            ...prev,
+            ...fetchMoreResult,
             statuses: [...prev.statuses, ...fetchMoreResult.statuses]
           };
         },
-        ...options,
       });
     }, [query.fetchMore, query.data, myId, limit]),
   };

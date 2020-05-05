@@ -10,6 +10,7 @@ export { default as once } from './once';
 export const noop = () => {};
 export const noopGen = function* () {};
 export const empty = {};
+export const emptyArr = [];
 
 export const pick = (obj, keys) => {
   const clone = {};

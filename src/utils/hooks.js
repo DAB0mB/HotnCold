@@ -162,16 +162,19 @@ export const useAsyncEffect = createAsyncEffectHook(useEffect);
 export const useAsyncLayoutEffect = createAsyncEffectHook(useLayoutEffect);
 
 export const useAsyncCallback = (fn, input) => {
-  const mountState = useMountState();
+  const mountState = useMountState(true);
 
   return useCallback(async (...args) => {
     const iterator = fn(...args);
-    let result = iterator.next();
+    let result = { value: undefined, done: false };
 
-    while (!result.done) {
+    while (!result.done && mountState.current) {
       try {
-        if (mountState.current) {
+        if (result.value instanceof Promise) {
           result = iterator.next(await result.value);
+        }
+        else {
+          result = iterator.next(result.value);
         }
       }
       catch (e) {

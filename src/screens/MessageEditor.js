@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React, { useState, useCallback } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, View, ScrollView, Text, TextInput, Image } from 'react-native';
 import { RaisedTextButton } from 'react-native-material-buttons';
@@ -6,12 +5,10 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { getUserAvatarSource } from '../assets';
 import Base from '../containers/Base';
-import * as mutations from '../graphql/mutations';
-import { useAppState } from '../services/AppState';
+import { useMine } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
-import { useAsyncCallback } from '../utils';
 
 const styles = StyleSheet.create({
   container: {
@@ -76,11 +73,12 @@ const styles = StyleSheet.create({
 
 const StatusEditor = () => {
   const baseNav = useNavigation(Base);
-  const { me } = baseNav.getParam('mine');
+  const { me } = useMine();
   const [text, setText] = useState('');
   const alertError = useAlertError();
-  const [appState] = useAppState();
-  const [superCreateStatus] = mutations.createStatus.use(text, {
+  const maxLength = baseNav.getParam('maxLength');
+  const placeholder = baseNav.getParam('placeholder');
+  const [runMutation] = baseNav.getParam('useMutation')(text, {
     onCompleted: useCallback((data) => {
       if (!data) return;
 
@@ -88,16 +86,9 @@ const StatusEditor = () => {
     }, [baseNav]),
     onError: alertError,
   });
+  const handleSave = baseNav.getParam('useSaveHandler')(runMutation, text);
 
   baseNav.useBackListener();
-
-  const createStatus = useAsyncCallback(function* () {
-    const location = yield appState.discoveryMap.current.getCenter();
-
-    // TODO: Create status at a specific time of the day
-    // For now the status will be published exactly at the end of the day
-    superCreateStatus(location, moment(appState.discoveryTime).add(1, 'day').subtract(1, 's').toDate());
-  }, [superCreateStatus, appState]);
 
   const clear = useCallback(() => {
     setText('');
@@ -121,7 +112,7 @@ const StatusEditor = () => {
             )}
 
             <RaisedTextButton
-              onPress={createStatus}
+              onPress={handleSave}
               style={styles.headerSave}
               key={!text.length}
               disabled={!text.length}
@@ -144,9 +135,9 @@ const StatusEditor = () => {
               multiline
               value={text}
               textAlignVertical='top'
-              placeholder="What's on your mind?"
+              placeholder={placeholder}
               style={styles.textScroll}
-              maxLength={150}
+              maxLength={maxLength}
               onChangeText={setText}
             />
           </ScrollView>
@@ -154,7 +145,7 @@ const StatusEditor = () => {
       </View>
 
       <View style={styles.limit}>
-        <Text style={styles.limitText}>{text.length} / 100</Text>
+        <Text style={styles.limitText}>{text.length} / {maxLength}</Text>
       </View>
     </View>
   );

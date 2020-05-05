@@ -14,6 +14,7 @@ const messages = gql `
   ${fragments.message}
 `;
 
+// TODO: Have similar implementation to comments.query
 messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) => {
   const subscriptions = require('../subscriptions');
 

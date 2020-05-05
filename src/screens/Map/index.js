@@ -226,6 +226,7 @@ const Map = () => {
           },
           properties: {
             type: 'status',
+            image: me.avatar ? me.id : 'avatar',
             marker: 'hot-marker',
             user: {
               id: me.id,

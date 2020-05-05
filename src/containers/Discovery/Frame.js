@@ -9,12 +9,14 @@ import Bar from '../../components/Bar';
 import Calendar from '../../components/Calendar';
 import Hamburger from '../../components/Hamburger';
 import Base from '../../containers/Base';
+import * as mutations from '../../graphql/mutations';
 import { useAppState } from '../../services/AppState';
 import { useMine } from '../../services/Auth';
 import { HitboxProvider } from '../../services/Hitbox';
+import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
 import { empty, useCallbackWhen } from '../../utils';
-import { useNavigation } from '../../services/Navigation';
+import { useAsyncCallback } from '../../utils';
 import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
 import Status from './Status';
@@ -149,8 +151,25 @@ const Frame = ({
       <MIcon name='person-pin-circle' size={50} color='white' />
     ),
     onPress: useCallback(() => {
-      baseNav.push('StatusEditor', { mine });
-    }, [mine, baseNav]),
+      baseNav.push('MessageEditor', {
+        maxLength: 150,
+        placeholder: 'What\'s on your mind?',
+        useMutation(text, options) {
+          return mutations.createStatus.use(text, options);
+        },
+        useSaveHandler(createStatus) {
+          const [appState] = useAppState();
+
+          return useAsyncCallback(function* () {
+            const location = yield appState.discoveryMap.current.getCenter();
+
+            // TODO: Create status at a specific time of the day
+            // For now the status will be published exactly at the end of the day
+            createStatus(location, moment(appState.discoveryTime).add(1, 'day').subtract(1, 's').toDate());
+          }, [createStatus, appState]);
+        },
+      });
+    }, [baseNav]),
   };
 
   const bubbles = [

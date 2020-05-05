@@ -10,7 +10,7 @@ import FAQScreen from '../screens/FAQ';
 import ProfileScreen from '../screens/Profile';
 import ProfileEditorScreen from '../screens/ProfileEditor';
 import SelectionScreen from '../screens/Selection';
-import StatusEditorScreen from '../screens/StatusEditor';
+import MessageEditorScreen from '../screens/MessageEditor';
 import Router from './Router';
 
 const Base = Router.create({
@@ -35,8 +35,8 @@ const Base = Router.create({
   ProfileEditor: {
     screen: ProfileEditorScreen,
   },
-  StatusEditor: {
-    screen: StatusEditorScreen,
+  MessageEditor: {
+    screen: MessageEditorScreen,
   },
   Auth: {
     screen: AuthContainer,
