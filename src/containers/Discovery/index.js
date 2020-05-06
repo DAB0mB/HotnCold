@@ -113,6 +113,8 @@ const Discovery = Base.create(({ navigation }) => {
     if (myQuery.error) return;
 
     if (!myContract || !myContract.signed) {
+      yield myQuery.client.clearStore();
+
       baseNav.terminalPush('Agreement', {}, [
         NavigationActions.navigate({
           key: UUID(),

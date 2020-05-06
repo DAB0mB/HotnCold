@@ -154,6 +154,8 @@ comments.use = (...args) => {
     ...query,
     clear: useCallback(() => {
       delete query.client.cache.data.data['ROOT_QUERY'][`comments({"eventId":"${eventId}","limit":${limit}})`];
+      delete query.client.cache.data.data['ROOT_QUERY'][`veryFirstComment({"eventId":"${eventId}"})`];
+      delete query.client.cache.data.data['ROOT_QUERY'][`commentsCount({"eventId":"${eventId}"})`];
     }, [true]),
     fetchMore: useCallback((...args) => {
       if (!query.data) return;

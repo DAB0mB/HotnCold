@@ -559,7 +559,7 @@ const ProfileEditor = () => {
           <RaisedTextButton
             onPress={save}
             color={colors.hot}
-            title={saving ? 'saving...' : myContract.signed ? 'save' : 'save & continue'}
+            title={myContract.signed ? 'save' : 'save & continue'}
             titleColor='white'
           />
         </View>

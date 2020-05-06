@@ -1,7 +1,9 @@
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { useCallback } from 'react';
 import { Image } from 'react-native';
 
+import { noop } from '../../utils';
 import * as fragments from '../fragments';
 
 const mine = gql `
@@ -19,9 +21,9 @@ const mine = gql `
   ${fragments.user.profile}
 `;
 
-mine.use = ({ onCompleted = () => {}, ...options } = {}) => {
-  return useQuery(mine, {
-    onCompleted: (data) => {
+mine.use = ({ onCompleted = noop, ...options } = {}) => {
+  const query = useQuery(mine, {
+    onCompleted: useCallback((data) => {
       const { me } = data || {};
 
       if (me) {
@@ -33,9 +35,11 @@ mine.use = ({ onCompleted = () => {}, ...options } = {}) => {
       }
 
       onCompleted(data);
-    },
+    }, [onCompleted]),
     ...options,
   });
+
+  return query;
 };
 
 export default mine;

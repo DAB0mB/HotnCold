@@ -58,6 +58,7 @@ attendees.use = (...args) => {
     ...query,
     clear: useCallback(() => {
       delete query.client.cache.data.data['ROOT_QUERY'][`attendees({"eventId":"${eventId}","limit":${limit}})`];
+      delete query.client.cache.data.data['ROOT_QUERY'][`veryFirstAttendee({"eventId":"${eventId}"})`];
     }, [true]),
     fetchMore: useCallback((...args) => {
       if (!query.data) return;
