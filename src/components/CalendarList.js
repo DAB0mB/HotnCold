@@ -1,9 +1,9 @@
 import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { BackHandler, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { Calendar as SuperCalendar } from 'react-native-calendars';
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { CalendarList as SuperCalendarList } from 'react-native-calendars';
 import SuperDay from 'react-native-calendars/src/calendar/day/basic';
-import CONFIG from 'react-native-config';
+import LinearGradient from 'react-native-linear-gradient';
 import { RaisedTextButton } from 'react-native-material-buttons';
 
 import { colors } from '../theme';
@@ -11,7 +11,7 @@ import { useConst } from '../utils';
 
 const styles = StyleSheet.create({
   container: { backgroundColor: 'white', borderWidth: 1, borderColor: colors.lightGray },
-  buttonsDiv: { margin: 10, alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row', alignSelf: 'stretch' },
+  buttonsDiv: { backgroundColor: 'white', padding: 10, alignItems: 'center', justifyContent: 'flex-end', flexDirection: 'row', alignSelf: 'stretch' },
   cancelButton: { color: colors.hot, fontSize: 14, paddingHorizontal: 16 },
 });
 
@@ -21,8 +21,7 @@ const calendarTheme = {
   arrowColor: colors.hot,
 };
 
-const Calendar = ({
-  visibleState,
+const CalendarList = ({
   style,
   onConfirm,
   onCancel,
@@ -32,7 +31,6 @@ const Calendar = ({
   maxDate,
   ...calendarProps
 }) => {
-  const [isVisible, setVisible] = visibleState;
   const [selectedDate, setSelectedDate] = useState(current);
 
   const momentTz = useCallback((date) => {
@@ -79,16 +77,6 @@ const Calendar = ({
     [momentTz(selectedDate).format('YYYY-MM-DD')]: { selected: true, disableTouchEvent: true },
   }), [momentTz, selectedDate]);
 
-  const handleBackPress = useCallback(() => {
-    if (CONFIG.USE_ROBOT) return;
-
-    if (isVisible) {
-      setVisible(false);
-
-      return true;
-    }
-  }, [isVisible]);
-
   const handleDayChange = useCallback((date) => {
     setSelectedDate(
       momentTz()
@@ -100,38 +88,26 @@ const Calendar = ({
   }, [selectedDate]);
 
   const handleConfirm = useCallback(() => {
-    setVisible(false);
-
     if (typeof onConfirm == 'function') {
       onConfirm(selectedDate);
     }
   }, [onConfirm, selectedDate]);
 
   const handleCancel = useCallback(() => {
-    setVisible(false);
-
     if (typeof onCancel == 'function') {
       onCancel();
     }
   }, [onCancel]);
 
   useEffect(() => {
-    if (!isVisible) return;
-
     if (selectedDate !== current) {
       setSelectedDate(current);
     }
+  }, [current]);
 
-    BackHandler.addEventListener('hardwareBackPress', handleBackPress);
-
-    return () => {
-      BackHandler.removeEventListener('hardwareBackPress', handleBackPress);
-    };
-  }, [isVisible, current]);
-
-  return isVisible && (
-    <View style={[styles.container, style]}>
-      <SuperCalendar
+  return (
+    <View style={[styles.container, style, { position: 'relative' }]}>
+      <SuperCalendarList
         {...calendarProps}
         minDate={formattedMinDate}
         maxDate={formattedMaxDate}
@@ -142,20 +118,29 @@ const Calendar = ({
         markedDates={markedDates}
       />
 
-      <View style={styles.buttonsDiv}>
-        <TouchableWithoutFeedback onPress={handleCancel}>
-          <Text style={styles.cancelButton}>CANCEL</Text>
-        </TouchableWithoutFeedback>
-
-        <RaisedTextButton
-          onPress={handleConfirm}
-          color={colors.hot}
-          title='CONFIRM'
-          titleColor='white'
+      <View style={{ position: 'absolute', bottom: 0, right: 0, left: 0 }}>
+        <LinearGradient
+          start={{ x: 0, y: 1 }}
+          end={{ x: 0, y: 0 }}
+          colors={['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']}
+          style={{ alignSelf: 'stretch', height: 50 }}
         />
+
+        <View style={styles.buttonsDiv}>
+          <TouchableWithoutFeedback onPress={handleCancel}>
+            <Text style={styles.cancelButton}>CANCEL</Text>
+          </TouchableWithoutFeedback>
+
+          <RaisedTextButton
+            onPress={handleConfirm}
+            color={colors.hot}
+            title='CONFIRM'
+            titleColor='white'
+          />
+        </View>
       </View>
     </View>
   );
 };
 
-export default Calendar;
+export default CalendarList;

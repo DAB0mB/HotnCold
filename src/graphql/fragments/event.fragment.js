@@ -5,6 +5,7 @@ import area from './area.fragment';
 const event = gql `
   fragment Event on Event {
     id
+    category
     source
     sourceLink
     name

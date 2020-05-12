@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import Ripple from 'react-native-material-ripple';
 import Popover from 'react-native-popover-view';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -37,9 +38,9 @@ const MenuPopover = ({ items, state, ...props }) => {
       isVisible={isVisible}
       onRequestClose={hidePopover}
     >
-      <View style={{ width: 150, height: items.length * 50 }}>
+      <View style={{ width: 150, height: items.length * 50, borderColor: colors.lightGray, borderWidth: 1 }}>
         {items.map((item, index) => (
-          <TouchableWithoutFeedback key={item.text} onPress={() => {
+          <Ripple key={item.text} onPress={() => {
             hidePopover(); item.onPress();
           }}>
             <View style={[styles.item, index && styles.itemBorder].filter(Boolean)}>
@@ -47,7 +48,7 @@ const MenuPopover = ({ items, state, ...props }) => {
                 <McIcon name={item.icon} size={17} color={colors.ink} /> <Text> {item.text}</Text>
               </Text>
             </View>
-          </TouchableWithoutFeedback>
+          </Ripple>
         ))}
       </View>
     </Popover>

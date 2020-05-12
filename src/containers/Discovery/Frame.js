@@ -1,13 +1,13 @@
 import { useRobot } from 'hotncold-robot';
 import moment from 'moment';
-import React, { useCallback, useMemo, useState, useLayoutEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useCallback, useMemo, useState, useLayoutEffect, useRef } from 'react';
+import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Bar from '../../components/Bar';
-import Calendar from '../../components/Calendar';
 import Hamburger from '../../components/Hamburger';
+import MenuPopover from '../../components/MenuPopover';
 import Base from '../../containers/Base';
 import * as mutations from '../../graphql/mutations';
 import { useAppState } from '../../services/AppState';
@@ -15,8 +15,7 @@ import { useMine } from '../../services/Auth';
 import { HitboxProvider } from '../../services/Hitbox';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
-import { empty, useCallbackWhen } from '../../utils';
-import { useAsyncCallback } from '../../utils';
+import { empty, useAsyncCallback, useCallbackWhen } from '../../utils';
 import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
 import Status from './Status';
@@ -27,34 +26,14 @@ const loadingIcons = Promise.all([
 ]);
 
 const styles = StyleSheet.create({
-  gradient: {
-    width: '100%',
-    position: 'absolute',
-    padding: 10,
-    left: 0,
-    top: 0,
-  },
-  container: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    left: 0,
-    top: 0,
-  },
-  logo: {
-    height: 20,
-    resizeMode: 'contain',
-    flex: 1,
-  },
-  headerTitle: {
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.ink,
-  },
+  gradient: { width: '100%', position: 'absolute', padding: 10, left: 0, top: 0 },
+  container: { width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 10, left: 0, top: 0 },
+  logo: { height: 20, resizeMode: 'contain', flex: 1 },
+  headerTitle: { textAlign: 'center', fontSize: 20, fontWeight: '600', color: colors.ink },
+  menuArrow: { backgroundColor: 'transparent', width: .1, height: .1 },
 });
+
+const menuRect = { x: Dimensions.get('window').width, y: 0, width: 0, height: 0 };
 
 const Bubble = {
   Map: 0,
@@ -75,8 +54,11 @@ const Frame = ({
   const [sideMenuOpened, setSideMenuOpened] = useState(false);
   const [title, setTitle] = useState('Map');
   const { useTrap } = useRobot();
-  const [appState, setAppState] = useAppState();
+  const [appState] = useAppState();
+  const menuState = useState(false);
   const timezone = me?.area?.timezone;
+  const menuIconRef = useRef();
+  const [, setMenuVisible] = menuState;
 
   const momentTz = useCallback((date) => {
     let m = moment(date);
@@ -96,24 +78,6 @@ const Frame = ({
   useMemo(() => {
     appState.discoveryTime = minDate;
   }, [true]);
-
-  const calendarProps = {
-    minDate,
-    maxDate,
-    current: appState.discoveryTime,
-    visibleState: useState(false),
-    onConfirm: useCallback((discoveryTime) => {
-      if (discoveryTime === appState.discoveryTime) {
-        return;
-      }
-
-      // Given time at the beginning of UTC day
-      setAppState(appState => ({
-        ...appState,
-        discoveryTime,
-      }));
-    }, [appState]),
-  };
 
   useLayoutEffect(() => {
     loadingIcons.then(([map, activity]) => {
@@ -172,6 +136,39 @@ const Frame = ({
     }, [baseNav]),
   };
 
+  const showMenu = useCallback(() => {
+    setMenuVisible(true);
+  }, [true]);
+
+  const navToCalendar = useCallback(() => {
+    setMenuVisible(false);
+
+    baseNav.push('Calendar', {
+      timezone,
+      maxDate,
+      minDate,
+    });
+  }, [baseNav, timezone, minDate, maxDate]);
+
+  const navToSearch = useCallback(() => {
+    setMenuVisible(false);
+
+    // TODO: Implement
+  }, []);
+
+  const menuItems = useMemo(() => [
+    {
+      text: moment(appState.discoveryTime).format('MMMM Do'),
+      icon: 'calendar',
+      onPress: navToCalendar,
+    },
+    {
+      text: 'Any',
+      icon: 'tag',
+      onPress: navToSearch,
+    },
+  ], [appState.discoveryTime, navToCalendar]);
+
   const bubbles = [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
     { title: 'Activity', iconSource: icons.activity, onSelect: Activity },
@@ -197,8 +194,8 @@ const Frame = ({
               <Hamburger color={colors.hot} type='cross' onPress={openSideMenu} active={sideMenuOpened} />
             </View>
 
-            <View style={{ position: 'absolute', right: 0 }}>
-              <McIcon name='calendar' size={30} color={colors.hot} onPress={() => calendarProps.visibleState[1](true)} />
+            <View ref={menuIconRef} style={{ position: 'absolute', right: 0 }}>
+              <MIcon name='search' size={30} color={colors.hot} onPress={showMenu} />
             </View>
           </Bar>
 
@@ -215,7 +212,12 @@ const Frame = ({
         <Status />
       </SideMenu>
 
-      <Calendar style={{ position: 'absolute', top: 10, right: 10 }} timezone={timezone} {...calendarProps} />
+      <MenuPopover
+        fromRect={menuRect}
+        arrowStyle={styles.menuArrow}
+        state={menuState}
+        items={menuItems}
+      />
     </View>
   );
 };
