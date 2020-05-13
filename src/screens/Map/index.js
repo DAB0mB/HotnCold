@@ -2,6 +2,7 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import turfCircle from '@turf/circle';
 import Flatbush from 'flatbush';
 import { useRobot } from 'hotncold-robot';
+import Lunr from 'lunr';
 import React, { useMemo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { TouchableWithoutFeedback, Image, Text, View, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
@@ -313,11 +314,15 @@ const Map = () => {
 
     superUpdateMyLocation(location).then(({ data: { updateMyLocation: { features } } }) => {
       let flatbush = null;
+      let idx = null;
       const otherFeatures = [];
       const myFeatures = [];
 
       if (features.length) {
         flatbush = new Flatbush(features.length);
+        const idxBuilder = new Lunr.Builder();
+        idxBuilder.field('name');
+        idxBuilder.field('category');
 
         features.forEach((feature) => {
           switch (feature.properties.type) {
@@ -338,9 +343,16 @@ const Map = () => {
           case 'event':
             feature.properties.weight = 1 + feature.properties.event.attendanceCount;
             otherFeatures.push(feature);
+            idx.add({
+              id: feature.properties.event.id,
+              name: feature.properties.event.name,
+              category: feature.properties.event.category,
+            });
             break;
           }
         });
+
+        idx = idxBuilder.build();
       }
 
       if (otherFeatures.length) {
@@ -358,9 +370,15 @@ const Map = () => {
       setFlatbush(flatbush);
       setOtherFeatures(otherFeatures);
       setMyFeatures(myFeatures);
+
       setSelection(selection => selection && ({
         ...selection,
         isOutdated: true,
+      }));
+
+      setAppState(appState => ({
+        ...appState,
+        discoveryIndex: idx,
       }));
     }).catch(alertError);
   }, [alertError, initialLocation, superUpdateMyLocation]);

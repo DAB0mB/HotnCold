@@ -1,4 +1,4 @@
-import { fromBottom } from 'react-navigation-transitions';
+import { fadeIn, fromBottom } from 'react-navigation-transitions';
 
 import AuthContainer from '../containers/Auth';
 import DiscoveryContainer from '../containers/Discovery';
@@ -9,10 +9,21 @@ import CalendarScreen from '../screens/Calendar';
 import EventScreen from '../screens/Event';
 import FAQScreen from '../screens/FAQ';
 import ProfileScreen from '../screens/Profile';
+import SearchScreen from '../screens/Search';
 import ProfileEditorScreen from '../screens/ProfileEditor';
 import SelectionScreen from '../screens/Selection';
 import MessageEditorScreen from '../screens/MessageEditor';
 import Router from './Router';
+
+const handleCustomTransition = ({ scenes }) => {
+  const nextScene = scenes[scenes.length - 1];
+
+  if (nextScene.route.routeName == 'Search') {
+    return fadeIn();
+  }
+
+  return fromBottom();
+};
 
 const Base = Router.create({
   Agreement: {
@@ -32,6 +43,9 @@ const Base = Router.create({
   },
   Event: {
     screen: EventScreen,
+  },
+  Search: {
+    screen: SearchScreen,
   },
   ProfileEditor: {
     screen: ProfileEditorScreen,
@@ -55,8 +69,8 @@ const Base = Router.create({
   transparentCard: true,
   initialRouteName: 'Discovery',
   headerMode: 'none',
-  transitionConfig: () => ({
-    ...fromBottom(),
+  transitionConfig: (nav) => ({
+    ...handleCustomTransition(nav),
     containerStyleLight: {
       backgroundColor: 'white',
     },

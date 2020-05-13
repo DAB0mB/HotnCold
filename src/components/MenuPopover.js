@@ -39,13 +39,13 @@ const MenuPopover = ({ items, state, ...props }) => {
       onRequestClose={hidePopover}
     >
       <View style={{ width: 150, height: items.length * 50, borderColor: colors.lightGray, borderWidth: 1 }}>
-        {items.map((item, index) => (
+        {items.map(({ IconComponent = McIcon, ...item }, index) => (
           <Ripple key={item.text} onPress={() => {
             hidePopover(); item.onPress();
           }}>
             <View style={[styles.item, index && styles.itemBorder].filter(Boolean)}>
               <Text style={styles.itemText}>
-                <McIcon name={item.icon} size={17} color={colors.ink} /> <Text> {item.text}</Text>
+                <IconComponent name={item.icon} size={17} color={colors.ink} /> <Text> {item.text}</Text>
               </Text>
             </View>
           </Ripple>

@@ -153,8 +153,8 @@ const Frame = ({
   const navToSearch = useCallback(() => {
     setMenuVisible(false);
 
-    // TODO: Implement
-  }, []);
+    baseNav.push('Search');
+  }, [baseNav]);
 
   const menuItems = useMemo(() => [
     {
@@ -163,11 +163,12 @@ const Frame = ({
       onPress: navToCalendar,
     },
     {
-      text: 'Any',
-      icon: 'tag',
+      text: appState.discoverySearchText || '-Any-',
+      IconComponent: MIcon,
+      icon: 'search',
       onPress: navToSearch,
     },
-  ], [appState.discoveryTime, navToCalendar]);
+  ], [appState.discoveryTime, appState.discoverySearchText, navToCalendar]);
 
   const bubbles = [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
@@ -195,7 +196,7 @@ const Frame = ({
             </View>
 
             <View ref={menuIconRef} style={{ position: 'absolute', right: 0 }}>
-              <MIcon name='search' size={30} color={colors.hot} onPress={showMenu} />
+              <McIcon name='dots-vertical' size={30} color={colors.hot} onPress={showMenu} />
             </View>
           </Bar>
 
