@@ -5,7 +5,6 @@ import DiscoveryContainer from '../containers/Discovery';
 import SocialContainer from '../containers/Social';
 import AgreementScreen from '../screens/Agreement';
 import AttendeesScreen from '../screens/Attendees';
-import CalendarScreen from '../screens/Calendar';
 import EventScreen from '../screens/Event';
 import FAQScreen from '../screens/FAQ';
 import ProfileScreen from '../screens/Profile';
@@ -52,9 +51,6 @@ const Base = Router.create({
   },
   MessageEditor: {
     screen: MessageEditorScreen,
-  },
-  Calendar: {
-    screen: CalendarScreen,
   },
   Auth: {
     screen: AuthContainer,

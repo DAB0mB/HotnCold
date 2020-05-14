@@ -6,6 +6,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Bar from '../../components/Bar';
+import Calendar from '../../components/Calendar';
 import Hamburger from '../../components/Hamburger';
 import MenuPopover from '../../components/MenuPopover';
 import Base from '../../containers/Base';
@@ -54,10 +55,12 @@ const Frame = ({
   const [sideMenuOpened, setSideMenuOpened] = useState(false);
   const [title, setTitle] = useState('Map');
   const { useTrap } = useRobot();
-  const [appState] = useAppState();
+  const [appState, setAppState] = useAppState();
+  const calendarState = useState(false);
   const menuState = useState(false);
   const timezone = me?.area?.timezone;
   const menuIconRef = useRef();
+  const [, setCalendarVisible] = calendarState;
   const [, setMenuVisible] = menuState;
 
   const momentTz = useCallback((date) => {
@@ -78,6 +81,24 @@ const Frame = ({
   useMemo(() => {
     appState.discoveryTime = minDate;
   }, [true]);
+
+  const calendarProps = {
+    minDate,
+    maxDate,
+    current: appState.discoveryTime,
+    visibleState: calendarState,
+    onConfirm: useCallback((discoveryTime) => {
+      if (discoveryTime === appState.discoveryTime) {
+        return;
+      }
+
+      // Given time at the beginning of UTC day
+      setAppState(appState => ({
+        ...appState,
+        discoveryTime,
+      }));
+    }, [appState]),
+  };
 
   useLayoutEffect(() => {
     loadingIcons.then(([map, activity]) => {
@@ -140,15 +161,10 @@ const Frame = ({
     setMenuVisible(true);
   }, [true]);
 
-  const navToCalendar = useCallback(() => {
+  const showCalendar = useCallback(() => {
     setMenuVisible(false);
-
-    baseNav.push('Calendar', {
-      timezone,
-      maxDate,
-      minDate,
-    });
-  }, [baseNav, timezone, minDate, maxDate]);
+    setCalendarVisible(true);
+  }, [true]);
 
   const navToFilter = useCallback(() => {
     setMenuVisible(false);
@@ -160,14 +176,14 @@ const Frame = ({
     {
       text: moment(appState.discoveryTime).format('MMMM Do'),
       icon: 'calendar',
-      onPress: navToCalendar,
+      onPress: showCalendar,
     },
     {
       text: appState.discoveryFilterText || '-Any-',
       icon: 'filter',
       onPress: navToFilter,
     },
-  ], [appState.discoveryTime, appState.discoveryFilterText, navToCalendar]);
+  ], [appState.discoveryTime, appState.discoveryFilterText, showCalendar]);
 
   const bubbles = [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
@@ -211,6 +227,8 @@ const Frame = ({
 
         <Status />
       </SideMenu>
+
+      <Calendar style={{ position: 'absolute', top: 10, right: 10 }} timezone={timezone} {...calendarProps} />
 
       <MenuPopover
         fromRect={menuRect}
