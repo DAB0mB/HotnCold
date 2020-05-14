@@ -1,7 +1,8 @@
 import { useRobot } from 'hotncold-robot';
 import moment from 'moment';
 import React, { useCallback, useMemo, useState, useLayoutEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Dimensions } from 'react-native';
+import { Dimensions, View, StyleSheet, Text } from 'react-native';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
@@ -21,20 +22,23 @@ import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
 import Status from './Status';
 
+const winDims = Dimensions.get('window');
+
 const loadingIcons = Promise.all([
   McIcon.getImageSource('map', 30, colors.hot),
   McIcon.getImageSource('cards-variant', 30, colors.hot),
 ]);
 
 const styles = StyleSheet.create({
+  container: { flex: 1, position: 'relative' },
+  childrenView: { height: winDims.height - getStatusBarHeight() - 110 },
   gradient: { width: '100%', position: 'absolute', padding: 10, left: 0, top: 0 },
-  container: { width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 10, left: 0, top: 0 },
   logo: { height: 20, resizeMode: 'contain', flex: 1 },
   headerTitle: { textAlign: 'center', fontSize: 20, fontWeight: '600', color: colors.ink },
   menuArrow: { backgroundColor: 'transparent', width: .1, height: .1 },
 });
 
-const menuRect = { x: Dimensions.get('window').width, y: 0, width: 0, height: 0 };
+const menuRect = { x: winDims.width, y: 0, width: 0, height: 0 };
 
 const Bubble = {
   Map: 0,
@@ -198,7 +202,7 @@ const Frame = ({
   });
 
   return (
-    <View style={{ flex: 1, position: 'relative' }}>
+    <View style={styles.container}>
       <SideMenu opened={sideMenuOpened} onClose={closeSideMenu}>
         <HitboxProvider>
           <Bar>
@@ -215,7 +219,7 @@ const Frame = ({
             </View>
           </Bar>
 
-          <View style={{ flex: 1 }}>{children}</View>
+          <View style={styles.childrenView}>{children}</View>
 
           <BubblesBar
             activeBubble={activeBubble}

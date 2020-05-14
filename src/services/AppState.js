@@ -2,9 +2,10 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
 } from 'react';
-import { AppState } from 'react-native';
+import { AppState, Keyboard } from 'react-native';
 
 import { useStatePromise } from '../utils';
 
@@ -27,6 +28,32 @@ export const AppStateProvider = ({ children, init = {} }) => {
       AppState.removeEventListener('change', changeListener);
     };
   }, [true]);
+
+  useLayoutEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setAppState(appState => ({
+          ...appState,
+          keyboardVisible: true,
+        }));
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setAppState(appState => ({
+          ...appState,
+          keyboardVisible: false,
+        }));
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  });
 
   const value = useMemo(() => [appState, setAppState], [appState, setAppState]);
 

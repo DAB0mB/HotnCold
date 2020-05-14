@@ -19,8 +19,6 @@ const CountryPickerTheme = {
   primaryColorVariant: colors.gray,
 };
 
-const COUNTRIES = ['US', 'IL', 'TW', 'DE'];
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -205,7 +203,6 @@ const Phone = () => {
                 withFlag
                 withCountryNameButton
                 visible={countryPickerOpened}
-                countryCodes={COUNTRIES}
                 theme={CountryPickerTheme}
                 containerButtonStyle={{ marginBottom: (country && country.cca2) ? 0 : 3 }}
                 countryCode={country && country.cca2}

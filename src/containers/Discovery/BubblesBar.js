@@ -238,7 +238,7 @@ class BubblesBar extends Component {
 
   render() {
     return (
-      <View style={styles.border}>
+      <View style={[styles.border, this.props.style].filter(Boolean)}>
         <View style={styles.container}>
           {this._renderBubbles()}
           {this._renderBigBubble()}
