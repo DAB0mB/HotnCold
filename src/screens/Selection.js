@@ -49,6 +49,7 @@ const Selection = () => {
   const [queryEvent, eventQuery] = queries.event.use();
 
   const events = useMemo(() => selection.features
+    .filter(f => f.properties.displayed)
     .map(f => f.properties.event)
     .filter(Boolean)
     .sort((a, b) => (a.attendanceCount > b.attendanceCount) ? -1 : 1)

@@ -1,5 +1,6 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import turfCircle from '@turf/circle';
+import cloneDeep from 'lodash.clonedeep';
 import Flatbush from 'flatbush';
 import { useRobot } from 'hotncold-robot';
 import Lunr from 'lunr';
@@ -184,6 +185,11 @@ const isUserFeature = mapfn.all(
   mapfn.has('status'),
 );
 
+const isFeatureDisplayed = mapfn.eq(
+  mapfn.get('displayed'),
+  true,
+);
+
 export const $Map = {};
 
 const Map = () => {
@@ -210,6 +216,8 @@ const Map = () => {
   // TODO: Use additional rbush + rbush-knn for dynamic status features
   // Package: https://github.com/mourner/rbush
   const [flatbush, setFlatbush] = useState(null);
+  const idx = appState.discoveryIndex;
+  const filterText = appState.discoveryFilterText;
 
   useEffect(() => {
     const onStatusCreate = ({ operationName, data }) => {
@@ -295,6 +303,23 @@ const Map = () => {
 
   const images = useMemo(() => ({ ...defaultImages, ...myImages, ...otherImages }), [myImages, otherImages]);
 
+  const filterEventsFeatures = useCallback((features = otherFeatures) => {
+    if (idx && filterText) {
+      const refs = new Set(idx.search(filterText).map(doc => doc.ref));
+
+      features.forEach((feature) => {
+        if (!('event' in feature.properties)) return;
+
+        feature.properties.displayed = refs.has(feature.properties.event.id);
+      });
+    }
+    else {
+      features.forEach((feature) => {
+        feature.properties.displayed = true;
+      });
+    }
+  }, [idx, filterText, otherFeatures]);
+
   const updateMyLocation = useCallback((location, force) => {
     if (!mountState.current) return;
 
@@ -343,7 +368,7 @@ const Map = () => {
           case 'event':
             feature.properties.weight = 1 + feature.properties.event.attendanceCount;
             otherFeatures.push(feature);
-            idx.add({
+            idxBuilder.add({
               id: feature.properties.event.id,
               name: feature.properties.event.name,
               category: feature.properties.event.category,
@@ -367,6 +392,8 @@ const Map = () => {
         flatbush.finish();
       }
 
+      filterEventsFeatures(otherFeatures);
+
       setFlatbush(flatbush);
       setOtherFeatures(otherFeatures);
       setMyFeatures(myFeatures);
@@ -381,7 +408,7 @@ const Map = () => {
         discoveryIndex: idx,
       }));
     }).catch(alertError);
-  }, [alertError, initialLocation, superUpdateMyLocation]);
+  }, [alertError, initialLocation, superUpdateMyLocation, filterEventsFeatures]);
 
   useLayoutEffect(() => {
     setAppState(appState => ({
@@ -407,6 +434,21 @@ const Map = () => {
       updateMyLocation(location, true);
     }
   }, [appState.discoveryTime]);
+
+  useEffect(() => {
+    setSelection(selection => {
+      if (!selection) return selection;
+
+      selection = cloneDeep(selection);
+      selection.isOutdated = true;
+
+      return selection;
+    });
+
+    filterEventsFeatures();
+
+    setOtherFeatures(otherFeatures => otherFeatures && otherFeatures.slice());
+  }, [filterText]);
 
   const zoomInterpolator = useAsyncCallback(function* (v) {
     const zoom = yield mapRef.current.getZoom();
@@ -459,7 +501,7 @@ const Map = () => {
     const selectionBorder = turfCircle(selectionCoords, SELECTION_RADIUS);
     const selectionIndexes = flatbush ? flatbush.neighbors(...selectionCoords, Infinity, SELECTION_RADIUS / 100) : [];
     const selectionFeatures = selectionIndexes.map(i => otherFeatures[i]);
-    const eventsFeatures = selectionFeatures.filter(f => f.properties.type == 'event');
+    const eventsFeatures = selectionFeatures.filter(f => f.properties.type == 'event' && f.properties.displayed);
     const attendanceCount = eventsFeatures.reduce((count, f) => count + f.properties.event.attendanceCount, 0);
 
     eventsFeatures.forEach((feature) => {
@@ -555,6 +597,7 @@ const Map = () => {
           <MapboxGL.HeatmapLayer
             id='mapFeaturesHeatmap'
             sourceID='mapFeatures'
+            filter={isFeatureDisplayed}
             style={mapStyles.heatmap}
           />
 

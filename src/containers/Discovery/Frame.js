@@ -150,10 +150,10 @@ const Frame = ({
     });
   }, [baseNav, timezone, minDate, maxDate]);
 
-  const navToSearch = useCallback(() => {
+  const navToFilter = useCallback(() => {
     setMenuVisible(false);
 
-    baseNav.push('Search');
+    baseNav.push('Filter');
   }, [baseNav]);
 
   const menuItems = useMemo(() => [
@@ -163,12 +163,11 @@ const Frame = ({
       onPress: navToCalendar,
     },
     {
-      text: appState.discoverySearchText || '-Any-',
-      IconComponent: MIcon,
-      icon: 'search',
-      onPress: navToSearch,
+      text: appState.discoveryFilterText || '-Any-',
+      icon: 'filter',
+      onPress: navToFilter,
     },
-  ], [appState.discoveryTime, appState.discoverySearchText, navToCalendar]);
+  ], [appState.discoveryTime, appState.discoveryFilterText, navToCalendar]);
 
   const bubbles = [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },

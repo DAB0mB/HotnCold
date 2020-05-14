@@ -1,28 +1,27 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { View, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { View, TextInput, Text, TouchableWithoutFeedback } from 'react-native';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Base from '../containers/Base';
 import { useAppState } from '../services/AppState';
 import { useNavigation } from '../services/Navigation';
 
-const Search = () => {
+const Filter = () => {
   const baseNav = useNavigation(Base);
   const [appState, setAppState] = useAppState();
-  const [searchText, setSearchText] = useState(appState.discoverySearchText);
+  const [filterText, setFilterText] = useState(appState.discoveryFilterText);
   const inputRef = useRef();
 
   baseNav.useBackListener();
 
-  const applySearch = useCallback(() => {
+  const applyFilter = useCallback(() => {
     setAppState(appState => ({
       ...appState,
-      discoverySearchText: searchText,
+      discoveryFilterText: filterText,
     }));
 
     baseNav.goBackOnceFocused();
-  }, [baseNav, searchText]);
+  }, [baseNav, filterText]);
 
   useEffect(() => {
     const didFocusListener = baseNav.addListener('didFocus', () => {
@@ -37,15 +36,18 @@ const Search = () => {
   return (
     <View style={{ backgroundColor: 'rgba(0, 0, 0, .8)', flex: 1, position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
       <McIcon name='close' color='white' size={30} style={{ position: 'absolute', top: 10, right: 10 }} onPress={baseNav.goBackOnceFocused} />
-      <TextInput ref={inputRef} style={[{ textAlign: 'center', fontSize: 30, color: 'white', fontWeight: '500', width: '80%', borderBottomColor: 'white', borderBottomWidth: 2.5 }, !searchText && { fontWeight: '300' }].filter(Boolean)} value={searchText} placeholder='-Any-' placeholderTextColor='white' onChangeText={setSearchText} />
+      {!filterText && (
+        <Text style={{ position: 'absolute', fontSize: 30, color: 'rgba(255, 255, 255, .5)', fontWeight: '200' }}>-Any-</Text>
+      )}
+      <TextInput ref={inputRef} style={{ textAlign: 'center', fontSize: 30, color: 'white', fontWeight: '500', width: '80%', borderBottomColor: 'white', borderBottomWidth: 2.5 }} value={filterText} placeholder='' placeholderTextColor='white' onChangeText={setFilterText} />
 
-      <TouchableWithoutFeedback onPress={applySearch}>
+      <TouchableWithoutFeedback onPress={applyFilter}>
         <View style={{ alignItems: 'center', justifyContent: 'center', height: 65, width: 65, position: 'absolute', bottom: 30, alignSelf: 'center', borderRadius: 100, borderWidth: 2, borderColor: 'white' }}>
-          <MIcon name='search' size={40} color='white' />
+          <McIcon name='filter-outline' size={40} color='white' />
         </View>
       </TouchableWithoutFeedback>
     </View>
   );
 };
 
-export default Base.create(Search);
+export default Base.create(Filter);

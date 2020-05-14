@@ -9,7 +9,7 @@ import CalendarScreen from '../screens/Calendar';
 import EventScreen from '../screens/Event';
 import FAQScreen from '../screens/FAQ';
 import ProfileScreen from '../screens/Profile';
-import SearchScreen from '../screens/Search';
+import FilterScreen from '../screens/Filter';
 import ProfileEditorScreen from '../screens/ProfileEditor';
 import SelectionScreen from '../screens/Selection';
 import MessageEditorScreen from '../screens/MessageEditor';
@@ -18,7 +18,7 @@ import Router from './Router';
 const handleCustomTransition = ({ scenes }) => {
   const nextScene = scenes[scenes.length - 1];
 
-  if (nextScene.route.routeName == 'Search') {
+  if (nextScene.route.routeName == 'Filter') {
     return fadeIn();
   }
 
@@ -44,8 +44,8 @@ const Base = Router.create({
   Event: {
     screen: EventScreen,
   },
-  Search: {
-    screen: SearchScreen,
+  Filter: {
+    screen: FilterScreen,
   },
   ProfileEditor: {
     screen: ProfileEditorScreen,
