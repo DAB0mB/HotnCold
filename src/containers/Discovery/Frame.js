@@ -179,7 +179,7 @@ const Frame = ({
   const menuItems = useMemo(() => [
     {
       key: 'time',
-      text: moment(appState.discoveryTime).tz(timezone)?.format('MMMM Do'),
+      text: momentTz(appState.discoveryTime).format('MMMM Do'),
       icon: 'calendar',
       onPress: showCalendar,
     },
@@ -189,7 +189,7 @@ const Frame = ({
       icon: 'filter',
       onPress: navToFilter,
     },
-  ], [timezone, appState.discoveryTime, appState.discoveryFilterText, showCalendar]);
+  ], [momentTz, appState.discoveryTime, appState.discoveryFilterText, showCalendar]);
 
   const bubbles = [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
