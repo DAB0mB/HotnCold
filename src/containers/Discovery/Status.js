@@ -4,6 +4,7 @@ import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
+import { getUserAvatarSource } from '../../assets';
 import { useMine } from '../../services/Auth';
 import { useAppState } from '../../services/AppState';
 import { useAlertError }  from '../../services/DropdownAlert';
@@ -162,7 +163,7 @@ const Status = (props) => {
           <View style={styles.header}>
             <View style={styles.avatarView} pointerEvents='box-none'>
               <View style={styles.avatarBackground} />
-              <Image style={styles.avatar} source={{ uri: user.avatar }} />
+              <Image style={styles.avatar} source={getUserAvatarSource(user)} />
             </View>
 
             <View style={styles.titles}>

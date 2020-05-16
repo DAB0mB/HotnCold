@@ -308,9 +308,12 @@ const Map = () => {
       const refs = new Set(idx.search(filterText).map(doc => doc.ref));
 
       features.forEach((feature) => {
-        if (!('event' in feature.properties)) return;
-
-        feature.properties.displayed = refs.has(feature.properties.event.id);
+        if ('event' in feature.properties) {
+          feature.properties.displayed = refs.has(feature.properties.event.id);
+        }
+        else {
+          feature.properties.displayed = true;
+        }
       });
     }
     else {
@@ -353,6 +356,7 @@ const Map = () => {
           switch (feature.properties.type) {
           case 'status':
             feature.properties.weight = 1;
+            feature.properties.displayed = true;
 
             if (feature.properties.user.id == me.id) {
               feature.properties.image = me.avatar ? me.id : 'avatar';
