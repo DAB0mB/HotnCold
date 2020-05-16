@@ -204,11 +204,15 @@ const Map = () => {
   const alertError = useAlertError();
   const [appState, setAppState] = useAppState();
   const [superUpdateMyLocation, updateMyLocationMutation] = mutations.updateMyLocation.use(appState.discoveryTime);
-  const [otherFeatures, setOtherFeatures] = useState([]);
+  const [theirFeatures, setTheirFeatures] = useState([]);
+  const [eventsFeatures, setEventsFeatures] = useState([]);
   const [myFeatures, setMyFeatures] = useState([]);
-  const mapFeatureCollection = useMemo(() => ({
-    type: 'FeatureCollection', features: [...myFeatures, ...otherFeatures]
-  }), [myFeatures, otherFeatures]);
+  const eventFeatureCollection = useMemo(() => ({
+    type: 'FeatureCollection', features: eventsFeatures
+  }), [eventsFeatures]);
+  const statusFeatureCollection = useMemo(() => ({
+    type: 'FeatureCollection', features: [].concat(myFeatures, theirFeatures),
+  }), [myFeatures, theirFeatures]);
   const [initialLocation, setInitialLocation] = useState(null);
   const [selection, setSelection] = useState(null);
   const [loaded, setLoaded] = useRenderer();
@@ -287,33 +291,26 @@ const Map = () => {
     return images;
   }, [me.avatar]);
 
-  const otherImages = useMemo(() => {
+  const theirImages = useMemo(() => {
     const images = {};
 
-    for (const feature of otherFeatures) {
-      if (!feature.properties.user) continue;
-
+    for (const feature of theirFeatures) {
       if (feature.properties.user.avatar) {
         images[feature.properties.user.id] = { uri: feature.properties.user.avatar };
       }
     }
 
     return images;
-  }, [otherFeatures]);
+  }, [theirFeatures]);
 
-  const images = useMemo(() => ({ ...defaultImages, ...myImages, ...otherImages }), [myImages, otherImages]);
+  const images = useMemo(() => ({ ...defaultImages, ...myImages, ...theirImages }), [myImages, theirImages]);
 
-  const filterEventsFeatures = useCallback((features = otherFeatures) => {
+  const filterEventsFeatures = useCallback((features = eventsFeatures) => {
     if (idx && filterText) {
       const refs = new Set(idx.search(filterText).map(doc => doc.ref));
 
       features.forEach((feature) => {
-        if ('event' in feature.properties) {
-          feature.properties.displayed = refs.has(feature.properties.event.id);
-        }
-        else {
-          feature.properties.displayed = true;
-        }
+        feature.properties.displayed = refs.has(feature.properties.event.id);
       });
     }
     else {
@@ -321,9 +318,9 @@ const Map = () => {
         feature.properties.displayed = true;
       });
     }
-  }, [idx, filterText, otherFeatures]);
+  }, [idx, filterText, eventsFeatures]);
 
-  const updateMyLocation = useCallback((location, force) => {
+  const updateMyLocation = useAsyncCallback(function* (location, force) {
     if (!mountState.current) return;
 
     location = [
@@ -340,78 +337,87 @@ const Map = () => {
 
     locationUpdatedAtRef.current = Date.now();
 
-    superUpdateMyLocation(location).then(({ data: { updateMyLocation: { features } } }) => {
-      let flatbush = null;
-      let idx = null;
-      const otherFeatures = [];
-      const myFeatures = [];
+    let features;
+    try {
+      const { data } = yield superUpdateMyLocation(location);
+      features = data.updateMyLocation.features;
+    }
+    catch (e) {
+      return alertError(e);
+    }
 
-      if (features.length) {
-        flatbush = new Flatbush(features.length);
-        const idxBuilder = new Lunr.Builder();
-        idxBuilder.field('name');
-        idxBuilder.field('category');
+    let flatbush = null;
+    let idx = null;
+    const eventsFeatures = [];
+    const theirFeatures = [];
+    const myFeatures = [];
 
-        features.forEach((feature) => {
-          switch (feature.properties.type) {
-          case 'status':
-            feature.properties.weight = 1;
-            feature.properties.displayed = true;
+    if (features.length) {
+      flatbush = new Flatbush(features.length);
+      const idxBuilder = new Lunr.Builder();
+      idxBuilder.field('name');
+      idxBuilder.field('category');
 
-            if (feature.properties.user.id == me.id) {
-              feature.properties.image = me.avatar ? me.id : 'avatar';
-              feature.properties.marker = 'hot-marker';
-              myFeatures.push(feature);
-            }
-            else {
-              feature.properties.image = feature.properties.user.avatar ? feature.properties.user.id : 'avatar';
-              feature.properties.marker = 'cold-marker';
-              otherFeatures.push(feature);
-            }
-            break;
-          case 'event':
-            feature.properties.weight = 1 + feature.properties.event.attendanceCount;
-            otherFeatures.push(feature);
-            idxBuilder.add({
-              id: feature.properties.event.id,
-              name: feature.properties.event.name,
-              category: feature.properties.event.category,
-            });
-            break;
+      features.forEach((feature) => {
+        switch (feature.properties.type) {
+        case 'status':
+          feature.properties.weight = 1;
+          feature.properties.displayed = true;
+
+          if (feature.properties.user.id == me.id) {
+            feature.properties.image = me.avatar ? me.id : 'avatar';
+            feature.properties.marker = 'hot-marker';
+            myFeatures.push(feature);
           }
-        });
+          else {
+            feature.properties.image = feature.properties.user.avatar ? feature.properties.user.id : 'avatar';
+            feature.properties.marker = 'cold-marker';
+            theirFeatures.push(feature);
+          }
+          break;
+        case 'event':
+          feature.properties.weight = 1 + feature.properties.event.attendanceCount;
+          eventsFeatures.push(feature);
+          idxBuilder.add({
+            id: feature.properties.event.id,
+            name: feature.properties.event.name,
+            category: feature.properties.event.category,
+          });
+          break;
+        }
+      });
 
-        idx = idxBuilder.build();
-      }
+      idx = idxBuilder.build();
+    }
 
-      if (otherFeatures.length) {
-        flatbush = new Flatbush(otherFeatures.length);
+    if (eventsFeatures.length) {
+      flatbush = new Flatbush(eventsFeatures.length);
 
-        otherFeatures.forEach((feature) => {
-          const [x, y] = feature.geometry.coordinates;
+      eventsFeatures.forEach((feature) => {
+        const [x, y] = feature.geometry.coordinates;
 
-          flatbush.add(x, y, x, y);
-        });
+        flatbush.add(x, y, x, y);
+      });
 
-        flatbush.finish();
-      }
+      flatbush.finish();
+    }
 
-      filterEventsFeatures(otherFeatures);
+    filterEventsFeatures(eventsFeatures);
 
-      setFlatbush(flatbush);
-      setOtherFeatures(otherFeatures);
-      setMyFeatures(myFeatures);
+    setFlatbush(flatbush);
+    setEventsFeatures(eventsFeatures);
+    setTheirFeatures(theirFeatures);
+    setMyFeatures(myFeatures);
 
-      setSelection(selection => selection && ({
-        ...selection,
-        isOutdated: true,
-      }));
+    setSelection(selection => selection && ({
+      ...selection,
+      isOutdated: true,
+    }));
 
-      setAppState(appState => ({
-        ...appState,
-        discoveryIndex: idx,
-      }));
-    }).catch(alertError);
+    setAppState(appState => ({
+      ...appState,
+      discoveryIndex: idx,
+    }));
   }, [alertError, initialLocation, superUpdateMyLocation, filterEventsFeatures]);
 
   useLayoutEffect(() => {
@@ -440,18 +446,16 @@ const Map = () => {
   }, [appState.discoveryTime]);
 
   useEffect(() => {
-    setSelection(selection => {
-      if (!selection) return selection;
+    if (selection) {
+      const newSelection = cloneDeep(selection);
+      newSelection.isOutdated = true;
 
-      selection = cloneDeep(selection);
-      selection.isOutdated = true;
+      setSelection(newSelection);
+    }
 
-      return selection;
-    });
-
-    filterEventsFeatures();
-
-    setOtherFeatures(otherFeatures => otherFeatures && otherFeatures.slice());
+    const newEventsFeatures = eventsFeatures.slice();
+    filterEventsFeatures(newEventsFeatures);
+    setEventsFeatures(newEventsFeatures);
   }, [filterText]);
 
   const zoomInterpolator = useAsyncCallback(function* (v) {
@@ -466,10 +470,8 @@ const Map = () => {
     return result;
   }, [true]);
 
-  const onFeaturePress = useCallback((e) => {
+  const onStatusFeaturePress = useCallback((e) => {
     const feature = e.nativeEvent.payload;
-
-    if (!feature.properties.user) return;
 
     setAppState(appState => ({
       ...appState,
@@ -504,11 +506,11 @@ const Map = () => {
     const selectionCoords = feature?.geometry.coordinates || (yield mapRef.current.getCenter());
     const selectionBorder = turfCircle(selectionCoords, SELECTION_RADIUS);
     const selectionIndexes = flatbush ? flatbush.neighbors(...selectionCoords, Infinity, SELECTION_RADIUS / 100) : [];
-    const selectionFeatures = selectionIndexes.map(i => otherFeatures[i]);
-    const eventsFeatures = selectionFeatures.filter(f => f.properties.type == 'event' && f.properties.displayed);
-    const attendanceCount = eventsFeatures.reduce((count, f) => count + f.properties.event.attendanceCount, 0);
+    const selectionFeatures = selectionIndexes.map(i => eventsFeatures[i]);
+    const displayedEventsFeatures = selectionFeatures.filter(f => f.properties.displayed);
+    const attendanceCount = displayedEventsFeatures.reduce((count, f) => count + f.properties.event.attendanceCount, 0);
 
-    eventsFeatures.forEach((feature) => {
+    displayedEventsFeatures.forEach((feature) => {
       const featuredPhoto = feature.properties.event.featuredPhoto;
 
       if (featuredPhoto) {
@@ -528,11 +530,11 @@ const Map = () => {
       size: selectionIndexes.length,
       border: selectionBorder,
       features: selectionFeatures,
-      eventsCount: eventsFeatures.length,
+      eventsCount: displayedEventsFeatures.length,
       attendanceCount,
       zoom,
     });
-  }, [flatbush, otherFeatures]);
+  }, [flatbush, eventsFeatures]);
 
   useGeoBackgroundTelemetry({
     enabled: me.discoverable,
@@ -594,36 +596,41 @@ const Map = () => {
         )}
 
         <MapboxGL.ShapeSource
-          id='mapFeatures'
-          onPress={onFeaturePress}
-          shape={mapFeatureCollection}
+          id='eventsFeatures'
+          shape={eventFeatureCollection}
         >
           <MapboxGL.HeatmapLayer
-            id='mapFeaturesHeatmap'
-            sourceID='mapFeatures'
+            id='eventsFeaturesHeatmap'
+            sourceID='eventsFeatures'
             filter={isFeatureDisplayed}
             style={mapStyles.heatmap}
           />
+        </MapboxGL.ShapeSource>
 
+        <MapboxGL.ShapeSource
+          id='statusesFeatures'
+          onPress={onStatusFeaturePress}
+          shape={statusFeatureCollection}
+        >
           <MapboxGL.SymbolLayer
-            id='mapFeaturesMarkers'
-            sourceID='mapFeatures'
+            id='statusesFeaturesMarkers'
+            sourceID='statusesFeatures'
             minZoomLevel={MIN_ZOOM}
             filter={isUserFeature}
             style={mapStyles.marker}
           />
 
           <MapboxGL.SymbolLayer
-            id='mapFeaturesAvatars'
-            sourceID='mapFeatures'
+            id='statusesFeaturesAvatars'
+            sourceID='statusesFeatures'
             minZoomLevel={MIN_ZOOM}
             filter={isUserFeature}
             style={mapStyles.avatar}
           />
 
           <MapboxGL.SymbolLayer
-            id='mapFeaturesNames'
-            sourceID='mapFeatures'
+            id='statusesFeaturesNames'
+            sourceID='statusesFeatures'
             minZoomLevel={MAX_INTER_ZOOM}
             filter={isUserFeature}
             style={mapStyles.name}
