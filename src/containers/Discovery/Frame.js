@@ -178,11 +178,13 @@ const Frame = ({
 
   const menuItems = useMemo(() => [
     {
-      text: moment(appState.discoveryTime).tz(timezone).format('MMMM Do'),
+      key: 'time',
+      text: moment(appState.discoveryTime).tz(timezone)?.format('MMMM Do'),
       icon: 'calendar',
       onPress: showCalendar,
     },
     {
+      key: 'filter',
       text: appState.discoveryFilterText || '-Any-',
       icon: 'filter',
       onPress: navToFilter,

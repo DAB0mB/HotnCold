@@ -40,7 +40,7 @@ const MenuPopover = ({ items, state, ...props }) => {
     >
       <View style={{ width: 150, height: items.length * 50, borderColor: colors.lightGray, borderWidth: 1 }}>
         {items.map(({ IconComponent = McIcon, ...item }, index) => (
-          <Ripple key={item.text} onPress={() => {
+          <Ripple key={item.key} onPress={() => {
             hidePopover(); item.onPress();
           }}>
             <View style={[styles.item, index && styles.itemBorder].filter(Boolean)}>
