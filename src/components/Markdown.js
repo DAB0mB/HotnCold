@@ -10,42 +10,12 @@ import { colors } from '../theme';
 import { noop } from '../utils';
 
 export const hncMdStyles = StyleSheet.create({
-  heading1: {
-    ...superStyles.heading1,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  heading2: {
-    ...superStyles.heading2,
-    textAlign: 'center',
-    alignSelf: 'center',
-    color: colors.hot,
-    width: '100%',
-    fontWeight: '600',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  heading3: {
-    ...superStyles.heading3,
-    fontWeight: '600',
-  },
-  listUnorderedItem: {
-    marginTop: -10,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  listOrderedItemIcon: {
-    fontWeight: '600',
-    paddingTop: 10,
-    paddingLeft: 2,
-    paddingRight: 8,
-  },
-  listUnorderedItemIcon: {
-    fontWeight: '600',
-    paddingTop: 10,
-    paddingLeft: 2,
-    paddingRight: 8,
-  },
+  heading1: { ...superStyles.heading1, marginTop: 20, marginBottom: 20 },
+  heading2: { ...superStyles.heading2, textAlign: 'center', alignSelf: 'center', color: colors.hot, width: '100%', fontWeight: '600', marginTop: 20, marginBottom: 20 },
+  heading3: { ...superStyles.heading3, fontWeight: '600' },
+  listUnorderedItem: { marginTop: -10, flexDirection: 'row', justifyContent: 'flex-start' },
+  listOrderedItemIcon: { fontWeight: '600', paddingTop: 10, paddingLeft: 2, paddingRight: 8 },
+  listUnorderedItemIcon: { fontWeight: '600', paddingTop: 10, paddingLeft: 2, paddingRight: 8 },
 });
 
 const Markdown = ({ _handleUrl = noop, ...props }) => {

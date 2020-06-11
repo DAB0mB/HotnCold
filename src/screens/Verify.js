@@ -14,47 +14,13 @@ import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    maxHeight: Dimensions.get('window').height - (HEADER_HEIGHT * 2),
-  },
-  instructions: {
-    textAlign: 'center',
-    color: 'black',
-  },
-  otpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '80%',
-  },
-  otp: {
-    width: '100%',
-    height: 100,
-  },
-  otpInput: {
-    fontSize: 20,
-    fontWeight: '900',
-    borderWidth: 0,
-    borderBottomWidth: 1,
-    borderColor: 'black',
-  },
-  passcodeHint: {
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
-    fontSize: 10,
-    color: 'black',
-  },
-  resend: {
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
-    fontSize: 16,
-    color: 'rgba(0, 0, 0, .7)',
-  },
+  container: { flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', maxHeight: Dimensions.get('window').height - (HEADER_HEIGHT * 2) },
+  instructions: { textAlign: 'center', color: 'black' },
+  otpContainer: { flexDirection: 'row', justifyContent: 'center', width: '80%' },
+  otp: { width: '100%', height: 100 },
+  otpInput: { fontSize: 20, fontWeight: '900', borderWidth: 0, borderBottomWidth: 1, borderColor: 'black' },
+  passcodeHint: { position: 'absolute', left: 0, bottom: 0, fontSize: 10, color: 'black' },
+  resend: { position: 'absolute', left: 0, bottom: 0, fontSize: 16, color: 'rgba(0, 0, 0, .7)' },
 });
 
 export const $Verify = {};

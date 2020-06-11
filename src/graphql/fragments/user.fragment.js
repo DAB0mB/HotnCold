@@ -1,7 +1,5 @@
 import gql from 'graphql-tag';
 
-import area from './area.fragment';
-
 const user = gql `
   fragment User on User {
     id
@@ -16,16 +14,11 @@ user.profile = gql `
     birthDate
     age
     bio
-    location
     occupation
     pictures
-    area {
-      ...Area
-    }
   }
 
   ${user}
-  ${area}
 `;
 
 user.read = (cache, id) => {

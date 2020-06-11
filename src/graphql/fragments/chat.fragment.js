@@ -9,19 +9,20 @@ const chat = gql `
     title
     picture
     unreadMessagesCount
+    participantsCount
+    recipient {
+      ...UserProfile
+    }
     firstMessage {
       ...Message
     }
     recentMessages {
       ...Message
     }
-    users {
-      ...UserProfile
-    }
   }
 
-  ${message}
   ${user.profile}
+  ${message}
 `;
 
 chat.read = (cache, id) => {

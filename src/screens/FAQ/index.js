@@ -10,24 +10,10 @@ import { colors } from '../../theme';
 import faqMD from './FAQ.md';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.lightGray,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  logo: {
-    height: 25,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    resizeMode: 'contain',
-  },
-  copyrights: {
-    fontSize: 12,
-    marginBottom: 10,
-    marginTop: 20,
-  },
+  container: { flex: 1, backgroundColor: colors.lightGray },
+  header: { marginBottom: 20 },
+  logo: { height: 25, marginLeft: 'auto', marginRight: 'auto', resizeMode: 'contain' },
+  copyrights: { fontSize: 12, marginBottom: 10, marginTop: 20 },
 });
 
 const FAQ = () => {

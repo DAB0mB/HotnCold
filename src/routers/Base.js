@@ -4,13 +4,12 @@ import AuthContainer from '../containers/Auth';
 import DiscoveryContainer from '../containers/Discovery';
 import SocialContainer from '../containers/Social';
 import AgreementScreen from '../screens/Agreement';
-import AttendeesScreen from '../screens/Attendees';
-import EventScreen from '../screens/Event';
+import StatusChatScreen from '../screens/StatusChat';
+import ParticipantsScreen from '../screens/Participants';
 import FAQScreen from '../screens/FAQ';
 import ProfileScreen from '../screens/Profile';
-import FilterScreen from '../screens/Filter';
 import ProfileEditorScreen from '../screens/ProfileEditor';
-import SelectionScreen from '../screens/Selection';
+import AreaSearchScreen from '../screens/AreaSearch';
 import MessageEditorScreen from '../screens/MessageEditor';
 import Router from './Router';
 
@@ -28,29 +27,26 @@ const Base = Router.create({
   Agreement: {
     screen: AgreementScreen,
   },
+  StatusChat: {
+    screen: StatusChatScreen,
+  },
   FAQ: {
     screen: FAQScreen,
   },
   Profile: {
     screen: ProfileScreen,
   },
-  Selection: {
-    screen: SelectionScreen,
-  },
-  Attendees: {
-    screen: AttendeesScreen,
-  },
-  Event: {
-    screen: EventScreen,
-  },
-  Filter: {
-    screen: FilterScreen,
+  Participants: {
+    screen: ParticipantsScreen,
   },
   ProfileEditor: {
     screen: ProfileEditorScreen,
   },
   MessageEditor: {
     screen: MessageEditorScreen,
+  },
+  AreaSearch: {
+    screen: AreaSearchScreen,
   },
   Auth: {
     screen: AuthContainer,

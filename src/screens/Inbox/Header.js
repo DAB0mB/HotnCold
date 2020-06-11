@@ -7,20 +7,9 @@ import Social from '../../containers/Social';
 import { useNavigation } from '../../services/Navigation';
 
 const styles = StyleSheet.create({
-  header: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIcon: {
-    paddingRight: 10
-  },
-  title: {
-    paddingLeft: 15,
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '900'
-  },
+  header: { flex: 1, flexDirection: 'row', alignItems: 'center', },
+  backIcon: { paddingRight: 10, },
+  title: { paddingLeft: 15, color: 'white', fontSize: 16, fontWeight: '900', },
 });
 
 const Header = () => {

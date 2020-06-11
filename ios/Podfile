@@ -36,7 +36,6 @@ target 'hotncold' do
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
-  pod '@mauron85_react-native-background-geolocation', :path => '../node_modules/@mauron85/react-native-background-geolocation'
   pod 'react-native-config', :path => '../node_modules/react-native-config'
   pod 'react-native-gps-state', :path => '../node_modules/react-native-gps-state'
 

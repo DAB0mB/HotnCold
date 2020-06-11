@@ -11,7 +11,6 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
-import com.marianhello.bgloc.react.BackgroundGeolocationPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import br.com.dopaminamob.gpsstate.GPSStatePackage;
 import com.BV.LinearGradient.LinearGradientPackage;
@@ -49,7 +48,6 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebasePackage(),
           new RNFirebaseNotificationsPackage(),
           new RNFirebaseMessagingPackage(),
-          new BackgroundGeolocationPackage(),
           new RNPermissionsPackage(),
           new GPSStatePackage(),
           new LinearGradientPackage(),

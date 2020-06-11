@@ -1,12 +1,20 @@
 import gql from 'graphql-tag';
 
+import user from './user.fragment';
+
 const status = gql `
   fragment Status on Status {
     id
-    location
-    publishedAt
     text
+    location
+    createdAt
+    weight
+    author {
+      ...User
+    }
   }
+
+  ${user}
 `;
 
 status.read = (cache, id) => {

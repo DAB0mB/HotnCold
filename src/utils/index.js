@@ -1,5 +1,6 @@
 import { isValidNumber } from 'libphonenumber-js';
-import CONFIG from 'react-native-config';
+
+import { phoneLocalPattern, phoneSmsPattern } from '../consts';
 
 export { default as __ } from './_';
 export * from './cookie';
@@ -70,8 +71,8 @@ export const sleep = (ms) => {
 export const validatePhone = (phone) => {
   return (
     isValidNumber(phone.replace(/^-/, '+')) ||
-    new RegExp(CONFIG.TEST_PHONE_LOCAL).test(phone) ||
-    new RegExp(CONFIG.TEST_PHONE_SMS).test(phone)
+    phoneLocalPattern.test(phone) ||
+    phoneSmsPattern.test(phone)
   );
 };
 

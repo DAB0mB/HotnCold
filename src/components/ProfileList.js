@@ -5,34 +5,11 @@ import Ripple from 'react-native-material-ripple';
 import { hexToRgba, colors } from '../theme';
 
 const styles = StyleSheet.create({
-  item: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    flexDirection: 'row',
-  },
-  avatar: {
-    width: 60,
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarImage: {
-    resizeMode: 'contain',
-    height: 50,
-    width: 50,
-    marginRight: 10,
-    borderRadius: 999,
-  },
-  body: {
-    flex: 1,
-    flexDirection: 'column',
-    paddingTop: 20,
-    paddingBottom: 15,
-  },
-  bodyBorder: {
-    borderTopWidth: 1,
-    borderTopColor: hexToRgba(colors.gray, .5),
-  },
+  item: { paddingLeft: 10, paddingRight: 10, flexDirection: 'row' },
+  avatar: { width: 60, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },
+  avatarImage: { resizeMode: 'contain', height: 50, width: 50, marginRight: 10, borderRadius: 999 },
+  body: { flex: 1, flexDirection: 'column', paddingTop: 20, paddingBottom: 15 },
+  bodyBorder: { borderTopWidth: 1, borderTopColor: hexToRgba(colors.gray, .5) },
 });
 
 const RippleList = ({
@@ -42,6 +19,7 @@ const RippleList = ({
   keyExtractor,
   pictureExtractor,
   renderItemBody,
+  onEndReached,
   ListHeaderComponent,
   ListFooterComponent,
 }) => {
@@ -66,6 +44,7 @@ const RippleList = ({
       data={data}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
+      onEndReached={onEndReached}
       ListHeaderComponent={ListHeaderComponent}
       ListFooterComponent={ListFooterComponent}
     />

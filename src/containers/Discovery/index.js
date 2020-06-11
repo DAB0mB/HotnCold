@@ -50,23 +50,6 @@ const Discovery = Base.create(({ navigation }) => {
   const { me, myContract } = myQuery.data || {};
   const [appState] = useAppState();
 
-  // Prepare cache
-
-  const chatsQuery = queries.chats.use({
-    subscribeToChanges: true,
-    onError: alertError,
-  });
-
-  queries.statuses.use.mine({
-    subscribeToChanges: true,
-    onError: alertError,
-  });
-
-  queries.scheduledEvents.use({
-    subscribeToChanges: true,
-    onError: alertError,
-  });
-
   const onMessage = useCallback((message) => {
     switch (message.channelId) {
     case CHANNELS.CHAT_MESSAGES:
@@ -90,10 +73,6 @@ const Discovery = Base.create(({ navigation }) => {
 
     if (!chatId) return;
 
-    const chat = chatsQuery.data.chats.find(c => c.id === chatId);
-
-    if (!chat) return;
-
     const { activeChat } = appState;
 
     // We're already chatting with that person
@@ -102,10 +81,10 @@ const Discovery = Base.create(({ navigation }) => {
     baseNav.push('Social', {
       $setInitialRouteState: {
         routeName: 'Chat',
-        params: { chat },
+        params: { chatId },
       }
     });
-  }, [baseNav, chatsQuery, appState]);
+  }, [baseNav, appState]);
 
   useAsyncEffect(function* () {
     if (!myQuery.called) return;
@@ -133,9 +112,6 @@ const Discovery = Base.create(({ navigation }) => {
   }, [myQuery]);
 
   useAsyncEffect(function* (onCleanup) {
-    if (!chatsQuery.called) return;
-    if (chatsQuery.loading) return;
-
     const initialTrigger = yield notifications.getTrigger();
 
     if (initialTrigger) {
@@ -144,12 +120,9 @@ const Discovery = Base.create(({ navigation }) => {
 
     // Listen in background
     onCleanup(notifications.onTokenRefresh(associateNotificationsToken));
-  }, [chatsQuery.called && !chatsQuery.loading]);
+  }, [true]);
 
   useEffect(() => {
-    if (!chatsQuery.called) return;
-    if (chatsQuery.loading) return;
-
     const removeMessageListener = notifications.onMessage(onMessage);
     const removeNotificationOpenedListener = notifications.onNotificationOpened(onNotificationOpened);
 
@@ -158,7 +131,6 @@ const Discovery = Base.create(({ navigation }) => {
       removeNotificationOpenedListener();
     };
   }, [
-    chatsQuery.called && !chatsQuery.loading,
     onMessage,
     onNotificationOpened,
   ]);

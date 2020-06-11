@@ -1,11 +1,9 @@
-import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 import React, { createContext, useContext, useMemo } from 'react';
 // @react-native-community/geolocation has issues, don't use it
 import Geolocation from 'react-native-geolocation-service';
 import GPSState from 'react-native-gps-state';
 
-import { useAsyncEffect, fork } from '../utils';
-import { useCookie } from './Cookie';
+import { fork } from '../utils';
 
 const GeolocationContext = createContext(null);
 
@@ -19,50 +17,25 @@ export const GPS_STATES = {
 };
 
 export const GeolocationProvider = ({
-  fgService = Geolocation,
-  bgService = BackgroundGeolocation,
+  resolver = Geolocation,
   stateManager = GPSState,
   children
 }) => {
+  const value = useMemo(() => ({
+    resolver, stateManager
+  }), [resolver, stateManager]);
+
   return (
-    <GeolocationContext.Provider value={{ fgService, bgService, stateManager }}>
+    <GeolocationContext.Provider value={value}>
       {children}
     </GeolocationContext.Provider>
   );
 };
 
 export const useGeolocation = () => {
-  const { fgService, stateManager } = useContext(GeolocationContext);
+  const { resolver, stateManager } = useContext(GeolocationContext);
 
   return useMemo(() =>
-    Object.assign(fork(fgService), { state: stateManager })
-  , [fgService, stateManager]);
-};
-
-export const useGeoBackgroundTelemetry = ({ enabled, config = {} } = {}) => {
-  const { bgService } = useContext(GeolocationContext);
-  const cookie = useCookie();
-
-  useAsyncEffect(function* (onCleanup) {
-    if (!enabled) return;
-
-    const authToken = yield cookie.get('authToken');
-
-    yield new Promise((resolve, reject) => {
-      bgService.configure({
-        ...config,
-        httpHeaders: {
-          Cookie: `authToken=${authToken}`,
-        },
-      }, resolve, reject);
-    });
-
-    const bgEvent = bgService.on('background', () => bgService.start());
-    const fgEvent = bgService.on('foreground', () => bgService.stop());
-
-    onCleanup(() => {
-      bgEvent.remove();
-      fgEvent.remove();
-    });
-  }, [enabled, bgService, cookie]);
+    Object.assign(fork(resolver), { state: stateManager })
+  , [resolver, stateManager]);
 };

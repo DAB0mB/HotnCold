@@ -12,7 +12,7 @@ import Swiper from 'react-native-swiper';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Base from '../containers/Base';
-import * as mutations from '../graphql/mutations';
+import * as queries from '../graphql/queries';
 import { useMine } from '../services/Auth';
 import { useAlertError } from '../services/DropdownAlert';
 import { useBuffer } from '../services/Loading';
@@ -20,94 +20,19 @@ import { useNavigation } from '../services/Navigation';
 import { colors, hexToRgba } from '../theme';
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    backgroundColor: 'white',
-    flex: 1,
-  },
-  profilePicture: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').width,
-  },
-  profilePicturePlaceholder: {
-    backgroundColor: colors.gray,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  name: {
-    margin: 10,
-    fontSize: 30,
-    fontWeight: '900',
-    color: colors.ink,
-    borderBottomColor: 'silver',
-    flexDirection: 'row',
-  },
-  bioField: {
-    marginLeft: 10,
-    marginRight: 10,
-    fontSize: 16,
-    color: 'silver',
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  bioFieldIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 25,
-  },
-  bio: {
-    backgroundColor: hexToRgba(colors.gray, .2),
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-    borderBottomLeftRadius: 15,
-    margin: 10,
-    marginTop: 20,
-    padding: 10,
-    paddingTop: 20,
-    paddingBottom: 20,
-    textAlignVertical: 'top',
-    fontSize: 16,
-    color: 'gray',
-  },
-  backButton: {
-    position: 'absolute',
-    flexDirection: 'row',
-    left: 0,
-    top: 0,
-    padding: 10,
-  },
-  picturesButtons: {
-    position: 'absolute',
-    flexDirection: 'row',
-    right: 0,
-    top: 0,
-    paddingTop: 10,
-  },
-  profileButtons: {
-    position: 'absolute',
-    flexDirection: 'row',
-    top: Dimensions.get('window').width,
-    right: 0,
-    paddingTop: 10,
-  },
-  loader: {
-    alignItems: 'flex-end',
-    margin: 15,
-  },
-  icon: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    width: 50,
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 999,
-    marginRight: 10,
-  },
-  swiperDot: {
-    height: 4,
-    width: 4,
-  }
+  container: { flexDirection: 'column', backgroundColor: 'white', flex: 1 },
+  profilePicture: { width: Dimensions.get('window').width, height: Dimensions.get('window').width },
+  profilePicturePlaceholder: { backgroundColor: colors.gray, alignItems: 'center', justifyContent: 'center' },
+  name: { margin: 10, fontSize: 30, fontWeight: '900', color: colors.ink, borderBottomColor: 'silver', flexDirection: 'row' },
+  bioField: { marginLeft: 10, marginRight: 10, fontSize: 16, color: 'silver', flexDirection: 'row', alignItems: 'center' },
+  bioFieldIcon: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: 25 },
+  bio: { backgroundColor: hexToRgba(colors.gray, .2), borderTopRightRadius: 15, borderBottomRightRadius: 15, borderBottomLeftRadius: 15, margin: 10, marginTop: 20, padding: 10, paddingTop: 20, paddingBottom: 20, textAlignVertical: 'top', fontSize: 16, color: 'gray' },
+  backButton: { position: 'absolute', flexDirection: 'row', left: 0, top: 0, padding: 10 },
+  picturesButtons: { position: 'absolute', flexDirection: 'row', right: 0, top: 0, paddingTop: 10 },
+  profileButtons: { position: 'absolute', flexDirection: 'row', top: Dimensions.get('window').width, right: 0, paddingTop: 10 },
+  loader: { alignItems: 'flex-end', margin: 15 },
+  icon: { backgroundColor: 'rgba(0, 0, 0, 0.1)', width: 50, height: 50, alignItems: 'center', justifyContent: 'center', borderRadius: 999, marginRight: 10 },
+  swiperDot: { height: 4, width: 4 },
 });
 
 export const $Profile = Symbol('Profile');
@@ -129,39 +54,34 @@ const MyText = React.forwardRef(function MyText({ style = {}, ...props }, ref) {
 const Profile = () => {
   const baseNav = useNavigation(Base);
   const isRecipient = baseNav.getParam('isRecipient');
-  const userParam = baseNav.getParam('user');
   const { me = {} } = useMine();
-  const itsMe = userParam.id === me.id;
   const alertError = useAlertError();
 
   // User state
-  const [user, setUser] = useState(() => userParam && userParam.id && userParam);
+  const [user, setUser] = useState(() => baseNav.getParam('user'));
   const [name, setName] = useState(() => user ? user.name : '');
   const [age, setAge] = useState(() => !user ? '' : user.age);
   const [occupation, setOccupation] = useState(() => user ? user.occupation : '');
   const [bio, setBio] = useState(() => user ? user.bio : '');
   const [pictures, setPictures] = useState(() => user ? user.pictures : []);
+  const itsMe = user?.id === me.id;
 
-  baseNav.useBackListener();
+  queries.userProfile.use(baseNav.getParam('userId'), {
+    onCompleted: useCallback((data) => {
+      if (!data) return;
 
-  if (typeof userParam == 'function') {
-    const user = userParam();
-
-    useEffect(() => {
-      if (user) {
-        setName(user.name);
-        setOccupation(user.occupation);
-        setBio(user.bio);
-        setPictures(user.pictures);
-        setAge(user.age);
-        setUser(user);
-      }
-    }, [user]);
-  }
-
-  const [findOrCreateChat] = mutations.findOrCreateChat.use([user && user.id], {
+      const user = data.userProfile;
+      setName(user.name);
+      setOccupation(user.occupation);
+      setBio(user.bio);
+      setPictures(user.pictures);
+      setAge(user.age);
+      setUser(user);
+    }, [true]),
     onError: alertError,
   });
+
+  baseNav.useBackListener();
 
   useEffect(() => {
     if (!user) return;
@@ -176,22 +96,17 @@ const Profile = () => {
       return;
     }
 
-    const result = await findOrCreateChat();
-
-    // Probably validation issue
-    if (!result || !result.data) return;
-
     baseNav.push('Social', {
       $setInitialRouteState: {
         routeName: 'Chat',
         params: {
-          chat: result.data.findOrCreateChat
+          recipientId: user.id
         }
       }
     });
-  }, [baseNav, findOrCreateChat, user]);
+  }, [baseNav, user]);
 
-  return useBuffer(typeof userParam == 'function' && !user, () =>
+  return useBuffer(!user, () =>
     <ScrollView style={styles.container}>
       <View style={styles.profilePicture}>
         {/*react-native-swiper doesn't iterate through children properly so I have to compose the array manually*/}

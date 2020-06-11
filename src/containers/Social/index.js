@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useMemo, useContext, useLayoutEffect, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import * as queries from '../../graphql/queries';
@@ -8,6 +8,8 @@ import { LoadingProvider, useLoading } from '../../services/Loading';
 import { NavigationProvider } from '../../services/Navigation';
 import Base from '../Base';
 import Header from './Header';
+
+const SocialContext = createContext();
 
 const styles = StyleSheet.create({
   container: {
@@ -55,20 +57,29 @@ const Social = Base.create(({ navigation }) => {
 });
 
 Social.create = (Component) => {
-  const HeaderContents = Component.Header || (() => null);
-
   return function SocialScreen({ navigation: socialNav }) {
+    const headerRef = useRef(null);
+    const context = useMemo(() => ({ headerRef }), [true]);
+
     return (
-      <NavigationProvider navKey={Social} navigation={socialNav}>
-        <View style={styles.body}>
-          <Component navigation={socialNav} />
-        </View>
-        <Header>
-          <HeaderContents />
-        </Header>
-      </NavigationProvider>
+      <SocialContext.Provider value={context}>
+        <NavigationProvider navKey={Social} navigation={socialNav}>
+          <Header ref={headerRef} />
+          <View style={styles.body}>
+            <Component navigation={socialNav} />
+          </View>
+        </NavigationProvider>
+      </SocialContext.Provider>
     );
   };
+};
+
+Social.useHeader = (children) => {
+  const { headerRef } = useContext(SocialContext);
+
+  useLayoutEffect(() => {
+    headerRef.current.show(children);
+  });
 };
 
 export default Social;

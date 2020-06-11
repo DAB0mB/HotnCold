@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Loader = ({ size, betweenSpace, bufferMs = 500, style = {}, text = 'Loading' }) => {
+const Loader = ({ size, betweenSpace, bufferMs = 0, style = {}, text = 'Loading' }) => {
   const [buffering, setBuffering] = useState(true);
 
   useEffect(() => {
@@ -38,10 +38,12 @@ const Loader = ({ size, betweenSpace, bufferMs = 500, style = {}, text = 'Loadin
   return (
     <View style={[styles.container, style]}>
       {!buffering && (
-        <>
+        <React.Fragment>
           <DotsLoader size={size} betweenSpace={betweenSpace} />
-          <Text style={[styles.text, style]}>{text}...</Text>
-        </>
+          {text && (
+            <Text style={[styles.text, style]}>{text}...</Text>
+          )}
+        </React.Fragment>
       )}
     </View>
   );

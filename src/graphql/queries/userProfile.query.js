@@ -17,6 +17,7 @@ userProfile.use = (userId, options = {}) => {
   return useQuery(userProfile, {
     fetchPolicy: 'no-cache',
     variables: { userId },
+    skip: !userId,
     ...options,
   });
 };

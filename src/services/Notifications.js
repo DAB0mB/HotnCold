@@ -78,6 +78,8 @@ export const handleMessage = async (message) => {
   if (Platform.OS == 'android') {
     notification
       .android.setChannelId(message.channelId)
+      // Taken from Android's res/drawable/icon
+      .android.setSmallIcon('notification')
       .android.setLargeIcon(message.payload.largeIcon);
   }
 

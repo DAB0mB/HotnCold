@@ -1,5 +1,4 @@
 import { useRobot } from 'hotncold-robot';
-import moment from 'moment';
 import React, { useCallback, useMemo, useState, useLayoutEffect, useRef } from 'react';
 import { Dimensions, View, StyleSheet, Text } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -7,13 +6,11 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import Bar from '../../components/Bar';
-import Calendar from '../../components/Calendar';
 import Hamburger from '../../components/Hamburger';
 import MenuPopover from '../../components/MenuPopover';
 import Base from '../../containers/Base';
 import * as mutations from '../../graphql/mutations';
 import { useAppState } from '../../services/AppState';
-import { useMine } from '../../services/Auth';
 import { HitboxProvider } from '../../services/Hitbox';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
@@ -26,7 +23,7 @@ const winDims = Dimensions.get('window');
 
 const loadingIcons = Promise.all([
   McIcon.getImageSource('map', 30, colors.hot),
-  McIcon.getImageSource('cards-variant', 30, colors.hot),
+  McIcon.getImageSource('thought-bubble', 30, colors.hot),
 ]);
 
 const styles = StyleSheet.create({
@@ -42,7 +39,7 @@ const menuRect = { x: winDims.width, y: 0, width: 0, height: 0 };
 
 const Bubble = {
   Map: 0,
-  Activity: 1,
+  Statuses: 1,
 };
 
 export const $Frame = {};
@@ -51,62 +48,20 @@ const Frame = ({
   nav: discoveryNav,
   children,
 }) => {
-  const mine = useMine();
-  const { me } = mine;
   const baseNav = useNavigation(Base);
   const [activeBubble, setActiveBubble] = useState(Bubble.Map);
   const [icons, setIcons] = useState(empty);
   const [sideMenuOpened, setSideMenuOpened] = useState(false);
   const [title, setTitle] = useState('Map');
   const { useTrap } = useRobot();
-  const [appState, setAppState] = useAppState();
-  const calendarState = useState(false);
+  const [appState] = useAppState();
   const menuState = useState(false);
-  const timezone = me?.area?.timezone;
   const menuIconRef = useRef();
-  const [, setCalendarVisible] = calendarState;
   const [, setMenuVisible] = menuState;
 
-  const momentTz = useCallback((date) => {
-    let m = moment(date);
-
-    if (timezone) {
-      m = m.tz(timezone);
-    }
-
-    return m;
-  }, [timezone]);
-
-  const minDate = useMemo(() => momentTz().startOf('day').toDate(), [momentTz]);
-  const maxDate = useMemo(() => momentTz().startOf('day').add(3, 'months').toDate(), [momentTz]);
-
-  // Don't trigger effects.
-  // Will be used by child screens
-  useMemo(() => {
-    appState.discoveryTime = minDate;
-  }, [true]);
-
-  const calendarProps = {
-    minDate,
-    maxDate,
-    current: appState.discoveryTime,
-    visibleState: calendarState,
-    onConfirm: useCallback((discoveryTime) => {
-      if (discoveryTime === appState.discoveryTime) {
-        return;
-      }
-
-      // Given time at the beginning of UTC day
-      setAppState(appState => ({
-        ...appState,
-        discoveryTime,
-      }));
-    }, [appState]),
-  };
-
   useLayoutEffect(() => {
-    loadingIcons.then(([map, activity]) => {
-      setIcons({ map, activity });
+    loadingIcons.then(([map, statuses]) => {
+      setIcons({ map, statuses });
     });
   }, [true]);
 
@@ -116,15 +71,15 @@ const Frame = ({
     setActiveBubble(Bubble[discoveryNav.state.routeName]);
   }, [discoveryNav]);
 
-  const Activity = useCallbackWhen(() => {
-    discoveryNav.push('Activity');
-    setTitle('Activity');
-  }, activeBubble != Bubble.Activity && discoveryNav?.state.routeName === 'Map' && icons !== empty);
+  const navToStatuses = useCallbackWhen(() => {
+    discoveryNav.push('Statuses');
+    setTitle('Statuses');
+  }, activeBubble != Bubble.Statuses && discoveryNav?.state.routeName === 'Map' && icons !== empty);
 
   const navToMap = useCallbackWhen(() => {
     discoveryNav.goBackOnceFocused();
     setTitle('Map');
-  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Activity' && icons !== empty);
+  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Statuses' && icons !== empty);
 
   const openSideMenu = useCallback(() => {
     setSideMenuOpened(true);
@@ -152,9 +107,7 @@ const Frame = ({
           return useAsyncCallback(function* () {
             const location = yield appState.discoveryMap.current.getCenter();
 
-            // TODO: Create status at a specific time of the day
-            // For now the status will be published exactly at the end of the day
-            createStatus(location, moment(appState.discoveryTime).add(1, 'day').subtract(1, 's').toDate());
+            createStatus(location);
           }, [createStatus, appState]);
         },
       });
@@ -165,39 +118,26 @@ const Frame = ({
     setMenuVisible(true);
   }, [true]);
 
-  const showCalendar = useCallback(() => {
-    setMenuVisible(false);
-    setCalendarVisible(true);
-  }, [true]);
-
-  const navToFilter = useCallback(() => {
-    setMenuVisible(false);
-
-    baseNav.push('Filter');
+  const navToSearchArea = useCallback(() => {
+    baseNav.push('AreaSearch');
   }, [baseNav]);
 
   const menuItems = useMemo(() => [
     {
-      key: 'time',
-      text: momentTz(appState.discoveryTime).format('MMMM Do'),
-      icon: 'calendar',
-      onPress: showCalendar,
-    },
-    {
-      key: 'filter',
-      text: appState.discoveryFilterText || '-Any-',
-      icon: 'filter',
-      onPress: navToFilter,
-    },
-  ], [momentTz, appState.discoveryTime, appState.discoveryFilterText, showCalendar]);
+      key: 'area',
+      text: appState.discoveryArea?.shortName || '-default-',
+      icon: 'city',
+      onPress: navToSearchArea,
+    }
+  ], [appState, navToSearchArea]);
 
   const bubbles = [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
-    { title: 'Activity', iconSource: icons.activity, onSelect: Activity },
+    { title: 'Statuses', iconSource: icons.statuses, onSelect: navToStatuses },
   ];
 
   useTrap($Frame, {
-    Activity,
+    navToStatuses,
     navToMap,
     openSideMenu,
     closeSideMenu,
@@ -233,8 +173,6 @@ const Frame = ({
 
         <Status />
       </SideMenu>
-
-      <Calendar style={{ position: 'absolute', top: 10, right: 10 }} timezone={timezone} {...calendarProps} />
 
       <MenuPopover
         fromRect={menuRect}

@@ -6,6 +6,7 @@ const area = gql `
     name
     shortName
     timezone
+    center
   }
 `;
 

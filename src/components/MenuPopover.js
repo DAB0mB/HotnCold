@@ -7,24 +7,12 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors, hexToRgba } from '../theme';
 
 const styles = StyleSheet.create({
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    height: 50,
-  },
-  itemBorder: {
-    borderTopWidth: 1,
-    borderColor: hexToRgba(colors.gray, .4),
-  },
-  itemText: {
-    fontSize: 17,
-    color: colors.ink,
-    textAlign: 'center',
-  },
+  item: { flexDirection: 'row', alignItems: 'center', padding: 10, height: 50 },
+  itemBorder: { borderTopWidth: 1, borderColor: hexToRgba(colors.gray, .4) },
+  itemText: { fontSize: 17, color: colors.ink, textAlign: 'center' },
 });
 
-const MenuPopover = ({ items, state, ...props }) => {
+const MenuPopover = ({ items, state, width, ...props }) => {
   const [isVisible, setVisibility] = state;
 
   const hidePopover = useCallback(() => {
@@ -38,7 +26,7 @@ const MenuPopover = ({ items, state, ...props }) => {
       isVisible={isVisible}
       onRequestClose={hidePopover}
     >
-      <View style={{ width: 150, height: items.length * 50, borderColor: colors.lightGray, borderWidth: 1 }}>
+      <View style={{ width, height: items.length * 50, borderColor: colors.lightGray, borderWidth: 1 }}>
         {items.map(({ IconComponent = McIcon, ...item }, index) => (
           <Ripple key={item.key} onPress={() => {
             hidePopover(); item.onPress();

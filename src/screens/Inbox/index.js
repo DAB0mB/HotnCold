@@ -7,52 +7,22 @@ import ProfileList from '../../components/ProfileList';
 import Social from '../../containers/Social';
 import * as queries from '../../graphql/queries';
 import { useNavigation } from '../../services/Navigation';
+import { useAlertError } from '../../services/DropdownAlert';
 import { colors } from '../../theme';
 import { useMountState } from '../../utils';
 import Header, { $Header } from './Header';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  chatDescription: {
-    flexDirection: 'row',
-  },
-  chatTitle: {
-    flex: 1,
-  },
-  chatTitleText: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: colors.ink,
-  },
-  chatTime: {
-
-  },
-  chatTimeText: {
-    fontSize: 12,
-    color: colors.gray,
-  },
-  chatRecentMessage: {
-    flexDirection: 'row',
-  },
-  chatRecentMessageText: {
-    fontSize: 13,
-    color: colors.gray,
-  },
-  unreadMessages: {
-    backgroundColor: colors.hot,
-    borderRadius: 999,
-    height: 20,
-    width: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  unreadMessagesText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 11,
-  },
+  container: { flex: 1 },
+  chatDescription: { flexDirection: 'row' },
+  chatTitle: { flex: 1 },
+  chatTitleText: { fontSize: 16, fontWeight: '900', color: colors.ink },
+  chatTime: { },
+  chatTimeText: { fontSize: 12, color: colors.gray },
+  chatRecentMessage: { flexDirection: 'row' },
+  chatRecentMessageText: { fontSize: 13, color: colors.gray },
+  unreadMessages: { backgroundColor: colors.hot, borderRadius: 999, height: 20, width: 20, alignItems: 'center', justifyContent: 'center' },
+  unreadMessagesText: { color: 'white', textAlign: 'center', fontSize: 11 },
 });
 
 const getChatId = c => c.id;
@@ -63,7 +33,8 @@ export const $Inbox = {
 };
 
 const Inbox = () => {
-  const chatsQuery = queries.chats.use();
+  const alertError = useAlertError();
+  const chatsQuery = queries.chats.use({ subscribeToChanges: true, onError: alertError });
   const { chats = [] } = chatsQuery.data || {};
   const socialNav = useNavigation(Social);
   const mountState = useMountState();
@@ -79,6 +50,10 @@ const Inbox = () => {
   const onChatItemPress = useCallback(({ item: chat }) => {
     navToChat(chat);
   }, [navToChat]);
+
+  const fetchMoreChats = useCallback(() => {
+    chatsQuery.fetchMore();
+  }, [chatsQuery.fetchMore]);
 
   const renderChatItem = useCallback(({ item: chat }) => (
     <React.Fragment>
@@ -108,6 +83,10 @@ const Inbox = () => {
     </React.Fragment>
   ), [navToChat]);
 
+  Social.useHeader(
+    <Header />
+  );
+
   return (
     <View style={styles.container}>
       {chats.length ? (
@@ -117,6 +96,7 @@ const Inbox = () => {
           renderItemBody={renderChatItem}
           pictureExtractor={getChatPicture}
           onItemPress={onChatItemPress}
+          onEndReached={fetchMoreChats}
         />
       ) : chatsQuery.called && !chatsQuery.loading && (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 50 }}>
@@ -126,7 +106,5 @@ const Inbox = () => {
     </View>
   );
 };
-
-Inbox.Header = Header;
 
 export default Social.create(Inbox);

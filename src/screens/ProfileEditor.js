@@ -20,6 +20,7 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Bar from '../components/Bar';
 import Base from '../containers/Base';
 import DatePicker from '../components/DatePicker';
+import DotsLoader from '../components/Loader/DotsLoader';
 import * as mutations from '../graphql/mutations';
 import { useSignUp } from '../services/Auth';
 import { useAlertError, useAlertSuccess } from '../services/DropdownAlert';
@@ -35,116 +36,22 @@ const MINE_DEFAULT = {
 };
 
 const styles = StyleSheet.create({
-  scroller: {
-    flex: 1,
-    backgroundColor: colors.lightGray,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  headerTitle: {
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.ink,
-  },
-  headerDone: {
-    color: colors.hot,
-    fontSize: 18,
-    textAlign: 'right',
-  },
-  picturesGrid: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  picturesGridItem: {
-    flex: 1,
-    margin: 10,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  pictureActionContainer: {
-    backgroundColor: 'white',
-    width: 30,
-    height: 30,
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    borderRadius: 999,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pictureAction: {
-    paddingBottom: 1,
-  },
-  picturesFront: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  picturesFrontItem: {
-    width: Dimensions.get('window').width / 3 - 20,
-    height: Dimensions.get('window').width / 3 - 20,
-    margin: 10,
-  },
-  picturesBack: {
-    alignSelf: 'stretch',
-    position: 'relative',
-    height: (Dimensions.get('window').width / 3) * 2,
-  },
-  picturesBackItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  picturePlaceholder: {
-    width: Dimensions.get('window').width / 3 - 24,
-    height: Dimensions.get('window').width / 3 - 24,
-    margin: 12,
-    backgroundColor: colors.gray,
-    borderRadius: 5,
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: colors.ink,
-    alignItems: 'center',
-    justifyContent: 'center',
-    opacity: .35,
-  },
-  pictureIndexContainer: {
-    width: 20,
-    height: 20,
-    backgroundColor: colors.lightGray,
-    position: 'absolute',
-    borderRadius: 999,
-    top: -10,
-    left: -10,
-  },
-  pictureIndex: {
-    color: colors.ink,
-    fontSize: 15,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  input: {
-    marginTop: 20,
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: 'white',
-  },
+  scroller: { flex: 1, backgroundColor: colors.lightGray },
+  header: { marginBottom: 20 },
+  headerTitle: { textAlign: 'center', fontSize: 20, fontWeight: '600', color: colors.ink },
+  headerDone: { color: colors.hot, fontSize: 18, textAlign: 'right' },
+  picturesGrid: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  picturesGridItem: { flex: 1, margin: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center' },
+  pictureActionContainer: { backgroundColor: 'white', width: 30, height: 30, position: 'absolute', right: 0, bottom: 0, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  pictureAction: { paddingBottom: 1 },
+  picturesFront: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  picturesFrontItem: { width: Dimensions.get('window').width / 3 - 20, height: Dimensions.get('window').width / 3 - 20, margin: 10 },
+  picturesBack: { alignSelf: 'stretch', position: 'relative', height: (Dimensions.get('window').width / 3) * 2 },
+  picturesBackItem: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  picturePlaceholder: { width: Dimensions.get('window').width / 3 - 24, height: Dimensions.get('window').width / 3 - 24, margin: 12, backgroundColor: colors.gray, borderRadius: 5, borderWidth: 2, borderStyle: 'dashed', borderColor: colors.ink, alignItems: 'center', justifyContent: 'center', opacity: .35 },
+  pictureIndexContainer: { width: 20, height: 20, backgroundColor: colors.lightGray, position: 'absolute', borderRadius: 999, top: -10, left: -10 },
+  pictureIndex: { color: colors.ink, fontSize: 15, textAlign: 'center', fontWeight: '600' },
+  input: { marginTop: 20, paddingLeft: 10, paddingRight: 10, backgroundColor: 'white' },
 });
 
 export const $ProfileEditor = {};
@@ -162,8 +69,9 @@ const ProfileEditor = () => {
   }
 
   // Component state
+  const [saving, setSaving] = useState(null);
   const [scrollEnabled, setScrollEnabled] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const picturesGridRef = useRef();
   const submittingRef = useRef(false);
@@ -370,6 +278,24 @@ const ProfileEditor = () => {
     };
   }, [true]);
 
+  useEffect(() => {
+    if (saving == null) return;
+
+    if (!saving) {
+      setLoading(false);
+
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setLoading(true);
+    }, 500);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [saving]);
+
   useTrap($ProfileEditor, {
     save,
     name,
@@ -554,14 +480,17 @@ const ProfileEditor = () => {
           />
         </View>
 
-
-        <View style={{ padding: 20 }}>
-          <RaisedTextButton
-            onPress={save}
-            color={colors.hot}
-            title={myContract.signed ? 'save' : 'save & continue'}
-            titleColor='white'
-          />
+        <View style={{ padding: 20, alignItems: 'center', justifyContent: 'center', height: 100 }}>
+          {loading ? (
+            <DotsLoader />
+          ) : (
+            <RaisedTextButton
+              onPress={save}
+              color={colors.hot}
+              title={myContract.signed ? 'save' : 'save & continue'}
+              titleColor='white'
+            />
+          )}
         </View>
       </ScrollView>
 

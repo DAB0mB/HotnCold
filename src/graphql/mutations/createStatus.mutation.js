@@ -5,8 +5,8 @@ import { useCallback, useMemo } from 'react';
 import * as fragments from '../fragments';
 
 const createStatus = gql `
-  mutation CreateStatus($text: String!, $location: Vector2D!, $publishedAt: DateTime!) {
-    createStatus(text: $text, location: $location, publishedAt: $publishedAt) {
+  mutation CreateStatus($text: String!, $location: Vector2D!) {
+    createStatus(text: $text, location: $location) {
       ...Status
     }
   }
@@ -29,17 +29,16 @@ createStatus.use = (text, options = {}) => {
       const status = mutation.data.createStatus;
       fragments.status.write(cache, {
         ...status,
-        user: recentMe,
+        author: recentMe,
       });
     }, [me]),
   });
 
-  const mutate = useCallback((location, publishedAt) => {
+  const mutate = useCallback((location) => {
     superMutate({
       variables: {
         text,
         location,
-        publishedAt,
       },
     });
   }, [superMutate, text]);

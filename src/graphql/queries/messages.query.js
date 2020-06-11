@@ -24,6 +24,7 @@ messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) =>
   const query = useQuery(messages, {
     variables: { chatId, limit },
     fetchPolicy: 'no-cache',
+    skip: !chatId,
     ...options,
   });
 
@@ -38,6 +39,8 @@ messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) =>
   }, [data, onCompleted]);
 
   useEffect(() => {
+    if (!chatId) return;
+
     return query.subscribeToMore({
       document: subscriptions.messageSent,
       variables: { chatId },

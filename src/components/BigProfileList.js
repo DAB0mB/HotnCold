@@ -4,18 +4,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import Ripple from 'react-native-material-ripple';
 
 const styles = StyleSheet.create({
-  item: {
-    width: '100%',
-    height: 200,
-    position: 'relative',
-  },
-  itemAbsolute: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: '100%',
-    height: '100%',
-  },
+  item: { width: '100%', height: 200, position: 'relative' },
+  itemAbsolute: { position: 'absolute', left: 0, top: 0, width: '100%', height: '100%' },
 });
 
 const RippleList = ({

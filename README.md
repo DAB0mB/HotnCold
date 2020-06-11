@@ -1,6 +1,6 @@
 # Hot&Cold
 
-Built for both Android and iOS, currently known to support Android only.
+Should work both on Android and iOS. Android is currently the main version used as a reference for development and testing.
 
 ## Setup
 
@@ -23,16 +23,10 @@ Define environment variables in `.env.$ENVNAME` file (NEVER COMMIT):
     MAPBOX_ACCESS_TOKEN
     # The map style URL given by MapBox's API
     MAPBOX_STYLE_URL
-    # The name of the Bluetooth service that will be created by Hot&Cold
-    BLUETOOTH_ADAPTER_NAME
     # URL to Hot&Cold's server
     SERVER_URI
     # URL to Hot&Cold's server GraphQL endpoint
     GRAPHQL_ENDPOINT
-    # Test phone number regexp for local testing
-    TEST_PHONE_LOCAL
-    # Phone number regexp for testing with phone
-    TEST_PHONE_SMS
     # If specified, pressed notifications will remain
     PERSIST_NOTIFICATIONS
     # Run app with Robot. Robot files will not be bundled if this var is provided

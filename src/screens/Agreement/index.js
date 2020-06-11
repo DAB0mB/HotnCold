@@ -13,30 +13,11 @@ import privacyMD from './privacy.md';
 import termsMD from './terms.md';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.lightGray,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  logo: {
-    height: 25,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    resizeMode: 'contain',
-  },
-  agreeButton: {
-    margin: 30,
-    alignSelf: 'center',
-    backgroundColor: colors.hot,
-    borderRadius: 999,
-    borderColor: 'white',
-  },
-  copyrights: {
-    fontSize: 12,
-    marginBottom: 10,
-  },
+  container: { flex: 1, backgroundColor: colors.lightGray },
+  header: { marginBottom: 20 },
+  logo: { height: 25, marginLeft: 'auto', marginRight: 'auto', resizeMode: 'contain' },
+  agreeButton: { margin: 30, alignSelf: 'center', backgroundColor: colors.hot, borderRadius: 999, borderColor: 'white' },
+  copyrights: { fontSize: 12, marginBottom: 10 },
 });
 
 const termsStyle = StyleSheet.create({
@@ -85,7 +66,7 @@ const Agreement = () => {
         <View style={{ paddingLeft: 15, paddingRight: 15 }}>
           <Markdown style={termsStyle}>{termsMD}</Markdown>
           <Markdown style={privacyStyle}>{privacyMD}</Markdown>
-          <View style={{ padding: 5, paddingTop: 20, paddingBottom: 20 }}>
+          <View style={{ padding: 5, paddingTop: 30, paddingBottom: 40, alignItems: 'center' }}>
             <RaisedTextButton
               onPress={agree}
               color={colors.hot}

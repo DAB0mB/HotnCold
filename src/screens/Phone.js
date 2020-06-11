@@ -20,76 +20,18 @@ const CountryPickerTheme = {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    maxHeight: Dimensions.get('window').height - (HEADER_HEIGHT * 2),
-  },
-  instructions: {
-    color: 'black',
-    textAlign: 'center',
-  },
-  inputsContainer: {
-    marginTop: 20,
-  },
-  countryPickerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    borderBottomWidth: 1,
-    borderBottomColor: 'black',
-  },
-  countryPicker: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  countryPickerArrow: {
-    color: 'black',
-  },
-  phoneContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignSelf: 'stretch',
-    marginTop: 10,
-  },
-  ccode: {
-    padding: 0,
-    marginRight: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: 'black',
-    height: 30,
-    minWidth: 50,
-    paddingTop: 5,
-  },
-  ccodeText: {
-    color: 'black',
-    fontSize: 15,
-    padding: 0,
-    minWidth: 50,
-  },
-  localPhone: {
-    padding: 0,
-    height: 30,
-    borderBottomWidth: 1,
-    borderBottomColor: 'black',
-    paddingTop: 5,
-  },
-  localPhoneText: {
-    fontSize: 15,
-    minWidth: 150,
-    padding: 0,
-    color: 'black',
-  },
-  smsNote: {
-    color: 'black',
-    alignSelf: 'flex-start',
-    marginTop: 10,
-    fontSize: 10,
-  },
+  container: { flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', maxHeight: Dimensions.get('window').height - (HEADER_HEIGHT * 2) },
+  instructions: { color: 'black', textAlign: 'center' },
+  inputsContainer: { marginTop: 20 },
+  countryPickerContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', alignSelf: 'stretch', borderBottomWidth: 1, borderBottomColor: 'black' },
+  countryPicker: { flex: 1, flexDirection: 'row', justifyContent: 'center' },
+  countryPickerArrow: { color: 'black' },
+  phoneContainer: { flexDirection: 'row', justifyContent: 'center', alignSelf: 'stretch', marginTop: 10 },
+  ccode: { padding: 0, marginRight: 10, borderBottomWidth: 1, borderBottomColor: 'black', height: 30, minWidth: 50, paddingTop: 5 },
+  ccodeText: { color: 'black', fontSize: 15, padding: 0, minWidth: 50 },
+  localPhone: { padding: 0, height: 30, borderBottomWidth: 1, borderBottomColor: 'black', paddingTop: 5 },
+  localPhoneText: { fontSize: 15, minWidth: 150, padding: 0, color: 'black' },
+  smsNote: { color: 'black', alignSelf: 'flex-start', marginTop: 10, fontSize: 10 },
 });
 
 export const $Phone = {};
