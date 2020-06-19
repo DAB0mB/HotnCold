@@ -4,16 +4,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import DotsLoader from './DotsLoader';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: 'silver',
-    margin: 10,
-  },
+  container: { flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
+  text: { color: 'silver', margin: 10 },
 });
 
 const Loader = ({ size, betweenSpace, bufferMs = 0, style = {}, text = 'Loading' }) => {

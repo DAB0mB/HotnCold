@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   listContent: { paddingBottom: 75 },
   itemRipple: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.lightGray, padding: 20 },
   itemImage: { width: 50, height: 50, resizeMode: 'contain' },
-  itemName: { marginBottom: 5, fontSize: 18, color: colors.ink, fontWeight: '500' },
+  itemName: { marginBottom: 5, fontSize: 18, color: colors.ink },
   itemText: { fontSize: 16 },
   itemLyrics: { paddingLeft: 15, flex: 1 },
   tapHereDiv: { position: 'absolute', right: 15, bottom: 55 },

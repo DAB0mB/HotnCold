@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
@@ -16,6 +17,7 @@ const Status = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={{ paddingHorizontal: 15, paddingTop: 15 }}>{moment(status.createdAt).fromNow()}</Text>
       <Text style={styles.text}>{status.text}</Text>
     </View>
   );

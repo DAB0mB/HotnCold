@@ -6,32 +6,13 @@ import { colors } from '../theme';
 export const BAR_HEIGHT = 50;
 
 const styles = StyleSheet.create({
-  container: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    height: BAR_HEIGHT,
-  },
-  content: {
-    flex: 1,
-    alignSelf: 'stretch',
-    alignItems: 'center',
-    position: 'relative',
-    flexDirection: 'row',
-  },
+  container: { paddingLeft: 20, paddingRight: 20, height: BAR_HEIGHT },
+  content: { flex: 1, alignSelf: 'stretch', alignItems: 'center', position: 'relative', flexDirection: 'row' },
 });
 
 const defaultStyles = StyleSheet.create({
-  container: {
-    borderWidth: 1,
-    borderTopColor: colors.lightGray,
-    borderBottomColor: colors.lightGray,
-    borderLeftColor: 'white',
-    borderRightColor: 'white',
-    backgroundColor: 'white',
-  },
-  content: {
-    alignItems: 'center',
-  },
+  container: { borderWidth: 1, borderTopColor: colors.lightGray, borderBottomColor: colors.lightGray, borderLeftColor: 'white', borderRightColor: 'white', backgroundColor: 'white' },
+  content: { alignItems: 'center' },
 });
 
 const inkStyles = StyleSheet.create({

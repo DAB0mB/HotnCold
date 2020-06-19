@@ -13,7 +13,7 @@ const winDims = Dimensions.get('window');
 const menuRect = { x: winDims.width, y: 0, width: 0, height: 0 };
 
 const styles = StyleSheet.create({
-  userAvatar: { width: 40, height: 40, resizeMode: 'contain' },
+  userAvatar: { borderRadius: 40, width: 40, height: 40, resizeMode: 'contain' },
   userName: { paddingLeft: 15, color: colors.ink, fontSize: 16, fontWeight: '900' },
   menuArrow: { backgroundColor: 'transparent', width: .1, height: .1 },
 });
