@@ -80,7 +80,7 @@ export const useSignUp = (args, {
 };
 
 export const useSignOut = ({ onCompleted = noop, onError = noop } = {}) => {
-  const [appState] = useAppState();
+  const [, setAppState] = useAppState();
   const cookie = useCookie();
   const client = useApolloClient();
   const [dissociateNotificationsToken] = mutations.dissociateNotificationsToken.use();
@@ -99,10 +99,7 @@ export const useSignOut = ({ onCompleted = noop, onError = noop } = {}) => {
       }),
     ]))
       .then(() => {
-      // Silently clear without triggering effects
-        for (const key in appState) {
-          delete appState[key];
-        }
+        setAppState({});
       })
       .then(onCompleted, onError);
   }, [client, cookie, onCompleted, onError]);
