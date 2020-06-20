@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import * as fragments from '../../graphql/fragments';
 import { compactOptions, useConst } from '../../utils';
@@ -21,6 +21,7 @@ const statuses = gql `
 `;
 
 statuses.use = (...args) => {
+  const [sessionStatuses, setSessionStatuses] = useState([]);
   const [limit = 12, options = {}] = compactOptions(2, args);
   const { data: { me } = {} } = mine.use();
   const myId = me?.id;
@@ -57,8 +58,28 @@ statuses.use = (...args) => {
     };
   }, [true]);
 
+  useEffect(() => {
+    const onStatusCreate = ({ operationName, data }) => {
+      if (operationName != 'CreateStatus') return;
+
+      const status = data.createStatus;
+
+      setSessionStatuses(statuses => [status, ...statuses]);
+    };
+
+    query.client.events.on('response', onStatusCreate);
+
+    return () => {
+      query.client.events.off('response', onStatusCreate);
+    };
+  }, [true]);
+
   return {
     ...query,
+    data: query.data && {
+      ...query.data,
+      statuses: [...sessionStatuses, ...query.data.statuses],
+    },
     fetchMore: useCallback((...args) => {
       if (!query.data) return;
       if (query.data.firstStatus?.id === query.data.statuses[query.data.statuses.length - 1]?.id) return;

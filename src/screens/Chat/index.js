@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import GiftedChat from '../../components/GiftedChat';
@@ -87,7 +87,7 @@ const Chat = () => {
   const [sendMessage] = mutations.sendMessage.use(chat?.id, {
     onError: alertError,
   });
-  const messages = useMemo(() => messagesQuery.data && messagesQuery.data.messages, [messagesQuery]);
+  const messages = messagesQuery.data?.messages;
 
   const onSend = useCallback((message) => {
     sendMessage(message);

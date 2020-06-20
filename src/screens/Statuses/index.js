@@ -1,6 +1,5 @@
-import { useApolloClient } from '@apollo/react-hooks';
 import moment from 'moment';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Text, View, FlatList, Image, StyleSheet } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 
@@ -31,38 +30,16 @@ const styles = StyleSheet.create({
 const getStatusKey = s => s.id;
 
 const Statuses = () => {
-  const [sessionStatuses, setSessionStatuses] = useState([]);
-  const apolloClient = useApolloClient();
   const baseNav = useNavigation(Base);
   const discoveryNav = useNavigation(Discovery);
   const alertError = useAlertError();
   const statusesQuery = queries.statuses.use({
     onError: alertError,
   });
-  const { statuses: queryStatuses = emptyArr } = statusesQuery.data || {};
-
-  const statuses = useMemo(() => {
-    return [...sessionStatuses, ...queryStatuses];
-  }, [sessionStatuses, queryStatuses]);
+  const { statuses = emptyArr } = statusesQuery.data || {};
 
   discoveryNav.useBackListener();
   useScreenFrame();
-
-  useEffect(() => {
-    const onStatusCreate = ({ operationName, data }) => {
-      if (operationName != 'CreateStatus') return;
-
-      const status = data.createStatus;
-
-      setSessionStatuses(statuses => [status, ...statuses]);
-    };
-
-    apolloClient.events.on('response', onStatusCreate);
-
-    return () => {
-      apolloClient.events.off('response', onStatusCreate);
-    };
-  }, [true]);
 
   const navToStatusChat = useCallback((status) => {
     baseNav.push('StatusChat', { status });

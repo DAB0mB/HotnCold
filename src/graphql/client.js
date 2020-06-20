@@ -121,11 +121,14 @@ import Observable from 'zen-observable';
 const emitLink = new ApolloLink((operation, forward) => new Observable((observable) => {
   forward(operation).subscribe({
     next(response) {
-      events.emit('response', {
-        operationName: operation.operationName,
-        variables: operation.variables,
-        data: response.data,
-      });
+      // Emit only successful responses
+      if (!response.errors) {
+        events.emit('response', {
+          operationName: operation.operationName,
+          variables: operation.variables,
+          data: response.data,
+        });
+      }
 
       observable.next(response);
     },
