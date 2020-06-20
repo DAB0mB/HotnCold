@@ -2,7 +2,7 @@
 
 ### Introduction
 
-Hot &amp; Cold App, Inc. (“Company” or “We” or “Us”) respect your privacy and are committed to protecting it through our compliance with this policy. This policy describes:
+Hot &amp; Cold App, Inc. (“Company” or “We” or “Us”) respects your privacy and is committed to protecting it through our compliance with this policy. This policy describes:
 
 - The types of information we may collect or that you may provide when you download, install, register with, access, or use the Hot &amp; Cold mobile application (the “App”).
 - Our practices for collecting, using, maintaining, protecting, and disclosing that information.
@@ -30,12 +30,11 @@ When you download, register with, or use this App, we may ask you provide inform
 
 This information includes:
 
-- Information that you provide by filling in forms in the App. We may also ask when you report a problem with the App.
+- Information that you provide by filling in forms in the App. Information we may also ask when you report a problem with the App.
 - Records and copies of your correspondence (including email addresses and phone numbers), if you contact us.
 - Your responses to surveys that we might ask you to complete for research purposes.
 - Details of transactions you carry out through the App and of the fulfillment of your orders. You may be required to provide financial information before placing an order through the App.
 - Your search queries on the App.
-- The name and location of venues at which you “check-in”.
 
 You may provide information to be published or displayed (“Posted”) on public areas of websites you access through the App (collectively, “User Contributions”). Your User Contributions are Posted and transmitted to others at your own risk. Please be aware that no security measures are perfect or impenetrable. Additionally, we cannot control the actions of third parties with whom you may choose to share your User Contributions. Therefore, we cannot and do not guarantee that your User Contributions will not be viewed by unauthorized persons.
 
@@ -45,7 +44,7 @@ When you download, access, and use the App, it may use technology to automatical
 
 - Usage Details. When you access and use the App, we may automatically collect certain details of your access to and use of the App, including traffic data, location data, logs, and other communication data and the resources that you access and use on or through the App.
 - Stored Information and Files. The App also may access metadata and other information associated with other files stored on your device. This may include, for example, photographs, audio and video clips, personal contacts, and address book information.
-- Location Information. This App collects real-time information about the location of your device. We do this in order to display your presence to other users at relevant venues “Heatmap”.
+- Location Information. This App may collect information about the location of your device. We do this in order to display the right “heatmap” of the area you’re currently at.
 - If you do not want us to collect this information do not download the App or delete it from your device. Note, however, that opting out of the App’s collection of location information will cause its location-based features to be disabled.
 
 ### Information Collection and Tracking Technologies
@@ -70,8 +69,6 @@ The usage information we collect helps us to improve our App and to deliver a be
 - Store information about your preferences, allowing us to customize our App according to your individual interests.
 - Speed up your searches.
 - Recognize you when you use the App.
-
-We use location information we collect to suggest the appropriate venues/areas for you, and then share your relative location to other users checked into the same location as you.
 
 We may also use your information to contact you about our own and third parties’ goods and services that may be of interest to you. We may use the information we collect to display advertisements to our advertisers’ target audiences. Even though we do not disclose your personal information for these purposes without your consent, if you click on or otherwise interact with an advertisement, the advertiser may assume that you meet its target criteria.
 
