@@ -12,19 +12,9 @@ import Header from './Header';
 const SocialContext = createContext();
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'column',
-    backgroundColor: 'white',
-    flex: 1,
-  },
-  router: {
-    flex: 1,
-  },
-  body: {
-    backgroundColor: 'white',
-    marginTop: 50,
-    flex: 1
-  },
+  container: { flexDirection: 'column', backgroundColor: 'white', flex: 1 },
+  router: { flex: 1 },
+  body: { backgroundColor: 'white', marginTop: 50, flex: 1 },
 });
 
 const Social = Base.create(({ navigation }) => {

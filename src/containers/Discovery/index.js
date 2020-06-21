@@ -21,15 +21,8 @@ import { $SideMenu } from './SideMenu';
 import ServiceRequired from './ServiceRequired';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    justifyContent: 'flex-end',
-  },
-  body: {
-    backgroundColor: 'white',
-    flex: 1
-  },
+  container: { flex: 1, backgroundColor: 'white', justifyContent: 'flex-end' },
+  body: { backgroundColor: 'white', flex: 1 },
 });
 
 export const $Discovery = {

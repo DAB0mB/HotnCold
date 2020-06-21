@@ -4,9 +4,7 @@ import { StyleSheet } from 'react-native';
 import SuperLoader from '../../components/Loader';
 
 const styles = StyleSheet.create({
-  loader: {
-    color: 'white',
-  },
+  loader: { color: 'white' },
 });
 
 const Loader = ({ children }) => {

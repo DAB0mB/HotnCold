@@ -15,44 +15,14 @@ import { noop } from '../../utils';
 import Base from '../Base';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-  },
-  menuItem: {
-    height: 50,
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingLeft: 20,
-  },
-  menuItemIcon: {
-    width: 30,
-    textAlign: 'left',
-  },
-  menuItemSeparator: {
-    height: 1,
-    flexDirection: 'row',
-  },
-  header: {
-    justifyContent: 'flex-end',
-  },
-  headerContent: {
-    padding: 40,
-    width: SuperSideMenu.defaultProps.openMenuOffset,
-    height: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatar: {
-    marginBottom: 10,
-    width: 90,
-    height: 90,
-  },
-  myName: {
-    color: 'white',
-    fontSize: 18,
-    textAlign: 'center',
-  },
+  container: { flex: 1, position: 'relative' },
+  menuItem: { height: 50, alignItems: 'center', flexDirection: 'row', paddingLeft: 20 },
+  menuItemIcon: { width: 30, textAlign: 'left' },
+  menuItemSeparator: { height: 1, flexDirection: 'row' },
+  header: { justifyContent: 'flex-end' },
+  headerContent: { padding: 40, width: SuperSideMenu.defaultProps.openMenuOffset, height: 200, alignItems: 'center', justifyContent: 'center' },
+  avatar: { marginBottom: 10, width: 90, height: 90 },
+  myName: { color: 'white', fontSize: 18, textAlign: 'center' },
   copyright: { margin: 10 },
   copyrightText: { fontSize: 12 },
 });

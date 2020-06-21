@@ -6,29 +6,9 @@ import { SERVICES } from '../../components/NativeGuard';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'white',
-    top: 0,
-    left: 0,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  text: {
-    fontSize: 15,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  customMessage: {
-    fontSize: 12,
-    textAlign: 'center',
-    marginTop: 10,
-    color: colors.cold,
-  }
+  container: { position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', backgroundColor: 'white', top: 0, left: 0, paddingLeft: 20, paddingRight: 20 },
+  text: { fontSize: 15, textAlign: 'center', marginBottom: 10 },
+  customMessage: { fontSize: 12, textAlign: 'center', marginTop: 10, color: colors.cold },
 });
 
 const mapServiceToServiceData = (service) => {

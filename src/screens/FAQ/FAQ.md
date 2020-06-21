@@ -1,32 +1,28 @@
 # FAQs
 
-### How can I find someone using the heatmap?
+### How can I find conversations using the heatmap?
 
-Use the map to check out nearby people who have dropped statuses within the last 4 hours. Move towards the hotspots and tap to see how many people are in a given area. You’ll see their profile icons and status updates right on the map.
+Use the map to check out nearby people who are having real-time conversations. Move towards the hotspots and tap to see popular discussions and how many people are chatting in a given area/topic. You’ll see their profile icons and status topics right on the map.
 
-### Does the heatmap or radar indicate my exact position in real time?
+### Does the heatmap indicate my exact position in real time?
 
-No, your exact location is never revealed nor does the heatmap or radar reveal the exact locations of other users. The heatmap and radar only indicate your general vicinity and will not provide specific distances.
+No, your exact location is never revealed nor does the heatmap reveal the exact locations of other users.
 
-### How do I interact with other profiles?
+### How do I interact with other people privately?
 
-If you find someone you’re interested in, simply tap their profile icon and send them a message.
+If you find someone you want to chat with, simply tap their profile icon and send them a message.
 
-### How does the “radar” feature work?
+### How do I post a status topic?
 
-Radar is a unique feature that allows you to see real-time status updates from people who are nearby. When the radar is on, you'll be able to discover new people, as well as be discovered. Press the big button and anyone who is currently active will appear on the screen.
+Use the big icon located on the bottom menu. Once you've created a status topic, you can drop it on the map.
 
-### How do I post a status?
+### How do I see the status topic that I posted?
 
-Use the status icon located in the top right corner. Once you've created a status, you can either drop it on the map, or use it with the radar feature.
-
-### How do I see the status that I posted?
-
-To see your status, just tap the menu bar in the top left corner and then tap your profile picture. The status you posted will pop up. You will also have access to your status via the map, if you dropped it.
+To see your status topic, just tap the icon that says “statuses” located on the bottom menu. The status topic you posted will show up, along with other statuses you’ve been recently active with. You will also have access to your status topic via the map, if you dropped it.
 
 ### What kind of notifications will I receive?
 
-Each time you receive a new message, a push notification will alert you and you’ll never miss another opportunity. By tapping on a notification, you can directly access someone’s profile or message.
+Right now, only push notifications from direct messages are available. In the near future a push notification will alert you also when a relevant status topic is dropped on the map, this way you’ll never miss another opportunity. By tapping on a notification, you can directly access someone’s profile or message.
 
 ### Where are my messages located?
 
@@ -40,6 +36,8 @@ We’re working on adding this option, but it is not available yet. There is zer
 
 We have several exciting features in the works. Here’s a preview of what we’re doing to enhance your experience:
 
+**Audio conversations**
+You’ll be able to use an audio option to join conversations and listen to others speak.  You can always still use text if you’re not comfortable with audio.
 
 **Meetups, featured Events, etc.**
 Soon, you’ll be able to post meetups, events, or other gatherings on the heatmap. Additionally, we’ll have sponsored venues and events listed on the heatmap to keep you aware of things that are going on in your city. You can check out these spots to see who’s there and what’s happening to help you decide if you want to attend.
@@ -52,7 +50,6 @@ Met someone you want to keep in touch with or explore a potential relationship? 
 
 **Mutual approvals before messaging**
 You can approve which users are allowed to message you. If you turn this feature on, a user will have to wave “Hello” first and wait for your approval before messaging you. Remember not to wait too long to respond if you’re interested in chatting because “Hello” waves expire within 4 hours.
-
 
 Want to see other features added? Let us know! You can send us an email at:
 

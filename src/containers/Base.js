@@ -9,10 +9,7 @@ import { NavigationProvider } from '../services/Navigation';
 import { StatusBarProvider } from '../services/StatusBar';
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    flex: 1,
-  },
+  container: { position: 'relative', flex: 1 },
 });
 
 const Base = ({ navigation }) => {
