@@ -19,8 +19,12 @@ markChatAsRead.use = (chatId, options = {}) => {
 
   const mutate = useCallback(() => {
     const chat = fragments.chat.read(client, chatId);
-    chat.unreadMessagesCount = 0;
-    fragments.chat.write(client, chat);
+
+    // In case we open a notification and chat doesn't exist in the cache yet
+    if (chat) {
+      chat.unreadMessagesCount = 0;
+      fragments.chat.write(client, chat);
+    }
 
     return superMutate();
   }, [
