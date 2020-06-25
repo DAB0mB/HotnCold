@@ -82,9 +82,8 @@ const Discovery = Base.create(({ navigation }) => {
   useAsyncEffect(function* () {
     if (!myQuery.called) return;
     if (myQuery.loading) return;
-    if (myQuery.error) return;
 
-    if (!myContract || !myContract.signed) {
+    if (myQuery.error || !myContract || !myContract.signed) {
       yield myQuery.client.clearStore();
 
       baseNav.terminalPush('Agreement', {}, [
