@@ -318,7 +318,7 @@ const Map = () => {
     return () => {
       apolloClient.events.off('response', onStatusCreate);
     };
-  }, [true]);
+  }, [me]);
 
   useTrap($Map, {
     loaded,

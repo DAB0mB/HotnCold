@@ -42,12 +42,8 @@ updateMyProfile.use = (defaultArgs = {}, defaultOptions = {}) => {
     return superMutate({
       update: (cache, mutation) => {
         if (mutation.error) return;
-        if (!me) return;
 
-        const recentMe = fragments.user.profile.read(cache, me.id);
-        fragments.user.profile.write(cache, {
-          ...recentMe, name, birthDate, occupation, bio, pictures
-        });
+        fragments.user.profile.write(cache, mutation.data.updateMyProfile);
       },
       variables: { name, birthDate, occupation, bio, pictures },
     });

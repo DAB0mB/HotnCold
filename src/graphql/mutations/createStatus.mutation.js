@@ -15,24 +15,9 @@ const createStatus = gql `
 `;
 
 createStatus.use = (text, options = {}) => {
-  const queries = require('../queries');
-
-  const { data: { me } = {} } = queries.mine.use();
   text = useMemo(() => text.replace(/\n+/g, ' '), [text]);
 
-  const [superMutate, mutation] = useMutation(createStatus, {
-    ...options,
-    update: useCallback((cache, mutation) => {
-      if (mutation.error) return;
-
-      const recentMe = fragments.user.profile.read(cache, me.id);
-      const status = mutation.data.createStatus;
-      fragments.status.write(cache, {
-        ...status,
-        author: recentMe,
-      });
-    }, [me]),
-  });
+  const [superMutate, mutation] = useMutation(createStatus, options);
 
   const mutate = useCallback((location) => {
     superMutate({
