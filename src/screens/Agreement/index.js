@@ -1,5 +1,5 @@
 import { useRobot } from 'hotncold-robot';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { TouchableWithoutFeedback, Text, View, ScrollView, StyleSheet, Image } from 'react-native';
 import { RaisedTextButton } from 'react-native-material-buttons';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -9,6 +9,7 @@ import Markdown, { hncMdStyles } from '../../components/Markdown';
 import Base from '../../containers/Base';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
+import { useAsyncCallback, sleep } from '../../utils';
 import privacyMD from './privacy.md';
 import termsMD from './terms.md';
 
@@ -41,7 +42,9 @@ const Agreement = () => {
 
   nav.useBackListener();
 
-  const agree = useCallback(() => {
+  const agree = useAsyncCallback(function* () {
+    yield sleep(500);
+
     nav.goBackOnceFocused();
   }, [true]);
 

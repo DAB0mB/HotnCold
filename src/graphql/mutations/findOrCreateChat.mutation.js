@@ -5,8 +5,8 @@ import { useCallback } from 'react';
 import * as fragments from '../fragments';
 
 const findOrCreateChat = gql `
-  mutation FindOrCreateChat($usersIds: [ID!]!) {
-    findOrCreateChat(usersIds: $usersIds) {
+  mutation FindOrCreateChat($recipientId: ID!) {
+    findOrCreateChat_2(recipientId: $recipientId) {
       ...Chat
     }
   }
@@ -14,23 +14,26 @@ const findOrCreateChat = gql `
   ${fragments.chat}
 `;
 
-findOrCreateChat.use = (_usersIds = [], defaultOptions = {}) => {
-  const [superMutate, mutation] = useMutation(findOrCreateChat, defaultOptions);
+findOrCreateChat.use = (_recipientId, options) => {
+  const [superMutate, mutation] = useMutation(findOrCreateChat, options);
 
-  const mutate = useCallback((usersIds = _usersIds, options = {}) => {
+  const mutate = useCallback((recipientId = _recipientId, options = {}) => {
     // Token should be stored via response.headers, see graphql/client.js
     return superMutate({
       update: (cache, mutation) => {
         if (mutation.error) return;
 
+        mutation.data.findOrCreateChat = mutation.data.findOrCreateChat_2;
+        delete mutation.data.findOrCreateChat_2;
+
         fragments.chat.write(cache, mutation.data.findOrCreateChat);
       },
-      variables: { usersIds },
+      variables: { recipientId },
       ...options,
     });
   }, [
     superMutate,
-    _usersIds,
+    _recipientId,
   ]);
 
   return [mutate, mutation];

@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { GiftedChat as _GiftedChat, Bubble, Send, Time, MessageText } from 'react-native-gifted-chat';
 
+import avatarPng from '../assets/avatar.png';
 import { colors } from '../theme';
 
 const adaptUser = (user) => ({
@@ -11,7 +12,7 @@ const adaptUser = (user) => ({
     return user.name;
   },
   get avatar() {
-    return user.avatar;
+    return user.avatar || avatarPng;
   },
 });
 
@@ -34,6 +35,10 @@ const normalizeUser = (user) => {
   user = { ...user };
   user.id = user._id;
   delete user._id;
+
+  if (user.avatar === avatarPng) {
+    user.avatar = null;
+  }
 
   return user;
 };
@@ -116,12 +121,21 @@ const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
     props.onSend(message);
   }, [props.onSend]);
 
+  const onPressAvatar = useCallback((user) => {
+    if (typeof props.onPressAvatar != 'function') return;
+
+    user = normalizeMessage(user);
+
+    props.onPressAvatar(user);
+  }, [props.onPressAvatar]);
+
   return (
     <_GiftedChat
       {...props}
       user={user}
       messages={messages}
       onSend={onSend}
+      onPressAvatar={onPressAvatar}
       renderBubble={renderBubble}
       renderSend={renderSend}
       renderTime={renderTime}

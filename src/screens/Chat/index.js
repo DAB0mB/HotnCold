@@ -7,8 +7,8 @@ import Social from '../../containers/Social';
 import * as mutations from '../../graphql/mutations';
 import * as queries from '../../graphql/queries';
 import * as subscriptions from '../../graphql/subscriptions';
-import { useMine } from '../../services/Auth';
 import { useAppState } from '../../services/AppState';
+import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
 import { useNavigation } from '../../services/Navigation';
 import Header from './Header';
@@ -28,7 +28,7 @@ const Chat = () => {
   const [markChatAsRead] = mutations.markChatAsRead.use(chat?.id);
   const [, setAppState] = useAppState();
 
-  const [findOrCreateChat] = mutations.findOrCreateChat.use([socialNav.getParam('recipientId')], {
+  const [findOrCreateChat] = mutations.findOrCreateChat.use(socialNav.getParam('recipientId'), {
     onCompleted: useCallback((data) => {
       if (!data) return;
 

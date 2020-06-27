@@ -1,12 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { useAlertError } from '../../services/DropdownAlert';
-import { useMine } from '../../services/Auth';
-import Loader from '../../components/Loader';
 import GiftedChat from '../../components/GiftedChat';
-import * as queries from '../../graphql/queries';
+import Loader from '../../components/Loader';
+import Base from '../../containers/Base';
 import * as mutations from '../../graphql/mutations';
+import * as queries from '../../graphql/queries';
+import { useMine } from '../../services/Auth';
+import { useAlertError } from '../../services/DropdownAlert';
+import { useNavigation } from '../../services/Navigation';
 
 const styles = StyleSheet.create({
   container: { flex: 1, position: 'relative' },
@@ -16,6 +18,7 @@ const styles = StyleSheet.create({
 const Chat = ({ chat }) => {
   const { me } = useMine();
   const alertError = useAlertError();
+  const baseNav = useNavigation(Base);
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
 
@@ -63,6 +66,12 @@ const Chat = ({ chat }) => {
     messagesQuery.fetchMore();
   }, [messagesQuery, setIsLoadingEarlier]);
 
+  const handleAvatarPress = useCallback((user) => {
+    baseNav.push('Profile', {
+      userId: user.id,
+    });
+  }, [baseNav]);
+
   if (!chat) {
     return (
       <View style={[styles.container, styles.loader]}>
@@ -80,6 +89,7 @@ const Chat = ({ chat }) => {
         onSend={onSend}
         loadEarlier={loadEarlier}
         isLoadingEarlier={isLoadingEarlier}
+        onPressAvatar={handleAvatarPress}
         keyboardShouldPersistTaps='never'
         scrollToBottom
       />
