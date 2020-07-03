@@ -7,11 +7,11 @@ import * as fragments from '../fragments';
 const createStatus = gql `
   mutation CreateStatus($text: String!, $location: Vector2D!) {
     createStatus(text: $text, location: $location) {
-      ...Status
+      ...StatusItem
     }
   }
 
-  ${fragments.status}
+  ${fragments.status.item}
 `;
 
 createStatus.use = (text, options = {}) => {

@@ -62,7 +62,7 @@ const Discovery = Base.create(({ navigation }) => {
       notifications.removeDeliveredNotification(notification.notificationId);
     }
 
-    const chatId = notification.data.chatId;
+    const { statusId, chatId, isThread } = notification.data;
 
     if (!chatId) return;
 
@@ -71,12 +71,17 @@ const Discovery = Base.create(({ navigation }) => {
     // We're already chatting with that person
     if (activeChat?.id === chatId) return;
 
-    baseNav.push('Social', {
-      $setInitialRouteState: {
-        routeName: 'Chat',
-        params: { chatId },
-      }
-    });
+    if (isThread) {
+      baseNav.push('StatusChat', { statusId });
+    }
+    else {
+      baseNav.push('Social', {
+        $setInitialRouteState: {
+          routeName: 'Chat',
+          params: { chatId },
+        }
+      });
+    }
   }, [baseNav, appState]);
 
   useAsyncEffect(function* () {

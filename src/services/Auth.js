@@ -63,12 +63,9 @@ export const useSignUp = (args, {
   const [createUser] = mutations.createUser.use(args, {
     ...options,
     onCompleted: useCallback((data) => {
-      const removeListener = client.subscription.onConnected(() => {
-        removeListener();
-        onCompleted(data?.createUser);
-      });
-
+      // Note: subscription.onConnected() listener isn't fired consistently
       client.subscription.connect();
+      onCompleted(data?.createUser);
     }, [client, onCompleted]),
   });
 
@@ -89,14 +86,8 @@ export const useSignOut = ({ onCompleted = noop, onError = noop } = {}) => {
     return dissociateNotificationsToken().then(() => Promise.all([
       cookie.clear(),
       client.clearStore(),
-      new Promise((resolve) => {
-        const removeListener = client.subscription.onDisconnected(() => {
-          removeListener();
-          resolve();
-        });
-
-        client.subscription.close();
-      }),
+      // Note: subscription.onDisconnected() listener isn't fired consistently
+      client.subscription.close(),
     ]))
       .then(() => {
         setAppState({});

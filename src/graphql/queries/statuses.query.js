@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import * as fragments from '../../graphql/fragments';
 import { compactOptions, useConst } from '../../utils';
@@ -9,19 +9,18 @@ import mine from './mine.query';
 const statuses = gql `
   query Statuses($limit: Int!, $anchor: ID) {
     statuses(limit: $limit, anchor: $anchor) {
-      ...Status
+      ...StatusItem
     }
 
     firstStatus {
-      ...Status
+      ...StatusItem
     }
   }
 
-  ${fragments.status}
+  ${fragments.status.item}
 `;
 
 statuses.use = (...args) => {
-  const [sessionStatuses, setSessionStatuses] = useState([]);
   const [limit = 12, options = {}] = compactOptions(2, args);
   const { data: { me } = {} } = mine.use();
   const myId = me?.id;
@@ -62,24 +61,50 @@ statuses.use = (...args) => {
     const onStatusCreate = ({ operationName, data }) => {
       if (operationName != 'CreateStatus') return;
 
-      const status = data.createStatus;
+      const status = {
+        ...data.createStatus,
+        chat: {
+          id: data.createStatus.chat.id,
+          subscribed: false,
+        },
+      };
 
-      setSessionStatuses(statuses => [status, ...statuses]);
+      query.client.writeQuery({
+        query: statuses,
+        variables: { limit },
+        data: {
+          ...query.data,
+          statuses: [status, ...query.data.statuses],
+        },
+      });
+    };
+
+    const onChatSubscriptionChange = ({ operationName, data, variables }) => {
+      if (operationName != 'ToggleChatSubscription') return;
+
+      const status = query.data.statuses.find(s => s.chat.id === variables.chatId);
+      const subscriptionState = data.toggleChatSubscription;
+
+      fragments.status.item.write(query.client, {
+        ...status,
+        chat: {
+          ...status.chat,
+          subscribed: subscriptionState,
+        },
+      });
     };
 
     query.client.events.on('response', onStatusCreate);
+    query.client.events.on('response', onChatSubscriptionChange);
 
     return () => {
       query.client.events.off('response', onStatusCreate);
+      query.client.events.off('response', onChatSubscriptionChange);
     };
-  }, [true]);
+  }, [query.data]);
 
   return {
     ...query,
-    data: query.data && {
-      ...query.data,
-      statuses: [...sessionStatuses, ...query.data.statuses],
-    },
     fetchMore: useCallback((...args) => {
       if (!query.data) return;
       if (query.data.firstStatus?.id === query.data.statuses[query.data.statuses.length - 1]?.id) return;

@@ -18,13 +18,12 @@ const styles = StyleSheet.create({
   menuArrow: { backgroundColor: 'transparent', width: .1, height: .1 },
 });
 
-const Header = ({ chat }) => {
+const Header = ({ status }) => {
   const baseNav = useNavigation(Base);
-  const status = baseNav.getParam('status');
   const menuState = useState(false);
   const menuIconRef = useRef();
   const [, setMenuVisible] = menuState;
-  const { author } = status;
+  const { author, chat } = status || {};
 
   baseNav.useBackListener();
 
@@ -68,12 +67,14 @@ const Header = ({ chat }) => {
         </View>
       </TouchableWithoutFeedback>
 
-      <TouchableWithoutFeedback onPress={navToProfile}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image style={styles.userAvatar} source={getUserAvatarSource(author)} />
-          <Text style={styles.userName}>{author.name}</Text>
-        </View>
-      </TouchableWithoutFeedback>
+      {author && (
+        <TouchableWithoutFeedback onPress={navToProfile}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image style={styles.userAvatar} source={getUserAvatarSource(author)} />
+            <Text style={styles.userName}>{author.name}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
 
       <TouchableWithoutFeedback onPress={showMenu}>
         <View ref={menuIconRef} style={{ position: 'absolute', right: 0 }}>

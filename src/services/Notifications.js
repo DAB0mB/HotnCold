@@ -80,7 +80,7 @@ export const handleMessage = async (message) => {
       .android.setChannelId(message.channelId)
       // Taken from Android's res/drawable/icon
       .android.setSmallIcon('notification')
-      .android.setLargeIcon(message.payload.largeIcon);
+      .android.setLargeIcon(message.payload.largeIcon || 'avatar');
   }
 
   if (Platform.OS == 'ios') {

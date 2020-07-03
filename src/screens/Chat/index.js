@@ -116,17 +116,23 @@ const Chat = () => {
   useEffect(() => {
     if (!chat) return;
 
-    setAppState(appState => ({
-      ...appState,
-      activeChat: chat,
-    }));
+    let recentActiveChat;
+
+    setAppState(appState => {
+      recentActiveChat = appState.activeChat;
+
+      return {
+        ...appState,
+        activeChat: chat,
+      };
+    });
 
     return () => {
       setAppState((appState) => {
-        appState = { ...appState };
-        delete appState.activeChat;
-
-        return appState;
+        return {
+          ...appState,
+          activeChat: recentActiveChat,
+        };
       });
     };
   }, [chat?.id]);

@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import * as fragments from '../fragments';
 
 const markChatAsRead = gql `
-  mutation markChatAsRead($chatId: ID!) {
+  mutation MarkChatAsRead($chatId: ID!) {
     markChatAsRead(chatId: $chatId)
   }
 `;
