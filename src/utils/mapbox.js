@@ -1,36 +1,25 @@
-export const mapfn = new Proxy((scopeFn) => {
-  return scopeFn(mapfn);
-}, {
-  get(target, p) {
-    const { snakeCase } = require('.');
+// Custom Mapbox Expressions
+export const mapx = (x, ...args) => {
+  switch (x) {
+  case 'get_deep': {
+    const [path] = args;
 
-    switch (p) {
-    case 'getDeep':
-      return (path) => path.split('.').reduce((children, prop) => ['get', prop, children].filter(Boolean), '');
-    case 'not': p = '!'; break;
-    case 'neq': p = '!='; break;
-    case 'eq': p = '=='; break;
-    case 'lt': p = '<'; break;
-    case 'lte': p = '<='; break;
-    case 'gt': p = '>'; break;
-    case 'gte': p = '>='; break;
-    case 'add': p = '+'; break;
-    case 'sub': p = '-'; break;
-    case 'mul': p = '*'; break;
-    case 'div': p = '/'; break;
-    case 'pow': p = '^'; break;
-    case 'mod': p = '%'; break;
-    default: p = snakeCase(p);
-    }
+    return path.split('.').reduce((children, prop) => ['get', prop, children].filter(Boolean), '');
+  }
+  case 'not': x = '!'; break;
+  case 'neq': x = '!='; break;
+  case 'eq': x = '=='; break;
+  case 'lt': x = '<'; break;
+  case 'lte': x = '<='; break;
+  case 'gt': x = '>'; break;
+  case 'gte': x = '>='; break;
+  case 'add': x = '+'; break;
+  case 'sub': x = '-'; break;
+  case 'mul': x = '*'; break;
+  case 'div': x = '/'; break;
+  case 'pow': x = '^'; break;
+  case 'mod': x = '%'; break;
+  }
 
-    return (...args) => [p, ...args];
-  },
-});
-
-export const maparg = new Proxy({}, {
-  get(target, p) {
-    const { snakeCase } = require('.');
-
-    return [snakeCase(p)];
-  },
-});
+  return [x, ...args];
+};

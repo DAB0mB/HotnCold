@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { ART } from 'react-native';
-
-const { Shape, Path } = ART;
+import { Shape, Path } from '@react-native-community/art';
 
 class Circle extends React.PureComponent {
   static propTypes = {

@@ -15,7 +15,7 @@ import { useScreenFrame } from '../../services/Frame';
 import { useLoading } from '../../services/Loading';
 import { useNavigation } from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
-import { maparg, mapfn, useRenderer, useAsyncCallback, useAsyncEffect } from '../../utils';
+import { mapx, useRenderer, useAsyncCallback, useAsyncEffect } from '../../utils';
 
 const AVATAR_SIZE = .19;
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
@@ -43,16 +43,16 @@ const styles = StyleSheet.create({
 const mapStyles = {
   heatmap: {
     heatmapRadius: 15,
-    heatmapWeight: mapfn.getDeep('status.weight'),
-    heatmapIntensity: mapfn.interpolate(
-      maparg.linear,
-      maparg.zoom,
+    heatmapWeight: mapx('get_deep', 'status.weight'),
+    heatmapIntensity: mapx('interpolate',
+      mapx('linear'),
+      mapx('zoom'),
       7, 0,
       15, .5,
     ),
-    heatmapColor: mapfn.interpolate(
-      maparg.linear,
-      maparg.heatmapDensity,
+    heatmapColor: mapx('interpolate',
+      mapx('linear'),
+      mapx('heatmapDensity'),
       0, 'rgba(0, 0, 0, 0)',
       0.1, 'rgba(0, 0, 0, 0)',
 
@@ -72,24 +72,24 @@ const mapStyles = {
     ),
   },
   marker: {
-    iconSize: mapfn.interpolate(
-      maparg.linear,
-      maparg.zoom,
+    iconSize: mapx('interpolate',
+      mapx('linear'),
+      mapx('zoom'),
       MIN_INTER_ZOOM, .5 / MIN_ICON_DIV,
       MAX_INTER_ZOOM, .5,
     ),
-    iconImage: mapfn.get('marker'),
+    iconImage: mapx('get', 'marker'),
     iconAnchor: 'bottom',
     iconAllowOverlap: true,
   },
   avatar: {
-    iconSize: mapfn.interpolate(
-      maparg.linear,
-      maparg.zoom,
+    iconSize: mapx('interpolate',
+      mapx('linear'),
+      mapx('zoom'),
       MIN_INTER_ZOOM, AVATAR_SIZE / MIN_ICON_DIV,
       MAX_INTER_ZOOM, AVATAR_SIZE,
     ),
-    iconImage: mapfn.get('image'),
+    iconImage: mapx('get', 'image'),
     iconAnchor: 'bottom',
     iconOffset: [0, -AVATAR_MARGIN],
     iconAllowOverlap: true,
@@ -97,7 +97,7 @@ const mapStyles = {
   name: {
     textColor: colors.ink,
     textHaloColor: 'white',
-    textField: mapfn.getDeep('status.author.name'),
+    textField: mapx('get_deep', 'status.author.name'),
     textAnchor: 'top',
     textSize: 16,
     textHaloWidth: 1,

@@ -52,7 +52,7 @@ const DatePickerPlatform = Platform.OS == 'android' ? DatePickerAndroid : DatePi
 const DatePicker = ({
   visibleState: [visibleState, setVisibleState],
   onConfirm,
-  ...props,
+  ...props
 }) => {
   const mountState = useMountState();
   const [date, setDate] = useState(props.date);

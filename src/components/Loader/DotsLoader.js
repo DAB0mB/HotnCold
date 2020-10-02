@@ -1,13 +1,12 @@
 // Source: https://github.com/wangdicoder/react-native-indicator/blob/master/lib/loader/DotsLoader.js
 
+import { Surface } from '@react-native-community/art';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Animated, ART } from 'react-native';
+import { Animated } from 'react-native';
 
 import { colors } from '../../theme';
 import AnimatedCircle from './AnimatedCircle';
-
-const { Surface } = ART;
 
 export default class DotsLoader extends React.PureComponent {
   static propTypes = {
@@ -41,9 +40,15 @@ export default class DotsLoader extends React.PureComponent {
         Animated.timing(self.state.scales[i], {
           toValue: 1,
           duration: 300,
-          delay: (i + 1) * 200
+          delay: (i + 1) * 200,
+          useNativeDriver: false,
         }),
-        Animated.timing(self.state.scales[i], { toValue: 0, duration: 300, delay: 50 })
+        Animated.timing(self.state.scales[i], {
+          toValue: 0,
+          duration: 300,
+          delay: 50,
+          useNativeDriver: false,
+        })
       ]);
     }
 

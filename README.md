@@ -10,6 +10,17 @@ Configure the following services:
 - [Firebase](firebase.google.com).
 - [Hot&Cold Server](https://github.com/DAB0mB/HotnCold-server).
 
+Add the following fields to `gradle.properties`:
+
+    # See the following guide for further info: https://reactnative.dev/docs/signed-apk-android.html
+    MYAPP_RELEASE_STORE_FILE
+    MYAPP_RELEASE_KEY_ALIAS
+    MYAPP_RELEASE_STORE_PASSWORD
+    MYAPP_RELEASE_KEY_PASSWORD
+    android.useAndroidX=true
+    android.enableJetifier=true
+    FLIPPER_VERSION=0.37.0
+
 If you're developing for iOS, from XCode, go to `product > schema > edit schema > build (hotncold) > pre-actions' and add the following script:
 
 ```sh
