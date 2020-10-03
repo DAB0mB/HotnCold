@@ -52,7 +52,7 @@ const mapStyles = {
     ),
     heatmapColor: mapx('interpolate',
       mapx('linear'),
-      mapx('heatmapDensity'),
+      mapx('heatmap-density'),
       0, 'rgba(0, 0, 0, 0)',
       0.1, 'rgba(0, 0, 0, 0)',
 

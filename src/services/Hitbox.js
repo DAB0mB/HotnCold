@@ -121,7 +121,7 @@ export const Hitbox = ({ viewStyle, transform, onPress, children, Touchable = To
   }), [true]);
 
   const onLayout = useCallback(() => {
-    hitboxRef.current.measure(Animated.event([null, null, layout.width, layout.height]));
+    hitboxRef.current.measure(Animated.event([new Animated.Value(0), new Animated.Value(0), layout.width, layout.height], { useNativeDriver: false }));
   }, [true]);
 
   useLayoutEffect(() => {
@@ -129,7 +129,7 @@ export const Hitbox = ({ viewStyle, transform, onPress, children, Touchable = To
 
     hitboxRef.current.measureLayout(
       findNodeHandle(container.ref.current),
-      Animated.event([layout.x, layout.y])
+      Animated.event([layout.x, layout.y], { useNativeDriver: false })
     );
   }, [container.x, container.y, container.width, container.height]);
 

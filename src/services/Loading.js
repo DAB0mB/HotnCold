@@ -41,6 +41,7 @@ export const LoadingProvider = ({ LoaderComponent = Loader, containerStyle = {},
       {
         toValue: 0,
         duration: 333,
+        useNativeDriver: true,
       }
     ).start(() => {
       if (index == indexRef.current) {

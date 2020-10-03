@@ -5,7 +5,7 @@ import { RaisedTextButton } from 'react-native-material-buttons';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../../components/Bar';
-import Markdown, { hncMdStyles } from '../../components/Markdown';
+import Markdown from '../../components/Markdown';
 import Base from '../../containers/Base';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
@@ -19,18 +19,6 @@ const styles = StyleSheet.create({
   logo: { height: 25, marginLeft: 'auto', marginRight: 'auto', resizeMode: 'contain' },
   agreeButton: { margin: 30, alignSelf: 'center', backgroundColor: colors.hot, borderRadius: 999, borderColor: 'white' },
   copyrights: { fontSize: 12, marginBottom: 10 },
-});
-
-const termsStyle = StyleSheet.create({
-  ...hncMdStyles,
-  listUnorderedItemIcon: {
-    ...hncMdStyles.listOrderedItemIcon,
-    color: colors.lightGray,
-  },
-});
-
-const privacyStyle = StyleSheet.create({
-  ...hncMdStyles,
 });
 
 export const $Agreement = {};
@@ -54,7 +42,7 @@ const Agreement = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.body}>
+      <ScrollView>
         <Bar style={styles.header}>
           <Image source={require('../../assets/logo_light.png')} style={styles.logo} />
 
@@ -67,8 +55,8 @@ const Agreement = () => {
           )}
         </Bar>
         <View style={{ paddingLeft: 15, paddingRight: 15 }}>
-          <Markdown style={termsStyle}>{termsMD}</Markdown>
-          <Markdown style={privacyStyle}>{privacyMD}</Markdown>
+          <Markdown>{termsMD}</Markdown>
+          <Markdown>{privacyMD}</Markdown>
           <View style={{ padding: 5, paddingTop: 30, paddingBottom: 40, alignItems: 'center' }}>
             <RaisedTextButton
               onPress={agree}
@@ -77,7 +65,7 @@ const Agreement = () => {
               titleColor='white'
             />
           </View>
-          <Text style={[hncMdStyles.text, styles.copyrights]}>© Hot &amp; Cold App, Inc 2020</Text>
+          <Text style={styles.copyrights}>© Hot &amp; Cold App, Inc 2020</Text>
         </View>
       </ScrollView>
     </View>

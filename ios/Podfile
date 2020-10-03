@@ -39,6 +39,7 @@ target 'hotncold' do
   pod 'react-native-config', :path => '../node_modules/react-native-config'
   pod 'react-native-gps-state', :path => '../node_modules/react-native-gps-state'
   pod 'react-native-simple-toast', :path => '../node_modules/react-native-simple-toast'
+  pod 'RNCClipboard', :path => '../node_modules/@react-native-community/clipboard'
 
   # Additional node_modules
   pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'

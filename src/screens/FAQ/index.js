@@ -3,7 +3,7 @@ import { TouchableWithoutFeedback, Text, View, ScrollView, StyleSheet, Image } f
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Bar from '../../components/Bar';
-import Markdown, { hncMdStyles } from '../../components/Markdown';
+import Markdown from '../../components/Markdown';
 import Base from '../../containers/Base';
 import { useNavigation } from '../../services/Navigation';
 import { colors } from '../../theme';
@@ -34,8 +34,8 @@ const FAQ = () => {
           </TouchableWithoutFeedback>
         </Bar>
         <View style={{ paddingLeft: 15, paddingRight: 15 }}>
-          <Markdown style={hncMdStyles}>{faqMD}</Markdown>
-          <Text style={[hncMdStyles.text, styles.copyrights]}>© Hot &amp; Cold App, Inc 2020</Text>
+          <Markdown>{faqMD}</Markdown>
+          <Text style={styles.copyrights}>© Hot &amp; Cold App, Inc 2020</Text>
         </View>
       </ScrollView>
     </View>

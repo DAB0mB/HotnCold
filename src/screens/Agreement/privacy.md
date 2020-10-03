@@ -18,8 +18,8 @@ The App is not intended for children under 18 years of age, and we do not knowin
 
 We collect information from and about users of our App:
 
-\- Directly from you when you provide it to us.
-\- Automatically when you use the App.
+- Directly from you when you provide it to us.
+- Automatically when you use the App.
 
 ### Information You Provide to Us
 
@@ -113,5 +113,5 @@ You are responsible for ensuring we have an up-to-date active and deliverable em
 
 To ask questions or comment about this privacy policy and our privacy practices, contact us at:
 
-\- [emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan), or
-\- [sksoliman@gmail.com](mailto:sksoliman@gmail.com) (Sherry)
+[emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan), or
+[sksoliman@gmail.com](mailto:sksoliman@gmail.com) (Sherry)

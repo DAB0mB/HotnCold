@@ -140,3 +140,7 @@ export const compactOptions = (length, args) => {
 
   return createRange(length).map(index => args[index]);
 };
+
+export const nextFrame = () => {
+  return new Promise(resolve => requestAnimationFrame(resolve));
+};

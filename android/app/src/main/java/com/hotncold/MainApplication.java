@@ -8,6 +8,7 @@ import com.facebook.react.ReactInstanceManager;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.hotncold.patches.ReactNativeWheelPickerPackage;
 import com.mapbox.rctmgl.RCTMGLPackage;
+import com.reactnativecommunity.clipboard.ClipboardPackage;
 import com.reactnativecommunity.art.ARTPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new ClipboardPackage(),
           new SplashScreenReactPackage(),
           new ReactNativeWheelPickerPackage(),
           new RCTMGLPackage(),

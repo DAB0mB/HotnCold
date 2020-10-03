@@ -17,19 +17,24 @@ export default class Hamburger extends Component {
   spinCross() {
     if (!this.state.active) {
       Animated.spring(this.containerAnim, {
-        toValue: 1
+        toValue: 1,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.topBar, {
-        toValue: .9
+        toValue: .9,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBar, {
-        toValue: .9
+        toValue: .9,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBarMargin, {
-        toValue: -10
+        toValue: -10,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.middleBarOpacity, {
         toValue: 0,
+        useNativeDriver: false,
         duration: 30
       }).start();
     }
@@ -38,19 +43,24 @@ export default class Hamburger extends Component {
         active: false
       });
       Animated.spring(this.containerAnim, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.topBar, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBar, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBarMargin, {
-        toValue: 4
+        toValue: 4,
+        useNativeDriver: false,
       }).start();
       Animated.timing(this.middleBarOpacity, {
         toValue: 1,
+        useNativeDriver: false,
         duration: 600
       }).start();
     }
@@ -59,16 +69,20 @@ export default class Hamburger extends Component {
   cross() {
     if (!this.state.active) {
       Animated.spring(this.topBar, {
-        toValue: .9
+        toValue: .9,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBar, {
-        toValue: .9
+        toValue: .9,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBarMargin, {
-        toValue: -10
+        toValue: -10,
+        useNativeDriver: false,
       }).start();
       Animated.timing(this.middleBarOpacity, {
         toValue: 0,
+        useNativeDriver: false,
         duration: 30
       }).start();
     }
@@ -77,16 +91,20 @@ export default class Hamburger extends Component {
         active: false
       });
       Animated.spring(this.topBar, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBar, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBarMargin, {
-        toValue: 4
+        toValue: 4,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.middleBarOpacity, {
         toValue: 1,
+        useNativeDriver: false,
         duration: 1200
       }).start();
     }
@@ -96,48 +114,62 @@ export default class Hamburger extends Component {
   spinArrow() {
     if (!this.state.active) {
       Animated.spring(this.containerAnim, {
-        toValue: 1
+        toValue: 1,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.topBar, {
-        toValue: 1
+        toValue: 1,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBar, {
-        toValue: 1
+        toValue: 1,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.width, {
-        toValue: 14
+        toValue: 14,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.marginLeft, {
-        toValue: -13
+        toValue: -13,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBarMargin, {
-        toValue: 2
+        toValue: 2,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.topBarMargin, {
-        toValue: -2
+        toValue: -2,
+        useNativeDriver: false,
       }).start();
     }
     else {
       Animated.spring(this.containerAnim, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.topBar, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBar, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.width, {
-        toValue: 25
+        toValue: 25,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.marginLeft, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBarMargin, {
-        toValue: 4
+        toValue: 4,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.topBarMargin, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
     }
   }
@@ -145,22 +177,28 @@ export default class Hamburger extends Component {
   arrow() {
     if (!this.state.active) {
       Animated.spring(this.topBar, {
-        toValue: 1
+        toValue: 1,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBar, {
-        toValue: 1
+        toValue: 1,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.width, {
-        toValue: 14
+        toValue: 14,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.marginLeft, {
-        toValue: -13
+        toValue: -13,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBarMargin, {
-        toValue: 2
+        toValue: 2,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.topBarMargin, {
-        toValue: -2
+        toValue: -2,
+        useNativeDriver: false,
       }).start();
     }
     else {
@@ -168,22 +206,28 @@ export default class Hamburger extends Component {
         active: false
       });
       Animated.spring(this.topBar, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBar, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.width, {
-        toValue: 25
+        toValue: 25,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.marginLeft, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.bottomBarMargin, {
-        toValue: 4
+        toValue: 4,
+        useNativeDriver: false,
       }).start();
       Animated.spring(this.topBarMargin, {
-        toValue: 0
+        toValue: 0,
+        useNativeDriver: false,
       }).start();
     }
   }

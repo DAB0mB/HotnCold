@@ -77,8 +77,8 @@ export const useImmediate = () => {
   return [_setImmediate, _clearImmediate];
 };
 
-export const useMountState = () => {
-  const mountState = useRef(true);
+export const useMountState = (initial = true) => {
+  const mountState = useRef(initial);
 
   useEffect(() => {
     return () => {
@@ -122,7 +122,6 @@ const createAsyncEffectHook = (useEffect) => (fn, input) => {
 
   useEffect(() => {
     cbQueueRef.current = [];
-    setResult(null);
 
     const iterator = fn(onCleanup);
 
@@ -135,26 +134,25 @@ const createAsyncEffectHook = (useEffect) => (fn, input) => {
   useEffect(() => {
     if (!result) return;
 
-    let mounted = true;
+    let alive = true;
 
     if (result.value instanceof Promise) {
       result.value.then((value) => {
-        if (mounted) {
+        if (alive) {
           next(value);
         }
       }).catch((error) => {
-        if (mounted) {
+        if (alive) {
           throwback(error);
         }
       });
-
-      return;
+    }
+    else {
+      next(result.value);
     }
 
-    next(result.value);
-
     return () => {
-      mounted = false;
+      alive = false;
     };
   }, [result]);
 };
@@ -162,13 +160,17 @@ export const useAsyncEffect = createAsyncEffectHook(useEffect);
 export const useAsyncLayoutEffect = createAsyncEffectHook(useLayoutEffect);
 
 export const useAsyncCallback = (fn, input) => {
-  const mountState = useMountState(true);
+  const aliveRef = useRef(true);
+
+  useEffect(() => () => {
+    aliveRef.current = false;
+  }, [true]);
 
   return useCallback(async (...args) => {
     const iterator = fn(...args);
     let result = { value: undefined, done: false };
 
-    while (!result.done && mountState.current) {
+    while (!result.done && aliveRef.current) {
       try {
         if (result.value instanceof Promise) {
           result = iterator.next(await result.value);
@@ -178,7 +180,7 @@ export const useAsyncCallback = (fn, input) => {
         }
       }
       catch (e) {
-        if (mountState.current) {
+        if (aliveRef.current) {
           result = iterator.throw(e);
         }
       }

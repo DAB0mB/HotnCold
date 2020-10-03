@@ -1,0 +1,173 @@
+diff --git a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_action_menu_layout.xml b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_action_menu_layout.xml
+index 8dab475..31dc4b4 100644
+--- a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_action_menu_layout.xml
++++ b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_action_menu_layout.xml
+@@ -14,7 +14,7 @@
+      limitations under the License.
+ -->
+ 
+-<android.support.v7.widget.ActionMenuView
++<androidx.appcompat.widget.ActionMenuView
+         xmlns:android="http://schemas.android.com/apk/res/android"
+         xmlns:app="http://schemas.android.com/apk/res-auto"
+         android:layout_width="wrap_content"
+diff --git a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_alert_dialog_material.xml b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_alert_dialog_material.xml
+index 7bc5467..10d988a 100644
+--- a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_alert_dialog_material.xml
++++ b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_alert_dialog_material.xml
+@@ -127,7 +127,7 @@
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"/>
+ 
+-        <android.support.v4.widget.Space
++        <androidx.legacy.widget.Space
+                 android:layout_width="0dp"
+                 android:layout_height="0dp"
+                 android:layout_weight="1"
+diff --git a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_screen_toolbar.xml b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_screen_toolbar.xml
+index 9f4a3d2..53bf33f 100644
+--- a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_screen_toolbar.xml
++++ b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_screen_toolbar.xml
+@@ -33,7 +33,7 @@
+             android:touchscreenBlocksFocus="true"
+             android:gravity="top">
+ 
+-        <android.support.v7.widget.Toolbar
++        <androidx.appcompat.widget.Toolbar
+                 android:id="@+id/action_bar"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+diff --git a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_search_view.xml b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_search_view.xml
+index 6d24056..4532c6c 100644
+--- a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_search_view.xml
++++ b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_search_view.xml
+@@ -75,7 +75,7 @@
+                 android:layout_gravity="center_vertical"
+                 android:orientation="horizontal">
+ 
+-            <view class="android.support.v7.widget.SearchView$SearchAutoComplete"
++            <view class="androidx.appcompat.widget.SearchView$SearchAutoComplete"
+                   android:id="@+id/search_src_text"
+                   android:layout_height="36dip"
+                   android:layout_width="0dp"
+diff --git a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_action_menu_layout.xml b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_action_menu_layout.xml
+index 64ea567..e0a2058 100644
+--- a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_action_menu_layout.xml
++++ b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_action_menu_layout.xml
+@@ -14,7 +14,7 @@
+      limitations under the License.
+ -->
+ 
+-<android.support.v7.widget.ActionMenuView
++<androidx.appcompat.widget.ActionMenuView
+         xmlns:android="http://schemas.android.com/apk/res/android"
+         xmlns:app="http://schemas.android.com/apk/res-auto"
+         android:layout_width="wrap_content"
+diff --git a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml
+index ca0259b..67cf995 100644
+--- a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml
++++ b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml
+@@ -127,7 +127,7 @@
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"/>
+ 
+-        <android.support.v4.widget.Space
++        <androidx.legacy.widget.Space
+                 android:layout_width="0dp"
+                 android:layout_height="0dp"
+                 android:layout_weight="1"
+diff --git a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_screen_toolbar.xml b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_screen_toolbar.xml
+index 477d13b..6bebc5b 100644
+--- a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_screen_toolbar.xml
++++ b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_screen_toolbar.xml
+@@ -33,7 +33,7 @@
+             android:touchscreenBlocksFocus="true"
+             android:gravity="top">
+ 
+-        <android.support.v7.widget.Toolbar
++        <androidx.appcompat.widget.Toolbar
+                 android:id="@+id/action_bar"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+diff --git a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_search_view.xml b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_search_view.xml
+index 916d5c3..2702acb 100644
+--- a/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_search_view.xml
++++ b/node_modules/react-native-sortable-grid/example/android/app/build/intermediates/res/merged/debug/layout/abc_search_view.xml
+@@ -75,7 +75,7 @@
+                 android:layout_gravity="center_vertical"
+                 android:orientation="horizontal">
+ 
+-            <view class="android.support.v7.widget.SearchView$SearchAutoComplete"
++            <view class="androidx.appcompat.widget.SearchView$SearchAutoComplete"
+                   android:id="@+id/search_src_text"
+                   android:layout_height="36dip"
+                   android:layout_width="0dp"
+diff --git a/node_modules/react-native-sortable-grid/index.js b/node_modules/react-native-sortable-grid/index.js
+index 8759847..08af178 100644
+--- a/node_modules/react-native-sortable-grid/index.js
++++ b/node_modules/react-native-sortable-grid/index.js
+@@ -120,13 +120,13 @@ class SortableGrid extends Component {
+     return { deleteModeOn }
+   }
+ 
+-  componentWillMount = () => this.createTouchHandlers()
++  UNSAFE_componentWillMount = () => this.createTouchHandlers()
+ 
+   componentDidMount = () => this.handleNewProps(this.props)
+ 
+   componentWillUnmount = () => { if (this.tapTimer) clearTimeout(this.tapTimer) }
+ 
+-  componentWillReceiveProps = (properties) => this.handleNewProps(properties)
++  UNSAFE_componentWillReceiveProps = (properties) => this.handleNewProps(properties)
+ 
+   handleNewProps = (properties) => {
+     this._assignReceivedPropertiesIntoThis(properties)
+@@ -188,7 +188,8 @@ class SortableGrid extends Component {
+           this._getBlock(closest).currentPosition,
+           {
+             toValue: this._getActiveBlock().origin,
+-            duration: this.blockTransitionDuration
++            duration: this.blockTransitionDuration,
++            useNativeDriver: false,
+           }
+         ).start()
+         let blockPositions = this.state.blockPositions
+@@ -229,7 +230,7 @@ class SortableGrid extends Component {
+     return new Promise( (resolve, reject) => {
+       Animated.timing(
+         this.state.deleteBlockOpacity,
+-        { toValue: 0, duration: 2 * this.activeBlockCenteringDuration }
++        { toValue: 0, duration: 2 * this.activeBlockCenteringDuration, useNativeDriver: false }
+       ).start(resolve)
+     })
+   }
+@@ -239,7 +240,8 @@ class SortableGrid extends Component {
+       this._getBlock(blockIndex).currentPosition,
+       {
+         toValue: position,
+-        duration: this.blockTransitionDuration
++        duration: this.blockTransitionDuration,
++        useNativeDriver: false,
+       }
+     ).start()
+   }
+@@ -251,7 +253,8 @@ class SortableGrid extends Component {
+       activeBlockCurrentPosition,
+       {
+         toValue: this._getActiveBlock().origin,
+-        duration: this.activeBlockCenteringDuration
++        duration: this.activeBlockCenteringDuration,
++        useNativeDriver: false,
+       }
+     ).start()
+   }
+@@ -430,7 +433,8 @@ class SortableGrid extends Component {
+         this.state.gridHeight,
+         {
+           toValue: this.gridHeightTarget,
+-          duration: this.blockTransitionDuration
++          duration: this.blockTransitionDuration,
++          useNativeDriver: false,
+         }
+       ).start()
+     }

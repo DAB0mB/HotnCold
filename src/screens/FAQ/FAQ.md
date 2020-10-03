@@ -53,7 +53,7 @@ You can approve which users are allowed to message you. If you turn this feature
 
 Want to see other features added? Let us know! You can send us an email at:
 
-\- [emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan), or
-\- [sksoliman@gmail.com](mailto:sksoliman@gmail.com) (Sherry)
+[emanor6@gmail.com](mailto:emanor6@gmail.com) (Eytan), or
+[sksoliman@gmail.com](mailto:sksoliman@gmail.com) (Sherry)
 
 As always, we welcome your suggestions and feedback.

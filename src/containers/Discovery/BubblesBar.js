@@ -204,7 +204,8 @@ class BubblesBar extends Component {
       }),
       Animated.timing(this.animatedImageValues[index], {
         toValue: 1,
-        duration: 400
+        duration: 400,
+        useNativeDriver: false
       })
     ]).start();
   };
@@ -231,7 +232,8 @@ class BubblesBar extends Component {
       Animated.timing(this.animatedImageValues[index], {
         toValue: 0,
         duration: 200,
-        delay: 175
+        delay: 175,
+        useNativeDriver: false,
       })
     ]).start();
   };

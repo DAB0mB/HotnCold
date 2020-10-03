@@ -1,5 +1,5 @@
 import { useRobot } from 'hotncold-robot';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useLayoutEffect } from 'react';
 import { Alert, ScrollView, View, Text, ImageBackground, Image, Platform, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ripple from 'react-native-material-ripple';
@@ -47,7 +47,7 @@ const SideMenu = ({
   children,
 }) => {
   const { useTrap } = useRobot();
-  const [initialOpened, setInitialOpened] = useState(opened);
+  const [shouldRenderMenu, setShouldRenderMenu] = useState(opened);
   const [bgStyle, setBgStyle] = useState(Platform.OS == 'android' ? { width: 0 } : {});
   const { me, myContract } = useMine();
   const baseNav = useNavigation(Base);
@@ -108,7 +108,7 @@ const SideMenu = ({
     navToFAQ,
   });
 
-  const menu = (
+  const menu = shouldRenderMenu && (
     <View style={styles.container}>
       <ImageBackground style={[styles.header, bgStyle]} source={require('./sidemenu-background-blur.png')} onLoad={() => setBgStyle({})}>
         <LinearGradient colors={['rgba(0, 0, 0, .4)', 'rgba(0, 0, 0, .65)']}>
@@ -175,20 +175,23 @@ const SideMenu = ({
   );
 
   const onChange = useCallback((isOpen) => {
-    if (!initialOpened) {
-      setInitialOpened(true);
-    }
-
     if (isOpen) {
       onOpen();
     }
     else {
       onClose();
     }
-  }, [onClose, onOpen, initialOpened]);
+  }, [onClose, onOpen]);
+
+  useLayoutEffect(() => {
+    if (shouldRenderMenu) return;
+    if (!opened) return;
+
+    setShouldRenderMenu(true);
+  }, [shouldRenderMenu, opened]);
 
   return (
-    <SuperSideMenu disableGestures menu={initialOpened && menu} isOpen={opened} onChange={onChange}>
+    <SuperSideMenu disableGestures menu={menu} isOpen={opened} onChange={onChange}>
       {children}
     </SuperSideMenu>
   );

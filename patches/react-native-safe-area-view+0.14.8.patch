@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-safe-area-view/index.js b/node_modules/react-native-safe-area-view/index.js
+index 0792130..15e4c35 100644
+--- a/node_modules/react-native-safe-area-view/index.js
++++ b/node_modules/react-native-safe-area-view/index.js
+@@ -189,7 +189,7 @@ class SafeView extends Component {
+ 
+     const { width: WIDTH, height: HEIGHT } = getResolvedDimensions();
+ 
+-    this.view.getNode().measureInWindow((winX, winY, winWidth, winHeight) => {
++    this.view.measureInWindow((winX, winY, winWidth, winHeight) => {
+       if (!this.view) {
+         return;
+       }

@@ -1,0 +1,63 @@
+diff --git a/node_modules/react-native-material-buttons/src/components/button/index.js b/node_modules/react-native-material-buttons/src/components/button/index.js
+index d3d9088..3ace278 100644
+--- a/node_modules/react-native-material-buttons/src/components/button/index.js
++++ b/node_modules/react-native-material-buttons/src/components/button/index.js
+@@ -71,7 +71,7 @@ export default class Button extends PureComponent {
+       let { disableAnimation } = this.state;
+ 
+       Animated
+-        .timing(disableAnimation, { toValue: disabled? 1 : 0, duration })
++        .timing(disableAnimation, { toValue: disabled? 1 : 0, duration, useNativeDriver: false })
+         .start();
+     }
+   }
+@@ -93,6 +93,7 @@ export default class Button extends PureComponent {
+         toValue: focused? 1 : 0,
+         duration: focusAnimationDuration,
+         easing: Easing.out(Easing.ease),
++        useNativeDriver: false
+       })
+       .start();
+   }
+diff --git a/node_modules/react-native-material-buttons/src/components/raised-text-button/index.js b/node_modules/react-native-material-buttons/src/components/raised-text-button/index.js
+index 22ac30c..a7939d5 100644
+--- a/node_modules/react-native-material-buttons/src/components/raised-text-button/index.js
++++ b/node_modules/react-native-material-buttons/src/components/raised-text-button/index.js
+@@ -1,6 +1,6 @@
+ import PropTypes from 'prop-types';
+ import React, { PureComponent } from 'react';
+-import { Animated } from 'react-native';
++import { Animated, Text } from 'react-native';
+ 
+ import RaisedButton from '../raised-button';
+ import { styles } from './styles';
+@@ -16,7 +16,7 @@ export default class RaisedTextButton extends PureComponent {
+ 
+     title: PropTypes.string.isRequired,
+     titleColor: PropTypes.string,
+-    titleStyle: Animated.Text.propTypes.style,
++    titleStyle: Text.propTypes.style,
+     disabledTitleColor: PropTypes.string,
+   };
+ 
+diff --git a/node_modules/react-native-material-buttons/src/components/text-button/index.js b/node_modules/react-native-material-buttons/src/components/text-button/index.js
+index e8c13b6..3754b4e 100644
+--- a/node_modules/react-native-material-buttons/src/components/text-button/index.js
++++ b/node_modules/react-native-material-buttons/src/components/text-button/index.js
+@@ -1,6 +1,6 @@
+ import PropTypes from 'prop-types';
+ import React, { PureComponent } from 'react';
+-import { Animated } from 'react-native';
++import { Animated, Text } from 'react-native';
+ 
+ import Button from '../button';
+ import { styles } from './styles';
+@@ -21,7 +21,7 @@ export default class TextButton extends PureComponent {
+ 
+     title: PropTypes.string.isRequired,
+     titleColor: PropTypes.string,
+-    titleStyle: Animated.Text.propTypes.style,
++    titleStyle: Text.propTypes.style,
+     disabledTitleColor: PropTypes.string,
+   };
+ 
