@@ -11,6 +11,7 @@ import ProfileScreen from '../screens/Profile';
 import ProfileEditorScreen from '../screens/ProfileEditor';
 import AreaSearchScreen from '../screens/AreaSearch';
 import MessageEditorScreen from '../screens/MessageEditor';
+import UserLobbyScreen from '../screens/UserLobby';
 import Router from './Router';
 
 const handleCustomTransition = ({ scenes }) => {
@@ -56,6 +57,9 @@ const Base = Router.create({
   },
   Social: {
     screen: SocialContainer,
+  },
+  UserLobby: {
+    screen: UserLobbyScreen,
   },
 }, {
   transparentCard: true,

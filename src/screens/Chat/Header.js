@@ -23,8 +23,8 @@ const Header = ({ chat }) => {
 
   activeNav.useBackListener();
 
-  const navToProfile = useCallback(() => {
-    baseNav.push('Profile', {
+  const navToUserLobby = useCallback(() => {
+    baseNav.push('UserLobby', {
       user: recipient,
       isRecipient: true,
     });
@@ -56,7 +56,7 @@ const Header = ({ chat }) => {
         },
         Thumb({ children }) {
           return (
-            <TouchableWithoutFeedback onPress={navToProfile}>
+            <TouchableWithoutFeedback onPress={navToUserLobby}>
               {children}
             </TouchableWithoutFeedback>
           );

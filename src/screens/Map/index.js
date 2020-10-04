@@ -22,14 +22,14 @@ const LOCATION_UPDATE_INTERVAL = 60 * 1000;
 const DEFAULT_ZOOM = 15;
 const MIN_ICON_DIV = 2;
 const MAX_INTER_ZOOM = DEFAULT_ZOOM - 1;
-const MIN_INTER_ZOOM = DEFAULT_ZOOM - 3;
-const MIN_ZOOM = DEFAULT_ZOOM - 3;
+const MIN_INTER_ZOOM = DEFAULT_ZOOM - 6;
+const MIN_ZOOM = DEFAULT_ZOOM - 6;
 const AVATAR_MARGIN = 28 / AVATAR_SIZE;
 
 const defaultImages = {
   'cold-marker': require('../../assets/cold-marker.png'),
   'hot-marker': require('../../assets/hot-marker.png'),
-  'avatar': require('../../assets/avatar.png'),
+  'avatar': require('../../assets/statusThumb.png'),
 };
 
 const styles = StyleSheet.create({
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 
 const mapStyles = {
   heatmap: {
-    heatmapRadius: 15,
+    heatmapRadius: 25,
     heatmapWeight: mapx('get_deep', 'status.weight'),
     heatmapIntensity: mapx('interpolate',
       mapx('linear'),
@@ -94,17 +94,21 @@ const mapStyles = {
     iconOffset: [0, -AVATAR_MARGIN],
     iconAllowOverlap: true,
   },
-  name: {
-    textColor: colors.ink,
-    textHaloColor: 'white',
-    textField: mapx('get_deep', 'status.author.name'),
-    textAnchor: 'top',
-    textSize: 16,
-    textHaloWidth: 1,
-  },
 };
 
 export const $Map = {};
+
+const pluckImages = (features) => {
+  const images = {};
+
+  for (const feature of features) {
+    if (feature.properties.status.avatar) {
+      images[feature.properties.status.id] = { uri: feature.properties.status.avatar };
+    }
+  }
+
+  return images;
+};
 
 const Map = () => {
   const { me } = useMine();
@@ -143,13 +147,13 @@ const Map = () => {
           },
         };
 
+        feature.properties.image = status.avatar ? status.id : 'avatar';
+
         if (status.author.id == me.id) {
-          feature.properties.image = me.avatar ? me.id : 'avatar';
           feature.properties.marker = 'hot-marker';
           myFeatures.push(feature);
         }
         else {
-          feature.properties.image = status.author.avatar ? status.author.id : 'avatar';
           feature.properties.marker = 'cold-marker';
           theirFeatures.push(feature);
         }
@@ -165,25 +169,11 @@ const Map = () => {
   discoveryNav.useBackListener();
 
   const myImages = useMemo(() => {
-    const images = {};
-
-    if (me.avatar) {
-      images[me.id] = { uri: me.avatar };
-    }
-
-    return images;
-  }, [me.avatar]);
+    return pluckImages(myFeatures);
+  }, [myFeatures]);
 
   const theirImages = useMemo(() => {
-    const images = {};
-
-    for (const feature of theirFeatures) {
-      if (feature.properties.status.author.avatar) {
-        images[feature.properties.status.author.id] = { uri: feature.properties.status.author.avatar };
-      }
-    }
-
-    return images;
+    return pluckImages(theirFeatures);
   }, [theirFeatures]);
 
   const images = useMemo(() => ({
@@ -297,11 +287,14 @@ const Map = () => {
           },
           properties: {
             weight: 1,
-            image: me.avatar ? me.id : 'avatar',
+            image: status.avatar ? status.id : 'avatar',
             marker: 'hot-marker',
             status: {
               id: status.id,
               text: status.text,
+              thumb: status.thumb,
+              avatar: status.avatar,
+              firstImage: status.firstImage,
               author: {
                 id: me.id,
                 name: me.name,
@@ -371,13 +364,6 @@ const Map = () => {
             sourceID='areaFeatures'
             minZoomLevel={MIN_ZOOM}
             style={mapStyles.avatar}
-          />
-
-          <MapboxGL.SymbolLayer
-            id='areaFeaturesNames'
-            sourceID='areaFeatures'
-            minZoomLevel={MAX_INTER_ZOOM}
-            style={mapStyles.name}
           />
         </MapboxGL.ShapeSource>
 

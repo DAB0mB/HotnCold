@@ -10,6 +10,9 @@ const status = gql `
     location
     createdAt
     weight
+    thumb
+    avatar
+    firstImage
     author {
       ...User
     }
@@ -21,6 +24,7 @@ const status = gql `
 status.item = gql `
   fragment StatusItem on Status {
     ...Status
+    published
     chat {
       __nocache: __typename
       id
@@ -34,6 +38,7 @@ status.item = gql `
 status.withChat = gql `
   fragment StatusWithChat on Status {
     ...Status
+    published
     chat {
       ...Chat
     }

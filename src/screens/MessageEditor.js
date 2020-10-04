@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, View, ScrollView, Text, TextInput, Image } from 'react-native';
 import { RaisedTextButton } from 'react-native-material-buttons';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,15 +22,19 @@ const styles = StyleSheet.create({
   avatar: { width: 50, height: 50, marginLeft: 15, marginRight: 10 },
   bodyRight: { flex: 1 },
   textScroll: { fontSize: 18 },
-  limit: { alignItems: 'flex-end', padding: 15 },
+  limit: { position: 'absolute', left: 10, bottom: 10 },
   limitText: { fontSize: 12 },
+  messageImageContainer: { alignSelf: 'flex-end', margin: 10, padding: 5, backgroundColor: 'white', borderWidth: 1, borderColor: colors.lightGray, shadowColor: '#000', shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 },
+  messageImage: { width: 100, height: 100 },
 });
 
 const StatusEditor = () => {
-  const baseNav = useNavigation(Base);
+  const refs = useRef({}).current;
+  const baseNav = refs.baseNav = useNavigation(Base);
   const { me } = useMine();
   const [text, setText] = useState('');
   const alertError = useAlertError();
+  const image = baseNav.getParam('image');
   const maxLength = baseNav.getParam('maxLength');
   const placeholder = baseNav.getParam('placeholder');
   const [runMutation] = baseNav.getParam('useMutation')(text, {
@@ -41,7 +45,7 @@ const StatusEditor = () => {
     }, [baseNav]),
     onError: alertError,
   });
-  const handleSave = baseNav.getParam('useSaveHandler')(runMutation, text);
+  const handleSave = baseNav.getParam('useSaveHandler')(runMutation);
 
   baseNav.useBackListener();
 
@@ -101,6 +105,10 @@ const StatusEditor = () => {
 
       <View style={styles.limit}>
         <Text style={styles.limitText}>{text.length} / {maxLength}</Text>
+      </View>
+
+      <View style={styles.messageImageContainer}>
+        <Image style={styles.messageImage} source={image} />
       </View>
     </View>
   );

@@ -62,8 +62,8 @@ const SideMenu = ({
     });
   }, [baseNav]);
 
-  const navToProfile = useCallback(() => {
-    baseNav.push('Profile', { user: me });
+  const navToUserLobby = useCallback(() => {
+    baseNav.push('UserLobby', { user: me });
   }, [baseNav, me]);
 
   const navToProfileEditor = useCallback(() => {
@@ -113,7 +113,7 @@ const SideMenu = ({
       <ImageBackground style={[styles.header, bgStyle]} source={require('./sidemenu-background-blur.png')} onLoad={() => setBgStyle({})}>
         <LinearGradient colors={['rgba(0, 0, 0, .4)', 'rgba(0, 0, 0, .65)']}>
           <View style={styles.headerContent}>
-            <TouchableWithoutFeedback onPress={navToProfile}>
+            <TouchableWithoutFeedback onPress={navToUserLobby}>
               <Image source={getUserAvatarSource(me)} style={styles.avatar} />
             </TouchableWithoutFeedback>
             <Text style={styles.myName}>{me.name}</Text>

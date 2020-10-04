@@ -40,6 +40,8 @@ Define environment variables in `.env.$ENVNAME` file (NEVER COMMIT):
     GRAPHQL_ENDPOINT
     # If specified, pressed notifications will remain
     PERSIST_NOTIFICATIONS
+    # The maximum creation distance of statuses from GPS location in meters
+    STATUS_CREATION_RADIUS
     # Run app with Robot. Robot files will not be bundled if this var is provided
     USE_ROBOT
 

@@ -67,7 +67,7 @@ const Chat = ({ chat }) => {
   }, [messagesQuery, setIsLoadingEarlier]);
 
   const handleAvatarPress = useCallback((user) => {
-    baseNav.push('Profile', {
+    baseNav.push('UserLobby', {
       userId: user.id,
     });
   }, [baseNav]);

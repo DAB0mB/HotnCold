@@ -4,11 +4,10 @@ import { useCallback, useEffect } from 'react';
 
 import * as fragments from '../../graphql/fragments';
 import { compactOptions, useConst } from '../../utils';
-import mine from './mine.query';
 
 const statuses = gql `
-  query Statuses($limit: Int!, $anchor: ID) {
-    statuses(limit: $limit, anchor: $anchor) {
+  query Statuses($userId: ID, $limit: Int!, $anchor: ID) {
+    statuses(userId: $userId, limit: $limit, anchor: $anchor) {
       ...StatusItem
     }
 
@@ -21,14 +20,12 @@ const statuses = gql `
 `;
 
 statuses.use = (...args) => {
-  const [limit = 12, options = {}] = compactOptions(2, args);
-  const { data: { me } = {} } = mine.use();
-  const myId = me?.id;
+  const [userId, limit = 12, options = {}] = compactOptions(3, args);
 
   const query = useQuery(statuses, {
     ...options,
-    variables: { limit },
-    skip: !myId,
+    variables: { userId, limit },
+    skip: typeof userId == 'undefined',
     fetchPolicy: 'cache-and-network',
   });
 
@@ -48,7 +45,7 @@ statuses.use = (...args) => {
       // Reset fetchMore()
       query.client.writeQuery({
         query: statuses,
-        variables: { limit },
+        variables: { userId, limit },
         data: {
           statuses: statusesData,
           firstStatus: firstStatus,
@@ -71,7 +68,7 @@ statuses.use = (...args) => {
 
       query.client.writeQuery({
         query: statuses,
-        variables: { limit },
+        variables: { userId, limit },
         data: {
           ...query.data,
           statuses: [status, ...query.data.statuses],
@@ -94,12 +91,25 @@ statuses.use = (...args) => {
       });
     };
 
+    const onStatusPublish = ({ operationName, variables }) => {
+      if (operationName != 'PublishStatus') return;
+
+      const status = query.data.statuses.find(s => s.id === variables.statusId);
+
+      fragments.status.item.write(query.client, {
+        ...status,
+        published: true,
+      });
+    };
+
     query.client.events.on('response', onStatusCreate);
     query.client.events.on('response', onChatSubscriptionChange);
+    query.client.events.on('response', onStatusPublish);
 
     return () => {
       query.client.events.off('response', onStatusCreate);
       query.client.events.off('response', onChatSubscriptionChange);
+      query.client.events.off('response', onStatusPublish);
     };
   }, [query.data]);
 
@@ -109,11 +119,12 @@ statuses.use = (...args) => {
       if (!query.data) return;
       if (query.data.firstStatus?.id === query.data.statuses[query.data.statuses.length - 1]?.id) return;
 
-      const [lazyLimit = limit, options = {}] = compactOptions(2, args);
+      const [lazyUserId = userId, lazyLimit = limit, options = {}] = compactOptions(3, args);
 
       return query.fetchMore({
         ...options,
         variables: {
+          userId: lazyUserId,
           limit: lazyLimit,
           anchor: query.data.statuses[query.data.statuses.length - 1]?.id,
         },
@@ -126,7 +137,7 @@ statuses.use = (...args) => {
           };
         },
       });
-    }, [query.fetchMore, query.data, limit]),
+    }, [query.fetchMore, query.data, userId, limit]),
   };
 };
 

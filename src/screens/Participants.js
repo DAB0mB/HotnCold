@@ -43,7 +43,7 @@ const Participants = () => {
   baseNav.useBackListener();
 
   const onParticipantItemPress = useCallback((participant) => {
-    baseNav.push('Profile', {
+    baseNav.push('UserLobby', {
       userId: participant.id
     });
   }, [baseNav]);

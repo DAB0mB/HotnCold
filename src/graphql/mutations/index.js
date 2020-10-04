@@ -5,6 +5,7 @@ export { default as dissociateNotificationsToken } from './dissociateNotificatio
 export { default as findOrCreateChat } from './findOrCreateChat.mutation';
 export { default as findOrCreateContract } from './findOrCreateContract.mutation';
 export { default as markChatAsRead } from './markChatAsRead.mutation';
+export { default as publishStatus } from './publishStatus.mutation';
 export { default as sendMessage } from './sendMessage.mutation';
 export { default as toggleChatSubscription } from './toggleChatSubscription.mutation';
 export { default as updateMyProfile } from './updateMyProfile.mutation';

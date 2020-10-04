@@ -80,10 +80,6 @@ apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.grad
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
-    // the name of the generated asset file containing your JS bundle
-    bundleAssetName: "index.android.bundle",
-    // the entry file for bundle generation
-    entryFile: "index.android.js"
 ]
 apply from: "../../node_modules/react-native/react.gradle"
 
