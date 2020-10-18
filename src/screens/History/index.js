@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View, Image, StyleSheet } from 'react-native';
 
 import Discovery from '../../containers/Discovery';
 import StatusList from '../../components/StatusList';
+import { useAppState } from '../../services/AppState';
 import { useScreenFrame } from '../../services/Frame';
 import { useNavigation } from '../../services/Navigation';
 import tapHerePng from './tap_here.png';
@@ -15,11 +16,18 @@ const styles = StyleSheet.create({
   tapHereImage: { height: 100, resizeMode: 'contain' },
 });
 
-const Feed = () => {
+const History = () => {
   const discoveryNav = useNavigation(Discovery);
+  const [appState] = useAppState();
 
   discoveryNav.useBackListener();
   useScreenFrame();
+
+  useEffect(() => {
+    if (appState.isCreatingStatus) {
+      discoveryNav.goBackOnceFocused();
+    }
+  }, [discoveryNav, appState.isCreatingStatus]);
 
   return (
     <View style={styles.container}>
@@ -43,4 +51,4 @@ const NoStatuses = () => {
   );
 };
 
-export default Discovery.create(Feed);
+export default Discovery.create(History);

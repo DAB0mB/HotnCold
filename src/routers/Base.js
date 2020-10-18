@@ -3,6 +3,7 @@ import { fadeIn, fromBottom } from 'react-navigation-transitions';
 import AuthContainer from '../containers/Auth';
 import DiscoveryContainer from '../containers/Discovery';
 import SocialContainer from '../containers/Social';
+import StatusEditorContainer from '../containers/StatusEditor';
 import AgreementScreen from '../screens/Agreement';
 import StatusChatScreen from '../screens/StatusChat';
 import ParticipantsScreen from '../screens/Participants';
@@ -57,6 +58,9 @@ const Base = Router.create({
   },
   Social: {
     screen: SocialContainer,
+  },
+  StatusEditor: {
+    screen: StatusEditorContainer,
   },
   UserLobby: {
     screen: UserLobbyScreen,

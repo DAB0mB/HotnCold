@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   image: { width: 110, height: 110 },
   modalBody: { position: 'relative', flex: 1 },
   modalX: { position: 'absolute', right: 10, top: 10 },
+  statusType: { borderRadius: 12, width: 12, height: 12, marginRight: 5 },
 });
 
 const Status = (props) => {
@@ -133,7 +134,10 @@ const Status = (props) => {
 
               <View style={styles.titles}>
                 <Text style={styles.nameTitle}>{status.author.name}</Text>
-                <Text>{moment(status.createdAt).fromNow()}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={[styles.statusType, { backgroundColor: status.isMeetup ? colors.hot : colors.cold }]} />
+                  <Text>{moment(status.createdAt).fromNow()}</Text>
+                </View>
               </View>
             </View>
 

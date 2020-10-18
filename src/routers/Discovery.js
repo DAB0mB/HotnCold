@@ -1,12 +1,12 @@
 import { fromRight } from 'react-navigation-transitions';
 
-import FeedScreen from '../screens/Feed';
+import HistoryScreen from '../screens/History';
 import MapScreen from '../screens/Map';
 import Router from './Router';
 
 const Discovery = Router.create({
-  Feed: {
-    screen: FeedScreen,
+  History: {
+    screen: HistoryScreen,
   },
   Map: {
     screen: MapScreen,

@@ -2,7 +2,7 @@ import MapboxGL from '@react-native-mapbox-gl/maps';
 import { useApolloClient } from '@apollo/react-hooks';
 import { useRobot } from 'hotncold-robot';
 import React, { useMemo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { TouchableWithoutFeedback, Image, View, StyleSheet } from 'react-native';
+import { TouchableWithoutFeedback, Image, View, Text, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -20,10 +20,10 @@ import { mapx, useRenderer, useAsyncCallback, useAsyncEffect } from '../../utils
 const AVATAR_SIZE = .19;
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
 const DEFAULT_ZOOM = 15;
-const MIN_ICON_DIV = 2;
+const MIN_ICON_DIV = 2.5;
 const MAX_INTER_ZOOM = DEFAULT_ZOOM - 1;
-const MIN_INTER_ZOOM = DEFAULT_ZOOM - 6;
-const MIN_ZOOM = DEFAULT_ZOOM - 6;
+const MIN_INTER_ZOOM = DEFAULT_ZOOM - 8;
+const MIN_ZOOM = DEFAULT_ZOOM - 8;
 const AVATAR_MARGIN = 28 / AVATAR_SIZE;
 
 const defaultImages = {
@@ -36,13 +36,14 @@ const styles = StyleSheet.create({
   container: { flex: 1, position: 'relative' },
   map: { flex: 1 },
   plusIcon: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' },
+  colorsIndex: { position: 'absolute', left: 10, top: 10, backgroundColor: 'rgba(255, 255, 255, .5)', flexDirection: 'column' },
   watermarkContainer: { position: 'absolute', right: 8, top: 8 },
   watermarkImage: { width: 80, height: 20, opacity: 1 / 3 },
 });
 
 const mapStyles = {
   heatmap: {
-    heatmapRadius: 25,
+    heatmapRadius: 15,
     heatmapWeight: mapx('get_deep', 'status.weight'),
     heatmapIntensity: mapx('interpolate',
       mapx('linear'),
@@ -148,13 +149,12 @@ const Map = () => {
         };
 
         feature.properties.image = status.avatar ? status.id : 'avatar';
+        feature.properties.marker = status.isMeetup ? 'hot-marker' : 'cold-marker';
 
         if (status.author.id == me.id) {
-          feature.properties.marker = 'hot-marker';
           myFeatures.push(feature);
         }
         else {
-          feature.properties.marker = 'cold-marker';
           theirFeatures.push(feature);
         }
       });
@@ -288,7 +288,7 @@ const Map = () => {
           properties: {
             weight: 1,
             image: status.avatar ? status.id : 'avatar',
-            marker: 'hot-marker',
+            marker: status.isMeetup ? 'hot-marker' : 'cold-marker',
             status: {
               id: status.id,
               text: status.text,
@@ -370,9 +370,20 @@ const Map = () => {
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
 
-      <View style={styles.plusIcon}>
-        <McIcon name='plus' color={colors.ink} size={12} />
+      <View style={styles.colorsIndex}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ height: 10, width: 10, margin: 5, backgroundColor: colors.hot }} /><Text style={{ color: colors.ink, marginRight: 5 }}>They wanna meet</Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ height: 10, width: 10, margin: 5, backgroundColor: colors.cold }} /><Text style={{ color: colors.ink, marginRight: 5 }}>Online discussion</Text>
+        </View>
       </View>
+
+      {appState.isCreatingStatus && (
+        <View style={styles.plusIcon}>
+          <McIcon name='target' color={colors.ink} size={20} />
+        </View>
+      )}
 
       <TouchableWithoutFeedback onPress={showAttribution}>
         <View style={styles.watermarkContainer}>

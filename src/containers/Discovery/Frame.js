@@ -4,7 +4,7 @@ import turfDistance from '@turf/distance';
 import { ReactNativeFile } from 'apollo-upload-client';
 import { useRobot } from 'hotncold-robot';
 import React, { useCallback, useMemo, useState, useLayoutEffect, useRef } from 'react';
-import { Alert, Dimensions, View, StyleSheet, Text } from 'react-native';
+import { Dimensions, View, StyleSheet, Text } from 'react-native';
 import CONFIG from 'react-native-config';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,7 +30,8 @@ const winDims = Dimensions.get('window');
 
 const loadingIcons = Promise.all([
   McIcon.getImageSource('map', 30, colors.hot),
-  McIcon.getImageSource('layers', 30, colors.hot),
+  McIcon.getImageSource('history', 30, colors.hot),
+  McIcon.getImageSource('close', 30, colors.hot),
 ]);
 
 const styles = StyleSheet.create({
@@ -46,7 +47,7 @@ const menuRect = { x: winDims.width, y: 0, width: 0, height: 0 };
 
 const Bubble = {
   Map: 0,
-  Feed: 1,
+  History: 1,
 };
 
 export const $Frame = {};
@@ -62,7 +63,7 @@ const Frame = ({
   const [sideMenuOpened, setSideMenuOpened] = useState(false);
   const [title, setTitle] = useState('Map');
   const { useTrap } = useRobot();
-  const [appState] = useAppState();
+  const [appState, setAppState] = useAppState();
   const menuState = useState(false);
   const menuIconRef = useRef();
   const [, setMenuVisible] = menuState;
@@ -77,8 +78,8 @@ const Frame = ({
   });
 
   useLayoutEffect(() => {
-    loadingIcons.then(([map, feed]) => {
-      setIcons({ map, feed });
+    loadingIcons.then(([map, history, close]) => {
+      setIcons({ map, history, close });
     });
   }, [true]);
 
@@ -88,15 +89,15 @@ const Frame = ({
     setActiveBubble(Bubble[discoveryNav.state.routeName]);
   }, [discoveryNav]);
 
-  const navToFeed = useCallbackWhen(() => {
-    discoveryNav.push('Feed');
-    setTitle('Feed');
-  }, activeBubble != Bubble.Feed && discoveryNav?.state.routeName === 'Map' && icons !== empty);
+  const navToHistory = useCallbackWhen(() => {
+    discoveryNav.push('History');
+    setTitle('History');
+  }, activeBubble != Bubble.History && discoveryNav?.state.routeName === 'Map' && icons !== empty);
 
   const navToMap = useCallbackWhen(() => {
     discoveryNav.goBackOnceFocused();
     setTitle('Map');
-  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Feed' && icons !== empty);
+  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'History' && icons !== empty);
 
   const openSideMenu = useCallback(() => {
     setSideMenuOpened(true);
@@ -106,79 +107,63 @@ const Frame = ({
     setSideMenuOpened(false);
   }, [true]);
 
-  const alertPublish = useCallback(() => {
-    return new Promise((resolve) => {
-      Alert.alert('Publish status?', 'Would you like to create a new status and make it visible to the public? You can always publish it later.', [
-        {
-          text: 'Cancel',
-        },
-        {
-          text: 'Create, don\'t publish',
-          onPress: () => resolve(false),
-        },
-        {
-          text: 'Create and publish',
-          onPress: () => resolve(true),
-        },
-      ]);
-    });
-  }, []);
-
   const bigBubble = {
     backgroundColor: colors.cold,
-    icon: (
+    icon: appState.isCreatingStatus ? (
+      <MIcon name='check' size={50} color='white' />
+    ) : (
       <MIcon name='person-pin-circle' size={50} color='white' />
     ),
     onPress: useAsyncCallback(function* () {
-      const mapLocation = yield appState.discoveryMap.current.getCenter();
+      if (appState.isCreatingStatus) {
+        setAppState(appState => ({ ...appState, isCreatingStatus: false }));
 
-      // Cannot be created too far
-      {
-        const { coords } = yield MapboxGL.locationManager.getLastKnownLocation();
-        const gpsLocation = [coords.longitude, coords.latitude];
-        const distance = turfDistance(turf.point(mapLocation), turf.point(gpsLocation), { units: 'meters' });
-        const maxDistance = Number(CONFIG.STATUS_CREATION_RADIUS);
+        const mapLocation = yield appState.discoveryMap.current.getCenter();
 
-        if (distance > maxDistance) {
-          alertError(`Status cannot be created beyond ${maxDistance} meters from your current location. Try dragging the map closer to where you're at.`);
+        // Cannot be created too far
+        {
+          const { coords } = yield MapboxGL.locationManager.getLastKnownLocation();
+          const gpsLocation = [coords.longitude, coords.latitude];
+          const distance = turfDistance(turf.point(mapLocation), turf.point(gpsLocation), { units: 'meters' });
+          const maxDistance = Number(CONFIG.STATUS_CREATION_RADIUS);
 
-          return;
+          if (distance > maxDistance) {
+            alertError(`Status cannot be created beyond ${maxDistance} meters from your current location. Try dragging the map closer to where you're at.`);
+
+            return;
+          }
         }
-      }
 
-      imagePicker.showImagePicker({}, (image) => {
+        const localImage = yield new Promise(resolve => imagePicker.showImagePicker({}, resolve));
+
         const file = new ReactNativeFile({
-          uri: image.uri,
-          name: image.fileName,
-          type: image.type,
+          uri: localImage.uri,
+          name: localImage.fileName,
+          type: localImage.type,
         });
 
         const uploadingImage = uploadPicture(file)
           .then((res) => {
             return res?.data?.uploadPicture;
-          })
-          .catch((e) => {
+          }, (e) => {
             alertError(e);
           });
 
-        baseNav.push('MessageEditor', {
-          image,
-          maxLength: 150,
-          placeholder: 'What\'s on your mind?',
-          useMutation(text, options) {
-            return mutations.createStatus.use(text, options);
-          },
-          useSaveHandler(createStatus) {
-            return useAsyncCallback(function* () {
-              const published = yield alertPublish();
-              const images = yield uploadingImage;
-
-              createStatus(images, mapLocation, published);
-            }, [createStatus]);
-          },
+        baseNav.push('StatusEditor', {
+          $setInitialRouteState: {
+            routeName: 'StatusMessage',
+            params: {
+              localImage,
+              uploadingImage,
+              location: mapLocation,
+            }
+          }
         });
-      });
-    }, [appState, baseNav, imagePicker, uploadPicture, alertPublish, alertError]),
+      }
+      else {
+        setAppState(appState => ({ ...appState, isCreatingStatus: true }));
+      }
+    }, [appState, baseNav, imagePicker, uploadPicture, alertError]),
   };
 
   const showMenu = useCallback(() => {
@@ -189,6 +174,10 @@ const Frame = ({
     baseNav.push('AreaSearch');
   }, [baseNav]);
 
+  const cancelLocationSelection = useCallback(() => {
+    setAppState(appState => ({ ...appState, isCreatingStatus: false }));
+  }, []);
+
   const menuItems = useMemo(() => [
     {
       key: 'area',
@@ -198,13 +187,15 @@ const Frame = ({
     }
   ], [appState, navToSearchArea]);
 
-  const bubbles = [
+  const bubbles = appState.isCreatingStatus ? [
+    { title: 'Cancel', iconSource: icons.close, onSelect: cancelLocationSelection }
+  ] : [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
-    { title: 'Feed', iconSource: icons.feed, onSelect: navToFeed },
+    { title: 'History', iconSource: icons.history, onSelect: navToHistory },
   ];
 
   useTrap($Frame, {
-    navToFeed,
+    navToHistory,
     navToMap,
     openSideMenu,
     closeSideMenu,
@@ -231,7 +222,8 @@ const Frame = ({
           <View style={styles.childrenView}>{children}</View>
 
           <BubblesBar
-            activeBubble={activeBubble}
+            key={!!appState.isCreatingStatus}
+            activeBubble={appState.isCreatingStatus ? -1 : activeBubble}
             tintColor={colors.hot}
             bigBubble={bigBubble}
             bubbles={bubbles}

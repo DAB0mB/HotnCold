@@ -40,6 +40,7 @@
     "moment-timezone": "^0.5.28",
     "pluralize": "^8.0.0",
     "prop-types": "^15.7.2",
+    "radio-buttons-react-native": "^1.0.4",
     "react": "^16.13.1",
     "react-native": "^0.63.3",
     "react-native-auto-height-image": "^3.1.2",

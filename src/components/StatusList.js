@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
   statusDescription: { flexDirection: 'row', padding: 10 },
   statusCreatedAt: { color: colors.ink, flex: 1, fontWeight: '700', marginBottom: 10 },
   statusText: { padding: 10, fontSize: 16 },
+  statusType: { marginTop: 2, marginRight: 5, borderRadius: 15, width: 15, height: 15 },
   noStatusesMessage: { height: 50, alignItems: 'center', justifyContent: 'center' },
 });
 
@@ -75,6 +76,7 @@ const StatusList = ({ hideHeader, queryUserId = null, userScreen, NoStatusesComp
           <Image style={styles.statusImage} source={getStatusThumbSource(status)} />
         </TouchableWithoutFeedback>
         <View style={styles.statusDescription} onPress={() => navToStatusChat(status)}>
+          <View style={[styles.statusType, { backgroundColor: status.isMeetup ? colors.hot : colors.cold }]} />
           <Text style={styles.statusCreatedAt}>{moment(status.createdAt).fromNow()}</Text>
           <TouchableWithoutFeedback onPress={() => navToStatusChat(status)}>
             <MIcon name='chat-bubble-outline' size={30} color={colors.ink} />

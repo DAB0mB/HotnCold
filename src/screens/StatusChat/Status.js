@@ -11,7 +11,9 @@ const styles = StyleSheet.create({
   text: { color: colors.ink, fontSize: 16, padding: 15 },
   imageContainer: { margin: 10, marginBottom: -20, width: 110, height: 110, alignItems: 'center', justifyContent: 'center', borderWidth: 1, backgroundColor: 'white', borderColor: colors.lightGray },
   image: { width: 100, height: 100 },
-  createdAt: { paddingHorizontal: 15, paddingTop: 15 },
+  statusInfo: { paddingHorizontal: 15, paddingTop: 15, flexDirection: 'row', alignItems: 'center' },
+  statusType: { borderRadius: 12, width: 12, height: 12, marginRight: 5 },
+  createdAt: {},
   statusDetails: { flex: 1 },
 });
 
@@ -29,7 +31,10 @@ const Status = ({ status }) => {
       {status && (
         <React.Fragment>
           <View style={styles.statusDetails}>
-            <Text style={styles.createdAt}>{moment(status.createdAt).fromNow()}</Text>
+            <View style={styles.statusInfo}>
+              <View style={[styles.statusType, { backgroundColor: status.isMeetup ? colors.hot : colors.cold }]} />
+              <Text style={styles.createdAt}>{moment(status.createdAt).fromNow()}</Text>
+            </View>
             <Text style={styles.text}>{status.text}</Text>
           </View>
           <TouchableWithoutFeedback onPress={openImageViewer}>

@@ -122,16 +122,14 @@ export const Hitbox = ({ viewStyle, transform, onPress, children, Touchable = To
 
   const onLayout = useCallback(() => {
     hitboxRef.current.measure(Animated.event([new Animated.Value(0), new Animated.Value(0), layout.width, layout.height], { useNativeDriver: false }));
+
+    if (container.ref.current) {
+      hitboxRef.current.measureLayout(
+        findNodeHandle(container.ref.current),
+        Animated.event([layout.x, layout.y], { useNativeDriver: false })
+      );
+    }
   }, [true]);
-
-  useLayoutEffect(() => {
-    if (!container.ref.current) return;
-
-    hitboxRef.current.measureLayout(
-      findNodeHandle(container.ref.current),
-      Animated.event([layout.x, layout.y], { useNativeDriver: false })
-    );
-  }, [container.x, container.y, container.width, container.height]);
 
   useHitbox({ ...layout, transform, onPress, Touchable });
 

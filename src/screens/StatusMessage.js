@@ -1,12 +1,12 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, TouchableWithoutFeedback, View, ScrollView, Text, TextInput, Image } from 'react-native';
 import { RaisedTextButton } from 'react-native-material-buttons';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { getUserAvatarSource } from '../assets';
 import Base from '../containers/Base';
+import StatusEditor from '../containers/StatusEditor';
 import { useMine } from '../services/Auth';
-import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
 import { colors } from '../theme';
 
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   headerLeft: { position: 'absolute', left: 0 },
   headerRight: { position: 'absolute', right: 0, flexDirection: 'row', alignItems: 'center' },
   headerClear: { color: colors.hot, fontSize: 14, paddingHorizontal: 16 },
-  headerSave: { marginLeft: 15 },
+  headerNext: { marginLeft: 15 },
   body: { flex: 1, flexDirection: 'row' },
   avatar: { width: 50, height: 50, marginLeft: 15, marginRight: 10 },
   bodyRight: { flex: 1 },
@@ -28,25 +28,23 @@ const styles = StyleSheet.create({
   messageImage: { width: 100, height: 100 },
 });
 
-const MessageEditor = () => {
-  const refs = useRef({}).current;
-  const baseNav = refs.baseNav = useNavigation(Base);
+const StatusMessage = () => {
+  const baseNav = useNavigation(Base);
+  const statusEditorNav = useNavigation(StatusEditor);
   const { me } = useMine();
   const [text, setText] = useState('');
-  const alertError = useAlertError();
-  const image = baseNav.getParam('image');
-  const maxLength = baseNav.getParam('maxLength');
-  const placeholder = baseNav.getParam('placeholder');
-  const saveMessage = baseNav.getParam('saveMessage') || 'save';
-  const [runMutation] = baseNav.getParam('useMutation')(text, {
-    onCompleted: useCallback((data) => {
-      if (!data) return;
+  const localImage = statusEditorNav.getParam('localImage');
+  const uploadingImage = statusEditorNav.getParam('uploadingImage');
+  const location = statusEditorNav.getParam('location');
 
-      baseNav.goBackOnceFocused();
-    }, [baseNav]),
-    onError: alertError,
-  });
-  const handleSave = baseNav.getParam('useSaveHandler')(runMutation);
+  const navToStatusOptions = useCallback(() => {
+    statusEditorNav.push('StatusOptions', {
+      localImage,
+      uploadingImage,
+      location,
+      text,
+    });
+  }, [uploadingImage, location, text, localImage]);
 
   baseNav.useBackListener();
 
@@ -72,12 +70,12 @@ const MessageEditor = () => {
             )}
 
             <RaisedTextButton
-              onPress={handleSave}
-              style={styles.headerSave}
+              onPress={navToStatusOptions}
+              style={styles.headerNext}
               key={!text.length}
               disabled={!text.length}
               color={colors.hot}
-              title={saveMessage}
+              title='next'
               titleColor='white'
             />
           </View>
@@ -95,9 +93,9 @@ const MessageEditor = () => {
               multiline
               value={text}
               textAlignVertical='top'
-              placeholder={placeholder}
+              placeholder="What's on your mind"
               style={styles.textScroll}
-              maxLength={maxLength}
+              maxLength={150}
               onChangeText={setText}
             />
           </ScrollView>
@@ -105,14 +103,14 @@ const MessageEditor = () => {
       </View>
 
       <View style={styles.limit}>
-        <Text style={styles.limitText}>{text.length} / {maxLength}</Text>
+        <Text style={styles.limitText}>{text.length} / 150</Text>
       </View>
 
       <View style={styles.messageImageContainer}>
-        <Image style={styles.messageImage} source={image} />
+        <Image style={styles.messageImage} source={localImage} />
       </View>
     </View>
   );
 };
 
-export default Base.create(MessageEditor);
+export default StatusEditor.create(StatusMessage);

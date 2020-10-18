@@ -13,6 +13,7 @@ const status = gql `
     thumb
     avatar
     firstImage
+    isMeetup
     author {
       ...User
     }
