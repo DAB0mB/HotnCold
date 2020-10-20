@@ -1,6 +1,6 @@
 # FAQs
 
-### How do the colors represent?
+### What do the colors represent?
 
 Hot&Cold makes a clever use of “hot” and “cold” colors to indicate information and activity on the map:
 
