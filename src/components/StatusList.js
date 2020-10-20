@@ -5,7 +5,7 @@ import Ripple from 'react-native-material-ripple';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import ImageViewer from './ImageViewer';
-import { getStatusThumbSource, getUserAvatarSource } from '../assets';
+import { getUserAvatarSource } from '../assets';
 import * as queries from '../graphql/queries';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
@@ -73,7 +73,7 @@ const StatusList = ({ hideHeader, queryUserId = null, userScreen, NoStatusesComp
           </Ripple>
         )}
         <TouchableWithoutFeedback onPress={() => openImageViewer(status)}>
-          <Image style={styles.statusImage} source={getStatusThumbSource(status)} />
+          <Image style={styles.statusImage} source={{ uri: status.firstImage }} />
         </TouchableWithoutFeedback>
         <View style={styles.statusDescription} onPress={() => navToStatusChat(status)}>
           <View style={[styles.statusType, { backgroundColor: status.isMeetup ? colors.hot : colors.cold }]} />
