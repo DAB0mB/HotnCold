@@ -34,6 +34,7 @@ const History = () => {
       <StatusList
         userScreen='UserLobby'
         NoStatusesComponent={NoStatuses}
+        ListFooterComponent={<View style={{ height: 50 }} />}
       />
     </View>
   );

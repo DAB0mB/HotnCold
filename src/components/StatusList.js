@@ -98,7 +98,7 @@ const StatusList = ({ hideHeader, queryUserId = null, userScreen, NoStatusesComp
           keyExtractor={extractStatusItemKey}
           renderItem={renderStatusItem}
           onEndReached={fetchMoreStatuses}
-          ListFooterComponent={noStatuses && <NoStatuses />}
+          ListFooterComponent={noStatuses ? <NoStatuses /> : props.ListFooterComponent}
         />
       )}
       <ImageViewer imageUrls={statusImages} openState={[isImageViewerOpen, setImageViewerOpen]} />

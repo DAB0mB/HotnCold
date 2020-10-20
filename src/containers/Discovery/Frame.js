@@ -21,7 +21,7 @@ import { useNavigation } from '../../services/Navigation';
 import { useImagePicker } from '../../services/ImagePicker';
 import { useAlertError } from '../../services/DropdownAlert';
 import { colors } from '../../theme';
-import { empty, useAsyncCallback, useCallbackWhen } from '../../utils';
+import { empty, sleep, useAsyncCallback, useCallbackWhen } from '../../utils';
 import BubblesBar from './BubblesBar';
 import SideMenu from './SideMenu';
 import Status from './Status';
@@ -66,6 +66,7 @@ const Frame = ({
   const [appState, setAppState] = useAppState();
   const menuState = useState(false);
   const menuIconRef = useRef();
+  const pressingBigBubbleRef = useRef();
   const [, setMenuVisible] = menuState;
   const [uploadPicture] = mutations.uploadPicture.use({
     onError: alertError,
@@ -115,6 +116,16 @@ const Frame = ({
       <MIcon name='person-pin-circle' size={50} color='white' />
     ),
     onPress: useAsyncCallback(function* () {
+      if (pressingBigBubbleRef.current) return;
+
+      pressingBigBubbleRef.current = true;
+
+      // Wait for ripple effect to finish
+      yield sleep(500);
+
+      // eslint-disable-next-line
+      pressingBigBubbleRef.current = false;
+
       if (appState.isCreatingStatus) {
         setAppState(appState => ({ ...appState, isCreatingStatus: false }));
 
