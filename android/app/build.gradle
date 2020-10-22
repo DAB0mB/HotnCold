@@ -134,8 +134,8 @@ android {
         applicationId "com.hotncold"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 21
-        versionName "0.14.1-beta"
+        versionCode 22
+        versionName "0.14.2-beta"
     }
     splits {
         abi {
@@ -214,6 +214,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:16.0.9"
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation "com.facebook.android:facebook-core:[5,6)" // Necessary for tracking analytics
     implementation "me.leolin:ShortcutBadger:1.1.21@aar"
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
