@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Hot&amp;Cold</string>
+    <string name="facebook_app_id">865598443958275</string>
+    <string name="fb_login_protocol_scheme">fb865598443958275</string>
 </resources>
