@@ -6,8 +6,8 @@ import UUID from 'uuid/v4';
 import * as fragments from '../fragments';
 
 const sendMessage = gql `
-  mutation SendMessage($chatId: ID!, $text: String!) {
-    sendMessage(chatId: $chatId, text: $text) {
+  mutation SendMessage($chatId: ID!, $text: String, $image: String) {
+    sendMessage(chatId: $chatId, text: $text, image: $image) {
       ...Message
     }
   }
@@ -20,6 +20,7 @@ sendMessage.use = (chatId, options = {}) => {
 
   const mutate = useCallback((message, options = {}) => {
     const messageId = message.id || UUID();
+    const createdAt = message.createdAt || new Date();
 
     return superMutate({
       optimisticResponse: {
@@ -27,8 +28,9 @@ sendMessage.use = (chatId, options = {}) => {
         sendMessage: {
           __typename: 'Message',
           id: messageId,
-          text: message.text,
-          createdAt: message.createdAt,
+          text: message.text || null,
+          image: message.image || null,
+          createdAt: createdAt,
           user: {
             __typename: 'User',
             id: message.user.id,
@@ -51,8 +53,9 @@ sendMessage.use = (chatId, options = {}) => {
         const recentMessage = {
           __typename: 'Message',
           id: messageId,
-          text: message.text,
-          createdAt: message.createdAt,
+          text: message.text || null,
+          image: message.image || null,
+          createdAt: createdAt,
           user: {
             __typename: 'User',
             id: message.user.id,
@@ -69,7 +72,7 @@ sendMessage.use = (chatId, options = {}) => {
 
         fragments.chat.write(cache, chat);
       },
-      variables: { chatId, text: message.text },
+      variables: { chatId, text: message.text, image: message.image },
       ...options,
     });
   }, [

@@ -1,0 +1,42 @@
+diff --git a/node_modules/react-native-lightbox/LightboxOverlay.js b/node_modules/react-native-lightbox/LightboxOverlay.js
+index 9e01f9a..5c00a0e 100644
+--- a/node_modules/react-native-lightbox/LightboxOverlay.js
++++ b/node_modules/react-native-lightbox/LightboxOverlay.js
+@@ -99,7 +99,9 @@ export default class LightboxOverlay extends Component {
+       onPanResponderMove: Animated.event([
+         null,
+         { dy: this.state.pan }
+-      ]),
++      ], {
++        useNativeDriver: false,
++      }),
+       onPanResponderTerminationRequest: (evt, gestureState) => true,
+       onPanResponderRelease: (evt, gestureState) => {
+         if(Math.abs(gestureState.dy) > DRAG_DISMISS_THRESHOLD) {
+@@ -115,7 +117,7 @@ export default class LightboxOverlay extends Component {
+         } else {
+           Animated.spring(
+             this.state.pan,
+-            { toValue: 0, ...this.props.springConfig }
++            { toValue: 0, ...this.props.springConfig, useNativeDriver: false }
+           ).start(() => { this.setState({ isPanning: false }); });
+         }
+       },
+@@ -144,7 +146,7 @@ export default class LightboxOverlay extends Component {
+ 
+     Animated.spring(
+       this.state.openVal,
+-      { toValue: 1, ...this.props.springConfig }
++      { toValue: 1, ...this.props.springConfig, useNativeDriver: false }
+     ).start(() => {
+       this.setState({ isAnimating: false });
+       this.props.didOpen();
+@@ -161,7 +163,7 @@ export default class LightboxOverlay extends Component {
+     });
+     Animated.spring(
+       this.state.openVal,
+-      { toValue: 0, ...this.props.springConfig }
++      { toValue: 0, ...this.props.springConfig, useNativeDriver: false }
+     ).start(() => {
+       this.setState({
+         isAnimating: false,

@@ -7,6 +7,7 @@ const message = gql `
     id
     createdAt
     text
+    image
     user {
       ...User
     }

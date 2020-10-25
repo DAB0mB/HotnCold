@@ -1,8 +1,21 @@
+import { ReactNativeFile } from 'apollo-upload-client';
 import React, { useCallback, useMemo } from 'react';
-import { GiftedChat as _GiftedChat, Bubble, Send, Time, MessageText } from 'react-native-gifted-chat';
+import { StyleSheet, Image } from 'react-native';
+import { GiftedChat as _GiftedChat, Actions, Bubble, Send, Time, MessageText, MessageImage } from 'react-native-gifted-chat';
+import UUID from 'uuid/v4';
 
+import attachPng from '../assets/attach.png';
 import avatarPng from '../assets/avatar.png';
+import * as mutations from '../graphql/mutations';
+import { useImagePicker } from '../services/ImagePicker';
+import { useAlertError } from '../services/DropdownAlert';
 import { colors } from '../theme';
+import { useAsyncCallback } from '../utils';
+
+const styles = StyleSheet.create({
+  actionsContainer: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', marginLeft: 4, marginRight: -10, marginBottom: 0 },
+  actionsImage: { width: 26, height: 26 },
+});
 
 const adaptUser = (user) => ({
   get _id() {
@@ -25,6 +38,9 @@ const adaptMessage = (message) => ({
   },
   get text() {
     return message.text;
+  },
+  get image() {
+    return message.image;
   },
   get user() {
     return adaptUser(message.user);
@@ -104,7 +120,19 @@ renderMessageText.linkStyle = {
   right: { color: colors.cold },
 };
 
+const renderMessageImage = (props) => {
+  return (
+    <MessageImage {...props} />
+  );
+};
+
 const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
+  const alertError = useAlertError();
+  const imagePicker = useImagePicker();
+  const [uploadPicture] = mutations.uploadPicture.use({
+    onError: alertError,
+  });
+
   // Create adapted proxies instead of cloning objects, much less expensive when dealing
   // with a large amount of data
   const user = useMemo(() => adaptUser(_user), [_user]);
@@ -129,6 +157,56 @@ const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
     props.onPressAvatar(user);
   }, [props.onPressAvatar]);
 
+  const uploadImage = useAsyncCallback(function* () {
+    if (typeof props.onSend != 'function') return;
+
+    const localImage = yield new Promise(resolve => imagePicker.showImagePicker({}, resolve));
+
+    const file = new ReactNativeFile({
+      uri: localImage.uri,
+      name: localImage.fileName,
+      type: localImage.type,
+    });
+
+    let image;
+    try {
+      const res = yield uploadPicture(file);
+      image = res?.data?.uploadPicture;
+    }
+    catch (e) {
+      alertError(e);
+    }
+
+    if (!image) return;
+
+    props.onSend({
+      id: UUID(),
+      createdAt: new Date(),
+      image,
+      user: _user,
+    });
+  }, [_user, uploadPicture, imagePicker, onSend]);
+
+  const renderActions = useCallback((props) => (
+    <Actions
+      {...props}
+      containerStyle={styles.actionsContainer}
+      icon={() => (
+        <Image
+          style={styles.actionsImage}
+          source={attachPng}
+        />
+      )}
+      options={{
+        'Upload image': uploadImage,
+        'Cancel': () => {
+          // Abort
+        },
+      }}
+      optionTintColor={colors.ink}
+    />
+  ), [uploadImage]);
+
   return (
     <_GiftedChat
       {...props}
@@ -137,9 +215,11 @@ const GiftedChat = ({ user: _user, messages: _messages, ...props }) => {
       onSend={onSend}
       onPressAvatar={onPressAvatar}
       renderBubble={renderBubble}
+      renderActions={renderActions}
       renderSend={renderSend}
       renderTime={renderTime}
       renderMessageText={renderMessageText}
+      renderMessageImage={renderMessageImage}
     />
   );
 };
