@@ -295,6 +295,7 @@ const Map = () => {
               thumb: status.thumb,
               avatar: status.avatar,
               firstImage: status.firstImage,
+              isMeetup: status.isMeetup,
               author: {
                 id: me.id,
                 name: me.name,
