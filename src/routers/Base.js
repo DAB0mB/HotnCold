@@ -11,6 +11,7 @@ import FAQScreen from '../screens/FAQ';
 import ProfileScreen from '../screens/Profile';
 import ProfileEditorScreen from '../screens/ProfileEditor';
 import AreaSearchScreen from '../screens/AreaSearch';
+import PlaceSearchScreen from '../screens/PlaceSearch';
 import MessageEditorScreen from '../screens/MessageEditor';
 import UserLobbyScreen from '../screens/UserLobby';
 import Router from './Router';
@@ -49,6 +50,9 @@ const Base = Router.create({
   },
   AreaSearch: {
     screen: AreaSearchScreen,
+  },
+  PlaceSearch: {
+    screen: PlaceSearchScreen,
   },
   Auth: {
     screen: AuthContainer,

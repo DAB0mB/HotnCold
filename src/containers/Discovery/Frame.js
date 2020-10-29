@@ -181,6 +181,10 @@ const Frame = ({
     setMenuVisible(true);
   }, [true]);
 
+  const navToSearchPlace = useCallback(() => {
+    baseNav.push('PlaceSearch');
+  }, [baseNav]);
+
   const navToSearchArea = useCallback(() => {
     baseNav.push('AreaSearch');
   }, [baseNav]);
@@ -191,12 +195,19 @@ const Frame = ({
 
   const menuItems = useMemo(() => [
     {
+      key: 'place',
+      text: 'Search in area',
+      icon: 'search',
+      IconComponent: MIcon,
+      onPress: navToSearchPlace,
+    },
+    {
       key: 'area',
       text: appState.discoveryArea?.shortName || '-GPS-',
       icon: 'airplane',
       onPress: navToSearchArea,
     }
-  ], [appState, navToSearchArea]);
+  ], [appState, navToSearchPlace, navToSearchArea]);
 
   const bubbles = appState.isCreatingStatus ? [
     { title: 'Cancel', iconSource: icons.close, onSelect: cancelLocationSelection }
