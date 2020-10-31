@@ -1,11 +1,14 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { useApolloClient } from '@apollo/react-hooks';
+import turfCircle from '@turf/circle';
+import Flatbush from 'flatbush';
 import { useRobot } from 'hotncold-robot';
 import React, { useMemo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { TouchableWithoutFeedback, Image, View, Text, StyleSheet } from 'react-native';
 import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import Selection from './Selection';
 import Discovery from '../../containers/Discovery';
 import * as queries from '../../graphql/queries';
 import { useAppState } from '../../services/AppState';
@@ -19,10 +22,12 @@ import { mapx, useRenderer, useAsyncCallback, useAsyncEffect } from '../../utils
 
 const AVATAR_SIZE = .19;
 const LOCATION_UPDATE_INTERVAL = 60 * 1000;
-const DEFAULT_ZOOM = 15;
+const SELECTION_RADIUS = 1;
+const DEFAULT_ZOOM = 13;
+const CAMERA_ZOOM = 13;
 const MIN_ICON_DIV = 2.5;
-const MAX_INTER_ZOOM = DEFAULT_ZOOM - 1;
-const MIN_INTER_ZOOM = DEFAULT_ZOOM - 8;
+const MAX_INTER_ZOOM = 14;
+const MIN_INTER_ZOOM = 7;
 const MIN_ZOOM = DEFAULT_ZOOM - 8;
 const AVATAR_MARGIN = 28 / AVATAR_SIZE;
 
@@ -43,7 +48,7 @@ const styles = StyleSheet.create({
 
 const mapStyles = {
   heatmap: {
-    heatmapRadius: 15,
+    heatmapRadius: 17,
     heatmapWeight: mapx('get_deep', 'status.weight'),
     heatmapIntensity: mapx('interpolate',
       mapx('linear'),
@@ -95,6 +100,18 @@ const mapStyles = {
     iconOffset: [0, -AVATAR_MARGIN],
     iconAllowOverlap: true,
   },
+  selection: {
+    outline: {
+      lineCap: 'round',
+      lineColor: 'rgb(40, 23, 69)',
+      lineWidth: 2,
+      lineDasharray: [0, 2],
+    },
+    text: {
+      textSize: 20,
+      textColor: colors.ink,
+    },
+  },
 };
 
 export const $Map = {};
@@ -119,16 +136,35 @@ const Map = () => {
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
   const [initialLocation, setInitialLocation] = useState(null);
+  const [selection, setSelection] = useState(null);
   const [targetLocation, setTargetLocation] = useState(null);
   const alertError = useAlertError();
   const [appState, setAppState] = useAppState();
   const [loaded, setLoaded] = useRenderer();
   const [myFeatures, setMyFeatures] = useState([]);
   const [theirFeatures, setTheirFeatures] = useState([]);
+  const allFeatures = useMemo(() => [...myFeatures, ...theirFeatures], [myFeatures, theirFeatures]);
+  const activeStatusFeature = useMemo(() => allFeatures.find(f => f.properties.status.id === appState.activeStatus?.id), [appState?.activeStatus]);
 
   const areaFeatureCollection = useMemo(() => ({
-    type: 'FeatureCollection', features: [...myFeatures, ...theirFeatures],
-  }), [myFeatures, theirFeatures]);
+    type: 'FeatureCollection', features: allFeatures,
+  }), [allFeatures]);
+
+  const flatbush = useMemo(() => {
+    if (!allFeatures.length) return null;
+
+    const flatbush = new Flatbush(allFeatures.length);
+
+    for (let feature of allFeatures) {
+      const [x, y] = feature.geometry.coordinates;
+
+      flatbush.add(x, y, x, y);
+    }
+
+    flatbush.finish();
+
+    return flatbush;
+  }, [allFeatures]);
 
   queries.areaStatuses.use(targetLocation, {
     onCompleted: useCallback((data) => {
@@ -230,18 +266,55 @@ const Map = () => {
     };
   }, [true]);
 
-  const onStatusFeaturePress = useCallback((e) => {
-    const feature = e.nativeEvent.payload;
-
-    setAppState(appState => ({
-      ...appState,
-      activeStatus: feature.properties.status,
-    }));
-  }, [true]);
-
   const showAttribution = useCallback(() => {
     mapRef.current.showAttribution();
   }, [true]);
+
+  const clearSelection = useCallback(() => {
+    setSelection(null);
+  }, []);
+
+  const renderSelection = useAsyncCallback(function* (feature) {
+    const map = mapRef.current;
+
+    if (!map) return;
+
+    const zoom = yield map.getZoom();
+
+    const selectionCoords = feature?.geometry.coordinates || (yield mapRef.current.getCenter());
+    const selectionBorder = turfCircle(selectionCoords, SELECTION_RADIUS);
+    const selectionIndexes = flatbush ? flatbush.neighbors(...selectionCoords, Infinity, SELECTION_RADIUS / 100) : [];
+    const selectionFeatures = selectionIndexes.map(i => allFeatures[i]);
+
+    selectionFeatures.forEach((feature) => {
+      const avatar = feature.properties.status.avatar;
+
+      if (avatar) {
+        Image.prefetch(avatar);
+      }
+    });
+
+    setSelection({
+      location: {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Point',
+          coordinates: selectionCoords,
+        },
+      },
+      size: selectionIndexes.length,
+      border: selectionBorder,
+      features: selectionFeatures,
+      zoom,
+    });
+
+    cameraRef.current.setCamera({
+      centerCoordinate: selectionCoords,
+      zoomLevel: CAMERA_ZOOM,
+      animationDuration: 2000,
+    });
+  }, [flatbush, allFeatures]);
 
   useAsyncEffect(function* () {
     const interval = setInterval(() => {
@@ -305,6 +378,11 @@ const Map = () => {
           },
         },
       ]);
+
+      setAppState(appState => ({
+        ...appState,
+        activeStatus: status,
+      }));
     };
 
     apolloClient.events.on('response', onStatusCreate);
@@ -330,6 +408,7 @@ const Map = () => {
         ref={mapRef}
         style={styles.map}
         styleURL={CONFIG.MAPBOX_STYLE_URL}
+        onPress={renderSelection}
         onDidFinishLoadingMap={setLoaded}
         attributionEnabled={false}
         logoEnabled={false}
@@ -342,9 +421,36 @@ const Map = () => {
           centerCoordinate={initialLocation}
         />
 
+        {selection && (
+          <React.Fragment>
+            <MapboxGL.ShapeSource
+              id='selection'
+              shape={selection.border}
+            >
+              <MapboxGL.LineLayer
+                id='selectionOutline'
+                sourceLayerID='selection'
+                style={mapStyles.selection.outline}
+                minZoomLevel={MIN_ZOOM}
+              />
+            </MapboxGL.ShapeSource>
+
+            <MapboxGL.ShapeSource
+              id='selectionLocation'
+              shape={selection.location}
+            >
+              <MapboxGL.SymbolLayer
+                id='selectionText'
+                sourceLayerID='selection'
+                minZoomLevel={MIN_ZOOM}
+                style={{ ...mapStyles.selection.text, textField: selection.size.toString() }}
+              />
+            </MapboxGL.ShapeSource>
+          </React.Fragment>
+        )}
+
         <MapboxGL.ShapeSource
           id='areaFeatures'
-          onPress={onStatusFeaturePress}
           shape={areaFeatureCollection}
         >
           <MapboxGL.HeatmapLayer
@@ -352,21 +458,28 @@ const Map = () => {
             sourceID='areaFeatures'
             style={mapStyles.heatmap}
           />
-
-          <MapboxGL.SymbolLayer
-            id='areaFeaturesMarkers'
-            sourceID='areaFeatures'
-            minZoomLevel={MIN_ZOOM}
-            style={mapStyles.marker}
-          />
-
-          <MapboxGL.SymbolLayer
-            id='areaFeaturesAvatars'
-            sourceID='areaFeatures'
-            minZoomLevel={MIN_ZOOM}
-            style={mapStyles.avatar}
-          />
         </MapboxGL.ShapeSource>
+
+        {appState.activeStatus && (
+          <MapboxGL.ShapeSource
+            id='activeStatusFeature'
+            shape={activeStatusFeature}
+          >
+            <MapboxGL.SymbolLayer
+              id='activeStatusFeatureMarkers'
+              sourceID='activeStatusFeature'
+              minZoomLevel={MIN_ZOOM}
+              style={mapStyles.marker}
+            />
+
+            <MapboxGL.SymbolLayer
+              id='activeStatusFeatureAvatars'
+              sourceID='activeStatusFeature'
+              minZoomLevel={MIN_ZOOM}
+              style={mapStyles.avatar}
+            />
+          </MapboxGL.ShapeSource>
+        )}
 
         <MapboxGL.UserLocation />
       </MapboxGL.MapView>
@@ -391,6 +504,8 @@ const Map = () => {
           <Image source={require('./mapbox.png')} resizeMode='contain' style={styles.watermarkImage} />
         </View>
       </TouchableWithoutFeedback>
+
+      <Selection selection={selection} handleClearSelection={clearSelection} />
     </View>
   );
 };

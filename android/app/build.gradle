@@ -134,8 +134,8 @@ android {
         applicationId "com.hotncold"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "0.16.0-beta"
+        versionCode 27
+        versionName "0.17.0-beta"
     }
     splits {
         abi {
