@@ -43,6 +43,12 @@ const Status = (props) => {
   const _status = 'status' in props ? props.status : appState.activeStatus;
   const status = useMemo(() => _status, [statusDisplayed]);
 
+  useEffect(() => {
+    if (status?.firstImage) {
+      Image.prefetch(status.firstImage);
+    }
+  }, [status]);
+
   // Must preserve hooks
   let hideStatus = useCallback(() => {
     setContainerMeasures(null);
