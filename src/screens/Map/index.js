@@ -1,6 +1,7 @@
 import MapboxGL from '@react-native-mapbox-gl/maps';
 import { useApolloClient } from '@apollo/react-hooks';
 import turfCircle from '@turf/circle';
+import { around as flatbushAround } from 'geoflatbush';
 import Flatbush from 'flatbush';
 import { useRobot } from 'hotncold-robot';
 import React, { useMemo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -283,7 +284,7 @@ const Map = () => {
 
     const selectionCoords = feature?.geometry.coordinates || (yield mapRef.current.getCenter());
     const selectionBorder = turfCircle(selectionCoords, SELECTION_RADIUS);
-    const selectionIndexes = flatbush ? flatbush.neighbors(...selectionCoords, Infinity, SELECTION_RADIUS / 100) : [];
+    const selectionIndexes = flatbush ? flatbushAround(flatbush, ...selectionCoords, Infinity, SELECTION_RADIUS) : [];
     const selectionFeatures = selectionIndexes.map(i => allFeatures[i]);
 
     selectionFeatures.forEach((feature) => {

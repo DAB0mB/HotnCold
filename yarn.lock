@@ -3794,7 +3794,7 @@ flatbush@^3.3.0:
   dependencies:
     flatqueue "^1.2.0"
 
-flatqueue@^1.2.0:
+flatqueue@^1.1.0, flatqueue@^1.2.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/flatqueue/-/flatqueue-1.2.1.tgz#82f501758fc5925742fbeb478637230456157ef2"
   integrity sha512-X86TpWS1rGuY7m382HuA9vngLeDuWA9lJvhEG+GfgKMV5onSvx5a71cl7GMbXzhWtlN9dGfqOBrpfqeOtUfGYQ==
@@ -3908,6 +3908,13 @@ gensync@^1.0.0-beta.1:
   version "1.0.0-beta.1"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.1.tgz#58f4361ff987e5ff6e1e7a210827aa371eaac269"
   integrity sha512-r8EC6NO1sngH/zdD9fiRDLdcgnbayXah+mLgManTaIZJqEC1MZstmnox8KpnI2/fxQwrp5OpCOYWLp4rBl4Jcg==
+
+geoflatbush@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/geoflatbush/-/geoflatbush-1.0.0.tgz#5e3041e9dd529774ea17f4d81fbd21465c108ef1"
+  integrity sha512-epTkkL1KUbbJDRJW2AcN2yKkj4GHTivXWgssZZtYtLRh8VowckqBjxUCIJq8ZAcUXkJz31+Tu1d9F2sTq5klvg==
+  dependencies:
+    flatqueue "^1.1.0"
 
 get-caller-file@^2.0.1:
   version "2.0.5"
