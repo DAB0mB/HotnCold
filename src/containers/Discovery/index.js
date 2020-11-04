@@ -108,7 +108,11 @@ const Discovery = Base.create(({ navigation }) => {
     associateNotificationsToken(notificationsToken);
   }, [myQuery]);
 
+  const isLoading = myQuery.loading || myQuery.error || !me;
+
   useAsyncEffect(function* (onCleanup) {
+    if (isLoading) return;
+
     const initialTrigger = yield notifications.getTrigger();
 
     if (initialTrigger) {
@@ -117,9 +121,11 @@ const Discovery = Base.create(({ navigation }) => {
 
     // Listen in background
     onCleanup(notifications.onTokenRefresh(associateNotificationsToken));
-  }, [true]);
+  }, [isLoading]);
 
   useEffect(() => {
+    if (isLoading) return;
+
     const removeMessageListener = notifications.onMessage(onMessage);
     const removeNotificationOpenedListener = notifications.onNotificationOpened(onNotificationOpened);
 
@@ -130,9 +136,10 @@ const Discovery = Base.create(({ navigation }) => {
   }, [
     onMessage,
     onNotificationOpened,
+    isLoading,
   ]);
 
-  if (myQuery.loading || myQuery.error || !me) {
+  if (isLoading) {
     return useLoading(true);
   }
 
