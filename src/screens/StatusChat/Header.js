@@ -23,17 +23,17 @@ const styles = StyleSheet.create({
   menuArrow: { backgroundColor: 'transparent', width: .1, height: .1 },
 });
 
-const Header = ({ status }) => {
+const Header = ({ status = {} }) => {
   const alertError = useAlertError();
   const baseNav = useNavigation(Base);
   const menuState = useState(false);
   const menuIconRef = useRef();
   const [, setMenuVisible] = menuState;
-  const { author, chat } = status || {};
+  const { author, chat } = status;
   // TODO: Add listener to statusQuery
   const [subscribed, setSubscribed] = useState(!chat ? null : (chat.subscribed || false));
   const [published, setPublished] = useState(status.published);
-  const [toggleChatSubscription] = mutations.toggleChatSubscription.use({
+  const [toggleChatSubscription] = mutations.toggleChatSubscription.use(chat?.id, {
     onError: alertError,
   });
   const [publishStatus] = mutations.publishStatus.use(status.id, {
