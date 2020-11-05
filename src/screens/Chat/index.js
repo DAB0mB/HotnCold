@@ -111,7 +111,7 @@ const Chat = () => {
         markChatAsRead();
       }
     }, [chat]),
-  }),
+  });
 
   useEffect(() => {
     if (!chat) return;

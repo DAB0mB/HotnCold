@@ -42,9 +42,8 @@ const httpLink = createUploadLink({
 
 const wsLink = new WebSocketLink({
   uri: CONFIG.GRAPHQL_ENDPOINT.replace(/^https?/, 'ws'),
-  // TODO: Handle reconnection of subscription on network error
-  // "reconnect: true" options has a leak! Beware
   options: {
+    reconnect: true,
     async connectionParams() {
       return {
         cookie: await CookieManager.get(CONFIG.SERVER_URI),
