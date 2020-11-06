@@ -16,6 +16,8 @@ const messageSent = gql `
 messageSent.use = (chatId, options = {}) => {
   return useSubscription(messageSent, {
     variables: { chatId },
+    fetchPolicy: 'no-cache',
+    skip: !chatId,
     ...options,
   });
 };

@@ -105,13 +105,16 @@ const Chat = () => {
     }
   }, [chat]);
 
-  subscriptions.chatBumped.use({
-    onSubscriptionData: useCallback(() => {
-      if (chat) {
-        markChatAsRead();
-      }
-    }, [chat]),
-  });
+  {
+    const sub = subscriptions.chatBumped.use();
+
+    useEffect(() => {
+      if (!sub.data) return;
+      if (!chat) return;
+
+      markChatAsRead();
+    }, [sub.data]);
+  }
 
   useEffect(() => {
     if (!chat) return;

@@ -14,7 +14,10 @@ const chatBumped = gql `
 `;
 
 chatBumped.use = (options = {}) => {
-  return useSubscription(chatBumped, options);
+  return useSubscription(chatBumped, {
+    fetchPolicy: 'no-cache',
+    ...options,
+  });
 };
 
 export default chatBumped;

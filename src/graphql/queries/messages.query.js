@@ -29,6 +29,8 @@ messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) =>
   });
 
   useEffect(() => {
+    if (!query.data) return;
+
     setData(query.data);
   }, [query.data]);
 
@@ -38,23 +40,22 @@ messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) =>
     }
   }, [data, onCompleted]);
 
-  useEffect(() => {
-    if (!chatId) return;
+  {
+    const sub = subscriptions.messageSent.use(chatId);
 
-    return query.subscribeToMore({
-      document: subscriptions.messageSent,
-      variables: { chatId },
-      updateQuery(prev, { subscriptionData }) {
-        if (!subscriptionData.data) return;
+    // NOTE:
+    // subscribeToMore() - does not unsubscribe for some reason
+    // onSubscriptionData() - is not called for some reason
+    useEffect(() => {
+      if (!sub.data) return;
 
-        const { messageSent } = subscriptionData.data;
+      const { messageSent } = sub.data;
 
-        setData({
-          messages: [messageSent, ...data.messages]
-        });
-      },
-    });
-  }, [query.subscribeToMore, data, chatId]);
+      setData({
+        messages: [messageSent, ...data.messages]
+      });
+    }, [sub.data]);
+  }
 
   return {
     ...query,
