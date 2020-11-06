@@ -11,7 +11,7 @@ import Header from './Header';
 import Status from './Status';
 
 const styles = StyleSheet.create({
-  container: { flex: 1, flexDirection: 'column', backgroundColor: 'white' },
+  container: { flex: 1, flexDirection: 'column-reverse', backgroundColor: 'white' },
   shadow: { position: 'absolute', top: 0, left: 0, width: '100%', height: 30 },
 });
 
@@ -62,8 +62,6 @@ const StatusChat = () => {
 
   return (
     <View style={styles.container}>
-      <Header status={status} />
-      <Status status={status} />
       <View style={{ flex: 1 }}>
         <LinearGradient
           colors={['rgba(0, 0, 0, .05)', 'rgba(0, 0, 0, 0)']}
@@ -73,6 +71,8 @@ const StatusChat = () => {
         />
         <Chat chat={chat} />
       </View>
+      <Status status={status} />
+      <Header status={status} />
     </View>
   );
 };

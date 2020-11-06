@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Lightbox from 'react-native-lightbox';
 import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { StyleSheet, Animated, View, Text, Image, TouchableWithoutFeedback, Easing, BackHandler } from 'react-native';
 import CONFIG from 'react-native-config';
@@ -6,7 +7,6 @@ import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 import { getUserAvatarSource, getStatusThumbSource } from '../../assets';
-import ImageViewer from '../../components/ImageViewer';
 import { useAppState } from '../../services/AppState';
 import { useNavigation }  from '../../services/Navigation';
 import { colors, hexToRgba } from '../../theme';
@@ -35,10 +35,10 @@ const Status = (props) => {
   const baseNav = useNavigation(Base);
   const [appState, setAppState] = useAppState();
   const [statusDisplayed, setStatusDisplayed] = useState(false);
-  const [isImageViewerOpen, setImageViewerOpen] = useState(false);
   const [statusBottom] = useState(() => new Animated.Value(200));
   const [containerMeasures, setContainerMeasures] = useState();
   const containerRef = useRef();
+  const lbRef = useRef();
 
   const _status = 'status' in props ? props.status : appState.activeStatus;
   const status = useMemo(() => _status, [statusDisplayed]);
@@ -65,10 +65,6 @@ const Status = (props) => {
   const navToStatusChat = useCallback(() => {
     baseNav.push('StatusChat', { status });
   }, [baseNav, status]);
-
-  const openImageViewer = useCallback(() => {
-    setImageViewerOpen(true);
-  }, []);
 
   useAsyncLayoutEffect(function* () {
     if (statusDisplayed) {
@@ -166,15 +162,15 @@ const Status = (props) => {
         </TouchableWithoutFeedback>
 
         <View style={styles.imageContainer}>
-          <Image style={styles.image} source={getStatusThumbSource(status)} />
+          <Lightbox ref={lbRef} activeProps={{ resizeMode: 'contain', style: { flex: 1, width: '100%' }, source: { uri: status.firstImage } }}>
+            <Image style={styles.image} source={getStatusThumbSource(status)} />
+          </Lightbox>
         </View>
       </Animated.View>
 
       {containerMeasures && (
-        <TouchableWithoutFeedback onPress={openImageViewer}>
-          <View style={{ position: 'absolute', right: 10, bottom: containerMeasures.height + 10, width: 120, height: 120 }}>
-            <ImageViewer imageUrls={status.firstImage} openState={[isImageViewerOpen, setImageViewerOpen]} />
-          </View>
+        <TouchableWithoutFeedback onPress={() => lbRef.current?.open()}>
+          <View style={{ position: 'absolute', right: 10, bottom: containerMeasures.height + 10, width: 120, height: 120 }} />
         </TouchableWithoutFeedback>
       )}
     </React.Fragment>

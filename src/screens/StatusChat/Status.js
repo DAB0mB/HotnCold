@@ -1,8 +1,8 @@
 import moment from 'moment';
-import React, { useCallback, useState } from 'react';
-import { Image, Text, View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import React from 'react';
+import { Image, Text, View, StyleSheet } from 'react-native';
+import Lightbox from 'react-native-lightbox';
 
-import ImageViewer from '../../components/ImageViewer';
 import { getStatusThumbSource } from '../../assets';
 import { colors } from '../../theme';
 
@@ -20,12 +20,6 @@ const styles = StyleSheet.create({
 const Status = ({ status }) => {
   if (!status) return null;
 
-  const [isImageViewerOpen, setImageViewerOpen] = useState(false);
-
-  const openImageViewer = useCallback(() => {
-    setImageViewerOpen(true);
-  }, []);
-
   return (
     <View style={styles.container}>
       {status && (
@@ -37,12 +31,11 @@ const Status = ({ status }) => {
             </View>
             <Text style={styles.text}>{status.text}</Text>
           </View>
-          <TouchableWithoutFeedback onPress={openImageViewer}>
-            <View style={styles.imageContainer}>
+          <View style={styles.imageContainer}>
+            <Lightbox activeProps={{ resizeMode: 'contain', style: { flex: 1, width: '100%' }, source: { uri: status.firstImage } }}>
               <Image style={styles.image} source={getStatusThumbSource(status)} />
-            </View>
-          </TouchableWithoutFeedback>
-          <ImageViewer imageUrls={status.firstImage} openState={[isImageViewerOpen, setImageViewerOpen]} />
+            </Lightbox>
+          </View>
         </React.Fragment>
       )}
     </View>

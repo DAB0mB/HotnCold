@@ -55,7 +55,7 @@ const Selection = ({ selection: _selection, handleClearSelection }) => {
 
   return (
     <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
-      <ScrollView horizontal style={styles.scroller} contentStyleContainer={styles.scrollerContent}>
+      <ScrollView horizontal key={selection.features.length} style={styles.scroller} contentStyleContainer={styles.scrollerContent}>
         {selection.features.map((feature) => (
           <TouchableWithoutFeedback key={feature.properties.status.id} onPress={() => onFeaturePress(feature)}>
             <Image style={[styles.statusAvatar, { borderColor: feature.properties.status.isMeetup ? colors.hot : colors.cold }]} source={{ uri: feature.properties.status.avatar }} />

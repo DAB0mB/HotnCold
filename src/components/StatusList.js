@@ -1,10 +1,9 @@
 import moment from 'moment';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, View, Dimensions, Image, Text, FlatList, TouchableWithoutFeedback } from 'react-native';
 import Ripple from 'react-native-material-ripple';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
-import ImageViewer from './ImageViewer';
 import { getUserAvatarSource } from '../assets';
 import * as queries from '../graphql/queries';
 import { useAlertError } from '../services/DropdownAlert';
@@ -21,10 +20,11 @@ const styles = StyleSheet.create({
   statusImage: { height: statusImageSize, width: statusImageSize },
   statusAuthorPicture: { width: 40, height: 40 },
   statusAuthorName: { color: colors.ink, fontSize: 16, paddingLeft: 10 },
-  statusDescription: { flexDirection: 'row', padding: 10 },
-  statusCreatedAt: { color: colors.ink, flex: 1, fontWeight: '700', marginBottom: 10 },
-  statusText: { padding: 10, fontSize: 16 },
+  statusDescription: { flexDirection: 'row', padding: 15, paddingBottom: 10 },
+  statusCreatedAt: { color: 'black', flex: 1, marginBottom: 10 },
+  statusText: { padding: 15, paddingTop: 0, fontSize: 16 },
   statusType: { marginTop: 2, marginRight: 5, borderRadius: 15, width: 15, height: 15 },
+  actionIcon: { marginTop: -5, marginRight: -5 },
   noStatusesMessage: { height: 50, alignItems: 'center', justifyContent: 'center' },
 });
 
@@ -37,19 +37,12 @@ const StatusList = ({ hideHeader, queryUserId = null, userScreen, NoStatusesComp
 
   const baseNav = useNavigation(Base);
   const alertError = useAlertError();
-  const [statusImages, setStatusImages] = useState([]);
-  const [isImageViewerOpen, setImageViewerOpen] = useState(false);
 
   const statusesQuery = queries.statuses.use(queryUserId, {
     onError: alertError,
   });
 
   const { statuses = emptyArr } = statusesQuery.data || {};
-
-  const openImageViewer = useCallback((status) => {
-    setStatusImages([status.firstImage]);
-    setImageViewerOpen(true);
-  }, []);
 
   const navToStatusChat = useCallback((status) => {
     baseNav.push('StatusChat', { status });
@@ -72,20 +65,18 @@ const StatusList = ({ hideHeader, queryUserId = null, userScreen, NoStatusesComp
             <Text style={styles.statusAuthorName}>{status.author.name}</Text>
           </Ripple>
         )}
-        <TouchableWithoutFeedback onPress={() => openImageViewer(status)}>
-          <Image style={styles.statusImage} source={{ uri: status.firstImage }} />
-        </TouchableWithoutFeedback>
+        <Image style={styles.statusImage} source={{ uri: status.firstImage }} />
         <View style={styles.statusDescription} onPress={() => navToStatusChat(status)}>
           <View style={[styles.statusType, { backgroundColor: status.isMeetup ? colors.hot : colors.cold }]} />
           <Text style={styles.statusCreatedAt}>{moment(status.createdAt).fromNow()}</Text>
           <TouchableWithoutFeedback onPress={() => navToStatusChat(status)}>
-            <MIcon name='chat-bubble-outline' size={30} color={colors.ink} />
+            <MIcon name='chat-bubble' size={30} color={colors.ink} style={styles.actionIcon} />
           </TouchableWithoutFeedback>
         </View>
         <Text style={styles.statusText}>{status.text}</Text>
       </View>
     );
-  }, [hideHeader, navToUserScreen, openImageViewer, navToStatusChat]);
+  }, [hideHeader, navToUserScreen, navToStatusChat]);
 
   const noStatuses = statusesQuery.called && !statusesQuery.loading && !statuses.length;
 
@@ -101,7 +92,6 @@ const StatusList = ({ hideHeader, queryUserId = null, userScreen, NoStatusesComp
           ListFooterComponent={noStatuses ? <NoStatuses /> : props.ListFooterComponent}
         />
       )}
-      <ImageViewer imageUrls={statusImages} openState={[isImageViewerOpen, setImageViewerOpen]} />
     </React.Fragment>
   );
 };
