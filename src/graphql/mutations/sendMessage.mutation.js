@@ -22,23 +22,33 @@ sendMessage.use = (chatId, options = {}) => {
     const messageId = message.id || UUID();
     const createdAt = message.createdAt || new Date();
 
-    return superMutate({
-      optimisticResponse: {
-        __typename: 'Mutation',
-        sendMessage: {
-          __typename: 'Message',
-          id: messageId,
-          text: message.text || null,
-          image: message.image || null,
-          createdAt: createdAt,
-          user: {
-            __typename: 'User',
-            id: message.user.id,
-            avatar: message.user.avatar,
-            name: message.user.name,
-          },
+    const optimisticResponse = {
+      __typename: 'Mutation',
+      sendMessage: {
+        __typename: 'Message',
+        id: messageId,
+        text: message.text || null,
+        image: message.image || null,
+        createdAt: createdAt,
+        pending: true,
+        sent: false,
+        user: {
+          __typename: 'User',
+          id: message.user.id,
+          avatar: message.user.avatar,
+          name: message.user.name,
         },
       },
+    };
+
+    mutation.client.events.emit('optimisticResponse', ({
+      operationName: 'SendMessage',
+      variables: { chatId, text: message.text, image: message.image },
+      data: optimisticResponse,
+    }));
+
+    return superMutate({
+      optimisticResponse,
       update: (cache, mutation) => {
         if (mutation.error) return;
 
@@ -52,10 +62,12 @@ sendMessage.use = (chatId, options = {}) => {
 
         const recentMessage = {
           __typename: 'Message',
-          id: messageId,
+          id: message.id,
           text: message.text || null,
           image: message.image || null,
           createdAt: createdAt,
+          pending: message.pending,
+          sent: message.sent,
           user: {
             __typename: 'User',
             id: message.user.id,
@@ -74,6 +86,13 @@ sendMessage.use = (chatId, options = {}) => {
       },
       variables: { chatId, text: message.text, image: message.image },
       ...options,
+    }).then(({ data }) => {
+      mutation.client.events.emit('responded', {
+        operationName: 'SendMessage',
+        variables: { chatId, text: message.text, image: message.image },
+        data,
+        optimisticResponse,
+      });
     });
   }, [
     superMutate,

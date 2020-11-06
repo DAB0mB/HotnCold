@@ -8,6 +8,8 @@ const message = gql `
     createdAt
     text
     image
+    pending
+    sent
     user {
       ...User
     }

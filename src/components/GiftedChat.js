@@ -42,6 +42,12 @@ const adaptMessage = (message) => ({
   get image() {
     return message.image;
   },
+  get pending() {
+    return message.pending;
+  },
+  get sent() {
+    return message.sent;
+  },
   get user() {
     return adaptUser(message.user);
   },
