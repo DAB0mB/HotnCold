@@ -42,6 +42,7 @@ status.withChat = gql `
     published
     chat {
       ...Chat
+      subscribed
     }
   }
 
