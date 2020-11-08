@@ -4,8 +4,8 @@ import gql from 'graphql-tag';
 import * as fragments from '../fragments';
 
 const status = gql `
-  query Status($statusId: ID!) {
-    status(statusId: $statusId) {
+  query Status($statusId: ID, $chatId: ID) {
+    status(statusId: $statusId, chatId: $chatId) {
       ...StatusWithChat
     }
   }
@@ -13,11 +13,17 @@ const status = gql `
   ${fragments.status.withChat}
 `;
 
-status.use = (statusId, options = {}) => {
+status.use = (id, { type = 'status', ...options } = {}) => {
+  const variables = type == 'chat' ? {
+    chatId: id,
+  } : {
+    statusId: id,
+  };
+
   return useQuery(status, {
-    variables: { statusId },
+    variables,
     fetchPolicy: 'no-cache',
-    skip: !statusId,
+    skip: !id,
     ...options,
   });
 };

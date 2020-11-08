@@ -8,6 +8,7 @@ const chat = gql `
     id
     title
     picture
+    isThread
     unreadMessagesCount
     participantsCount
     recipient {

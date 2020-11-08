@@ -7,10 +7,10 @@ import { compactOptions, omit, useConst } from '../../utils';
 
 const chats = gql `
   query Chats($limit: Int!, $anchor: ID) {
-    chats(limit: $limit, anchor: $anchor) {
+    chats(limit: $limit, anchor: $anchor, includeThreads: true) {
       ...Chat
     }
-    firstChat {
+    firstChat(includeThreads: true) {
       ...Chat
     }
   }
@@ -42,7 +42,7 @@ chats.use = (...args) => {
             chats.splice(chatIndex, 1);
           }
 
-          chats.push(chatBumped);
+          chats.unshift(chatBumped);
 
           const firstChat = chats.length == 1 ? chats[0] : prev.firstChat;
 

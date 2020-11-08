@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import GiftedChat from '../../components/GiftedChat';
 import Loader from '../../components/Loader';
 import Base from '../../containers/Base';
 import * as mutations from '../../graphql/mutations';
+import * as subscriptions from '../../graphql/subscriptions';
 import * as queries from '../../graphql/queries';
 import { useMine } from '../../services/Auth';
 import { useAlertError } from '../../services/DropdownAlert';
@@ -21,6 +22,7 @@ const Chat = ({ chat }) => {
   const baseNav = useNavigation(Base);
   const [loadEarlier, setLoadEarlier] = useState(false);
   const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
+  const [markChatAsRead] = mutations.markChatAsRead.use(chat?.id);
 
   const messagesQuery = queries.messages.use(chat?.id, 20, {
     onCompleted: useCallback((data) => {
@@ -65,6 +67,23 @@ const Chat = ({ chat }) => {
 
     messagesQuery.fetchMore();
   }, [messagesQuery, setIsLoadingEarlier]);
+
+  useEffect(() => {
+    if (chat) {
+      markChatAsRead();
+    }
+  }, [chat]);
+
+  {
+    const sub = subscriptions.chatBumped.use();
+
+    useEffect(() => {
+      if (!sub.data) return;
+      if (!chat) return;
+
+      markChatAsRead();
+    }, [sub.data]);
+  }
 
   const handleAvatarPress = useCallback((user) => {
     baseNav.push('UserLobby', {

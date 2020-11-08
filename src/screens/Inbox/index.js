@@ -4,6 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 
 import { getUserAvatarSource } from '../../assets';
 import ProfileList from '../../components/ProfileList';
+import Base from '../../containers/Base';
 import Social from '../../containers/Social';
 import * as queries from '../../graphql/queries';
 import { useNavigation } from '../../services/Navigation';
@@ -36,16 +37,22 @@ const Inbox = () => {
   const alertError = useAlertError();
   const chatsQuery = queries.chats.use({ subscribeToChanges: true, onError: alertError });
   const { chats = [] } = chatsQuery.data || {};
+  const baseNav = useNavigation(Base);
   const socialNav = useNavigation(Social);
   const mountState = useMountState();
 
   const navToChat = useCallback((chat) => {
     setTimeout(() => {
       if (mountState.current) {
-        socialNav.push('Chat', { chat });
+        if (chat.isThread) {
+          baseNav.push('StatusChat', { chatId: chat.id });
+        }
+        else {
+          socialNav.push('Chat', { chat });
+        }
       }
     }, 200);
-  }, [socialNav]);
+  }, [socialNav, baseNav]);
 
   const onChatItemPress = useCallback(({ item: chat }) => {
     navToChat(chat);
@@ -69,7 +76,7 @@ const Inbox = () => {
 
       <View style={styles.chatRecentMessage}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.chatRecentMessageText}>{chat.recentMessages[0].text}</Text>
+          <Text numberOfLines={1} style={styles.chatRecentMessageText}>{chat.recentMessages[0].text}</Text>
         </View>
 
         {!!chat.unreadMessagesCount && (

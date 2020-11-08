@@ -18,19 +18,24 @@ const styles = StyleSheet.create({
 const StatusChat = () => {
   const baseNav = useNavigation(Base);
   const [, setAppState] = useAppState();
+  const chatId = baseNav.getParam('chatId');
   let statusId = baseNav.getParam('statusId');
   let statusQuery;
   let status;
   let chat;
 
-  if (statusId) {
-    statusQuery = queries.status.use(statusId);
+  if (chatId) {
+    statusQuery = queries.status.use(chatId, { type: 'chat' });
+    status = statusQuery.data?.status;
+  }
+  else if (statusId) {
+    statusQuery = queries.status.use(statusId, { type: 'status' });
     status = statusQuery.data?.status;
   }
   else {
     status = baseNav.getParam('status');
     statusId = status.id;
-    statusQuery = queries.status.use(status.id);
+    statusQuery = queries.status.use(status.id, { type: 'status' });
   }
 
   status = statusQuery.data?.status || status;
