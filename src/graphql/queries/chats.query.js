@@ -17,6 +17,8 @@ const chats = gql `
   ${fragments.chat}
 `;
 
+const $chats = chats;
+
 chats.use = (...args) => {
   const subscriptions = require('../subscriptions');
   const [limit = 12, options = {}] = compactOptions(2, args);
@@ -27,41 +29,43 @@ chats.use = (...args) => {
     ...omit(options, ['subscribeToChanges']),
   });
 
+  const refs = useConst({});
+  refs.data = query.data;
+  refs.limit = limit;
+
   if (options.subscribeToChanges) {
+    const sub = subscriptions.chatBumped.use();
+
     useEffect(() => {
-      return query.subscribeToMore({
-        document: subscriptions.chatBumped,
-        updateQuery(prev, { subscriptionData }) {
-          if (!subscriptionData.data) return;
+      if (!sub.data) return;
+      if (!refs.data) return;
 
-          const { chatBumped } = subscriptionData.data;
-          const chats = prev.chats.slice();
-          const chatIndex = chats.findIndex(c => c.id === chatBumped.id);
+      const { chatBumped } = sub.data;
+      const chats = refs.data.chats.slice();
+      const chatIndex = chats.findIndex(c => c.id === chatBumped.id);
 
-          if (~chatIndex) {
-            chats.splice(chatIndex, 1);
-          }
+      if (~chatIndex) {
+        chats.splice(chatIndex, 1);
+      }
 
-          chats.unshift(chatBumped);
+      chats.unshift(chatBumped);
 
-          const firstChat = chats.length == 1 ? chats[0] : prev.firstChat;
+      const firstChat = chats.length == 1 ? chats[0] : refs.data.firstChat;
 
-          return {
-            firstChat,
-            chats,
-          };
+      query.client.writeQuery({
+        query: $chats,
+        variables: { limit: refs.limit },
+        data: {
+          chats,
+          firstChat,
         },
       });
-    }, [query.subscribeToMore]);
+    }, [sub.data]);
   }
-
-  const disposeVars = useConst({});
-  disposeVars.data = query.data;
-  disposeVars.limit = limit;
 
   useEffect(() => {
     return () => {
-      const { data, limit } = disposeVars;
+      const { data, limit } = refs;
 
       if (!data) return;
 

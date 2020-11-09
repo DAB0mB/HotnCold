@@ -11,6 +11,7 @@ const chat = gql `
     isThread
     unreadMessagesCount
     participantsCount
+    createdAt
     recipient {
       ...UserProfile
     }

@@ -2,7 +2,7 @@ import moment from 'moment';
 import React, { useCallback } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import { getUserAvatarSource } from '../../assets';
+import { getStatusThumbSource, getUserAvatarSource } from '../../assets';
 import ProfileList from '../../components/ProfileList';
 import Base from '../../containers/Base';
 import Social from '../../containers/Social';
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 });
 
 const getChatId = c => c.id;
-const getChatPicture = c => getUserAvatarSource(c, 'picture');
+const getChatPicture = c => c.isThread ? getStatusThumbSource(c, 'picture') : getUserAvatarSource(c, 'picture');
 
 export const $Inbox = {
   Header: $Header,
@@ -70,13 +70,13 @@ const Inbox = () => {
         </View>
 
         <View style={styles.chatTime}>
-          <Text style={[styles.chatTimeText, chat.unreadMessagesCount && { color: colors.hot }].filter(Boolean)}>{moment(chat.recentMessages[0].createdAt).fromNow()}</Text>
+          <Text style={[styles.chatTimeText, chat.unreadMessagesCount && { color: colors.hot }].filter(Boolean)}>{moment(chat.recentMessages[0]?.createdAt || chat.createdAt).fromNow()}</Text>
         </View>
       </View>
 
       <View style={styles.chatRecentMessage}>
         <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} style={styles.chatRecentMessageText}>{chat.recentMessages[0].text}</Text>
+          <Text numberOfLines={1} style={styles.chatRecentMessageText}>{chat.recentMessages[0]?.text || ''}</Text>
         </View>
 
         {!!chat.unreadMessagesCount && (

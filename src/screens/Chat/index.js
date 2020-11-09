@@ -152,11 +152,13 @@ const Chat = () => {
     );
   }
 
+  // TODO: Use chat.recentMessages for faster initial loading. Right now there's a duplicate key
+  // warning message that appears after that chat was bumped
   return (
     <View style={styles.container}>
       <GiftedChat
         user={me}
-        messages={messages || chat.recentMessages}
+        messages={messages}
         onLoadEarlier={onLoadEarlier}
         onSend={onSend}
         loadEarlier={loadEarlier}
