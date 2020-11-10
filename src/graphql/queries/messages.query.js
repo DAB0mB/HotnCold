@@ -33,18 +33,20 @@ messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) =>
   });
 
   useEffect(() => {
-    const onOptimisticMessage = ({ operationName, data: { sendMessage: message } = {} }) => {
+    const onOptimisticMessage = ({ operationName, data: { sendMessage: message } = {}, variables }) => {
       if (operationName != 'SendMessage') return;
       if (!message) return;
+      if (variables?.chatId !== chatId) return;
 
       setData({
         messages: [message, ...data.messages]
       });
     };
 
-    const onMessage = ({ operationName, data: { sendMessage: message } = {}, optimisticResponse: { sendMessage: optimisticMessage } = {} }) => {
+    const onMessage = ({ operationName, data: { sendMessage: message } = {}, optimisticResponse: { sendMessage: optimisticMessage } = {}, variables }) => {
       if (operationName != 'SendMessage') return;
       if (!message) return;
+      if (variables?.chatId !== chatId) return;
 
       let index = -1;
       for (let i = data.messages.length - 1; i >= 0; i--) {
@@ -74,7 +76,7 @@ messages.use = (chatId, limit, { onCompleted = () => {}, options = {} } = {}) =>
       query.client.events.off('optimisticResponse', onOptimisticMessage);
       query.client.events.off('responded', onMessage);
     };
-  }, [data]);
+  }, [chatId, data]);
 
   useEffect(() => {
     if (!query.data) return;
