@@ -30,7 +30,7 @@ const winDims = Dimensions.get('window');
 
 const loadingIcons = Promise.all([
   McIcon.getImageSource('map', 30, colors.hot),
-  McIcon.getImageSource('history', 30, colors.hot),
+  McIcon.getImageSource('view-list', 30, colors.hot),
   McIcon.getImageSource('close', 30, colors.hot),
 ]);
 
@@ -47,7 +47,7 @@ const menuRect = { x: winDims.width, y: 0, width: 0, height: 0 };
 
 const Bubble = {
   Map: 0,
-  History: 1,
+  Feed: 1,
 };
 
 export const $Frame = {};
@@ -79,8 +79,8 @@ const Frame = ({
   });
 
   useLayoutEffect(() => {
-    loadingIcons.then(([map, history, close]) => {
-      setIcons({ map, history, close });
+    loadingIcons.then(([map, feed, close]) => {
+      setIcons({ map, feed, close });
     });
   }, [true]);
 
@@ -90,15 +90,15 @@ const Frame = ({
     setActiveBubble(Bubble[discoveryNav.state.routeName]);
   }, [discoveryNav]);
 
-  const navToHistory = useCallbackWhen(() => {
-    discoveryNav.push('History');
-    setTitle('History');
-  }, activeBubble != Bubble.History && discoveryNav?.state.routeName === 'Map' && icons !== empty);
+  const navToFeed = useCallbackWhen(() => {
+    discoveryNav.push('Feed');
+    setTitle('Feed');
+  }, activeBubble != Bubble.Feed && discoveryNav?.state.routeName === 'Map' && icons !== empty);
 
   const navToMap = useCallbackWhen(() => {
     discoveryNav.goBackOnceFocused();
     setTitle('Map');
-  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'History' && icons !== empty);
+  }, activeBubble != Bubble.Map && discoveryNav?.state.routeName === 'Feed' && icons !== empty);
 
   const openSideMenu = useCallback(() => {
     setSideMenuOpened(true);
@@ -213,11 +213,11 @@ const Frame = ({
     { title: 'Cancel', iconSource: icons.close, onSelect: cancelLocationSelection }
   ] : [
     { title: 'Map', iconSource: icons.map, onSelect: navToMap },
-    { title: 'History', iconSource: icons.history, onSelect: navToHistory },
+    { title: 'Feed', iconSource: icons.feed, onSelect: navToFeed },
   ];
 
   useTrap($Frame, {
-    navToHistory,
+    navToFeed,
     navToMap,
     openSideMenu,
     closeSideMenu,

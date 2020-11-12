@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Text, View, Image, StyleSheet } from 'react-native';
 
 import Discovery from '../../containers/Discovery';
-import StatusList from '../../components/StatusList';
+import StatusFeed from '../../components/StatusFeed';
 import { useAppState } from '../../services/AppState';
 import { useScreenFrame } from '../../services/Frame';
 import { useNavigation } from '../../services/Navigation';
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   tapHereImage: { height: 100, resizeMode: 'contain' },
 });
 
-const History = () => {
+const Feed = () => {
   const discoveryNav = useNavigation(Discovery);
   const [appState] = useAppState();
 
@@ -31,7 +31,8 @@ const History = () => {
 
   return (
     <View style={styles.container}>
-      <StatusList
+      <StatusFeed
+        key={appState.discoveryArea?.id}
         userScreen='UserLobby'
         NoStatusesComponent={NoStatuses}
         ListFooterComponent={<View style={{ height: 50 }} />}
@@ -43,7 +44,7 @@ const History = () => {
 const NoStatuses = () => {
   return (
     <View style={[styles.container, styles.empty]}>
-      <Text style={{ textAlign: 'center', lineHeight: 20 }}>See satatus that you{'\''}ve created or have been recently active with. Tap the <Text style={{ fontWeight: '900', fontSize: 20 }}>BIG</Text> button to create your first status and get started!</Text>
+      <Text style={{ textAlign: 'center', lineHeight: 20 }}>No statuses found around. Tap the <Text style={{ fontWeight: '900', fontSize: 20 }}>BIG</Text> button and be the first to create a status in the area!</Text>
 
       <View style={styles.tapHereDiv}>
         <Image source={tapHerePng} style={styles.tapHereImage} />
@@ -52,4 +53,4 @@ const NoStatuses = () => {
   );
 };
 
-export default Discovery.create(History);
+export default Discovery.create(Feed);

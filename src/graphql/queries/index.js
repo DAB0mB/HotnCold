@@ -10,3 +10,4 @@ export { default as status } from './status.query';
 export { default as statuses } from './statuses.query';
 export { default as statusImages } from './statusImages.query';
 export { default as userProfile } from './userProfile.query';
+export { default as areaStatusesList } from './areaStatusesList.query';

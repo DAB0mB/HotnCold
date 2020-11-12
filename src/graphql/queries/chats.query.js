@@ -92,6 +92,7 @@ chats.use = (...args) => {
     }, [true]),
     fetchMore: useCallback((...args) => {
       if (!query.data) return;
+      if (query.loading) return;
       if (query.data.firstChat?.id === query.data.chats.slice(-1)[0]?.id) return;
 
       const [lazyLimit = limit, options = {}] = compactOptions(2, args);
@@ -111,7 +112,7 @@ chats.use = (...args) => {
           };
         },
       });
-    }, [query.fetchMore, query.data, limit]),
+    }, [query.fetchMore, query.loading, query.data, limit]),
   };
 };
 
