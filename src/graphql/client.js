@@ -117,8 +117,8 @@ const terminatingLink = split(
 
 import Observable from 'zen-observable';
 
-const emitLink = new ApolloLink((operation, forward) => new Observable((observable) => {
-  forward(operation).subscribe({
+const emitLink = new ApolloLink((operation, forward) => new Observable((observer) => {
+  return forward(operation).subscribe({
     next(response) {
       // Emit only successful responses
       if (!response.errors) {
@@ -129,15 +129,15 @@ const emitLink = new ApolloLink((operation, forward) => new Observable((observab
         });
       }
 
-      observable.next(response);
+      observer.next(response);
     },
 
     complete() {
-      observable.complete();
+      observer.complete();
     },
 
     error(error) {
-      observable.error(error);
+      observer.error(error);
     }
   });
 }));

@@ -82,7 +82,7 @@
     "react-navigation": "^4.0.5",
     "react-navigation-stack": "^1.8.0",
     "react-navigation-transitions": "^1.0.12",
-    "subscriptions-transport-ws": "^0.9.16",
+    "subscriptions-transport-ws": "0.9.18",
     "uuid": "^3.3.3",
     "zen-observable": "^0.8.15"
   },
