@@ -7,6 +7,7 @@ const contract = gql `
     isTest
     signed
     passcode
+    referenceSubmitted
   }
 `;
 

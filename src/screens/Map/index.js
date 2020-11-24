@@ -10,6 +10,7 @@ import CONFIG from 'react-native-config';
 import McIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Selection from './Selection';
+import Base from '../../containers/Base';
 import Discovery from '../../containers/Discovery';
 import * as queries from '../../graphql/queries';
 import { useAppState } from '../../services/AppState';
@@ -130,9 +131,10 @@ const pluckImages = (features) => {
 };
 
 const Map = () => {
-  const { me } = useMine();
+  const { me, myContract } = useMine();
   const { useTrap } = useRobot();
   const apolloClient = useApolloClient();
+  const baseNav = useNavigation(Base);
   const discoveryNav = useNavigation(Discovery);
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
@@ -166,6 +168,12 @@ const Map = () => {
 
     return flatbush;
   }, [allFeatures]);
+
+  useEffect(() => {
+    if (!myContract.referenceSubmitted) {
+      baseNav.push('ReferenceDetails');
+    }
+  }, []);
 
   queries.areaStatuses.use(targetLocation, {
     onCompleted: useCallback((data) => {

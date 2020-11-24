@@ -13,6 +13,7 @@ import ProfileEditorScreen from '../screens/ProfileEditor';
 import AreaSearchScreen from '../screens/AreaSearch';
 import PlaceSearchScreen from '../screens/PlaceSearch';
 import MessageEditorScreen from '../screens/MessageEditor';
+import ReferenceDetailsScreen from '../screens/ReferenceDetails';
 import UserLobbyScreen from '../screens/UserLobby';
 import Router from './Router';
 
@@ -20,6 +21,10 @@ const handleCustomTransition = ({ scenes }) => {
   const nextScene = scenes[scenes.length - 1];
 
   if (nextScene.route.routeName == 'Filter') {
+    return fadeIn();
+  }
+
+  if (nextScene.route.routeName == 'ReferenceDetails') {
     return fadeIn();
   }
 
@@ -53,6 +58,9 @@ const Base = Router.create({
   },
   PlaceSearch: {
     screen: PlaceSearchScreen,
+  },
+  ReferenceDetails: {
+    screen: ReferenceDetailsScreen,
   },
   Auth: {
     screen: AuthContainer,

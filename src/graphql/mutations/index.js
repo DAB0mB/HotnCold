@@ -1,4 +1,5 @@
 export { default as associateNotificationsToken } from './associateNotificationsToken.mutation';
+export { default as addContractReferenceDetails } from './addContractReferenceDetails.mutation';
 export { default as createStatus } from './createStatus.mutation';
 export { default as createUser } from './createUser.mutation';
 export { default as dissociateNotificationsToken } from './dissociateNotificationsToken.mutation';

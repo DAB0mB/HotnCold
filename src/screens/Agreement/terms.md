@@ -12,13 +12,13 @@ By accessing or using our Services (clicking the “Agree” button, or download
 
 2. License Restrictions. Licensee shall not:
 
-    - copy the Application, except as expressly permitted by this license;
-    - modify, translate, adapt, or otherwise create derivative works or improvements, whether or not patentable, of the Application;
-    - reverse engineer, disassemble, decompile, decode, or otherwise attempt to derive or gain access to the source code of the Application or any part thereof;
-    - remove, delete, alter, or obscure any trademarks or any copyright, trademark, patent, or other intellectual property or proprietary rights notices from the Application, including any copy thereof;
-    - rent, lease, lend, sell, sublicense, assign, distribute, publish, transfer, or otherwise make available the Application, or any features or functionality of the Application, to any third party for any reason, including by making the Application available on a network where it is capable of being accessed by more than one device at any time; or
-    - remove, disable, circumvent, or otherwise create or implement any workaround to any copy protection, rights management, or security features in or protecting the    Application; or
-    - use the Application in, or in association with, the design, construction, maintenance, or operation of any hazardous environments or systems, including any power generation systems; aircraft navigation or communication systems, air traffic control systems, or any other transport management systems; safety-critical applications, including medical or life-support systems, vehicle operation applications or any police, fire, or other safety response systems; and military or aerospace applications, weapons systems, or environments.
+    1. copy the Application, except as expressly permitted by this license;
+    2. modify, translate, adapt, or otherwise create derivative works or improvements, whether or not patentable, of the Application;
+    3. reverse engineer, disassemble, decompile, decode, or otherwise attempt to derive or gain access to the source code of the Application or any part thereof;
+    4. remove, delete, alter, or obscure any trademarks or any copyright, trademark, patent, or other intellectual property or proprietary rights notices from the Application, including any copy thereof;
+    5. rent, lease, lend, sell, sublicense, assign, distribute, publish, transfer, or otherwise make available the Application, or any features or functionality of the Application, to any third party for any reason, including by making the Application available on a network where it is capable of being accessed by more than one device at any time; or
+    6. remove, disable, circumvent, or otherwise create or implement any workaround to any copy protection, rights management, or security features in or protecting the    Application; or
+    7. use the Application in, or in association with, the design, construction, maintenance, or operation of any hazardous environments or systems, including any power generation systems; aircraft navigation or communication systems, air traffic control systems, or any other transport management systems; safety-critical applications, including medical or life-support systems, vehicle operation applications or any police, fire, or other safety response systems; and military or aerospace applications, weapons systems, or environments.
 
 3. Reservation of Rights. You acknowledge and agree that the Application is provided under license, and not sold, to you. You do not acquire any ownership interest in the Application under this Agreement, or any other rights thereto other than to use the Application in accordance with the license granted, and subject to all terms, conditions, and restrictions, under this Agreement. Company and its licensors and service providers reserve and shall retain its/their entire right, title, and interest in and to the Application, including all copyrights, trademarks, and other intellectual property rights therein or relating thereto, except as expressly granted to you in this Agreement.
 
@@ -26,25 +26,25 @@ By accessing or using our Services (clicking the “Agree” button, or download
 
 5. Updates. Company may from time to time in its sole discretion develop and provide Application updates, which may include upgrades, bug fixes, patches, other error corrections, and/or new features (collectively, including related documentation, “Updates“). Updates may also modify or delete in their entirety certain features and functionality. You agree that Company has no obligation to provide any Updates or to continue to provide or enable any particular features or functionality. Based on your Mobile Device settings, when your Mobile Device is connected to the internet either:
 
-    - the Application will automatically download and install all available Updates; or
-    - you may receive notice of or be prompted to download and install available Updates.
+    1. the Application will automatically download and install all available Updates; or
+    2. you may receive notice of or be prompted to download and install available Updates.
 
    You shall promptly download and install all Updates and acknowledge and agree that the Application or portions thereof may not properly operate should you fail to do so. You further agree that all Updates will be deemed part of the Application and be subject to all terms and conditions of this Agreement.
 
 6. Third-Party Materials.
 
-    - The Application may display, include, or make available third-party content (including data, information, applications, and other products, services, and/or materials) or provide links to third-party websites or services, including through third-party advertising (“Third- Party Materials“). You acknowledge and agree that Company is not responsible for Third-Party Materials, including their accuracy, completeness, timeliness, validity, copyright compliance, legality, decency, quality, or any other aspect thereof. Company does not assume and will not have any liability or responsibility to you or any other person or entity for any Third-Party Materials. Third-Party Materials and links thereto are provided solely as a convenience to you, and you access and use them entirely at your own risk and subject to such third parties’ terms and conditions.
-    - Similarly, the App will allow you to upload certain content, including without limitation, photographs, text, and other similar content. By uploading the same the App, you represent and warrant to us that you have sufficient rights in such content to perform such act, and you are not infringing on the right of a third-party by doing so.
+    1. The Application may display, include, or make available third-party content (including data, information, applications, and other products, services, and/or materials) or provide links to third-party websites or services, including through third-party advertising (“Third- Party Materials“). You acknowledge and agree that Company is not responsible for Third-Party Materials, including their accuracy, completeness, timeliness, validity, copyright compliance, legality, decency, quality, or any other aspect thereof. Company does not assume and will not have any liability or responsibility to you or any other person or entity for any Third-Party Materials. Third-Party Materials and links thereto are provided solely as a convenience to you, and you access and use them entirely at your own risk and subject to such third parties’ terms and conditions.
+    2. Similarly, the App will allow you to upload certain content, including without limitation, photographs, text, and other similar content. By uploading the same the App, you represent and warrant to us that you have sufficient rights in such content to perform such act, and you are not infringing on the right of a third-party by doing so.
 
 7. Term and Termination.
 
-    - The term of Agreement commences when you download/install the Application and will continue in effect until terminated by you or Company as set forth in this Section 7.
-    - You may terminate this Agreement by deleting the Application and all copies thereof from your Mobile Device.
-    - Company may terminate this Agreement at any time without notice. In addition, this Agreement will terminate immediately and automatically without any notice if you violate any of the terms and conditions of this Agreement.
-    - Upon termination:
-        - all rights granted to you under this Agreement will also terminate; and
-        - you must cease all use of the Application and delete all copies of the Application from your Mobile Device and account.
-    - Termination will not limit any of Company’s rights or remedies at law or in equity.
+    1. The term of Agreement commences when you download/install the Application and will continue in effect until terminated by you or Company as set forth in this Section 7.
+    2. You may terminate this Agreement by deleting the Application and all copies thereof from your Mobile Device.
+    3. Company may terminate this Agreement at any time without notice. In addition, this Agreement will terminate immediately and automatically without any notice if you violate any of the terms and conditions of this Agreement.
+    4. Upon termination:
+        1. all rights granted to you under this Agreement will also terminate; and
+        2. you must cease all use of the Application and delete all copies of the Application from your Mobile Device and account.
+    5. Termination will not limit any of Company’s rights or remedies at law or in equity.
 
 8. Disclaimer of Warranties. THE APPLICATION IS PROVIDED TO LICENSEE “AS IS” AND WITH ALL FAULTS AND DEFECTS WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED UNDER APPLICABLE LAW, COMPANY, ON ITS OWN BEHALF AND ON BEHALF OF ITS AFFILIATES AND ITS AND THEIR RESPECTIVE LICENSORS AND SERVICE PROVIDERS, EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, WITH RESPECT TO THE APPLICATION, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT, AND WARRANTIES THAT MAY ARISE OUT OF COURSE OF DEALING, COURSE OF PERFORMANCE, USAGE, OR TRADE PRACTICE. WITHOUT LIMITATION TO THE FOREGOING, COMPANY PROVIDES NO WARRANTY OR UNDERTAKING, AND MAKES NO REPRESENTATION OF ANY KIND THAT THE APPLICATION WILL MEET YOUR REQUIREMENTS, ACHIEVE ANY INTENDED RESULTS, BE COMPATIBLE, OR WORK WITH ANY OTHER SOFTWARE, APPLICATIONS, SYSTEMS, OR SERVICES, OPERATE WITHOUT INTERRUPTION, MEET ANY PERFORMANCE OR RELIABILITY STANDARDS, OR BE ERROR-FREE, OR THAT ANY ERRORS OR DEFECTS CAN OR WILL BE CORRECTED.
 
@@ -52,8 +52,8 @@ By accessing or using our Services (clicking the “Agree” button, or download
 
 9. Limitation of Liability. TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT WILL COMPANY OR ITS AFFILIATES, OR ANY OF ITS OR THEIR RESPECTIVE LICENSORS OR SERVICE PROVIDERS, HAVE ANY LIABILITY ARISING FROM OR RELATED TO YOUR USE OF OR INABILITY TO USE THE APPLICATION OR THE CONTENT AND SERVICES FOR:
 
-    - PERSONAL INJURY, PROPERTY DAMAGE, LOST PROFITS, COST OF SUBSTITUTE GOODS OR SERVICES, LOSS OF DATA, LOSS OF GOODWILL, BUSINESS INTERRUPTION, COMPUTER FAILURE OR MALFUNCTION, OR ANY OTHER CONSEQUENTIAL, INCIDENTAL, INDIRECT, EXEMPLARY, SPECIAL, OR PUNITIVE DAMAGES.
-    - DIRECT DAMAGES IN AMOUNTS THAT IN THE AGGREGATE EXCEED THE AMOUNT ACTUALLY PAID BY YOU FOR THE APPLICATION. THE FOREGOING LIMITATIONS WILL APPLY WHETHER SUCH DAMAGES ARISE OUT OF BREACH OF CONTRACT, TORT (INCLUDING NEGLIGENCE), OR OTHERWISE AND
+    1. PERSONAL INJURY, PROPERTY DAMAGE, LOST PROFITS, COST OF SUBSTITUTE GOODS OR SERVICES, LOSS OF DATA, LOSS OF GOODWILL, BUSINESS INTERRUPTION, COMPUTER FAILURE OR MALFUNCTION, OR ANY OTHER CONSEQUENTIAL, INCIDENTAL, INDIRECT, EXEMPLARY, SPECIAL, OR PUNITIVE DAMAGES.
+    2. DIRECT DAMAGES IN AMOUNTS THAT IN THE AGGREGATE EXCEED THE AMOUNT ACTUALLY PAID BY YOU FOR THE APPLICATION. THE FOREGOING LIMITATIONS WILL APPLY WHETHER SUCH DAMAGES ARISE OUT OF BREACH OF CONTRACT, TORT (INCLUDING NEGLIGENCE), OR OTHERWISE AND
 
     REGARDLESS OF WHETHER SUCH DAMAGES WERE FORESEEABLE OR COMPANY WAS ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. SOME JURISDICTIONS DO NOT ALLOW CERTAIN LIMITATIONS OF LIABILITY SO SOME OR ALL OF THE ABOVE LIMITATIONS OF LIABILITY MAY NOT APPLY TO YOU.
 
