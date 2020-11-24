@@ -41,7 +41,10 @@ export const useScreenFrame = (screenProps = empty) => {
 
   useEffect(() => {
     const listener = nav.addListener('willBlur', ({ action }) => {
-      if (action.type === NavigationActions.BACK) {
+      if (
+        action.type === NavigationActions.BACK ||
+        action.type === 'Navigation/POP' // Missing enum??
+      ) {
         setFrameProps(frameProps);
       }
     });

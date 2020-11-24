@@ -88,7 +88,14 @@ const Frame = ({
     if (!discoveryNav) return;
 
     setActiveBubble(Bubble[discoveryNav.state.routeName]);
+    setTitle(discoveryNav.state.routeName);
   }, [discoveryNav]);
+
+  useLayoutEffect(() => {
+    if (appState.activeStatus) {
+      discoveryNav.popToTop();
+    }
+  }, [appState.activeStatus]);
 
   const navToFeed = useCallbackWhen(() => {
     discoveryNav.push('Feed');

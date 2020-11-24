@@ -8,6 +8,7 @@ import { getUserAvatarSource } from '../assets';
 import * as queries from '../graphql/queries';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
+import { useAppState } from '../services/AppState';
 import { colors } from '../theme';
 import { emptyArr } from '../utils';
 
@@ -37,12 +38,32 @@ const StatusList = ({ hideHeader, queryUserId = null, userScreen, NoStatusesComp
 
   const baseNav = useNavigation(Base);
   const alertError = useAlertError();
+  const [appState, setAppState] = useAppState();
 
   const statusesQuery = queries.statuses.use(queryUserId, {
     onError: alertError,
   });
 
   const { statuses = emptyArr } = statusesQuery.data || {};
+
+  const flyToStatus = useCallback((status) => {
+    const parentNav = baseNav.dangerouslyGetParent();
+
+    if (!parentNav) return;
+
+    appState.discoveryCamera.current.setCamera({
+      centerCoordinate: status.location,
+      zoomLevel: 13,
+      animationDuration: 2000,
+    });
+
+    parentNav.popToTop();
+
+    setAppState(appState => ({
+      ...appState,
+      activeStatus: status,
+    }));
+  }, [appState.discoveryCamera, baseNav]);
 
   const navToStatusChat = useCallback((status) => {
     baseNav.push('StatusChat', { status });
@@ -69,6 +90,10 @@ const StatusList = ({ hideHeader, queryUserId = null, userScreen, NoStatusesComp
         <View style={styles.statusDescription} onPress={() => navToStatusChat(status)}>
           <View style={[styles.statusType, { backgroundColor: status.isMeetup ? colors.hot : colors.cold }]} />
           <Text style={styles.statusCreatedAt}>{moment(status.createdAt).fromNow()}</Text>
+          <TouchableWithoutFeedback onPress={() => flyToStatus(status)}>
+            <MIcon name='gps-fixed' size={28} color={colors.ink} style={styles.actionIcon} />
+          </TouchableWithoutFeedback>
+          <View style={{ width: 20 }} />
           <TouchableWithoutFeedback onPress={() => navToStatusChat(status)}>
             <MIcon name='chat-bubble' size={30} color={colors.ink} style={styles.actionIcon} />
           </TouchableWithoutFeedback>

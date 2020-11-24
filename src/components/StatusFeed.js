@@ -10,6 +10,7 @@ import * as queries from '../graphql/queries';
 import { useAlertError } from '../services/DropdownAlert';
 import { useNavigation } from '../services/Navigation';
 import { useAppState } from '../services/AppState';
+import { useScreenFrame } from '../services/Frame';
 import { colors } from '../theme';
 import { emptyArr, useAsyncEffect } from '../utils';
 
@@ -36,11 +37,15 @@ const extractStatusItemKey = (status) => {
 
 const StatusFeed = ({ hideHeader, userScreen, NoStatusesComponent, ...props }) => {
   const Base = require('../containers/Base').default;
+  const Discovery = require('../containers/Discovery').default;
 
   const baseNav = useNavigation(Base);
+  const discoveryNav = useNavigation(Discovery);
   const alertError = useAlertError();
-  const [appState] = useAppState();
+  const [appState, setAppState] = useAppState();
   const [location, setLocation] = useState(() => props.location ?? appState.discoveryArea?.center);
+
+  useScreenFrame();
 
   useAsyncEffect(function* () {
     if (location) return;
@@ -60,6 +65,21 @@ const StatusFeed = ({ hideHeader, userScreen, NoStatusesComponent, ...props }) =
   });
 
   const { areaStatusesList: statuses = emptyArr } = statusesQuery.data || {};
+
+  const flyToStatus = useCallback((status) => {
+    appState.discoveryCamera.current.setCamera({
+      centerCoordinate: status.location,
+      zoomLevel: 13,
+      animationDuration: 2000,
+    });
+
+    discoveryNav.pop();
+
+    setAppState(appState => ({
+      ...appState,
+      activeStatus: status,
+    }));
+  }, [appState.discoveryCamera, discoveryNav]);
 
   const navToStatusChat = useCallback((status) => {
     baseNav.push('StatusChat', { status });
@@ -86,6 +106,10 @@ const StatusFeed = ({ hideHeader, userScreen, NoStatusesComponent, ...props }) =
         <View style={styles.statusDescription} onPress={() => navToStatusChat(status)}>
           <View style={[styles.statusType, { backgroundColor: status.isMeetup ? colors.hot : colors.cold }]} />
           <Text style={styles.statusCreatedAt}>{moment(status.createdAt).fromNow()}</Text>
+          <TouchableWithoutFeedback onPress={() => flyToStatus(status)}>
+            <MIcon name='gps-fixed' size={28} color={colors.ink} style={styles.actionIcon} />
+          </TouchableWithoutFeedback>
+          <View style={{ width: 20 }} />
           <TouchableWithoutFeedback onPress={() => navToStatusChat(status)}>
             <MIcon name='chat-bubble' size={30} color={colors.ink} style={styles.actionIcon} />
           </TouchableWithoutFeedback>

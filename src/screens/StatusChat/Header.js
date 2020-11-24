@@ -8,6 +8,7 @@ import { getUserAvatarSource } from '../../assets';
 import MenuPopover from '../../components/MenuPopover';
 import Bar from '../../components/Bar';
 import Base from '../../containers/Base';
+import { useAppState } from '../../services/AppState';
 import { useNavigation } from '../../services/Navigation';
 import { useAlertError } from '../../services/DropdownAlert';
 import { colors } from '../../theme';
@@ -28,6 +29,7 @@ const Header = ({ status = {} }) => {
   const baseNav = useNavigation(Base);
   const menuState = useState(false);
   const menuIconRef = useRef();
+  const [appState, setAppState] = useAppState();
   const [, setMenuVisible] = menuState;
   const { author, chat } = status;
   // TODO: Add listener to statusQuery
@@ -105,6 +107,25 @@ const Header = ({ status = {} }) => {
     baseNav.push('Participants', { chat });
   }, [baseNav, chat]);
 
+  const flyToStatus = useCallback(() => {
+    const parentNav = baseNav.dangerouslyGetParent();
+
+    if (!parentNav) return;
+
+    appState.discoveryCamera.current.setCamera({
+      centerCoordinate: status.location,
+      zoomLevel: 13,
+      animationDuration: 2000,
+    });
+
+    parentNav.popToTop();
+
+    setAppState(appState => ({
+      ...appState,
+      activeStatus: status,
+    }));
+  }, [appState.discoveryCamera, baseNav, status]);
+
   const showMenu = useCallback(() => {
     if (chat) {
       setMenuVisible(true);
@@ -117,6 +138,13 @@ const Header = ({ status = {} }) => {
       text: 'Participants',
       icon: 'account-group',
       onPress: navToParticipants,
+    },
+    status && {
+      key: 'flyto',
+      text: 'Fly to',
+      icon: 'gps-fixed',
+      IconComponent: MIcon,
+      onPress: flyToStatus,
     },
     chat && {
       key: 'subscription',
@@ -131,7 +159,7 @@ const Header = ({ status = {} }) => {
       IconComponent: MIcon,
       onPress: publish,
     },
-  ].filter(Boolean), [chat, published, subscribed, publish, toggleSubscription, navToParticipants]);
+  ].filter(Boolean), [status, chat, published, subscribed, publish, toggleSubscription, navToParticipants, flyToStatus]);
 
   return (
     <Bar>
