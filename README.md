@@ -1,6 +1,22 @@
 # Hot&Cold
 
-Should work both on Android and iOS. Android is currently the main version used as a reference for development and testing.
+<p align="center">
+    <img width="540" alt="hotncold-screenshot" src="https://user-images.githubusercontent.com/7648874/119815095-88d51980-bf2e-11eb-955e-311b3b943e4f.png">
+</p>
+
+Hot&Cold is an open source, full-stack, heatmap-based social chat app. Featuring:
+
+- [React-Native](https://reactnative.dev/)
+- [PostgresSQL](https://www.postgresql.org/)
+- [Apollo GraphQL (Client + Server)](https://www.apollographql.com/)
+- [MapBox](https://www.mapbox.com/)
+- [FireBase](https://firebase.google.com/)
+- [Twillio](https://www.twilio.com/)
+- [Cloudinary](https://cloudinary.com/)
+
+This is the main repository of the app, but only includes the front-end part of it; [please see its complient back-end project](https://github.com/DAB0mB/HotnCold-server). The app should be working on both Android and iOS, but was developed mostly with Android in mind.
+
+[**The app is currently available for Android on PlayStore**](https://play.google.com/store/apps/details?id=com.hotncold&hl=en_US&gl=US).
 
 ## Setup
 
